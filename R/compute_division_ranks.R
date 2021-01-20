@@ -2,17 +2,33 @@
 compute_division_ranks <- function(games,
                                    teams,
                                    tiebreaker_depth = 3,
-                                   .debug = FALSE
-                                   ){
-  # NOTE: Add message here with ui_stop but avoid usethis dependency
-  stopifnot(tiebreaker_depth %in% 1:3)
-  #
+                                   .debug = FALSE) {
+  # catch invalid input
+  if (!isTRUE(tiebreaker_depth %in% 1:3)) {
+    stop(
+      "The argument `tiebreaker_depth` has to be",
+      "a single value in the range of 1-3!"
+    )
+  }
+
+  required_vars <- c(
+    "sim",
+    "game_type",
+    "week",
+    "away_team",
+    "home_team",
+    "result"
+  )
+
+  if (!all(names(games) %in% required_vars) | !is.data.frame(games)) {
+    stop("The argument `games` has to be a data frame including ",
+         "all of the following variables: ",
+         glue_collapse(required_vars, sep = ", ", last = " and "),
+         "!")
+  }
+
   # double games
   games_doubled <- double_games(games)
-
-  teams <- divisions[rep(seq_len(nrow(divisions)), each = iter_sims_num), ] %>%
-    mutate(sim = rep(iter_sims, nrow(divisions))) %>%
-    select(sim, everything())
 
   # record of each team
   report("Calculating team data")
@@ -28,8 +44,8 @@ compute_division_ranks <- function(games,
     inner_join(games_doubled, by = c("sim", "team")) %>%
     filter(game_type == "REG") %>%
     inner_join(teams,
-               by = c("sim" = "sim", "opp" = "team"),
-               suffix = c("", "_opp")
+      by = c("sim" = "sim", "opp" = "team"),
+      suffix = c("", "_opp")
     ) %>%
     mutate(
       win_pct = wins / games,
@@ -39,14 +55,14 @@ compute_division_ranks <- function(games,
     group_by(sim, conf, division, team, games, wins, win_pct) %>%
     summarize(
       div_pct = ifelse(sum(div_game) == 0, 0.5,
-                       sum(div_game * outcome) / sum(div_game)
+        sum(div_game * outcome) / sum(div_game)
       ),
       conf_pct = ifelse(sum(conf_game) == 0, 0.5,
-                        sum(conf_game * outcome) / sum(conf_game)
+        sum(conf_game * outcome) / sum(conf_game)
       ),
       sov = ifelse(sum(outcome == 1) == 0, 0,
-                   sum(wins_opp * (outcome == 1)) /
-                     sum(games_opp * (outcome == 1))
+        sum(wins_opp * (outcome == 1)) /
+          sum(games_opp * (outcome == 1))
       ),
       sos = sum(wins_opp) / sum(games_opp)
     ) %>%
@@ -59,12 +75,12 @@ compute_division_ranks <- function(games,
     h2h <- teams %>%
       select(sim, team) %>%
       inner_join(teams %>% select(sim, team),
-                 by = "sim", suffix = c("", "_opp")
+        by = "sim", suffix = c("", "_opp")
       ) %>%
       rename(opp = team_opp) %>%
       arrange(sim, team, opp) %>%
       left_join(games_doubled %>% filter(game_type == "REG"),
-                by = c("sim", "team", "opp")
+        by = c("sim", "team", "opp")
       ) %>%
       group_by(sim, team, opp) %>%
       summarize(
@@ -104,5 +120,5 @@ compute_division_ranks <- function(games,
       select(-new_rank)
   }
 
-  return(teams)
+  return(list(teams = teams, h2h = h2h))
 }
