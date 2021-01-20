@@ -9,9 +9,9 @@ A data frame with 36 rows and 4 variables containing NFL team level
 information, including franchises in multiple cities:
 \describe{
 \item{team}{Team abbreviation}
-\item{conf}{Complete Team name}
-\item{division}{Team id used in the roster function}
-\item{sdiv}{Nickname}
+\item{conf}{Conference abbreviation}
+\item{division}{Division name}
+\item{sdiv}{Division abbreviation}
 }
 This data frame is created using the \code{teams_colors_logos} data frame of the
 \code{nflfastR} package. Please see \code{data-raw/divisions.R} for the code to create
