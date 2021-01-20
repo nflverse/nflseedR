@@ -1,0 +1,12 @@
+# internal constants
+TIEBREAKERS_NONE        <- 1
+TIEBREAKERS_NO_COMMON   <- 2
+TIEBREAKERS_THROUGH_SOS <- 3
+
+usethis::use_data(
+  TIEBREAKERS_NONE,
+  TIEBREAKERS_NO_COMMON,
+  TIEBREAKERS_THROUGH_SOS,
+  internal = TRUE,
+  overwrite = TRUE
+)
