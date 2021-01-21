@@ -3,10 +3,10 @@
 # break ties for next division rank
 # u = teams which may be tied
 # r = rank number to set
-break_conference_ties <- function(u, r) {
+break_conference_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
 
   # if any ties
-  if (any(is.na(u$conf_rank)) && tiebreaker_depth > TIEBREAKERS_NONE) {
+  if (any(is.na(u$conf_rank)) && tb_depth > TIEBREAKERS_NONE) {
 
     # larger ties before smaller ties
     for (min_tied in 3:2)
@@ -24,7 +24,7 @@ break_conference_ties <- function(u, r) {
 
       # if not all division winners, reduce to best per division
       if (tied %>% filter(div_winner) %>% nrow() == 0) {
-        if (debug) report(glue("CONF ({min_tied}): Best-in-division reduction"))
+        if (isTRUE(.debug)) report(glue("CONF ({min_tied}): Best-in-division reduction"))
         list[u, tied] <- tied %>%
           group_by(sim, conf, division) %>%
           mutate(value = case_when(
@@ -39,11 +39,11 @@ break_conference_ties <- function(u, r) {
       }
 
       # head-to-head sweep
-      if (debug) report(glue("CONF ({min_tied}): Head-to-head Sweep"))
+      if (isTRUE(.debug)) report(glue("CONF ({min_tied}): Head-to-head Sweep"))
       list[u, tied] <- tied %>%
         inner_join(tied %>% select(sim, conf, team, div_winner, div_best_left, win_pct),
-                   by = c("sim", "conf", "div_winner", "div_best_left", "win_pct"),
-                   suffix = c("", "_opp")
+          by = c("sim", "conf", "div_winner", "div_best_left", "win_pct"),
+          suffix = c("", "_opp")
         ) %>%
         rename(opp = team_opp) %>%
         filter(team != opp) %>%
@@ -66,7 +66,7 @@ break_conference_ties <- function(u, r) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # conference record
-      if (debug) report(glue("CONF ({min_tied}): Conference Record"))
+      if (isTRUE(.debug)) report(glue("CONF ({min_tied}): Conference Record"))
       list[u, tied] <- tied %>%
         mutate(value = case_when(
           tied_teams < min_tied ~ NA_real_,
@@ -75,11 +75,11 @@ break_conference_ties <- function(u, r) {
         process_conf_ties(u, r)
 
       # any ties to break at this size?
-      if (tiebreaker_depth < TIEBREAKERS_NO_COMMON) next
+      if (tb_depth < TIEBREAKERS_NO_COMMON) next
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # common games
-      if (debug) report(glue("CONF ({min_tied}): Common Record"))
+      if (isTRUE(.debug)) report(glue("CONF ({min_tied}): Common Record"))
       list[u, tied] <- tied %>%
         inner_join(h2h, by = c("sim", "team")) %>%
         filter(h2h_played == 1) %>%
@@ -100,7 +100,7 @@ break_conference_ties <- function(u, r) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # strength of victory
-      if (debug) report(glue("CONF ({min_tied}): Strength of Victory"))
+      if (isTRUE(.debug)) report(glue("CONF ({min_tied}): Strength of Victory"))
       list[u, tied] <- tied %>%
         mutate(value = case_when(
           tied_teams < min_tied ~ NA_real_,
@@ -112,7 +112,7 @@ break_conference_ties <- function(u, r) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # strength of schedule
-      if (debug) report(glue("CONF ({min_tied}): Strength of Schedule"))
+      if (isTRUE(.debug)) report(glue("CONF ({min_tied}): Strength of Schedule"))
       list[u, tied] <- tied %>%
         mutate(value = case_when(
           tied_teams < min_tied ~ NA_real_,
@@ -155,7 +155,7 @@ process_conf_ties <- function(t, u, r = seed_num) {
     ungroup()
   u <- u %>%
     left_join(t %>% select(sim, team, new_rank),
-              by = c("sim", "team")
+      by = c("sim", "team")
     ) %>%
     mutate(conf_rank = ifelse(!is.na(new_rank), new_rank, conf_rank)) %>%
     filter(is.na(new_rank) | new_rank != 0) %>%
