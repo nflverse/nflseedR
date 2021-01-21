@@ -9,7 +9,7 @@
 #' @importFrom crayon red
 #' @importFrom cli symbol
 #' @import dplyr
-#' @importFrom glue glue
+#' @importFrom glue glue glue_collapse
 #' @import gsubfn
 ## usethis namespace: end
 NULL

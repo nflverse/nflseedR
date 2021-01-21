@@ -1,8 +1,45 @@
+#' Compute NFL Division Rankings using Game Results
+#'
+#' @param games A data frame containing real or simulated game scores. The
+#' following variables are required:
+#' \describe{
+#'  \item{sim}{A simulation ID. Normally 1 - n simulated seasons.}
+#'  \item{game_type}{A simulation ID. Normally 1 - n simulated seasons.}
+#'  \item{week}{The week of the corresponding NFL season.}
+#'  \item{away_team}{Team abbreviation of the away team (please see
+#'    \code{\link{divisions}} for valid team abbreviations).}
+#'  \item{home_team}{Team abbreviation of the home team (please see
+#'    \code{\link{divisions}} for valid team abbreviations).}
+#'  \item{result}{Equals home score - away score.}
+#' }
+#' @param teams ...
+#' @param tiebreaker_depth A single numeric value in the range of 1, 2, 3. The
+#'  value controls the depth of tiebreakers that shall be applied. The deepest
+#'  currently implemented tiebreaker is strength of schedule. The following
+#'  values are valid:
+#'  \describe{
+#'  \item{tiebreaker_depth = 1}{Break all ties with a coinflip. Fastest variant.}
+#'  \item{tiebreaker_depth = 2}{Apply head-to-head and division win percentage tiebreakers.}
+#'  \item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule.}
+#'  }
+#' @param .debug Either \code{TRUE} or \code{FALSE}. Controls if additional
+#' messages are printed to the console showing what the tiebreaking algorithms
+#' are currently performing.
+#' @param h2h A data frame that is used for head-to-head tiebreakers across the
+#' tiebreaking functions. It is computed by the function
+#' \code{\link{compute_division_ranks}}.
+#' @returns A list of two data frames:
+#'  \describe{
+#'  \item{teams}{The argument \code{teams} including division ranks.}
+#'  \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
+#'  tiebreaking functions.}
+#'  }
 #' @export
 compute_division_ranks <- function(games,
                                    teams,
                                    tiebreaker_depth = 3,
-                                   .debug = FALSE) {
+                                   .debug = FALSE,
+                                   h2h = NULL) {
   # catch invalid input
   if (!isTRUE(tiebreaker_depth %in% 1:3)) {
     stop(
@@ -69,8 +106,7 @@ compute_division_ranks <- function(games,
     ungroup()
 
   # below only if there are tiebreakers
-  h2h <- NULL
-  if (tiebreaker_depth > TIEBREAKERS_NONE) {
+  if (is.null(h2h) & tiebreaker_depth > TIEBREAKERS_NONE) {
     report("Calculating head to head")
     h2h <- teams %>%
       select(sim, team) %>%
