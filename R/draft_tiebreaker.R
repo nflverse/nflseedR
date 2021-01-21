@@ -3,10 +3,10 @@
 # break ties for next division rank
 # u = teams which may be tied
 # r = rank number to set
-break_draft_ties <- function(u, r) {
+break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
 
   # any ties to break?
-  if (any(is.na(u$draft_order)) && tiebreaker_depth > TIEBREAKERS_NONE) {
+  if (any(is.na(u$draft_order)) && tb_depth > TIEBREAKERS_NONE) {
     for (min_tied in 2)
     {
 
@@ -20,7 +20,7 @@ break_draft_ties <- function(u, r) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # divisional tiebreakers
-      if (debug) report(glue("DRAFT: Divisional Rank"))
+      if (isTRUE(.debug)) report(glue("DRAFT: Divisional Rank"))
       list[u, tied] <- tied %>%
         group_by(sim) %>%
         mutate(value = case_when(
@@ -34,7 +34,7 @@ break_draft_ties <- function(u, r) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # conference tiebreakers
-      if (debug) report(glue("DRAFT: Conference Rank"))
+      if (isTRUE(.debug)) report(glue("DRAFT: Conference Rank"))
       list[u, tied] <- tied %>%
         mutate(
           div_winner = NA, # we don't care about div winners here
@@ -59,7 +59,7 @@ break_draft_ties <- function(u, r) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # head-to-head sweep
-      if (debug) report(glue("DRAFT: Head-to-head Sweep"))
+      if (isTRUE(.debug)) report(glue("DRAFT: Head-to-head Sweep"))
       list[u, tied] <- tied %>%
         inner_join(tied %>% select(sim, team), by = c("sim"), suffix = c("", "_opp")) %>%
         rename(opp = team_opp) %>%
@@ -76,11 +76,11 @@ break_draft_ties <- function(u, r) {
         process_draft_ties(u, r)
 
       # any ties to break at this size?
-      if (tiebreaker_depth < TIEBREAKERS_NO_COMMON) next
+      if (tb_depth < TIEBREAKERS_NO_COMMON) next
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # common games
-      if (debug) report(glue("DRAFT: Common Record"))
+      if (isTRUE(.debug)) report(glue("DRAFT: Common Record"))
       list[u, tied] <- tied %>%
         inner_join(h2h, by = c("sim", "team")) %>%
         filter(h2h_played == 1) %>%
@@ -100,7 +100,7 @@ break_draft_ties <- function(u, r) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # strength of victory
-      if (debug) report(glue("DRAFT: Strength of Victory"))
+      if (isTRUE(.debug)) report(glue("DRAFT: Strength of Victory"))
       list[u, tied] <- tied %>%
         mutate(value = sov) %>%
         process_draft_ties(u, r)
@@ -140,7 +140,7 @@ process_draft_ties <- function(t, u = u, d = do_num) {
     ungroup()
   u <- u %>%
     left_join(t %>% select(sim, team, new_do),
-              by = c("sim", "team")
+      by = c("sim", "team")
     ) %>%
     mutate(draft_order = ifelse(!is.na(new_do), new_do, draft_order)) %>%
     filter(is.na(new_do) | new_do != 0) %>%
