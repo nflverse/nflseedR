@@ -8,7 +8,8 @@ imports <- c(
   "glue",
   "gsubfn",
   "purrr",
-  "tidyr"
+  "tidyr",
+  "tibble"
 )
 purrr::walk(imports, usethis::use_package, "Imports")
 usethis::use_tidy_description()

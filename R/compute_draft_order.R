@@ -36,7 +36,7 @@ compute_draft_order <- function(teams,
     )
   }
 
-  if (is.list(teams)) teams <- teams$standings
+  if (!is_tibble(teams)) teams <- teams$standings
 
   required_vars <- c(
     "sim",

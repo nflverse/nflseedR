@@ -41,7 +41,7 @@ compute_conference_seeds <- function(teams,
     )
   }
 
-  if (is.list(teams)) teams <- teams$standings
+  if (!is_tibble(teams)) teams <- teams$standings
 
   if (!any((names(teams) %in% "div_rank")) | !is.data.frame(teams)) {
     stop(

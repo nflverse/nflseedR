@@ -13,5 +13,6 @@
 #' @import gsubfn
 #' @importFrom tidyr pivot_longer
 #' @importFrom purrr pluck
+#' @importFrom tibble is_tibble
 ## usethis namespace: end
 NULL
