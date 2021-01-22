@@ -40,6 +40,13 @@ in 2020 from 6 to 7).}
 \value{
 A data frame of division standings including playoff seeds and the
 week in which the season ended for the respective team (\code{exit}).
+
+A list of two data frames:
+\describe{
+\item{standings}{The division standings including playoff seeds.}
+\item{h2h}{A data frame that is used for head-to-head tiebreakers across the
+tiebreaking functions.}
+}
 }
 \description{
 Compute NFL Playoff Seedings using Game Results and Divisional Rankings
@@ -54,6 +61,7 @@ Compute NFL Playoff Seedings using Game Results and Divisional Rankings
    dplyr::filter(season \%in\% 2019:2020) \%>\%
    dplyr::select(sim = season, game_type, week, away_team, home_team, result) \%>\%
    compute_division_ranks() \%>\%
-   compute_conference_seeds(h2h = .$h2h)
+   compute_conference_seeds(h2h = .$h2h) \%>\%
+   purrr::pluck("standings")
 }
 }

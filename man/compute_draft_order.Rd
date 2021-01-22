@@ -4,21 +4,29 @@
 \alias{compute_draft_order}
 \title{Compute NFL Draft Order using Game Results and Divisional Rankings}
 \usage{
-compute_draft_order(teams, h2h = NULL, tiebreaker_depth = 3, .debug = FALSE)
+compute_draft_order(
+  teams,
+  games,
+  h2h = NULL,
+  tiebreaker_depth = 3,
+  .debug = FALSE
+)
 }
 \arguments{
-\item{teams}{This parameter is optional. If it is \code{NULL} the function
-will compute it internally, otherwise it has to be a data frame of all teams
-contained in the \code{games} data frame repeated for each simulation ID
-(\code{sim}). The following variables are required:
+\item{teams}{The division standings data frame including playoff seeds as
+computed by \code{\link{compute_conference_seeds}}}
+
+\item{games}{A data frame containing real or simulated game scores. The
+following variables are required:
 \describe{
 \item{sim}{A simulation ID. Normally 1 - n simulated seasons.}
-\item{team}{Team abbreviation of the team (please see
+\item{game_type}{A simulation ID. Normally 1 - n simulated seasons.}
+\item{week}{The week of the corresponding NFL season.}
+\item{away_team}{Team abbreviation of the away team (please see
 \code{\link{divisions}} for valid team abbreviations).}
-\item{conf}{Conference abbreviation of the team (please see
+\item{home_team}{Team abbreviation of the home team (please see
 \code{\link{divisions}} for valid team abbreviations).}
-\item{division}{Division of the team (please see
-\code{\link{divisions}} for valid division names).}
+\item{result}{Equals home score - away score.}
 }}
 
 \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
@@ -44,4 +52,21 @@ A data frame of standings including the final draft pick number
 }
 \description{
 Compute NFL Draft Order using Game Results and Divisional Rankings
+}
+\examples{
+\donttest{
+options(digits = 3)
+options(tibble.print_min = 64)
+library(dplyr)
+
+games <-
+  readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) \%>\%
+  dplyr::filter(season \%in\% 2018:2019) \%>\%
+  dplyr::select(sim = season, game_type, week, away_team, home_team, result)
+
+games \%>\%
+  compute_division_ranks() \%>\%
+  compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6) \%>\%
+  compute_draft_order(games = games, h2h = .$h2h)
+}
 }

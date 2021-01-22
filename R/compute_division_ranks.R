@@ -42,7 +42,7 @@
 #' \code{\link{compute_division_ranks}}.
 #' @returns A list of two data frames:
 #'  \describe{
-#'  \item{teams}{The argument \code{teams} including division ranks.}
+#'  \item{standings}{The division standings.}
 #'  \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
 #'  tiebreaking functions.}
 #'  }

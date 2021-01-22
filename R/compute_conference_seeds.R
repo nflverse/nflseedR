@@ -8,7 +8,12 @@
 #'
 #' @returns A data frame of division standings including playoff seeds and the
 #'   week in which the season ended for the respective team (\code{exit}).
-#'
+#' @returns A list of two data frames:
+#'  \describe{
+#'  \item{standings}{The division standings including playoff seeds.}
+#'  \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
+#'  tiebreaking functions.}
+#'  }
 #' @export
 #' @examples
 #' \donttest{
@@ -20,7 +25,8 @@
 #'    dplyr::filter(season %in% 2019:2020) %>%
 #'    dplyr::select(sim = season, game_type, week, away_team, home_team, result) %>%
 #'    compute_division_ranks() %>%
-#'    compute_conference_seeds(h2h = .$h2h)
+#'    compute_conference_seeds(h2h = .$h2h) %>%
+#'    purrr::pluck("standings")
 #' }
 compute_conference_seeds <- function(teams,
                                      h2h = NULL,
@@ -86,5 +92,5 @@ compute_conference_seeds <- function(teams,
     mutate(exit = ifelse(is.na(seed), max_reg_week, NA_real_)) %>%
     select(-max_reg_week)
 
-  return(teams)
+  return(list(standings = teams, h2h = h2h))
 }
