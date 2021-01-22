@@ -6,7 +6,7 @@
 \usage{
 compute_division_ranks(
   games,
-  teams,
+  teams = NULL,
   tiebreaker_depth = 3,
   .debug = FALSE,
   h2h = NULL
@@ -26,7 +26,19 @@ following variables are required:
 \item{result}{Equals home score - away score.}
 }}
 
-\item{teams}{...}
+\item{teams}{This parameter is optional. If it is \code{NULL} the function
+will compute it internally, otherwise it has to be a data frame of all teams
+contained in the \code{games} data frame repeated for each simulation ID
+(\code{sim}). The following variables are required:
+\describe{
+\item{sim}{A simulation ID. Normally 1 - n simulated seasons.}
+\item{team}{Team abbreviation of the team (please see
+\code{\link{divisions}} for valid team abbreviations).}
+\item{conf}{Conference abbreviation of the team (please see
+\code{\link{divisions}} for valid team abbreviations).}
+\item{division}{Division of the team (please see
+\code{\link{divisions}} for valid division names).}
+}}
 
 \item{tiebreaker_depth}{A single numeric value in the range of 1, 2, 3. The
 value controls the depth of tiebreakers that shall be applied. The deepest
@@ -56,4 +68,17 @@ tiebreaking functions.}
 }
 \description{
 Compute NFL Division Rankings using Game Results
+}
+\examples{
+\donttest{
+options(digits = 3)
+options(tibble.print_min = 64)
+library(dplyr)
+
+readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) \%>\%
+  dplyr::filter(season \%in\% 2019:2020) \%>\%
+  dplyr::select(sim = season, game_type, week, away_team, home_team, result) \%>\%
+  compute_division_ranks() \%>\%
+  purrr::pluck("standings")
+}
 }

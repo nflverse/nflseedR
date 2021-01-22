@@ -5,28 +5,20 @@
 \title{Compute NFL Playoff Seedings using Game Results and Divisional Rankings}
 \usage{
 compute_conference_seeds(
-  games,
   teams,
+  h2h = NULL,
   tiebreaker_depth = 3,
   .debug = FALSE,
-  h2h
+  playoff_seeds = 7
 )
 }
 \arguments{
-\item{games}{A data frame containing real or simulated game scores. The
-following variables are required:
-\describe{
-\item{sim}{A simulation ID. Normally 1 - n simulated seasons.}
-\item{game_type}{A simulation ID. Normally 1 - n simulated seasons.}
-\item{week}{The week of the corresponding NFL season.}
-\item{away_team}{Team abbreviation of the away team (please see
-\code{\link{divisions}} for valid team abbreviations).}
-\item{home_team}{Team abbreviation of the home team (please see
-\code{\link{divisions}} for valid team abbreviations).}
-\item{result}{Equals home score - away score.}
-}}
+\item{teams}{The division standings data frame as computed by
+\code{\link{compute_division_ranks}}}
 
-\item{teams}{...}
+\item{h2h}{A data frame that is used for head-to-head tiebreakers across the
+tiebreaking functions. It is computed by the function
+\code{\link{compute_division_ranks}}.}
 
 \item{tiebreaker_depth}{A single numeric value in the range of 1, 2, 3. The
 value controls the depth of tiebreakers that shall be applied. The deepest
@@ -42,18 +34,26 @@ values are valid:
 messages are printed to the console showing what the tiebreaking algorithms
 are currently performing.}
 
-\item{h2h}{A data frame that is used for head-to-head tiebreakers across the
-tiebreaking functions. It is computed by the function
-\code{\link{compute_division_ranks}}.}
+\item{playoff_seeds}{Number of playoff seeds within a conference (increased
+in 2020 from 6 to 7).}
 }
 \value{
-A list of two data frames:
-\describe{
-\item{teams}{The argument \code{teams} including playoff seeds.}
-\item{h2h}{A data frame that is used for head-to-head tiebreakers across the
-tiebreaking functions.}
-}
+A data frame of division standings including playoff seeds and the
+week in which the season ended for the respective team (\code{exit}).
 }
 \description{
 Compute NFL Playoff Seedings using Game Results and Divisional Rankings
+}
+\examples{
+\donttest{
+ options(digits = 3)
+ options(tibble.print_min = 64)
+ library(dplyr)
+
+ readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) \%>\%
+   dplyr::filter(season \%in\% 2019:2020) \%>\%
+   dplyr::select(sim = season, game_type, week, away_team, home_team, result) \%>\%
+   compute_division_ranks() \%>\%
+   compute_conference_seeds(h2h = .$h2h)
+}
 }

@@ -12,7 +12,19 @@
 #'    \code{\link{divisions}} for valid team abbreviations).}
 #'  \item{result}{Equals home score - away score.}
 #' }
-#' @param teams ...
+#' @param teams This parameter is optional. If it is \code{NULL} the function
+#'  will compute it internally, otherwise it has to be a data frame of all teams
+#'  contained in the \code{games} data frame repeated for each simulation ID
+#'  (\code{sim}). The following variables are required:
+#' \describe{
+#'  \item{sim}{A simulation ID. Normally 1 - n simulated seasons.}
+#'  \item{team}{Team abbreviation of the team (please see
+#'    \code{\link{divisions}} for valid team abbreviations).}
+#'  \item{conf}{Conference abbreviation of the team (please see
+#'    \code{\link{divisions}} for valid team abbreviations).}
+#'  \item{division}{Division of the team (please see
+#'    \code{\link{divisions}} for valid division names).}
+#' }
 #' @param tiebreaker_depth A single numeric value in the range of 1, 2, 3. The
 #'  value controls the depth of tiebreakers that shall be applied. The deepest
 #'  currently implemented tiebreaker is strength of schedule. The following
@@ -35,8 +47,20 @@
 #'  tiebreaking functions.}
 #'  }
 #' @export
+#' @examples
+#' \donttest{
+#' options(digits = 3)
+#' options(tibble.print_min = 64)
+#' library(dplyr)
+#'
+#' readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
+#'   dplyr::filter(season %in% 2019:2020) %>%
+#'   dplyr::select(sim = season, game_type, week, away_team, home_team, result) %>%
+#'   compute_division_ranks() %>%
+#'   purrr::pluck("standings")
+#' }
 compute_division_ranks <- function(games,
-                                   teams,
+                                   teams = NULL,
                                    tiebreaker_depth = 3,
                                    .debug = FALSE,
                                    h2h = NULL) {
@@ -57,11 +81,31 @@ compute_division_ranks <- function(games,
     "result"
   )
 
-  if (!all(names(games) %in% required_vars) | !is.data.frame(games)) {
-    stop("The argument `games` has to be a data frame including ",
-         "all of the following variables: ",
-         glue_collapse(required_vars, sep = ", ", last = " and "),
-         "!")
+  if (!sum(names(games) %in% required_vars, na.rm = TRUE) >= 6 | !is.data.frame(games)) {
+    stop(
+      "The argument `games` has to be a data frame including ",
+      "all of the following variables: ",
+      glue_collapse(required_vars, sep = ", ", last = " and "),
+      "!"
+    )
+  }
+
+  if (is.null(teams)) { # compute teams df from games df
+    pivot_games <- games %>%
+      select(sim, home_team, away_team) %>%
+      pivot_longer(cols = c("home_team", "away_team"), values_to = "team") %>%
+      select(sim, team)
+
+    teams <- bind_rows(
+      data.frame(team = unique(games$away_team)),
+      data.frame(team = unique(games$home_team))
+    ) %>%
+      distinct() %>%
+      left_join(nflseedR::divisions %>% select(-"sdiv"), by = "team") %>%
+      left_join(pivot_games, by = "team") %>%
+      select(sim, everything()) %>%
+      distinct() %>%
+      arrange(division, team, sim)
   }
 
   # double games
@@ -156,5 +200,10 @@ compute_division_ranks <- function(games,
       select(-new_rank)
   }
 
-  return(list(teams = teams, h2h = h2h))
+  max_reg_week <- max(games$week[games$game_type == "REG"], na.rm = TRUE)
+
+  teams <- teams %>%
+    mutate(max_reg_week = max_reg_week)
+
+  return(list(standings = teams, h2h = h2h))
 }

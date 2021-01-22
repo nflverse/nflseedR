@@ -11,5 +11,7 @@
 #' @import dplyr
 #' @importFrom glue glue glue_collapse
 #' @import gsubfn
+#' @importFrom tidyr pivot_longer
+#' @importFrom purrr pluck
 ## usethis namespace: end
 NULL

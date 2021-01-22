@@ -6,7 +6,9 @@ imports <- c(
   "cli",
   "dplyr",
   "glue",
-  "gsubfn"
+  "gsubfn",
+  "purrr",
+  "tidyr"
 )
 purrr::walk(imports, usethis::use_package, "Imports")
 usethis::use_tidy_description()

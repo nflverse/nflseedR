@@ -38,4 +38,6 @@ conf_rank <-
   seed_num <-
   value <-
   tied <-
-  do_num <- NULL
+  do_num <-
+  seed <-
+  max_reg_week <- NULL

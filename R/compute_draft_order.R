@@ -2,19 +2,13 @@
 #'
 #' @inheritParams compute_division_ranks
 #'
-#' @returns A list of two data frames:
-#'  \describe{
-#'  \item{teams}{The argument \code{teams} including the number of the draft pick.}
-#'  \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
-#'  tiebreaking functions.}
-#'  }
+#' @returns A data frame of standings including the final draft pick number
 #'
 #' @export
-compute_draft_order <- function(games,
-                                teams,
+compute_draft_order <- function(teams,
+                                h2h = NULL,
                                 tiebreaker_depth = 3,
-                                .debug = FALSE,
-                                h2h = NULL) {
+                                .debug = FALSE) {
   # catch invalid input
   if (!isTRUE(tiebreaker_depth %in% 1:3)) {
     stop(
@@ -23,25 +17,7 @@ compute_draft_order <- function(games,
     )
   }
 
-  required_vars <- c(
-    "sim",
-    "game_type",
-    "week",
-    "away_team",
-    "home_team",
-    "result"
-  )
-
-  if (!all(names(games) %in% required_vars) | !is.data.frame(games)) {
-    stop(
-      "The argument `games` has to be a data frame including ",
-      "all of the following variables: ",
-      glue_collapse(required_vars, sep = ", ", last = " and "),
-      "!"
-    )
-  }
-
-  if (!(names(teams) %in% "exit") | !is.data.frame(teams)) {
+  if (!any((names(teams) %in% "exit")) | !is.data.frame(teams)) {
     stop(
       "The argument `teams` has to be a data frame including ",
       "the variable `exit` as computed in the playoff simulation!"
@@ -85,5 +61,5 @@ compute_draft_order <- function(games,
       select(-new_do)
   } # end draft order loop
 
-  return(list(teams = teams, h2h = h2h))
+  return(teams)
 }

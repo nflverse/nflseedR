@@ -1,20 +1,32 @@
 #' Compute NFL Playoff Seedings using Game Results and Divisional Rankings
 #'
 #' @inheritParams compute_division_ranks
+#' @param teams The division standings data frame as computed by
+#'  \code{\link{compute_division_ranks}}
+#' @param playoff_seeds Number of playoff seeds within a conference (increased
+#'  in 2020 from 6 to 7).
 #'
-#' @returns A list of two data frames:
-#'  \describe{
-#'  \item{teams}{The argument \code{teams} including playoff seeds.}
-#'  \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
-#'  tiebreaking functions.}
-#'  }
+#' @returns A data frame of division standings including playoff seeds and the
+#'   week in which the season ended for the respective team (\code{exit}).
 #'
 #' @export
-compute_conference_seeds <- function(games,
-                                     teams,
+#' @examples
+#' \donttest{
+#'  options(digits = 3)
+#'  options(tibble.print_min = 64)
+#'  library(dplyr)
+#'
+#'  readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
+#'    dplyr::filter(season %in% 2019:2020) %>%
+#'    dplyr::select(sim = season, game_type, week, away_team, home_team, result) %>%
+#'    compute_division_ranks() %>%
+#'    compute_conference_seeds(h2h = .$h2h)
+#' }
+compute_conference_seeds <- function(teams,
+                                     h2h = NULL,
                                      tiebreaker_depth = 3,
                                      .debug = FALSE,
-                                     h2h) {
+                                     playoff_seeds = 7) {
   # catch invalid input
   if (!isTRUE(tiebreaker_depth %in% 1:3)) {
     stop(
@@ -23,25 +35,9 @@ compute_conference_seeds <- function(games,
     )
   }
 
-  required_vars <- c(
-    "sim",
-    "game_type",
-    "week",
-    "away_team",
-    "home_team",
-    "result"
-  )
+  if (is.list(teams)) teams <- teams$standings
 
-  if (!all(names(games) %in% required_vars) | !is.data.frame(games)) {
-    stop(
-      "The argument `games` has to be a data frame including ",
-      "all of the following variables: ",
-      glue_collapse(required_vars, sep = ", ", last = " and "),
-      "!"
-    )
-  }
-
-  if (!(names(teams) %in% "div_rank") | !is.data.frame(teams)) {
+  if (!any((names(teams) %in% "div_rank")) | !is.data.frame(teams)) {
     stop(
       "The argument `teams` has to be a data frame including ",
       "the variable `div_rank` as computed by `compute_division_ranks()`!"
@@ -59,7 +55,7 @@ compute_conference_seeds <- function(games,
     mutate(conf_rank = NA_real_)
 
   # seed loop
-  for (seed_num in 1:playoff_seeds)
+  for (seed_num in seq_len(playoff_seeds))
   {
     report(paste0("Calculating seed #", seed_num))
 
@@ -86,7 +82,9 @@ compute_conference_seeds <- function(games,
 
   # rename conference rank to seed
   teams <- teams %>%
-    rename(seed = conf_rank)
+    rename(seed = conf_rank) %>%
+    mutate(exit = ifelse(is.na(seed), max_reg_week, NA_real_)) %>%
+    select(-max_reg_week)
 
-  return(list(teams = teams, h2h = h2h))
+  return(teams)
 }

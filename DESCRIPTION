@@ -1,7 +1,7 @@
 Package: nflseedR
 Title: Functions to Efficiently Simulate and Evaluate NFL
     Seasons
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     c(person(given = "Lee",
              family = "Sharpe",
@@ -22,7 +22,9 @@ Imports:
     glue,
     gsubfn,
     magrittr,
-    rlang
+    purrr,
+    rlang,
+    tidyr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

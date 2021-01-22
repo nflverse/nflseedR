@@ -4,29 +4,26 @@
 \alias{compute_draft_order}
 \title{Compute NFL Draft Order using Game Results and Divisional Rankings}
 \usage{
-compute_draft_order(
-  games,
-  teams,
-  tiebreaker_depth = 3,
-  .debug = FALSE,
-  h2h = NULL
-)
+compute_draft_order(teams, h2h = NULL, tiebreaker_depth = 3, .debug = FALSE)
 }
 \arguments{
-\item{games}{A data frame containing real or simulated game scores. The
-following variables are required:
+\item{teams}{This parameter is optional. If it is \code{NULL} the function
+will compute it internally, otherwise it has to be a data frame of all teams
+contained in the \code{games} data frame repeated for each simulation ID
+(\code{sim}). The following variables are required:
 \describe{
 \item{sim}{A simulation ID. Normally 1 - n simulated seasons.}
-\item{game_type}{A simulation ID. Normally 1 - n simulated seasons.}
-\item{week}{The week of the corresponding NFL season.}
-\item{away_team}{Team abbreviation of the away team (please see
+\item{team}{Team abbreviation of the team (please see
 \code{\link{divisions}} for valid team abbreviations).}
-\item{home_team}{Team abbreviation of the home team (please see
+\item{conf}{Conference abbreviation of the team (please see
 \code{\link{divisions}} for valid team abbreviations).}
-\item{result}{Equals home score - away score.}
+\item{division}{Division of the team (please see
+\code{\link{divisions}} for valid division names).}
 }}
 
-\item{teams}{...}
+\item{h2h}{A data frame that is used for head-to-head tiebreakers across the
+tiebreaking functions. It is computed by the function
+\code{\link{compute_division_ranks}}.}
 
 \item{tiebreaker_depth}{A single numeric value in the range of 1, 2, 3. The
 value controls the depth of tiebreakers that shall be applied. The deepest
@@ -41,18 +38,9 @@ values are valid:
 \item{.debug}{Either \code{TRUE} or \code{FALSE}. Controls if additional
 messages are printed to the console showing what the tiebreaking algorithms
 are currently performing.}
-
-\item{h2h}{A data frame that is used for head-to-head tiebreakers across the
-tiebreaking functions. It is computed by the function
-\code{\link{compute_division_ranks}}.}
 }
 \value{
-A list of two data frames:
-\describe{
-\item{teams}{The argument \code{teams} including the number of the draft pick.}
-\item{h2h}{A data frame that is used for head-to-head tiebreakers across the
-tiebreaking functions.}
-}
+A data frame of standings including the final draft pick number
 }
 \description{
 Compute NFL Draft Order using Game Results and Divisional Rankings
