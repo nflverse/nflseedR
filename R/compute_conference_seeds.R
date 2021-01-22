@@ -3,14 +3,14 @@
 #' @inheritParams compute_division_ranks
 #' @param teams The division standings data frame as computed by
 #'  \code{\link{compute_division_ranks}}
-#' @param playoff_seeds Number of playoff seeds within a conference (increased
+#' @param playoff_seeds Number of playoff teams per conference (increased
 #'  in 2020 from 6 to 7).
 #'
 #' @returns A data frame of division standings including playoff seeds and the
 #'   week in which the season ended for the respective team (\code{exit}).
 #' @returns A list of two data frames:
 #'  \describe{
-#'  \item{standings}{The division standings including playoff seeds.}
+#'  \item{standings}{Division standings including playoff seeds.}
 #'  \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
 #'  tiebreaking functions.}
 #'  }
