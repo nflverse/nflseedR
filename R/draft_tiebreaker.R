@@ -43,7 +43,7 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
         group_by(sim, division) %>%
         mutate(div_best_left = (div_rank == min(div_rank))) %>%
         ungroup() %>%
-        break_conference_ties(r) %>%
+        break_conference_ties(r, h2h = h2h, tb_depth = tb_depth, .debug = .debug) %>%
         right_join(tied, by = c("sim", "team")) %>%
         group_by(sim) %>%
         mutate(value = case_when(
@@ -105,19 +105,21 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
         mutate(value = sov) %>%
         process_draft_ties(u, r)
     }
+  } else if (any(is.na(u$draft_order))){
+    # break any remaining ties at random
+    u <- u %>%
+      mutate(coin_flip = sample(n())) %>%
+      group_by(sim) %>%
+      mutate(draft_order = case_when(
+        !is.na(draft_order) ~ as.numeric(draft_order),
+        coin_flip == min(coin_flip) ~ as.numeric(r),
+        TRUE ~ NA_real_
+      )) %>%
+      ungroup() %>%
+      filter(!is.na(draft_order))
   }
 
-  # break any remaining ties at random
-  u <- u %>%
-    mutate(coin_flip = sample(n())) %>%
-    group_by(sim) %>%
-    mutate(draft_order = case_when(
-      !is.na(draft_order) ~ as.numeric(draft_order),
-      coin_flip == min(coin_flip) ~ as.numeric(do_num),
-      TRUE ~ NA_real_
-    )) %>%
-    ungroup() %>%
-    filter(!is.na(draft_order)) %>%
+   u <- u%>%
     rename(new_do = draft_order) %>%
     select(sim, team, new_do)
 
@@ -125,7 +127,7 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
   return(u)
 }
 
-process_draft_ties <- function(t, u = u, d = do_num) {
+process_draft_ties <- function(t, u, d) {
   # value = min value for this
   # 0 = teams elimianted from tiebreaker
   t <- t %>%

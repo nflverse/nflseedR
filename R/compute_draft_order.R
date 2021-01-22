@@ -1,11 +1,30 @@
 #' Compute NFL Draft Order using Game Results and Divisional Rankings
 #'
 #' @inheritParams compute_division_ranks
+#' @param teams The division standings data frame including playoff seeds as
+#' computed by \code{\link{compute_conference_seeds}}
 #'
 #' @returns A data frame of standings including the final draft pick number
 #'
 #' @export
+#' @examples
+#' \donttest{
+#' options(digits = 3)
+#' options(tibble.print_min = 64)
+#' library(dplyr)
+#'
+#' games <-
+#'   readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
+#'   dplyr::filter(season %in% 2018:2019) %>%
+#'   dplyr::select(sim = season, game_type, week, away_team, home_team, result)
+#'
+#' games %>%
+#'   compute_division_ranks() %>%
+#'   compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6) %>%
+#'   compute_draft_order(games = games, h2h = .$h2h)
+#' }
 compute_draft_order <- function(teams,
+                                games,
                                 h2h = NULL,
                                 tiebreaker_depth = 3,
                                 .debug = FALSE) {
@@ -17,10 +36,35 @@ compute_draft_order <- function(teams,
     )
   }
 
-  if (!any((names(teams) %in% "exit")) | !is.data.frame(teams)) {
+  if (is.list(teams)) teams <- teams$standings
+
+  required_vars <- c(
+    "sim",
+    "game_type",
+    "week",
+    "away_team",
+    "home_team",
+    "result"
+  )
+
+  if (!sum(names(games) %in% required_vars, na.rm = TRUE) >= 6 | !is.data.frame(games)) {
     stop(
-      "The argument `teams` has to be a data frame including ",
-      "the variable `exit` as computed in the playoff simulation!"
+      "The argument `games` has to be a data frame including ",
+      "all of the following variables: ",
+      glue_collapse(required_vars, sep = ", ", last = " and "),
+      "!"
+    )
+  }
+
+  if (!any(games$game_type %in% "SB")) {
+    stop(
+      "Can't compute draft order for an incomplete season. It looks like the ",
+      "`games` data frame is missing the game_type 'SB'!"
+    )
+  } else if (any(is.na(games$result[games$game_type == "SB"]))){
+    stop(
+      "Can't compute draft order for an incomplete season. It looks like the ",
+      "`games` data frame is missing the result for game_type 'SB'!"
     )
   }
 
@@ -31,6 +75,88 @@ compute_draft_order <- function(teams,
       "function `compute_division_ranks()`."
     )
   }
+
+  # identify playoff teams
+  playoff_teams <- teams %>%
+    filter(!is.na(seed)) %>%
+    select(sim, conf, seed, team) %>%
+    arrange(sim, conf, seed)
+
+  # num teams tracker
+  num_teams <- playoff_teams %>%
+    group_by(sim, conf) %>%
+    summarize(count = n()) %>%
+    pull(count) %>%
+    max()
+
+  week_num <- games %>%
+    filter(game_type == "REG") %>%
+    pull(week) %>%
+    max()
+
+  week_max <- week_num + 4L
+
+  # playoff weeks
+  while (num_teams > 1) {
+
+    # inseed_numement week number
+    week_num <- week_num + 1L
+
+    if(week_num > week_max){
+      stop(
+        "Something went wrong and the function has entered an infinite loop. ",
+        "Does the number of postseason games match the number of playoff seeds?"
+      )
+    }
+
+    report(paste("Processing Playoffs Week", week_num))
+
+    # record losers
+    teams <- games %>%
+      filter(week == week_num) %>%
+      double_games() %>%
+      filter(outcome == 0) %>%
+      select(sim, team, outcome) %>%
+      right_join(teams, by = c("sim", "team")) %>%
+      mutate(exit = ifelse(!is.na(outcome), week_num, exit)) %>%
+      select(-outcome)
+
+    # if super bowl, record winner
+    if (any(playoff_teams$conf == "SB")) {
+      # super bowl winner exit is +1 to SB week
+      teams <- games %>%
+        filter(week == week_num) %>%
+        double_games() %>%
+        filter(outcome == 1) %>%
+        select(sim, team, outcome) %>%
+        right_join(teams, by = c("sim", "team")) %>%
+        mutate(exit = ifelse(!is.na(outcome), week_num + 1, exit)) %>%
+        select(-outcome)
+    }
+
+    # filter to winners or byes
+    playoff_teams <- games %>%
+      filter(week == week_num) %>%
+      double_games() %>%
+      right_join(playoff_teams, by = c("sim", "team")) %>%
+      filter(is.na(result) | result > 0) %>%
+      select(sim, conf, seed, team) %>%
+      arrange(sim, conf, seed)
+
+    # update number of teams
+    num_teams <- playoff_teams %>%
+      group_by(sim, conf) %>%
+      summarize(count = n()) %>%
+      pull(count) %>%
+      max()
+
+    # if at one team per conf, loop once more for the super bowl
+    if (num_teams == 1 && !any(playoff_teams$conf == "SB")) {
+      playoff_teams <- playoff_teams %>%
+        mutate(conf = "SB", seed = rep(1:2, n() / 2))
+      num_teams <- 2
+    }
+  } # end playoff loop
 
   # set draft order variable
   teams <- teams %>%
