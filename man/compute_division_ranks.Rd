@@ -40,7 +40,7 @@ contained in the \code{games} data frame repeated for each simulation ID
 \code{\link{divisions}} for valid division names).}
 }}
 
-\item{tiebreaker_depth}{A single numeric value in the range of 1, 2, 3. The
+\item{tiebreaker_depth}{A single value equal to 1, 2, or 3. The
 value controls the depth of tiebreakers that shall be applied. The deepest
 currently implemented tiebreaker is strength of schedule. The following
 values are valid:
@@ -50,7 +50,7 @@ values are valid:
 \item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule.}
 }}
 
-\item{.debug}{Either \code{TRUE} or \code{FALSE}. Controls if additional
+\item{.debug}{Either \code{TRUE} or \code{FALSE}. Controls whether additional
 messages are printed to the console showing what the tiebreaking algorithms
 are currently performing.}
 
@@ -61,7 +61,7 @@ tiebreaking functions. It is computed by the function
 \value{
 A list of two data frames:
 \describe{
-\item{standings}{The division standings.}
+\item{standings}{Division standings.}
 \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
 tiebreaking functions.}
 }

@@ -25,7 +25,7 @@
 #'  \item{division}{Division of the team (please see
 #'    \code{\link{divisions}} for valid division names).}
 #' }
-#' @param tiebreaker_depth A single numeric value in the range of 1, 2, 3. The
+#' @param tiebreaker_depth A single value equal to 1, 2, or 3. The
 #'  value controls the depth of tiebreakers that shall be applied. The deepest
 #'  currently implemented tiebreaker is strength of schedule. The following
 #'  values are valid:
@@ -34,7 +34,7 @@
 #'  \item{tiebreaker_depth = 2}{Apply head-to-head and division win percentage tiebreakers.}
 #'  \item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule.}
 #'  }
-#' @param .debug Either \code{TRUE} or \code{FALSE}. Controls if additional
+#' @param .debug Either \code{TRUE} or \code{FALSE}. Controls whether additional
 #' messages are printed to the console showing what the tiebreaking algorithms
 #' are currently performing.
 #' @param h2h A data frame that is used for head-to-head tiebreakers across the
@@ -42,7 +42,7 @@
 #' \code{\link{compute_division_ranks}}.
 #' @returns A list of two data frames:
 #'  \describe{
-#'  \item{standings}{The division standings.}
+#'  \item{standings}{Division standings.}
 #'  \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
 #'  tiebreaking functions.}
 #'  }
