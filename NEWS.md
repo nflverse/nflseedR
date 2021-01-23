@@ -1,3 +1,3 @@
-# nflseedR (development version)
+# nflseedR 1.0.0
 
 * Initial release.
