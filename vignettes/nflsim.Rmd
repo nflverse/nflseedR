@@ -1,6 +1,6 @@
 ---
-title: "Get started with nflseedR"
-author: "Sebastian Carl"
+title: "Simulating NFL seasons using nflseedR"
+author: "Lee Sharpe"
 ---
 
 ```{r, include = FALSE}
@@ -14,4 +14,4 @@ knitr::opts_chunk$set(
 library(nflseedR)
 ```
 
-Explain functionality, input and output of the three main functions
+How to simulate NFL seasons and use nflseedR for tiebreakers
