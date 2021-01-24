@@ -105,8 +105,10 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
         mutate(value = sov) %>%
         process_draft_ties(u, r)
     }
-  } else if (any(is.na(u$draft_order))){
-    # break any remaining ties at random
+  }
+
+  # break any remaining ties at random
+  if (any(is.na(u$draft_order))) {
     u <- u %>%
       mutate(coin_flip = sample(n())) %>%
       group_by(sim) %>%
@@ -119,7 +121,7 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       filter(!is.na(draft_order))
   }
 
-   u <- u%>%
+  u <- u %>%
     rename(new_do = draft_order) %>%
     select(sim, team, new_do)
 
