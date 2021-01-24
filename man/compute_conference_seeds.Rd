@@ -26,8 +26,8 @@ currently implemented tiebreaker is strength of schedule. The following
 values are valid:
 \describe{
 \item{tiebreaker_depth = 1}{Break all ties with a coinflip. Fastest variant.}
-\item{tiebreaker_depth = 2}{Apply head-to-head and division win percentage tiebreakers. (Random if still tied.)}
-\item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule. (Random if still tied.)}
+\item{tiebreaker_depth = 2}{Apply head-to-head and division win percentage tiebreakers. Random if still tied.}
+\item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule. Random if still tied.}
 }}
 
 \item{.debug}{Either \code{TRUE} or \code{FALSE}. Controls whether additional

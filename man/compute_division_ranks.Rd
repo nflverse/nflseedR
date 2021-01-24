@@ -40,14 +40,14 @@ contained in the \code{games} data frame repeated for each simulation ID
 \code{\link{divisions}} for valid division names).}
 }}
 
-\item{tiebreaker_depth}{A single value equal to 1, 2, or 3. The
+\item{tiebreaker_depth}{A single value equal to 1, 2, or 3. The default is 3. The
 value controls the depth of tiebreakers that shall be applied. The deepest
 currently implemented tiebreaker is strength of schedule. The following
 values are valid:
 \describe{
 \item{tiebreaker_depth = 1}{Break all ties with a coinflip. Fastest variant.}
-\item{tiebreaker_depth = 2}{Apply head-to-head and division win percentage tiebreakers.}
-\item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule.}
+\item{tiebreaker_depth = 2}{Apply head-to-head and division win percentage tiebreakers. Random if still tied.}
+\item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule. Random if still tied.}
 }}
 
 \item{.debug}{Either \code{TRUE} or \code{FALSE}. Controls whether additional
