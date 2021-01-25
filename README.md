@@ -28,9 +28,9 @@ the playoffs. It can also be run as a fresh season, wiping away results
 and simulating from scratch.
 
 The season simulation code for nflseedR was developed by Lee Sharpe
-(\[@LeeSharpeNFL\](<https://twitter.com/leesharpenfl>)) and building it
+([@LeeSharpeNFL](<https://twitter.com/leesharpenfl>)) and building it
 as package was developed by Sebastian Carl
-(\[@mrcaseb\](<https://twitter.com/mrcaseb>)).
+([@mrcaseb](<https://twitter.com/mrcaseb>)).
 
 ## Installation
 
