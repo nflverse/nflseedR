@@ -20,7 +20,7 @@ computed by \code{\link{compute_conference_seeds}}}
 following variables are required:
 \describe{
 \item{sim}{A simulation ID. Normally 1 - n simulated seasons.}
-\item{game_type}{A simulation ID. Normally 1 - n simulated seasons.}
+\item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.}
 \item{week}{The week of the corresponding NFL season.}
 \item{away_team}{Team abbreviation of the away team (please see
 \code{\link{divisions}} for valid team abbreviations).}
@@ -48,7 +48,9 @@ messages are printed to the console showing what the tiebreaking algorithms
 are currently performing.}
 }
 \value{
-A data frame of standings including the final draft pick number
+A data frame of standings including the final draft pick number and
+the variable \code{exit} which indicates the week number of the teams final
+game (Super Bowl Winner = 22, SUper Bowl Loser = 21).
 }
 \description{
 Compute NFL Draft Order using Game Results and Divisional Rankings

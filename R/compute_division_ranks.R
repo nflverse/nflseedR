@@ -4,7 +4,7 @@
 #' following variables are required:
 #' \describe{
 #'  \item{sim}{A simulation ID. Normally 1 - n simulated seasons.}
-#'  \item{game_type}{A simulation ID. Normally 1 - n simulated seasons.}
+#'  \item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.}
 #'  \item{week}{The week of the corresponding NFL season.}
 #'  \item{away_team}{Team abbreviation of the away team (please see
 #'    \code{\link{divisions}} for valid team abbreviations).}

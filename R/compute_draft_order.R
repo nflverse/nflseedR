@@ -4,7 +4,9 @@
 #' @param teams The division standings data frame including playoff seeds as
 #' computed by \code{\link{compute_conference_seeds}}
 #'
-#' @returns A data frame of standings including the final draft pick number
+#' @returns A data frame of standings including the final draft pick number and
+#'  the variable \code{exit} which indicates the week number of the teams final
+#'  game (Super Bowl Winner = 22, SUper Bowl Loser = 21).
 #'
 #' @export
 #' @examples
