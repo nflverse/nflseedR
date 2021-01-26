@@ -40,4 +40,12 @@ conf_rank <-
   tied <-
   do_num <-
   seed <-
-  max_reg_week <- NULL
+  max_reg_week <-
+  season <-
+  . <-
+  round_rank.x <-
+  round_rank.y <-
+  seed.x <-
+  seed.y <-
+  team.x <-
+  team.y <- NULL
