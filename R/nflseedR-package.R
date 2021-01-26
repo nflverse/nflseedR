@@ -14,5 +14,7 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom purrr pluck
 #' @importFrom tibble is_tibble
+#' @importFrom progressr progressor
+#' @importFrom furrr future_map future_map_dfr furrr_options
 ## usethis namespace: end
 NULL

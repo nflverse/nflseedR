@@ -14,21 +14,23 @@ Description: A set of functions to simulate National Football
     League seasons including the sophisticated tiebreaking procedures.
 License: MIT + file LICENSE
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5.0)
 Imports: 
     cli,
     crayon,
     dplyr,
+    furrr,
     glue,
     gsubfn,
     magrittr,
+    progressr,
     purrr,
     rlang,
     tibble,
     tidyr
+Suggests: 
+    rmarkdown
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Suggests: 
-    rmarkdown
