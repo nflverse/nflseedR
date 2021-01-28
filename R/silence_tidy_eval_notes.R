@@ -48,4 +48,5 @@ conf_rank <-
   seed.x <-
   seed.y <-
   team.x <-
-  team.y <- NULL
+  team.y <-
+  estimate <- NULL

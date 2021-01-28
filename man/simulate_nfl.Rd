@@ -6,8 +6,9 @@
 \usage{
 simulate_nfl(
   nfl_season,
-  estimate_games,
-  simulate_games,
+  estimate_games = NULL,
+  simulate_games = NULL,
+  ...,
   playoff_seeds = ifelse(nfl_season >= 2020, 7, 6),
   if_ended_today = FALSE,
   fresh_season = FALSE,
@@ -26,6 +27,9 @@ schedule as argument.}
 
 \item{simulate_games}{A function to simulate the results of the games to
 simulate. Uses the schedule and the week as argument.}
+
+\item{...}{Additional parameters passed on to the functions
+\code{estimate_games} and \code{simulate_games}.}
 
 \item{playoff_seeds}{Number of playoff teams per conference (increased
 in 2020 from 6 to 7).}
@@ -67,64 +71,20 @@ before the start of the simulations.
 }
 \examples{
 \donttest{
-  library(nflseedR)
-  library(dplyr)
+library(nflseedR)
 
-  # round out (away from zero)
-  round_out <- function(x) {
-    x[x < 0] <- floor(x[x < 0])
-    x[x > 0] <- ceiling(x[x > 0])
-    return(x)
-  }
+# Activate progress updates
+progressr::handlers(global = TRUE)
 
-  # function to estimate games
-  my_estimate <- function(g) {
-    # replace with your own function
-    # g = games data
+# Parallel processing can be activated via the following line
+# future::plan("multisession")
 
-    # define
-    # estimate = is the median spread expected (positive = home team favored)
-    # wp = is the probability of the team winning the game
-
-    # this example estimates at PK/0 and 50\%
-
-    g <- g \%>\%
-      dplyr::mutate(estimate = 0, wp = 0.5)
-    return(g)
-  }
-
-  # function to simulate games
-  my_simulate <- function(g, w) {
-    # replace with your own function
-    # only simulate games through week w
-    # only simulate games with is.na(result)
-
-    # define
-    # result = how many points home team won by
-    # can add additional columns as well (e.g. Elo)
-
-    g <- g \%>\%
-      dplyr::mutate(result = ifelse(is.na(result) & week <= w,
-        round_out(rnorm(n(), estimate, 14)),
-        result
-      ))
-    return(g)
-  }
-
-  # Activate progress updates
-  progressr::handlers(global = TRUE)
-
-  # Parallel processing can be activated via the following line
-  # future::plan("multisession")
-
-  # Simulate season 4 times in 2 rounds
-  sim <- nflseedR::simulate_nfl(
-    2020,
-    estimate_games = my_estimate,
-    simulate_games = my_simulate,
-    fresh_season = TRUE,
-    simulations = 4,
-    sims_per_round = 2
-  )
+# Simulate the season 4 times in 2 rounds
+sim <- nflseedR::simulate_nfl(
+  2020,
+  fresh_season = TRUE,
+  simulations = 4,
+  sims_per_round = 2
+)
 }
 }

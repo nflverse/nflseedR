@@ -16,5 +16,6 @@
 #' @importFrom tibble is_tibble
 #' @importFrom progressr progressor
 #' @importFrom furrr future_map future_map_dfr furrr_options
+#' @importFrom stats rnorm
 ## usethis namespace: end
 NULL
