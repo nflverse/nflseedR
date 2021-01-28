@@ -30,3 +30,5 @@ double_games <- function(g) {
     ))
   return(g)
 }
+
+is_single_digit_numeric <- function(x) is.numeric(x) && length(x) == 1L && !is.na(x)

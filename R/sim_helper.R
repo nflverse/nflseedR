@@ -6,6 +6,7 @@ simulate_round <- function(sim_round,
                            weeks_to_sim,
                            estimate_games,
                            simulate_games,
+                           ...,
                            tiebreaker_depth,
                            .debug,
                            playoff_seeds,
@@ -33,8 +34,8 @@ simulate_round <- function(sim_round,
     # estimate and simulate games
     # report(glue("Processing Week {week_num}"))
     games <- games %>%
-      estimate_games() %>%
-      simulate_games(week_num)
+      estimate_games(...) %>%
+      simulate_games(week_num, ...)
   }
 
   #### FIND DIVISIONAL STANDINGS AND PLAYOFF SEEDINGS ####
@@ -124,8 +125,8 @@ simulate_round <- function(sim_round,
 
     # process any new games
     games <- games %>%
-      estimate_games() %>%
-      simulate_games(week_num)
+      estimate_games(...) %>%
+      simulate_games(week_num, ...)
 
     # record losers
     teams <- games %>%
