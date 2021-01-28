@@ -15,6 +15,7 @@
 #' @param sims_per_round The number of \code{simulations} can be split into
 #'   multiple rounds and be processed parallel. This parameter controls the number
 #'   of simulations per round.
+#' @param print_summary If \code{TRUE}, prints the summary statistics to the console.
 #' @description This function simulates a given NFL season multiple times using custom functions
 #'   to estimate and simulate game results and computes the outcome of the given
 #'   season including playoffs and draft order.
@@ -22,6 +23,9 @@
 #'   appropriate \link[future]{plan}.
 #'   Progress updates can be activated by calling \link[progressr]{handlers}
 #'   before the start of the simulations.
+#' @returns A list of three data frames with the results of all simulated games,
+#'   the final standings in each simulated season (incl. playoffs and draft order)
+#'   and summary statistics across all simulated seasons.
 #' @export
 #' @examples
 #' \donttest{
@@ -52,7 +56,8 @@ simulate_nfl <- function(nfl_season,
                          tiebreaker_depth = 3,
                          simulations = 10,
                          sims_per_round = simulations,
-                         .debug = FALSE) {
+                         .debug = FALSE,
+                         print_summary = FALSE) {
 
   # Define simple estimate and simulate functions
 
@@ -191,7 +196,7 @@ simulate_nfl <- function(nfl_season,
     ) %>%
     ungroup()
 
-  print(overall)
+  if (isTRUE(print_summary)) print(overall)
 
   list("teams" = all_teams, "games" = all_games, "overall" = overall)
 }

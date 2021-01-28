@@ -16,7 +16,8 @@ simulate_nfl(
   tiebreaker_depth = 3,
   simulations = 10,
   sims_per_round = simulations,
-  .debug = FALSE
+  .debug = FALSE,
+  print_summary = FALSE
 )
 }
 \arguments{
@@ -59,6 +60,13 @@ of simulations per round.}
 \item{.debug}{Either \code{TRUE} or \code{FALSE}. Controls whether additional
 messages are printed to the console showing what the tiebreaking algorithms
 are currently performing.}
+
+\item{print_summary}{If \code{TRUE}, prints the summary statistics to the console.}
+}
+\value{
+A list of three data frames with the results of all simulated games,
+the final standings in each simulated season (incl. playoffs and draft order)
+and summary statistics across all simulated seasons.
 }
 \description{
 This function simulates a given NFL season multiple times using custom functions
