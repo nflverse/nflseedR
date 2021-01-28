@@ -106,18 +106,6 @@ simulate_nfl <- function(nfl_season,
 
   #### PREPROCESSING ####
 
-  # week to examine leverage
-  if (isTRUE(fresh_season) || isTRUE(if_ended_today)) {
-    leverage <- FALSE # override, leverage makes no sense here
-  } else leverage <- TRUE
-
-  if (isTRUE(leverage)) {
-    interest_week <- schedule %>%
-      filter(!is.na(result)) %>%
-      pull(week) %>%
-      min()
-  }
-
   # if simulating fresh season, clear out all results and playoff games
   if (isTRUE(fresh_season)) {
     schedule <- schedule %>%
