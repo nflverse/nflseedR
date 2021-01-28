@@ -24,48 +24,6 @@
 #' @examples
 #' \donttest{
 #' library(nflseedR)
-#' library(dplyr)
-#'
-#' # round out (away from zero)
-#' round_out <- function(x) {
-#'   x[x < 0] <- floor(x[x < 0])
-#'   x[x > 0] <- ceiling(x[x > 0])
-#'   return(x)
-#' }
-#'
-#' # function to estimate games
-#' my_estimate <- function(g) {
-#'   # replace with your own function
-#'   # g = games data
-#'
-#'   # define
-#'   # estimate = is the median spread expected (positive = home team favored)
-#'   # wp = is the probability of the team winning the game
-#'
-#'   # this example estimates at PK/0 and 50\%
-#'
-#'   g <- g %>%
-#'     dplyr::mutate(estimate = 0, wp = 0.5)
-#'   return(g)
-#' }
-#'
-#' # function to simulate games
-#' my_simulate <- function(g, w) {
-#'   # replace with your own function
-#'   # only simulate games through week w
-#'   # only simulate games with is.na(result)
-#'
-#'   # define
-#'   # result = how many points home team won by
-#'   # can add additional columns as well (e.g. Elo)
-#'
-#'   g <- g %>%
-#'     dplyr::mutate(result = ifelse(is.na(result) & week <= w,
-#'       round_out(rnorm(n(), estimate, 14)),
-#'       result
-#'     ))
-#'   return(g)
-#' }
 #'
 #' # Activate progress updates
 #' progressr::handlers(global = TRUE)
@@ -76,8 +34,6 @@
 #' # Simulate the season 4 times in 2 rounds
 #' sim <- nflseedR::simulate_nfl(
 #'   2020,
-#'   estimate_games = my_estimate,
-#'   simulate_games = my_simulate,
 #'   fresh_season = TRUE,
 #'   simulations = 4,
 #'   sims_per_round = 2
