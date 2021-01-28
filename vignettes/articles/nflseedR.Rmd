@@ -12,13 +12,13 @@ knitr::opts_chunk$set(
 
 # Preface
 
-nflseedR is designed to efficiently take over the sophisticated and complex rule set of the NFL regarding division ranks, postseason seeding and draft order.It is intended to be used for NFL season simulations to help modelers focus on their models rather than the tie-breaking procedures. The NFL's official procedures for breaking ties for postseason playoffs can be found [here](https://operations.nfl.com/the-rules/nfl-tie-breaking-procedures/) and [this site](https://operations.nfl.com/journey-to-the-nfl/the-nfl-draft/the-rules-of-the-draft/) explains the assigning of draft picks. 
+nflseedR is designed to efficiently take over the sophisticated and complex rule set of the NFL regarding division ranks, postseason seeding and draft order. It is intended to be used for NFL season simulations to help modelers focus on their models rather than the tie-breaking procedures. The NFL's official procedures for breaking ties for postseason playoffs can be found [here](https://operations.nfl.com/the-rules/nfl-tie-breaking-procedures/) and [this site](https://operations.nfl.com/journey-to-the-nfl/the-nfl-draft/the-rules-of-the-draft/) explains the assigning of draft picks. 
 
 However, it must be mentioned that nflseedR does not support all levels of tie-breakers at the moment. The deepest tie-breaker possible at the moment is the strength of schedule. After that, the decision is made at random. It should be noted, however, that the need for additional levels is extremely unlikely in reality.
 
 # Main functions
 
-nflseedR comes with three main functions (each can handle thousands of seasons at once):
+nflseedR comes with three in-simulation functions (each can handle thousands of seasons at once):
 
 * `compute_division_ranks()` to find all division winners,
 * `compute_conference_seeds()` to get the playoff participants and
@@ -134,3 +134,29 @@ games %>%
   knitr::kable()
 ```
 
+# Use The Built-In Simulator
+
+nflseedR also comes with a built-in simulator called `simulate_nfl()`. It is a convenient wrapper around the above mentioned functions that adds everything that is needed to simulate a season multiple times. The most important step of a season simulator is estimating the games and simulating their outcomes. `simulate_nfl()` includes very simple functions to do that (just to show how it works) and is able to use user-specified functions. One of the main features is the possibility to simulate seasons in parallel processes by splitting the overall number of simulations in multiple rounds to reduce run-time drastically. If the user wants so, it can also show progress updates. The following example shows how to do this.
+
+```{r}
+# Activate progress updates. Makes no sense here so it's commented out
+# progressr::handlers(global = TRUE)
+
+# Parallel processing can be activated via the following line
+# please make sure to chose the appropriate plan
+future::plan("multisession")
+
+# Simulate the choosen season 20 times in 4 rounds
+sim <- simulate_nfl(
+  2020,
+  fresh_season = TRUE,
+  simulations = 20,
+  sims_per_round = 5
+)
+```
+
+The function outputs a list of three data frames with the results of all simulated games, the final standings in each simulated season (incl. playoffs and draft order) and summary statistics across all simulated seasons. Let's have a look at the summary of our 20 simulated seasons:
+
+```{r}
+knitr::kable(sim$overall)
+```
