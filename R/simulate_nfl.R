@@ -114,7 +114,7 @@ simulate_nfl <- function(nfl_season,
 
   # load games data
   report("Loading games data")
-  schedule <- readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
+  schedule <- load_sharpe_games() %>%
     filter(season == nfl_season) %>%
     select(game_type, week, away_team, home_team, result)
 
