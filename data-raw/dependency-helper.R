@@ -11,7 +11,8 @@ imports <- c(
   "tidyr",
   "tibble",
   "furrr",
-  "progressr"
+  "progressr",
+  "future"
 )
 purrr::walk(imports, usethis::use_package, "Imports")
 usethis::use_tidy_description()
