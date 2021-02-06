@@ -2,10 +2,8 @@
 #'
 #' @inheritParams compute_conference_seeds
 #' @param nfl_season Season to simulate
-#' @param estimate_games A function to estimate the games to simulate. Uses the
-#'   schedule as argument.
-#' @param simulate_games A function to simulate the results of the games to
-#'   simulate. Uses the schedule and the week as argument.
+#' @param process_games A function to estimate and simulate the results of games. Uses team,
+#'   schedule, and week number as arguments.
 #' @param ... Additional parameters passed on to the functions
 #'   \code{estimate_games} and \code{simulate_games}.
 #' @param if_ended_today Either \code{TRUE} or \code{FALSE}. ...
@@ -46,53 +44,49 @@
 #' )
 #' }
 simulate_nfl <- function(nfl_season,
-                         estimate_games = NULL,
-                         simulate_games = NULL,
+                         process_games = NULL,
                          ...,
                          playoff_seeds = ifelse(nfl_season >= 2020, 7, 6),
                          if_ended_today = FALSE,
                          fresh_season = FALSE,
                          fresh_playoffs = FALSE,
                          tiebreaker_depth = 3,
-                         simulations = 10,
-                         sims_per_round = simulations,
+                         simulations = 1000,
+                         sims_per_round = min(1000,simulations),
                          .debug = FALSE,
                          print_summary = FALSE) {
 
   # Define simple estimate and simulate functions
 
-  if (is.null(estimate_games)) {
-    estimate_games <- function(g) {
+  if (is.null(process_games)) {
+    process_games <- function(t, g, w, ...) {
+      # t = teams data
       # g = games data
       # estimate = is the median spread expected (positive = home team favored)
       # wp = is the probability of the team winning the game
       # this example estimates at PK/0 and 50%
-
-      g %>%
-        mutate(estimate = 0, wp = 0.5)
-    }
-  }
-
-  if (is.null(simulate_games)) {
-    # round out (away from zero)
-    round_out <- function(x) {
-      x[x < 0] <- floor(x[x < 0])
-      x[x > 0] <- ceiling(x[x > 0])
-      return(x)
-    }
-
-    simulate_games <- function(g, w) {
       # only simulate games through week w
       # only simulate games with is.na(result)
       # result = how many points home team won by
 
-      g %>%
+      # round out (away from zero)
+      round_out <- function(x) {
+        x[x < 0] <- floor(x[x < 0])
+        x[x > 0] <- ceiling(x[x > 0])
+        return(x)
+      }
+
+      g <- g %>%
         dplyr::mutate(
+          estimate = ifelse(is.na(result) & week <= w, estimate, 0),
+          wp = ifelse(is.na(result) & week <= w, wp, 0.5),
           result = ifelse(is.na(result) & week <= w,
             round_out(rnorm(n(), estimate, 14)),
             result
           )
         )
+      return(list(teams=t,games=g))
+
     }
   }
 
@@ -106,8 +100,8 @@ simulate_nfl <- function(nfl_season,
          "`simulations` and `sims_per_round` are not single digit numeric values!")
   }
 
-  if (!all(is.function(estimate_games), is.function(simulate_games))) {
-    stop("The parameters `estimate_games` and `simulate_games` have to be functions!")
+  if (!is.function(process_games)) {
+    stop("The parameter `process_games` has to be a function!")
   }
 
   #### LOAD DATA ####
@@ -164,8 +158,7 @@ simulate_nfl <- function(nfl_season,
       schedule = schedule,
       simulations = simulations,
       weeks_to_sim = weeks_to_sim,
-      estimate_games = estimate_games,
-      simulate_games = simulate_games,
+      process_games = process_games,
       ...,
       tiebreaker_depth = tiebreaker_depth,
       .debug = .debug,
