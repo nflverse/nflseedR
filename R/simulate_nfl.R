@@ -76,6 +76,21 @@ simulate_nfl <- function(nfl_season,
         return(x)
       }
 
+      # add estimate if missing
+      if ("estimate" %in% colnames(g))
+      {
+        g <- g %>%
+          mutate(estimate=NA_real_)
+      }
+
+      # add wp if missing
+      if ("wp" %in% colnames(g))
+      {
+        g <- g %>%
+          mutate(wp=NA_real_)
+      }
+
+      # mark estimate, wp, and result for games
       g <- g %>%
         dplyr::mutate(
           estimate = ifelse(is.na(result) & week <= w, estimate, 0),
