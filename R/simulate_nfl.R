@@ -93,11 +93,12 @@ simulate_nfl <- function(nfl_season,
       # mark estimate, wp, and result for games
       g <- g %>%
         dplyr::mutate(
-          estimate = ifelse(is.na(result) & week <= w, estimate, 0),
-          wp = ifelse(is.na(result) & week <= w, wp, 0.5),
-          result = ifelse(is.na(result) & week <= w,
-            round_out(rnorm(n(), estimate, 14)),
-            result
+          estimate = ifelse(is.na(result) & week <= w, 0, estimate),
+          wp = ifelse(is.na(result) & week <= w, 0.5, wp),
+          result = case_when(
+            !is.na(result) ~ result,
+            week <= w ~ round_out(rnorm(n(), estimate, 14)),
+            TRUE ~ NA_real_
           )
         )
       return(list(teams=t,games=g))
@@ -133,7 +134,7 @@ simulate_nfl <- function(nfl_season,
   if (isTRUE(fresh_season)) {
     schedule <- schedule %>%
       filter(game_type == "REG") %>%
-      mutate(result = as.numeric(NA))
+      mutate(result = NA_real_)
   }
 
   # if simulating fresh playoffs, clear out playoff games
