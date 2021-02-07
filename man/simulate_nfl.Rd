@@ -6,16 +6,15 @@
 \usage{
 simulate_nfl(
   nfl_season,
-  estimate_games = NULL,
-  simulate_games = NULL,
+  process_games = NULL,
   ...,
   playoff_seeds = ifelse(nfl_season >= 2020, 7, 6),
   if_ended_today = FALSE,
   fresh_season = FALSE,
   fresh_playoffs = FALSE,
   tiebreaker_depth = 3,
-  simulations = 10,
-  sims_per_round = simulations,
+  simulations = 1000,
+  sims_per_round = min(1000, simulations),
   .debug = FALSE,
   print_summary = FALSE
 )
@@ -23,14 +22,10 @@ simulate_nfl(
 \arguments{
 \item{nfl_season}{Season to simulate}
 
-\item{estimate_games}{A function to estimate the games to simulate. Uses the
-schedule as argument.}
+\item{process_games}{A function to estimate and simulate the results of games. Uses team,
+schedule, and week number as arguments.}
 
-\item{simulate_games}{A function to simulate the results of the games to
-simulate. Uses the schedule and the week as argument.}
-
-\item{...}{Additional parameters passed on to the functions
-\code{estimate_games} and \code{simulate_games}.}
+\item{...}{Additional parameters passed on to the function \code{process_games}.}
 
 \item{playoff_seeds}{Number of playoff teams per conference (increased
 in 2020 from 6 to 7).}
