@@ -4,8 +4,7 @@
 #' @param nfl_season Season to simulate
 #' @param process_games A function to estimate and simulate the results of games. Uses team,
 #'   schedule, and week number as arguments.
-#' @param ... Additional parameters passed on to the functions
-#'   \code{estimate_games} and \code{simulate_games}.
+#' @param ... Additional parameters passed on to the function \code{process_games}.
 #' @param if_ended_today Either \code{TRUE} or \code{FALSE}. If TRUE, ignore remaining regular
 #'   season games and cut to playoffs based on current regular season data.
 #' @param fresh_season Either \code{TRUE} or \code{FALSE}. Whether to blank out all game results
@@ -57,7 +56,7 @@ simulate_nfl <- function(nfl_season,
                          fresh_playoffs = FALSE,
                          tiebreaker_depth = 3,
                          simulations = 1000,
-                         sims_per_round = min(1000,simulations),
+                         sims_per_round = min(1000, simulations),
                          .debug = FALSE,
                          print_summary = FALSE) {
 
@@ -82,17 +81,15 @@ simulate_nfl <- function(nfl_season,
       }
 
       # add estimate if missing
-      if (!("estimate" %in% colnames(g)))
-      {
+      if (!("estimate" %in% colnames(g))) {
         g <- g %>%
-          dplyr::mutate(estimate=NA_real_)
+          dplyr::mutate(estimate = NA_real_)
       }
 
       # add wp if missing
-      if (!("wp" %in% colnames(g)))
-      {
+      if (!("wp" %in% colnames(g))) {
         g <- g %>%
-          dplyr::mutate(wp=NA_real_)
+          dplyr::mutate(wp = NA_real_)
       }
 
       # mark estimate, wp, and result for games
@@ -106,19 +103,22 @@ simulate_nfl <- function(nfl_season,
             TRUE ~ NA_real_
           )
         )
-      return(list(teams=t,games=g))
-
+      return(list(teams = t, games = g))
     }
   }
 
   # Catch invalid input
 
-  if (!all(is_single_digit_numeric(nfl_season),
-           is_single_digit_numeric(tiebreaker_depth),
-           is_single_digit_numeric(simulations),
-           is_single_digit_numeric(sims_per_round))) {
-    stop("One or more of the parameters `nfl_season`, `tiebreaker_depth`, ",
-         "`simulations` and `sims_per_round` are not single digit numeric values!")
+  if (!all(
+    is_single_digit_numeric(nfl_season),
+    is_single_digit_numeric(tiebreaker_depth),
+    is_single_digit_numeric(simulations),
+    is_single_digit_numeric(sims_per_round)
+  )) {
+    stop(
+      "One or more of the parameters `nfl_season`, `tiebreaker_depth`, ",
+      "`simulations` and `sims_per_round` are not single digit numeric values!"
+    )
   }
 
   if (!is.function(process_games)) {
