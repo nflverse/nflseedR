@@ -77,14 +77,14 @@ simulate_nfl <- function(nfl_season,
       }
 
       # add estimate if missing
-      if ("estimate" %in% colnames(g))
+      if (!"estimate" %in% colnames(g))
       {
         g <- g %>%
           mutate(estimate=NA_real_)
       }
 
       # add wp if missing
-      if ("wp" %in% colnames(g))
+      if (!"wp" %in% colnames(g))
       {
         g <- g %>%
           mutate(wp=NA_real_)
