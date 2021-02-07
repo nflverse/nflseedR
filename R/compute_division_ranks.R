@@ -117,7 +117,7 @@ compute_division_ranks <- function(games,
     inner_join(games_doubled, by = c("sim", "team")) %>%
     filter(game_type == "REG") %>%
     group_by(sim, conf, division, team) %>%
-    summarize(games = n(), wins = sum(outcome)) %>%
+    summarize(games = n(), wins = sum(outcome), true_wins = sum(outcome == 1)) %>%
     ungroup()
 
   # add in tiebreaker info
@@ -133,7 +133,7 @@ compute_division_ranks <- function(games,
       div_game = ifelse(division == division_opp, 1, 0),
       conf_game = ifelse(conf == conf_opp, 1, 0)
     ) %>%
-    group_by(sim, conf, division, team, games, wins, win_pct) %>%
+    group_by(sim, conf, division, team, games, wins, true_wins, win_pct) %>%
     summarize(
       div_pct = ifelse(sum(div_game) == 0, 0.5,
         sum(div_game * outcome) / sum(div_game)

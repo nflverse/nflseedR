@@ -189,8 +189,8 @@ simulate_nfl <- function(nfl_season,
   all_teams <- furrr::future_map_dfr(all, ~ .x$teams)
   all_games <- furrr::future_map_dfr(all, ~ .x$games)
 
-  # aggregated data
   report("Aggregating across simulations")
+
   overall <- all_teams %>%
     group_by(conf, division, team) %>%
     summarize(
@@ -205,7 +205,23 @@ simulate_nfl <- function(nfl_season,
     ) %>%
     ungroup()
 
+  team_wins <-
+    tibble(
+      team = rep(sort(unique(all_teams$team)), each = max(all_teams$games)*2+1),
+      wins = rep(seq(0, max(all_teams$games), 0.5), length(unique(all_teams$team)))
+    ) %>%
+    inner_join(
+      all_teams %>% select(team, true_wins),
+      by=c("team")
+    ) %>%
+    group_by(team, wins) %>%
+    summarize(
+      over_prob = mean(true_wins > wins),
+      under_prob = mean(true_wins < wins)
+    ) %>%
+    ungroup()
+
   if (isTRUE(print_summary)) print(overall)
 
-  list("teams" = all_teams, "games" = all_games, "overall" = overall)
+  list("teams" = all_teams, "games" = all_games, "overall" = overall, "team_wins" = team_wins)
 }
