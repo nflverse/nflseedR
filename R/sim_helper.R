@@ -9,8 +9,7 @@ simulate_round <- function(sim_round,
                            tiebreaker_depth,
                            .debug,
                            playoff_seeds,
-                           p
-                           ){
+                           p) {
 
   # start us off
   # report(glue("Beginning simulation round {sim_round} of {sim_rounds}"))
@@ -21,13 +20,15 @@ simulate_round <- function(sim_round,
   iter_sims_num <- length(iter_sims)
 
   # teams starts as divisions data
-  teams <- nflseedR::divisions[rep(1:nrow(nflseedR::divisions), iter_sims_num),] %>%
-    mutate(sim=rep(iter_sims, each=nrow(nflseedR::divisions))) %>%
+  div_rows <- nrow(nflseedR::divisions)
+  teams <- nflseedR::divisions[rep(seq_len(div_rows), iter_sims_num), ] %>%
+    mutate(sim = rep(iter_sims, each = div_rows)) %>%
     select(sim, everything())
 
   # games have copies per sim
-  games <- schedule[rep(seq_len(nrow(schedule)), each = iter_sims_num), ] %>%
-    mutate(sim = rep(iter_sims, nrow(schedule))) %>%
+  sched_rows <- nrow(schedule)
+  games <- schedule[rep(seq_len(sched_rows), each = iter_sims_num), ] %>%
+    mutate(sim = rep(iter_sims, sched_rows)) %>%
     select(sim, everything())
 
   #### SIMULATE REGULAR SEASON ####
@@ -37,7 +38,7 @@ simulate_round <- function(sim_round,
   {
     # estimate and simulate games
     # report(glue("Processing Week {week_num}"))
-    list[teams,games] <-
+    list[teams, games] <-
       process_games(teams, games, week_num, ...)
   }
 
@@ -57,7 +58,8 @@ simulate_round <- function(sim_round,
 
   teams <- teams %>%
     inner_join(standings_and_h2h$standings,
-               by=intersect(colnames(teams), colnames(standings_and_h2h$standings)))
+      by = intersect(colnames(teams), colnames(standings_and_h2h$standings))
+    )
   h2h_df <- standings_and_h2h$h2h
 
 
@@ -124,7 +126,7 @@ simulate_round <- function(sim_round,
     }
 
     # process any new games
-    list[teams,games] <-
+    list[teams, games] <-
       process_games(teams, games, week_num, ...)
 
     # record losers
