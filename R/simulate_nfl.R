@@ -71,8 +71,8 @@ simulate_nfl <- function(nfl_season,
 
       # round out (away from zero)
       round_out <- function(x) {
-        x[x < 0] <- floor(x[x < 0])
-        x[x > 0] <- ceiling(x[x > 0])
+        x[!is.na(x) & x < 0] <- floor(x[!is.na(x) & x < 0])
+        x[!is.na(x) & x > 0] <- ceiling(x[!is.na(x) & x > 0])
         return(x)
       }
 
@@ -80,14 +80,14 @@ simulate_nfl <- function(nfl_season,
       if (!("estimate" %in% colnames(g)))
       {
         g <- g %>%
-          mutate(estimate=NA_real_)
+          dplyr::mutate(estimate=NA_real_)
       }
 
       # add wp if missing
       if (!("wp" %in% colnames(g)))
       {
         g <- g %>%
-          mutate(wp=NA_real_)
+          dplyr::mutate(wp=NA_real_)
       }
 
       # mark estimate, wp, and result for games

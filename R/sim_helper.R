@@ -20,6 +20,11 @@ simulate_round <- function(sim_round,
   iter_sims <- iter_sims[iter_sims <= simulations]
   iter_sims_num <- length(iter_sims)
 
+  # teams starts as divisions data
+  teams <- nflseedR::divisions[rep(1:nrow(nflseedR::divisions), iter_sims_num),] %>%
+    mutate(sim=rep(iter_sims, each=nrow(nflseedR::divisions))) %>%
+    select(sim, everything())
+
   # games have copies per sim
   games <- schedule[rep(seq_len(nrow(schedule)), each = iter_sims_num), ] %>%
     mutate(sim = rep(iter_sims, nrow(schedule))) %>%
@@ -50,7 +55,9 @@ simulate_round <- function(sim_round,
       playoff_seeds = playoff_seeds
     )
 
-  teams <- standings_and_h2h$standings
+  teams <- teams %>%
+    inner_join(standings_and_h2h$standings,
+               by=intersect(colnames(teams), colnames(standings_and_h2h$standings)))
   h2h_df <- standings_and_h2h$h2h
 
 
