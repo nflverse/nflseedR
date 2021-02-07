@@ -6,9 +6,14 @@
 #'   schedule, and week number as arguments.
 #' @param ... Additional parameters passed on to the functions
 #'   \code{estimate_games} and \code{simulate_games}.
-#' @param if_ended_today Either \code{TRUE} or \code{FALSE}. ...
-#' @param fresh_season Either \code{TRUE} or \code{FALSE}. ...
-#' @param fresh_playoffs Either \code{TRUE} or \code{FALSE}. ...
+#' @param if_ended_today Either \code{TRUE} or \code{FALSE}. If TRUE, ignore remaining regular
+#'   season games and cut to playoffs based on current regular season data.
+#' @param fresh_season Either \code{TRUE} or \code{FALSE}. Whether to blank out all game results
+#'   and simulate the the season from scratch (TRUE) or take game results so far as a given
+#'   and only simulate the rest (FALSE).
+#' @param fresh_playoffs Either \code{TRUE} or \code{FALSE}. Whether to blank out all playoff
+#'   game results and simulate the postseason from scratch (TRUE) or take game results so far
+#'   as a given and only simulate the rest (FALSE).
 #' @param simulations Equals the number of times the given NFL season shall be simulated
 #' @param sims_per_round The number of \code{simulations} can be split into
 #'   multiple rounds and be processed parallel. This parameter controls the number
