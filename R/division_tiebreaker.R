@@ -69,7 +69,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
         summarize(value = case_when(
           max(tied_teams) < min_tied ~ NA_real_,
           sum(common) == 0 ~ 0.5,
-          TRUE ~ sum(h2h_wins) / sum(h2h_games)
+          TRUE ~ sum(common*h2h_wins) / sum(common*h2h_games)
         )) %>%
         ungroup() %>%
         process_div_ties(u, r)
