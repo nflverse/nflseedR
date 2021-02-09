@@ -165,8 +165,10 @@ compute_draft_order <- function(teams,
     mutate(draft_order = NA_real_) %>%
     arrange(sim, division, team)
 
+  max_do_num <- min(length(unique(teams$team)), 32)
+
   # draft order loop
-  for (do_num in length(unique(teams$team)):1)
+  for (do_num in rev(seq_len(max_do_num)))
   {
     # progress
     report(paste0("Calculating draft order #", do_num))
