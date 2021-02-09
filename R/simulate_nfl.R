@@ -98,9 +98,9 @@ simulate_nfl <- function(nfl_season,
           estimate = ifelse(is.na(result) & week <= w, 0, estimate),
           wp = ifelse(is.na(result) & week <= w, 0.5, wp),
           result = case_when(
-            !is.na(result) ~ result,
-            week <= w ~ round_out(rnorm(n(), estimate, 14)),
-            TRUE ~ NA_real_
+            !is.na(result) ~ as.integer(result),
+            week <= w ~ as.integer(round_out(rnorm(n(), estimate, 14))),
+            TRUE ~ NA_integer_
           )
         )
       return(list(teams = t, games = g))
