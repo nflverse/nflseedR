@@ -131,7 +131,8 @@ simulate_nfl <- function(nfl_season,
   report("Loading games data")
   schedule <- load_sharpe_games() %>%
     filter(season == nfl_season) %>%
-    select(game_type, week, away_team, home_team, result)
+    select(game_type, week, away_team, home_team,
+           away_rest, home_rest, location, result)
 
   #### PREPROCESSING ####
 
