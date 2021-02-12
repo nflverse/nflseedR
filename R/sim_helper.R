@@ -71,8 +71,6 @@ simulate_round <- function(sim_round,
     pull(week) %>%
     max()
 
-  week_max <- week_num + 4L
-
   # identify playoff teams
   playoff_teams <- teams %>%
     filter(!is.na(seed)) %>%
@@ -86,9 +84,13 @@ simulate_round <- function(sim_round,
     pull(count) %>%
     max()
 
+  # final week of season (Super Bowl week)
+  week_max <- week_num +
+    ceiling(log(max(playoff_teams$seed_num) * length(unique(playoff_teams$conf)),
+                2))
 
   # playoff weeks
-  while (num_teams > 1) {
+  while (week_num <= week_max) {
 
     # inseed_numement week number
     week_num <- week_num + 1
