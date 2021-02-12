@@ -188,7 +188,7 @@ simulate_nfl <- function(nfl_season,
       p = p,
       .options = furrr::furrr_options(seed = TRUE)
     )
-  })
+  }, classes = ifelse(isTRUE(.debug), "", "message"))
 
   report("Combining simulation data")
 
