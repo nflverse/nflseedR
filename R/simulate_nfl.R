@@ -171,7 +171,7 @@ simulate_nfl <- function(nfl_season,
 
   p <- progressr::progressor(along = seq_len(sim_rounds))
 
-  suppressMessages({
+  run <- quote({
     all <- furrr::future_map(
       .x = seq_len(sim_rounds),
       .f = simulate_round,
@@ -188,7 +188,9 @@ simulate_nfl <- function(nfl_season,
       p = p,
       .options = furrr::furrr_options(seed = TRUE)
     )
-  }, classes = ifelse(isTRUE(.debug), "", "message"))
+  })
+
+  if (isTRUE(.debug)) eval(run) else suppressMessages(eval(run))
 
   report("Combining simulation data")
 
