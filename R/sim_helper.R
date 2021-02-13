@@ -19,16 +19,17 @@ simulate_round <- function(sim_round,
   iter_sims <- iter_sims[iter_sims <= simulations]
   iter_sims_num <- length(iter_sims)
 
-  # teams starts as divisions data
-  div_rows <- nrow(nflseedR::divisions)
-  teams <- nflseedR::divisions[rep(seq_len(div_rows), iter_sims_num), ] %>%
-    mutate(sim = rep(iter_sims, each = div_rows)) %>%
-    select(sim, everything())
-
   # games have copies per sim
   sched_rows <- nrow(schedule)
   games <- schedule[rep(seq_len(sched_rows), each = iter_sims_num), ] %>%
     mutate(sim = rep(iter_sims, sched_rows)) %>%
+    select(sim, everything())
+
+  # teams starts as divisions data
+  teams <- nflseedR::divisions %>%
+    filter(team %in% schedule$away_team | team %in% schedule$home_team)
+  teams <- teams[rep(seq_len(nrow(teams)), iter_sims_num), ] %>%
+    mutate(sim = rep(iter_sims, each = nrow(teams))) %>%
     select(sim, everything())
 
   #### SIMULATE REGULAR SEASON ####
@@ -84,15 +85,19 @@ simulate_round <- function(sim_round,
     pull(count) %>%
     max()
 
+  # bye count (per conference)
+  num_byes <- 2^ceiling(log(num_teams, 2)) - num_teams
+
+  # first playoff week
+  first_playoff_week <- week_num + 1
+
   # final week of season (Super Bowl week)
   week_max <- week_num +
     ceiling(log(num_teams * length(unique(playoff_teams$conf)), 2))
 
   # playoff weeks
-  while (week_num <= week_max) {
+  for (week_num in first_playoff_week:week_max) {
 
-    # inseed_numement week number
-    week_num <- week_num + 1
     report(paste("Processing Playoffs Week", week_num))
 
     # seed_numeate games if they don't already exist
@@ -109,7 +114,6 @@ simulate_round <- function(sim_round,
         inner_join(add_teams, by = c("sim", "conf")) %>%
         filter(round_rank.x > round_rank.y) %>%
         filter(round_rank.x + round_rank.y == max(round_rank.x) + 1) %>%
-        select(-conf, -seed.x, -seed.y, -round_rank.x, -round_rank.y) %>%
         rename(away_team = team.x, home_team = team.y) %>%
         mutate(
           week = week_num,
@@ -119,12 +123,26 @@ simulate_round <- function(sim_round,
             week_max - week_num == 1 ~ "CON",
             week_max - week_num == 0 ~ "SB",
             TRUE ~ "POST"
-          )
-        )
+          ),
+          away_rest = case_when(
+            conf == "SB" ~ 14,
+            TRUE ~ 7
+          ),
+          home_rest = case_when(
+            conf == "SB" ~ 14,
+            week_num == first_playoff_week + 1 & seed.y <= num_byes ~ 14,
+            TRUE ~ 7
+          ),
+          location = ifelse(conf == "SB", "Neutral", "Home")
+        ) %>%
+        select(-conf, -seed.x, -seed.y, -round_rank.x, -round_rank.y)
 
       # add to games
       games <- bind_rows(games, add_games)
     }
+
+    ### DEBUG ###
+    #return(list(teams = teams, games = games))
 
     # process any new games
     list[teams, games] <-
