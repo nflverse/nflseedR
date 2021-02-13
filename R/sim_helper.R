@@ -86,8 +86,7 @@ simulate_round <- function(sim_round,
 
   # final week of season (Super Bowl week)
   week_max <- week_num +
-    ceiling(log(max(playoff_teams$seed_num) * length(unique(playoff_teams$conf)),
-                2))
+    ceiling(log(num_teams * length(unique(playoff_teams$conf)), 2))
 
   # playoff weeks
   while (week_num <= week_max) {
@@ -119,7 +118,7 @@ simulate_round <- function(sim_round,
             week_max - week_num == 2 ~ "DIV",
             week_max - week_num == 1 ~ "CON",
             week_max - week_num == 0 ~ "SB",
-            TRUE ~ NA_character_
+            TRUE ~ "POST"
           )
         )
 
