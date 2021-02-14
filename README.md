@@ -138,9 +138,9 @@ each week is simulated. (The Elo model used is loosely based off of that of
 
 But of course the real value is putting in your own model into the simulatior. To
 accomplish this, you can write your own function which will determine the output of
-games instead. As an example, here's a very stupid model, for example, that makes the
-team earlier alphabetically win by 3 points 90% of the time, and lose by 3 points
-the other 10% of the time.
+games instead. As an example, here's a very stupid model that makes the team earlier
+alphabetically win by 3 points 90% of the time, and lose by 3 points the other 10% of
+the time.
 
 ``` r
 stupid_games_model <- function(t, g, w, ...) {
