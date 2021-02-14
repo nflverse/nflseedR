@@ -4,6 +4,8 @@
 # nflseedR <img src='man/figures/logo.png' align="right" height="139" />
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/leesharpe/nflseedR/workflows/R-CMD-check/badge.svg)](https://github.com/leesharpe/nflseedR/actions)
 <!-- badges: end -->
 
 ## Motivation
@@ -28,9 +30,9 @@ the playoffs. It can also be run as a fresh season, wiping away results
 and simulating from scratch.
 
 The season simulation code for nflseedR was developed by Lee Sharpe
-([@LeeSharpeNFL](<https://twitter.com/leesharpenfl>)) and building it
+(\[@LeeSharpeNFL\](<https://twitter.com/leesharpenfl>)) and building it
 as package was developed by Sebastian Carl
-([@mrcaseb](<https://twitter.com/mrcaseb>)).
+(\[@mrcaseb\](<https://twitter.com/mrcaseb>)).
 
 ## Installation
 
@@ -42,12 +44,6 @@ as package was developed by Sebastian Carl
 You can install nflseedR from [GitHub](https://github.com/) with:
 
 ``` r
-if (!requireNamespace("remotes", quietly = TRUE)) {install.packages("remotes")}
+if (!require("remotes")) install.packages("remotes")
 remotes::install_github("leesharpe/nflseedR")
 ```
-
-## How to Use
-
-Read [this guide](https://github.com/leesharpe/nflseedR/blob/master/vignettes/articles/nflseedR.Rmd)
-to learn how to use nflseedR to simulate NFL seasons using your own model,
-or calculate tiebreaker information based on NFL game outcomes.

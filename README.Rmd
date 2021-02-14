@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # nflseedR <img src='man/figures/logo.png' align="right" height="139" />
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/leesharpe/nflseedR/workflows/R-CMD-check/badge.svg)](https://github.com/leesharpe/nflseedR/actions)
 <!-- badges: end -->
 
 ## Motivation
@@ -52,6 +53,6 @@ developed by Sebastian Carl ([@mrcaseb](https://twitter.com/mrcaseb)).
 You can install nflseedR from [GitHub](https://github.com/) with:
 
 ``` r
-if (!requireNamespace("remotes", quietly = TRUE)) {install.packages("remotes")}
+if (!require("remotes")) install.packages("remotes")
 remotes::install_github("leesharpe/nflseedR")
 ```
