@@ -102,210 +102,6 @@
 <p>nflseedR is designed to efficiently take over the sophisticated and complex rule set of the NFL regarding division ranks, postseason seeding and draft order. It is intended to be used for NFL season simulations to help modelers focus on their models rather than the tie-breaking procedures. The NFL’s official procedures for breaking ties for postseason playoffs can be found <a href="https://operations.nfl.com/the-rules/nfl-tie-breaking-procedures/">here</a> and <a href="https://operations.nfl.com/journey-to-the-nfl/the-nfl-draft/the-rules-of-the-draft/">this site</a> explains the assigning of draft picks.</p>
 <p>However, it must be mentioned that nflseedR does not support all levels of tie-breakers at the moment. The deepest tie-breaker possible at the moment is the strength of schedule. After that, the decision is made at random. It should be noted, however, that the need for additional levels is extremely unlikely in reality.</p>
 </div>
-<div id="running-a-simulation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#running-a-simulation" class="anchor"></a>Running a Simulation</h1>
-<p>Let’s do a quick simualation! We’ll apply the <code>fresh_season = TRUE</code> option, which blanks out all of the game results and simulates everything from scratch. This is a Monte Carlo style of simulation, meaning that there are seasons simulated.</p>
-<p>By default, 1000 simulations are done.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="op">&gt;</span><span class="st"> </span><span class="kw">library</span>(nflseedR)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="op">&gt;</span><span class="st"> </span>sims &lt;-<span class="st"> </span><span class="kw">simulate_nfl</span>(<span class="dt">fresh_season =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">13</span><span class="op">:</span><span class="dv">54</span><span class="op">:</span><span class="dv">04</span><span class="op">:</span><span class="st"> </span>Loading games data</span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">13</span><span class="op">:</span><span class="dv">54</span><span class="op">:</span><span class="dv">22</span><span class="op">:</span><span class="st"> </span>Beginning simulation of <span class="dv">1000</span> seasons <span class="cf">in</span> <span class="dv">1</span> rounds</span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">13</span><span class="op">:</span><span class="dv">56</span><span class="op">:</span><span class="dv">22</span><span class="op">:</span><span class="st"> </span>Combining simulation data</span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">13</span><span class="op">:</span><span class="dv">56</span><span class="op">:</span><span class="dv">22</span><span class="op">:</span><span class="st"> </span>Aggregating across simulations</span></code></pre></div>
-<p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
-<p><em>Note: This is example randomized output, your output will differ.</em></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="op">&gt;</span><span class="st"> </span><span class="kw">library</span>(tidyverse)</span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="op">&gt;</span><span class="st"> </span>sims<span class="op">$</span>overall <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(team <span class="op">==</span><span class="st"> "CHI"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># A tibble: 1 x 11</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a>  conf  division  team   wins playoff  div1 seed1 won_conf won_sb draft1 draft5</span>
-<span id="cb2-5"><a href="#cb2-5"></a>  <span class="op">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a><span class="dv">1</span> NFC   NFC North CHI    <span class="fl">10.6</span>   <span class="fl">0.696</span> <span class="fl">0.301</span> <span class="fl">0.076</span>    <span class="fl">0.082</span>  <span class="fl">0.042</span>      <span class="dv">0</span>  <span class="fl">0.002</span></span></code></pre></div>
-<p>We can see the Bears got 10.6 wins on average. They made the playoffs 70% of the time, and won the division 30% of the time. They won the Super Bowl in 4%, and have no realistic shot at the #1 or even a top 5 draft pick. The <code>teams</code> section of the output will show how a team did in each simulated season.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="op">&gt;</span><span class="st"> </span>sims<span class="op">$</span>teams <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(team <span class="op">==</span><span class="st"> "CHI"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="co"># A tibble: 1,000 x 16</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a>     sim team  conf  division  games  wins true_wins win_pct div_pct conf_pct   sov   sos div_rank  seed  exit draft_order</span>
-<span id="cb3-4"><a href="#cb3-4"></a>   <span class="op">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">       </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="st"> </span><span class="dv">1</span>     <span class="dv">1</span> CHI   NFC   NFC North    <span class="dv">16</span>    <span class="dv">14</span>        <span class="dv">14</span>   <span class="fl">0.875</span>   <span class="dv">1</span>        <span class="fl">0.833</span> <span class="fl">0.491</span> <span class="fl">0.496</span>        <span class="dv">1</span>     <span class="dv">1</span>    <span class="dv">22</span>          <span class="dv">32</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a> <span class="dv">2</span>     <span class="dv">2</span> CHI   NFC   NFC North    <span class="dv">16</span>    <span class="dv">12</span>        <span class="dv">12</span>   <span class="fl">0.75</span>    <span class="fl">0.667</span>    <span class="fl">0.667</span> <span class="fl">0.438</span> <span class="fl">0.508</span>        <span class="dv">2</span>     <span class="dv">5</span>    <span class="dv">19</span>          <span class="dv">27</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a> <span class="dv">3</span>     <span class="dv">3</span> CHI   NFC   NFC North    <span class="dv">16</span>     <span class="dv">9</span>         <span class="dv">9</span>   <span class="fl">0.562</span>   <span class="fl">0.667</span>    <span class="fl">0.5</span>   <span class="fl">0.396</span> <span class="fl">0.531</span>        <span class="dv">2</span>    <span class="ot">NA</span>    <span class="dv">17</span>          <span class="dv">18</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a> <span class="dv">4</span>     <span class="dv">4</span> CHI   NFC   NFC North    <span class="dv">16</span>     <span class="dv">9</span>         <span class="dv">9</span>   <span class="fl">0.562</span>   <span class="dv">1</span>        <span class="fl">0.667</span> <span class="fl">0.444</span> <span class="fl">0.512</span>        <span class="dv">2</span>     <span class="dv">6</span>    <span class="dv">18</span>          <span class="dv">23</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a> <span class="dv">5</span>     <span class="dv">5</span> CHI   NFC   NFC North    <span class="dv">16</span>     <span class="dv">9</span>         <span class="dv">9</span>   <span class="fl">0.562</span>   <span class="fl">0.5</span>      <span class="fl">0.5</span>   <span class="fl">0.431</span> <span class="fl">0.535</span>        <span class="dv">3</span>    <span class="ot">NA</span>    <span class="dv">17</span>          <span class="dv">18</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a> <span class="dv">6</span>     <span class="dv">6</span> CHI   NFC   NFC North    <span class="dv">16</span>    <span class="dv">10</span>        <span class="dv">10</span>   <span class="fl">0.625</span>   <span class="fl">0.833</span>    <span class="fl">0.583</span> <span class="fl">0.381</span> <span class="fl">0.531</span>        <span class="dv">2</span>     <span class="dv">7</span>    <span class="dv">18</span>          <span class="dv">23</span></span>
-<span id="cb3-11"><a href="#cb3-11"></a> <span class="dv">7</span>     <span class="dv">7</span> CHI   NFC   NFC North    <span class="dv">16</span>    <span class="dv">12</span>        <span class="dv">12</span>   <span class="fl">0.75</span>    <span class="fl">0.667</span>    <span class="fl">0.667</span> <span class="fl">0.432</span> <span class="fl">0.531</span>        <span class="dv">2</span>     <span class="dv">5</span>    <span class="dv">18</span>          <span class="dv">23</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a> <span class="dv">8</span>     <span class="dv">8</span> CHI   NFC   NFC North    <span class="dv">16</span>    <span class="dv">13</span>        <span class="dv">13</span>   <span class="fl">0.812</span>   <span class="dv">1</span>        <span class="fl">0.833</span> <span class="fl">0.476</span> <span class="fl">0.527</span>        <span class="dv">1</span>     <span class="dv">3</span>    <span class="dv">19</span>          <span class="dv">28</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a> <span class="dv">9</span>     <span class="dv">9</span> CHI   NFC   NFC North    <span class="dv">16</span>     <span class="dv">8</span>         <span class="dv">8</span>   <span class="fl">0.5</span>     <span class="fl">0.5</span>      <span class="fl">0.583</span> <span class="fl">0.469</span> <span class="fl">0.531</span>        <span class="dv">3</span>     <span class="dv">7</span>    <span class="dv">18</span>          <span class="dv">19</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a><span class="dv">10</span>    <span class="dv">10</span> CHI   NFC   NFC North    <span class="dv">16</span>    <span class="dv">10</span>        <span class="dv">10</span>   <span class="fl">0.625</span>   <span class="fl">0.5</span>      <span class="fl">0.667</span> <span class="fl">0.388</span> <span class="fl">0.531</span>        <span class="dv">3</span>     <span class="dv">6</span>    <span class="dv">18</span>          <span class="dv">22</span></span></code></pre></div>
-<p>Oh hey, the Bears got the 32nd draft pick and Week “22” exit, which both mean they won the Super Bowl! Let’s check the individual games and see how that unfolded.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="op">&gt;</span><span class="st"> </span>sims<span class="op">$</span>games <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(sim <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, game_type <span class="op">!=</span><span class="st"> "REG"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="co"># A tibble: 13 x 9</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a>     sim game_type  week away_team home_team away_rest home_rest location result</span>
-<span id="cb4-4"><a href="#cb4-4"></a>   <span class="op">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">         </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>int<span class="op">&gt;</span></span>
-<span id="cb4-5"><a href="#cb4-5"></a><span class="st"> </span><span class="dv">1</span>     <span class="dv">1</span> WC           <span class="dv">18</span> MIA       JAX               <span class="dv">7</span>         <span class="dv">7</span> Home        <span class="dv">-51</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a> <span class="dv">2</span>     <span class="dv">1</span> WC           <span class="dv">18</span> PIT       LAC               <span class="dv">7</span>         <span class="dv">7</span> Home         <span class="dv">-4</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a> <span class="dv">3</span>     <span class="dv">1</span> WC           <span class="dv">18</span> BAL       CIN               <span class="dv">7</span>         <span class="dv">7</span> Home        <span class="dv">-19</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a> <span class="dv">4</span>     <span class="dv">1</span> WC           <span class="dv">18</span> SF        ARI               <span class="dv">7</span>         <span class="dv">7</span> Home         <span class="dv">13</span></span>
-<span id="cb4-9"><a href="#cb4-9"></a> <span class="dv">5</span>     <span class="dv">1</span> WC           <span class="dv">18</span> DET       NO                <span class="dv">7</span>         <span class="dv">7</span> Home        <span class="dv">-18</span></span>
-<span id="cb4-10"><a href="#cb4-10"></a> <span class="dv">6</span>     <span class="dv">1</span> WC           <span class="dv">18</span> DAL       NYG               <span class="dv">7</span>         <span class="dv">7</span> Home         <span class="dv">17</span></span>
-<span id="cb4-11"><a href="#cb4-11"></a> <span class="dv">7</span>     <span class="dv">1</span> DIV          <span class="dv">19</span> PIT       MIA               <span class="dv">7</span>         <span class="dv">7</span> Home          <span class="dv">2</span></span>
-<span id="cb4-12"><a href="#cb4-12"></a> <span class="dv">8</span>     <span class="dv">1</span> DIV          <span class="dv">19</span> BAL       NYJ               <span class="dv">7</span>        <span class="dv">14</span> Home         <span class="dv">10</span></span>
-<span id="cb4-13"><a href="#cb4-13"></a> <span class="dv">9</span>     <span class="dv">1</span> DIV          <span class="dv">19</span> ARI       NYG               <span class="dv">7</span>         <span class="dv">7</span> Home         <span class="dv">10</span></span>
-<span id="cb4-14"><a href="#cb4-14"></a><span class="dv">10</span>     <span class="dv">1</span> DIV          <span class="dv">19</span> DET       CHI               <span class="dv">7</span>        <span class="dv">14</span> Home          <span class="dv">1</span></span>
-<span id="cb4-15"><a href="#cb4-15"></a><span class="dv">11</span>     <span class="dv">1</span> CON          <span class="dv">20</span> MIA       NYJ               <span class="dv">7</span>         <span class="dv">7</span> Home          <span class="dv">9</span></span>
-<span id="cb4-16"><a href="#cb4-16"></a><span class="dv">12</span>     <span class="dv">1</span> CON          <span class="dv">20</span> NYG       CHI               <span class="dv">7</span>         <span class="dv">7</span> Home          <span class="dv">3</span></span>
-<span id="cb4-17"><a href="#cb4-17"></a><span class="dv">13</span>     <span class="dv">1</span> SB           <span class="dv">21</span> CHI       NYJ              <span class="dv">14</span>        <span class="dv">14</span> Neutral     <span class="dv">-22</span></span></code></pre></div>
-<p>Coming off the playoff bye, the Bears squeaked out a 1 point victory over the Lions, won the NFC Conference Championship by 3 points, but then decisively took care of the Jets in the Super Bowl.</p>
-<p>As you may have gathered at this point, the default simulation code picks a random Elo for every team, and uses those as the starting Elo ratings for all 32 teams. However, the default code Elo will adjust indepedently within each simulation as each week is simulated. (The Elo model used is loosely based off of that of <a href="https://fivethirtyeight.com/methodology/how-our-nfl-predictions-work/">FiveThirtyEight</a>.)</p>
-<div id="use-your-own-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#use-your-own-model" class="anchor"></a>Use Your Own Model</h2>
-<p>But of course the real value is putting in your own model into the simulatior. To accomplish this, you can write your own function which will determine the output of games instead. As an example, here’s a very stupid model that makes the team earlier alphabetically win by 3 points 90% of the time, and lose by 3 points the other 10% of the time.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">stupid_games_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">g</span>, <span class="va">w</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
-  <span class="co"># make the earlier alphabetical team win 90% of the time</span>
-  <span class="va">g</span> <span class="op">&lt;-</span> <span class="va">g</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
-      result <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span><span class="op">(</span>
-        <span class="va">week</span> <span class="op">!=</span> <span class="va">w</span> <span class="op">~</span> <span class="va">result</span>,
-        <span class="va">away_team</span> <span class="op">&lt;</span> <span class="va">home_team</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.1</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
-        <span class="va">away_team</span> <span class="op">&gt;</span> <span class="va">home_team</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
-        <span class="cn">TRUE</span> <span class="op">~</span> <span class="fl">0</span>
-      <span class="op">)</span>
-    <span class="op">)</span>
-  
-  <span class="co"># return values</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>teams <span class="op">=</span> <span class="va">t</span>, games <span class="op">=</span> <span class="va">g</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
-<p>When you create this function, the first two inputs are data on the teams (one row per team per sim), and data on the games (one row per game per sim). The third argument is the week number currently being simulated, as only one week is processed at a time.</p>
-<p>Your function’s job - by whatever means you choose - is to update the <code>result</code> column for that week’s games in each of the sims with the number of points the home team won by (or lost by if negative, or 0 if the game ended in a tie).</p>
-<p>It returns both the <code>teams</code> and the <code>games</code> data. It does both because this way you can store information in new columns by team or by game to use in the next call. Make sure your code both accepts and returns the appropriate information, or the simulator will break!</p>
-<p>For example, the default function updates a team’s Elo after the game, and stores it in the <code>teams</code> data. When the simulator processes the next week, it uses the updated Elo rating to inform the team’s next game.</p>
-<p>!! Also, make sure you aren’t overriding completed games or games that aren’t in the current week of <code>w</code>. The simulator will <strong>not</strong> stop you from setting past, present, or future game results in your function, whether you meant to do so or not. !!</p>
-<p>Let’s run a simulation with <code>stupid_games_model</code> and see what happens:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="op">&gt;</span><span class="st"> </span>sims2 &lt;-<span class="st"> </span><span class="kw">simulate_nfl</span>(<span class="dt">process_games =</span> stupid_games_model, <span class="dt">fresh_season =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">22</span><span class="op">:</span><span class="dv">19</span><span class="op">:</span><span class="dv">10</span><span class="op">:</span><span class="st"> </span>Loading games data</span>
-<span id="cb6-3"><a href="#cb6-3"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">22</span><span class="op">:</span><span class="dv">19</span><span class="op">:</span><span class="dv">11</span><span class="op">:</span><span class="st"> </span>Beginning simulation of <span class="dv">1000</span> seasons <span class="cf">in</span> <span class="dv">1</span> rounds</span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">22</span><span class="op">:</span><span class="dv">20</span><span class="op">:</span><span class="dv">30</span><span class="op">:</span><span class="st"> </span>Combining simulation data</span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">22</span><span class="op">:</span><span class="dv">20</span><span class="op">:</span><span class="dv">30</span><span class="op">:</span><span class="st"> </span>Aggregating across simulations</span>
-<span id="cb6-6"><a href="#cb6-6"></a><span class="op">&gt;</span><span class="st"> </span>sims2<span class="op">$</span>overall <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(team) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</span>
-<span id="cb6-7"><a href="#cb6-7"></a><span class="co"># A tibble: 6 x 11</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a>  conf  division  team   wins playoff  div1 seed1 won_conf won_sb draft1 draft5</span>
-<span id="cb6-9"><a href="#cb6-9"></a>  <span class="op">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span></span>
-<span id="cb6-10"><a href="#cb6-10"></a><span class="dv">1</span> NFC   NFC West  ARI    <span class="fl">14.4</span>   <span class="fl">0.997</span> <span class="fl">0.982</span> <span class="fl">0.423</span>    <span class="fl">0.757</span>  <span class="fl">0.676</span>      <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb6-11"><a href="#cb6-11"></a><span class="dv">2</span> NFC   NFC South ATL    <span class="fl">14.4</span>   <span class="dv">1</span>     <span class="fl">0.899</span> <span class="fl">0.509</span>    <span class="fl">0.188</span>  <span class="fl">0.169</span>      <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb6-12"><a href="#cb6-12"></a><span class="dv">3</span> AFC   AFC North BAL    <span class="fl">14.4</span>   <span class="dv">1</span>     <span class="fl">0.843</span> <span class="fl">0.596</span>    <span class="fl">0.78</span>   <span class="fl">0.118</span>      <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb6-13"><a href="#cb6-13"></a><span class="dv">4</span> AFC   AFC East  BUF    <span class="fl">13.5</span>   <span class="dv">1</span>     <span class="dv">1</span>     <span class="fl">0.278</span>    <span class="fl">0.162</span>  <span class="fl">0.02</span>       <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb6-14"><a href="#cb6-14"></a><span class="dv">5</span> NFC   NFC South CAR    <span class="fl">12.1</span>   <span class="fl">0.969</span> <span class="fl">0.101</span> <span class="fl">0.024</span>    <span class="fl">0.036</span>  <span class="fl">0.007</span>      <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb6-15"><a href="#cb6-15"></a><span class="dv">6</span> NFC   NFC North CHI    <span class="fl">12.7</span>   <span class="fl">0.988</span> <span class="fl">0.896</span> <span class="fl">0.039</span>    <span class="fl">0.014</span>  <span class="fl">0.002</span>      <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb6-16"><a href="#cb6-16"></a><span class="op">&gt;</span><span class="st"> </span>sims2<span class="op">$</span>overall <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(team) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tail</span>()</span>
-<span id="cb6-17"><a href="#cb6-17"></a><span class="co"># A tibble: 6 x 11</span></span>
-<span id="cb6-18"><a href="#cb6-18"></a>  conf  division  team   wins playoff  div1 seed1 won_conf won_sb draft1 draft5</span>
-<span id="cb6-19"><a href="#cb6-19"></a>  <span class="op">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span></span>
-<span id="cb6-20"><a href="#cb6-20"></a><span class="dv">1</span> AFC   AFC North PIT    <span class="fl">3.24</span>       <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">0</span>        <span class="dv">0</span>      <span class="dv">0</span>  <span class="fl">0.007</span>  <span class="fl">0.351</span></span>
-<span id="cb6-21"><a href="#cb6-21"></a><span class="dv">2</span> NFC   NFC West  SEA    <span class="fl">3.89</span>       <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">0</span>        <span class="dv">0</span>      <span class="dv">0</span>  <span class="fl">0.012</span>  <span class="fl">0.382</span></span>
-<span id="cb6-22"><a href="#cb6-22"></a><span class="dv">3</span> NFC   NFC West  SF     <span class="fl">2.42</span>       <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">0</span>        <span class="dv">0</span>      <span class="dv">0</span>  <span class="fl">0.198</span>  <span class="fl">0.845</span></span>
-<span id="cb6-23"><a href="#cb6-23"></a><span class="dv">4</span> NFC   NFC South TB     <span class="fl">1.60</span>       <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">0</span>        <span class="dv">0</span>      <span class="dv">0</span>  <span class="fl">0.221</span>  <span class="fl">0.832</span></span>
-<span id="cb6-24"><a href="#cb6-24"></a><span class="dv">5</span> AFC   AFC South TEN    <span class="fl">1.66</span>       <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">0</span>        <span class="dv">0</span>      <span class="dv">0</span>  <span class="fl">0.184</span>  <span class="fl">0.848</span></span>
-<span id="cb6-25"><a href="#cb6-25"></a><span class="dv">6</span> NFC   NFC East  WAS    <span class="fl">1.59</span>       <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">0</span>        <span class="dv">0</span>      <span class="dv">0</span>  <span class="fl">0.344</span>  <span class="fl">0.888</span></span></code></pre></div>
-<p>As you might expect, the earliest alphbetical teams win a lot. The Cardinals win the Super Bowl in 68% of seasons! Meanwhile, the teams at the bottom alphabetically are virtually certain to be at the top of the draft order.</p>
-</div>
-<div id="adding-in-your-own-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#adding-in-your-own-data" class="anchor"></a>Adding In Your Own Data</h2>
-<p>This is all well and good, you might be thinking, but your model works off of other data not in the simulator! How can that work? This is where we utilize R’s ability to have generic arguments.</p>
-<p>The <code>...</code> at the end of the function definition means that the function can be called with any number of additional arguments. You can name these whatever you want, as long as they’re not already the name of other defined arguments.</p>
-<p>When you call the <code><a href="../../reference/simulate_nfl.html">simulate_nfl()</a></code> function, it too uses the <code>...</code> syntax, which allows you to pass in any number of additional arguments to the function. The simulator will in turn pass these on to <em>your</em> function that processes games.</p>
-<p>For example, let’s slightly modify our last example:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">biased_games_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">g</span>, <span class="va">w</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
-  
-  <span class="co"># arguments</span>
-  <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
-  <span class="va">best</span> <span class="op">&lt;-</span> <span class="st">""</span>
-  <span class="va">worst</span> <span class="op">&lt;-</span> <span class="st">""</span>
-  
-  <span class="co"># best team?</span>
-  <span class="kw">if</span> <span class="op">(</span><span class="st">"best"</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">best</span> <span class="op">&lt;-</span> <span class="va">args</span><span class="op">$</span><span class="va">best</span>
-  <span class="op">}</span>
-  
-  <span class="co"># worst team?</span>
-  <span class="kw">if</span> <span class="op">(</span><span class="st">"worst"</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">worst</span> <span class="op">&lt;-</span> <span class="va">args</span><span class="op">$</span><span class="va">worst</span>
-  <span class="op">}</span>
-
-  <span class="co"># make the best team always win and the worst team always lose</span>
-  <span class="co"># otherwise, make the earlier alphabetical team win 90% of the time</span>
-  <span class="va">g</span> <span class="op">&lt;-</span> <span class="va">g</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
-      result <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span><span class="op">(</span>
-        <span class="va">week</span> <span class="op">!=</span> <span class="va">w</span> <span class="op">~</span> <span class="va">result</span>,
-        <span class="va">away_team</span> <span class="op">==</span> <span class="va">best</span> <span class="op">|</span> <span class="va">home_team</span> <span class="op">==</span> <span class="va">worst</span> <span class="op">~</span> <span class="op">-</span><span class="fl">3</span>,
-        <span class="va">away_team</span> <span class="op">==</span> <span class="va">worst</span> <span class="op">|</span> <span class="va">home_team</span> <span class="op">==</span> <span class="va">best</span> <span class="op">~</span> <span class="fl">3</span>,
-        <span class="va">away_team</span> <span class="op">&lt;</span> <span class="va">home_team</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.1</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
-        <span class="va">away_team</span> <span class="op">&gt;</span> <span class="va">home_team</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
-        <span class="cn">TRUE</span> <span class="op">~</span> <span class="fl">0</span>
-      <span class="op">)</span>
-    <span class="op">)</span>
-  
-  <span class="co"># return values</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>teams <span class="op">=</span> <span class="va">t</span>, games <span class="op">=</span> <span class="va">g</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
-<p>This allows us to define <code>best</code> and <code>worst</code>, and use that information to determine a result (in this case, have the best team always win and the worst team always lose). While <code>best</code> and <code>worst</code> are in this example single-length character vectors, they can be data frames or any other R data type.</p>
-<p>Let’s simulate using this:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="op">&gt;</span><span class="st"> </span>sims3 &lt;-<span class="st"> </span><span class="kw">simulate_nfl</span>(<span class="dt">process_games =</span> biased_games_model, <span class="dt">fresh_season =</span> <span class="ot">TRUE</span>, <span class="dt">best =</span> <span class="st">"CHI"</span>, <span class="dt">worst =</span> <span class="st">"GB"</span>)</span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">22</span><span class="op">:</span><span class="dv">48</span><span class="op">:</span><span class="dv">58</span><span class="op">:</span><span class="st"> </span>Loading games data</span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">22</span><span class="op">:</span><span class="dv">48</span><span class="op">:</span><span class="dv">58</span><span class="op">:</span><span class="st"> </span>Beginning simulation of <span class="dv">1000</span> seasons <span class="cf">in</span> <span class="dv">1</span> rounds</span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">22</span><span class="op">:</span><span class="dv">50</span><span class="op">:</span><span class="dv">15</span><span class="op">:</span><span class="st"> </span>Combining simulation data</span>
-<span id="cb8-5"><a href="#cb8-5"></a><span class="op">*</span><span class="st"> </span><span class="dv">2021-02-13</span> <span class="dv">22</span><span class="op">:</span><span class="dv">50</span><span class="op">:</span><span class="dv">16</span><span class="op">:</span><span class="st"> </span>Aggregating across simulations</span>
-<span id="cb8-6"><a href="#cb8-6"></a><span class="op">&gt;</span><span class="st"> </span>sims3<span class="op">$</span>overall <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(team <span class="op">==</span><span class="st"> "CHI"</span>)</span>
-<span id="cb8-7"><a href="#cb8-7"></a><span class="co"># A tibble: 1 x 11</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a>  conf  division  team   wins playoff  div1 seed1 won_conf won_sb draft1 draft5</span>
-<span id="cb8-9"><a href="#cb8-9"></a>  <span class="op">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a><span class="dv">1</span> NFC   NFC North CHI      <span class="dv">16</span>       <span class="dv">1</span>     <span class="dv">1</span> <span class="fl">0.967</span>        <span class="dv">1</span>      <span class="dv">1</span>      <span class="dv">0</span>      <span class="dv">0</span></span>
-<span id="cb8-11"><a href="#cb8-11"></a><span class="op">&gt;</span><span class="st"> </span>sims3<span class="op">$</span>overall <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(team <span class="op">==</span><span class="st"> "GB"</span>)</span>
-<span id="cb8-12"><a href="#cb8-12"></a><span class="co"># A tibble: 1 x 11</span></span>
-<span id="cb8-13"><a href="#cb8-13"></a>  conf  division  team   wins playoff  div1 seed1 won_conf won_sb draft1 draft5</span>
-<span id="cb8-14"><a href="#cb8-14"></a>  <span class="op">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span></span>
-<span id="cb8-15"><a href="#cb8-15"></a><span class="dv">1</span> NFC   NFC North GB        <span class="dv">0</span>       <span class="dv">0</span>     <span class="dv">0</span>     <span class="dv">0</span>        <span class="dv">0</span>      <span class="dv">0</span>  <span class="fl">0.995</span>      <span class="dv">1</span></span></code></pre></div>
-<p>And this shows exactly what we expect. By defining the Bears as the best team, they always go 16-0, win the division, and win the Super Bowl. Interestingly, they do not always get the #1 seed. This makes sense, however, as in games without the Bears or the Packers, the alphabetically earlier teams still wins 90% of the time. The Cardinals would therefore be expected to go 16-0 in some of the simulations, and in some of those have thee tiebreakers over the Bears However, even in these simulations, they’ll still lose to Bears in the end when they meet in the playoffs.</p>
-<p>Similarly, the Packers always go 0-16, and never have any kind of realistic postseason. They do almost always get the #1 draft pick – but not always. Using the same logic as above, sometimes the Washington Football Team will go 0-16 too, and may beat the Packers out for the #1 pick through tiebreakers.</p>
-</div>
-<div id="simulation-configuration" class="section level2">
-<h2 class="hasAnchor">
-<a href="#simulation-configuration" class="anchor"></a>Simulation Configuration</h2>
-<p>There is a lot of flexibility in how you choose to run the simulation. These are the parameters and how to configure them when you run the <code><a href="../../reference/simulate_nfl.html">simulate_nfl()</a></code> function.</p>
-<ul>
-<li>
-<strong>nfl_season</strong> - Which NFL season are you simulating? By default, it simulates the most recent season for which the regular season schedule is available through <a href="https://github.com/leesharpe/nfldata/tree/master/data">Lee Sharpe’s NFL game data</a>. This data only goes back to the 1999 season.</li>
-<li>
-<strong>process_games</strong> - This is where you supply a function you’ve written to encompass your model used to determine simulated games results, like the examples above. By default, this will generate a random Elo for every team per round of simulations, then use that to determine game data.</li>
-<li>
-<strong>playoff_seeds</strong> - How many playoff seeds per conference are used? By default, this is 7 for seasons 2020 and later, and 6 for earlier seasons.</li>
-<li>
-<strong>if_ended_today</strong> - This should only be used when running in the middle of the regular season. It will take all completed games as done, but remove the rest of the regular season games from the schedule, and begin the playoffs as if everything was locked in based on the regular season data that exists so far.</li>
-<li>
-<strong>fresh_season</strong> - You’ll see this was set to <code>TRUE</code> in all of our examples above. This setting deletes any playoff games and clears out the results for all regular season games, so everything is generated fresh. The default is <code>FALSE</code> where all games that have been completed in real life are treated as locked in, and instead remaining games are simulated.</li>
-<li>
-<strong>fresh_playoffs</strong> - Similar to <code>fresh_season</code>, except instead when set to <code>TRUE</code>, regular season results remain and only playoff games are deleted and then simulated. The default is <code>FALSE</code> in which case playoff games that are completed are accepted as they occurred,</li>
-<li>
-<strong>tiebreaker_depth</strong> - How far do you want tiebreakers to be utilized? Usually leaving it at the default below (<code>3</code>) is fine, but before the season starts, you may wish to have less tiebreaking in order to
-<ul>
-<li>
-<code>1</code>: All teams with the same record have any ties broken randomly.</li>
-<li>
-<code>2</code>: Instead of evaluating common games if that step is reached, break any ties randomly. But all earlier tiebreakers are handled correctly.</li>
-<li>
-<code>3</code>: The default. All tiebreakers are handled through strength of schedule are processed (or through strength of victory for draft pick order). In the unlikely event of a further tie, it will be broken randomly.</li>
-</ul>
-</li>
-<li>
-<strong>simulations</strong> - How many simulations should be run? Defaults to 1000.</li>
-<li>
-<strong>sims_per_round</strong> - The simulator can break things up into chunks of simualted seasons, process each chunk on its own (called a round), and then aggregate everything together at the end. Defaults to <code>simulations</code> or 1000, whichever is lower. If your computer is hanging and forces a restart while running this simulation, it is recommended that you lower this number.</li>
-</ul>
-</div>
-</div>
 <div id="using-in-simulation-functions" class="section level1">
 <h1 class="hasAnchor">
 <a href="#using-in-simulation-functions" class="anchor"></a>Using In-Simulation Functions</h1>
@@ -325,7 +121,7 @@
 </ul>
 <p>The following sections will demonstrate how to use them and what input is required.</p>
 <p>Loading the package is obligatory, so it is done first (along with <code>dplyr</code> for data wrangling and the <code>pipe</code>):</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://leesharpe.github.io/nflseedR">nflseedR</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
@@ -333,15 +129,16 @@
 <div id="load-sharpe-games" class="section level2">
 <h2 class="hasAnchor">
 <a href="#load-sharpe-games" class="anchor"></a>Load Sharpe Games</h2>
-<pre><code>games &lt;- load_sharpe_games()</code></pre>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../../reference/load_sharpe_games.html">load_sharpe_games</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>This pulls game information from the games.rds file (equivalent to the games.csv file) from <a href="https://github.com/leesharpe/nfldata/tree/master/data">Lee Sharpe’s NFL Data Github</a></p>
 </div>
 <div id="find-division-ranks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#find-division-ranks" class="anchor"></a>Find Division Ranks</h2>
 <p>This functions computes division ranks based on a data frame containing game results of one or more NFL seasons. SO let’s load some game data first (this example uses the game data of the 2012 and 2019 seasons):</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/load_sharpe_games.html">load_sharpe_games</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../../reference/load_sharpe_games.html">load_sharpe_games</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2012</span>, <span class="fl">2019</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span>sim <span class="op">=</span> <span class="va">season</span>, <span class="va">game_type</span>, <span class="va">week</span>, <span class="va">away_team</span>, <span class="va">home_team</span>, <span class="va">result</span><span class="op">)</span>
 
@@ -364,26 +161,26 @@
 <li><p><code>result</code> : Equals home score - away score.</p></li>
 </ul>
 <p>Now the games data frame can be used to compute the division ranks (the parameter <code>.debug</code> is set to <code>TRUE</code> to show what the function is doing).</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">div_standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../../reference/compute_division_ranks.html">compute_division_ranks</a></span><span class="op">(</span><span class="va">games</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:36: Calculating team data</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:36: Calculating head to head</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:36: Calculating division rank #1</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:36: DIV (2): Head-to-head</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:36: DIV (2): Division Record</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:36: Calculating division rank #2</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:36: DIV (3): Head-to-head</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:36: DIV (3): Division Record</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:36: DIV (3): Common Record</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:36: DIV (2): Head-to-head</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: DIV (2): Division Record</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: DIV (2): Common Record</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: DIV (2): Conference Record</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: Calculating division rank #3</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: DIV (2): Head-to-head</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: DIV (2): Division Record</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: DIV (2): Common Record</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: Calculating division rank #4</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:02: Calculating team data</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:02: Calculating head to head</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:02: Calculating division rank #1</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:02: DIV (2): Head-to-head</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:02: DIV (2): Division Record</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:02: Calculating division rank #2</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:02: DIV (3): Head-to-head</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:02: DIV (3): Division Record</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:02: DIV (3): Common Record</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: DIV (2): Head-to-head</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: DIV (2): Division Record</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: DIV (2): Common Record</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: DIV (2): Conference Record</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: Calculating division rank #3</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: DIV (2): Head-to-head</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: DIV (2): Division Record</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: DIV (2): Common Record</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: Calculating division rank #4</span>
 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">div_standings</span><span class="op">)</span>
 <span class="co">#&gt; List of 2</span>
 <span class="co">#&gt;  $ standings: tibble [64 × 14] (S3: tbl_df/tbl/data.frame)</span>
@@ -410,7 +207,7 @@
 <span class="co">#&gt;   ..$ h2h_played: num [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></code></pre></div>
 <p>Please note that the function outputs a list of data frames, the actual division standings as well as a data frame named <code>h2h</code>. The latter is an important input in the other functions (as it is used to break head-to-head ties) and can only be computed with <code><a href="../../reference/compute_division_ranks.html">compute_division_ranks()</a></code>.</p>
 <p>So here is the resulting division standings data frame for the 2012 season</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">div_standings</span> <span class="op">%&gt;%</span> 
   <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html">pluck</a></span><span class="op">(</span><span class="st">"standings"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op">%&gt;%</span> 
@@ -855,19 +652,19 @@
 <h2 class="hasAnchor">
 <a href="#find-conference-seedings" class="anchor"></a>Find Conference Seedings</h2>
 <p>This functions computes conference seedings based on the above computed division standings data frame. For efficiency reasons the above computed <code>h2h</code> data frame has to be passed to the function. The easiest way is to pass the list of data frames that is computed in the first step so we can do this (please note the number of playoff seeds):</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">seeds</span> <span class="op">&lt;-</span> <span class="va">div_standings</span> <span class="op">%&gt;%</span> 
   <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../../reference/compute_conference_seeds.html">compute_conference_seeds</a></span><span class="op">(</span>h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, playoff_seeds <span class="op">=</span> <span class="fl">6</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: Calculating seed #1</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: CONF (3): Head-to-head Sweep</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: Calculating seed #2</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: CONF (2): Head-to-head Sweep</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: CONF (2): Conference Record</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: Calculating seed #3</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: Calculating seed #4</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: Calculating seed #5</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:37: Calculating seed #6</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: CONF (2): Best-in-division reduction</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: Calculating seed #1</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: CONF (3): Head-to-head Sweep</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: Calculating seed #2</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: CONF (2): Head-to-head Sweep</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:03: CONF (2): Conference Record</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating seed #3</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating seed #4</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating seed #5</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating seed #6</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: CONF (2): Best-in-division reduction</span>
 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">seeds</span><span class="op">)</span>
 <span class="co">#&gt; List of 2</span>
 <span class="co">#&gt;  $ standings: tibble [64 × 15] (S3: tbl_df/tbl/data.frame)</span>
@@ -894,7 +691,7 @@
 <span class="co">#&gt;   ..$ h2h_wins  : num [1:2048] 0 0 0 0 0 0 0 0 0 0 ...</span>
 <span class="co">#&gt;   ..$ h2h_played: num [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></code></pre></div>
 <p>Just like <code><a href="../../reference/compute_division_ranks.html">compute_division_ranks()</a></code>, this function returns a list of two data frames so we can use it within a pipe. The resulting seeds for the 2012 season are given below.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">seeds</span> <span class="op">%&gt;%</span> 
   <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html">pluck</a></span><span class="op">(</span><span class="st">"standings"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op">%&gt;%</span> 
@@ -1371,49 +1168,49 @@
 <h2 class="hasAnchor">
 <a href="#find-draft-order" class="anchor"></a>Find Draft Order</h2>
 <p>This function computes the draft order based on the playoff outcome and the regular season games. It requires all playoff results in the <code>games</code> data frame and the <code>game_type</code> of the Super Bowl has to be <code>"SB"</code>. For efficiency reasons the above computed <code>h2h</code> data frame has to be passed to the function as well. The easiest way is to pass the list of data frames that is computed in the above steps:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">draft</span> <span class="op">&lt;-</span> <span class="va">seeds</span> <span class="op">%&gt;%</span> 
   <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../../reference/compute_draft_order.html">compute_draft_order</a></span><span class="op">(</span>games <span class="op">=</span> <span class="va">games</span>, h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Processing Playoffs Week 18</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Processing Playoffs Week 19</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Processing Playoffs Week 20</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Processing Playoffs Week 21</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #32</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #31</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #30</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #29</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #28</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #27</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #26</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #25</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #24</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #23</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #22</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #21</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #20</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #19</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #18</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #17</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #16</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:38: Calculating draft order #15</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #14</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #13</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #12</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #11</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #10</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: DRAFT: Divisional Rank</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: DRAFT: Conference Rank</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: CONF (2): Best-in-division reduction</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: CONF (2): Head-to-head Sweep</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #9</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #8</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #7</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #6</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #5</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #4</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #3</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #2</span>
-<span class="co">#&gt; ● 2021-02-14 20:14:39: Calculating draft order #1</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Processing Playoffs Week 18</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Processing Playoffs Week 19</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Processing Playoffs Week 20</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Processing Playoffs Week 21</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating draft order #32</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating draft order #31</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating draft order #30</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating draft order #29</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating draft order #28</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating draft order #27</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating draft order #26</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating draft order #25</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:04: Calculating draft order #24</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #23</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #22</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #21</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #20</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #19</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #18</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #17</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #16</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #15</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #14</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #13</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #12</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #11</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #10</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: DRAFT: Divisional Rank</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: DRAFT: Conference Rank</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: CONF (2): Best-in-division reduction</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: CONF (2): Head-to-head Sweep</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #9</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #8</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #7</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #6</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #5</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #4</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #3</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #2</span>
+<span class="co">#&gt; ● 2021-02-14 21:15:05: Calculating draft order #1</span>
 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">draft</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 64</span>
 <span class="co">#&gt; Columns: 16</span>
@@ -1434,7 +1231,7 @@
 <span class="co">#&gt; $ exit        &lt;dbl&gt; 17, 17, 20, 17, 22, 18, 17, 17, 19, 18, 17, 17, 19, 17, 1…</span>
 <span class="co">#&gt; $ draft_order &lt;dbl&gt; 8, 12, 29, 9, 32, 21, 6, 17, 27, 24, 2, 10, 28, 1, 3, 11,…</span></code></pre></div>
 <p>As this is the final step, the function <code>compute_draft_order</code> does not output <code>h2h</code> again. Instead it directly outputs the final standings including the draft order and the variable <code>exit</code> which indicates the week number of each team’s final game (the Super Bowl Winner’s <code>exit</code> equals 22):</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">draft</span> <span class="op">%&gt;%</span> 
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">division</span><span class="op">:</span><span class="va">draft_order</span><span class="op">)</span> <span class="op">%&gt;%</span> 
