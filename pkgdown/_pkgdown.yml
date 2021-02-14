@@ -1,0 +1,14 @@
+url: https://leesharpe.github.io/nflseedR
+
+template:
+  params:
+    bootswatch: yeti
+
+toc:
+  depth: 3
+
+authors:
+  Lee Sharpe:
+    href: https://twitter.com/LeeSharpeNFL
+  Sebastian Carl:
+    href: https://twitter.com/mrcaseb
