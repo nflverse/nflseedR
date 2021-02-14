@@ -31,7 +31,8 @@ Imports:
     tibble,
     tidyr
 Suggests: 
-    rmarkdown
+    knitr,
+    rmarkdown,
     tidyverse
 Encoding: UTF-8
 LazyData: true
