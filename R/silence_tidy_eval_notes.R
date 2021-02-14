@@ -49,4 +49,15 @@ conf_rank <-
   seed.y <-
   team.x <-
   team.y <-
-  estimate <- NULL
+  estimate <-
+  true_wins <-
+  elo <-
+  home_elo <-
+  away_elo <-
+  elo_diff <-
+  home_rest <-
+  away_rest <-
+  elo_input <-
+  elo_mult <-
+  wp <-
+  elo_shift <- NULL

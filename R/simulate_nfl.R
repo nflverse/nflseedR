@@ -159,7 +159,7 @@ simulate_nfl <- function(nfl_season = NULL,
   # Catch invalid input
 
   if (!all(
-    is_null(nfl_season) || is_single_digit_numeric(nfl_season),
+    is.null(nfl_season) || is_single_digit_numeric(nfl_season),
     is_single_digit_numeric(tiebreaker_depth),
     is_single_digit_numeric(simulations),
     is_single_digit_numeric(sims_per_round)
