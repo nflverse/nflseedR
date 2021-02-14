@@ -34,7 +34,7 @@
 #' library(nflseedR)
 #'
 #' # Activate progress updates
-#' progressr::handlers(global = TRUE)
+#' # progressr::handlers(global = TRUE)
 #'
 #' # Parallel processing can be activated via the following line
 #' # future::plan("multisession")

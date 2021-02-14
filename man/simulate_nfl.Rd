@@ -5,7 +5,7 @@
 \title{Simulate an NFL Season}
 \usage{
 simulate_nfl(
-  nfl_season,
+  nfl_season = NULL,
   process_games = NULL,
   ...,
   playoff_seeds = ifelse(nfl_season >= 2020, 7, 6),
@@ -30,11 +30,16 @@ schedule, and week number as arguments.}
 \item{playoff_seeds}{Number of playoff teams per conference (increased
 in 2020 from 6 to 7).}
 
-\item{if_ended_today}{Either \code{TRUE} or \code{FALSE}. ...}
+\item{if_ended_today}{Either \code{TRUE} or \code{FALSE}. If TRUE, ignore remaining regular
+season games and cut to playoffs based on current regular season data.}
 
-\item{fresh_season}{Either \code{TRUE} or \code{FALSE}. ...}
+\item{fresh_season}{Either \code{TRUE} or \code{FALSE}. Whether to blank out all game results
+and simulate the the season from scratch (TRUE) or take game results so far as a given
+and only simulate the rest (FALSE).}
 
-\item{fresh_playoffs}{Either \code{TRUE} or \code{FALSE}. ...}
+\item{fresh_playoffs}{Either \code{TRUE} or \code{FALSE}. Whether to blank out all playoff
+game results and simulate the postseason from scratch (TRUE) or take game results so far
+as a given and only simulate the rest (FALSE).}
 
 \item{tiebreaker_depth}{A single value equal to 1, 2, or 3. The default is 3. The
 value controls the depth of tiebreakers that shall be applied. The deepest
@@ -77,7 +82,7 @@ before the start of the simulations.
 library(nflseedR)
 
 # Activate progress updates
-progressr::handlers(global = TRUE)
+# progressr::handlers(global = TRUE)
 
 # Parallel processing can be activated via the following line
 # future::plan("multisession")

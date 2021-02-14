@@ -12,6 +12,13 @@
 A set of functions to simulate National Football
     League seasons including the sophisticated tiebreaking procedures.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://leesharpe.github.io/nflseedR}
+}
+
+}
 \author{
 \strong{Maintainer}: Sebastian Carl \email{mrcaseb@gmail.com} [contributor]
 
