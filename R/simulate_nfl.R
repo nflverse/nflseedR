@@ -47,7 +47,7 @@
 #'   sims_per_round = 2
 #' )
 #' }
-simulate_nfl <- function(nfl_season,
+simulate_nfl <- function(nfl_season = NULL,
                          process_games = NULL,
                          ...,
                          playoff_seeds = ifelse(nfl_season >= 2020, 7, 6),
@@ -159,7 +159,7 @@ simulate_nfl <- function(nfl_season,
   # Catch invalid input
 
   if (!all(
-    is_single_digit_numeric(nfl_season),
+    is_null(nfl_season) || is_single_digit_numeric(nfl_season),
     is_single_digit_numeric(tiebreaker_depth),
     is_single_digit_numeric(simulations),
     is_single_digit_numeric(sims_per_round)
@@ -179,9 +179,16 @@ simulate_nfl <- function(nfl_season,
   # load games data
   report("Loading games data")
   schedule <- load_sharpe_games() %>%
-    filter(season == nfl_season) %>%
-    select(game_type, week, away_team, home_team,
+    select(season, game_type, week, away_team, home_team,
            away_rest, home_rest, location, result)
+
+  if (is.null(nfl_season)) {
+    nfl_season <- max(schedule$season)
+  }
+
+  schedule <- schedule %>%
+    filter(season == nfl_season) %>%
+    select(-season)
 
   #### PREPROCESSING ####
 
