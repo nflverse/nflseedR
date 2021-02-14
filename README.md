@@ -48,6 +48,6 @@ remotes::install_github("leesharpe/nflseedR")
 
 ## How to Use
 
-Read [https://github.com/leesharpe/nflseedR/blob/master/vignettes/articles/nflseedR.Rmd](this guide)
+Read [this guide](https://github.com/leesharpe/nflseedR/blob/master/vignettes/articles/nflseedR.Rmd)
 to learn how to use nflseedR to simulate NFL seasons using your own model,
 or calculate tiebreaker information based on NFL game outcomes.
