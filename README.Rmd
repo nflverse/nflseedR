@@ -39,8 +39,8 @@ simulate from there forward, including if run during the playoffs. It can also b
 as a fresh season, wiping away results and simulating from scratch.
 
 The season simulation code for nflseedR was developed by Lee Sharpe
-([@LeeSharpeNFL](https://twitter.com/leesharpenfl)) and building it as package was 
-developed by Sebastian Carl ([@mrcaseb](https://twitter.com/mrcaseb)).
+([\@LeeSharpeNFL](https://twitter.com/leesharpenfl)) and building it as package was 
+developed by Sebastian Carl ([\@mrcaseb](https://twitter.com/mrcaseb)).
 
 ## Installation
 
@@ -56,3 +56,8 @@ You can install nflseedR from [GitHub](https://github.com/) with:
 if (!require("remotes")) install.packages("remotes")
 remotes::install_github("leesharpe/nflseedR")
 ```
+
+## Get Started
+
+With nflseedR it's possible to [simulate complete seasons](https://leesharpe.github.io/nflseedR/articles/articles/nflsim.html) or 
+use it's [seeding functions](https://leesharpe.github.io/nflseedR/articles/articles/nflseedR.html) in custom simulations.
