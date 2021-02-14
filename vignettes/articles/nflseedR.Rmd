@@ -324,12 +324,16 @@ that you lower this number.
 
 # Using In-Simulation Functions
 
-Alternatively, you can calculate tiebreakers yourself using your own simulator code and
-let nflseedR handle the tiebreakers for you with three in-simulation functions (each can
-handle thousands of seasons at once):
+You can get NFL game data from this function:
+
+* `load_sharpe_games()` to collect game information and results
+
+And if you prefer, you can take or generate any set of game outcomes and let nflseedR
+handle all of the NFL seeding and tiebreker math for you with three in-simulation
+functions (each can handle thousands of seasons at once):
 
 * `compute_division_ranks()` to find all division winners,
-* `compute_conference_seeds()` to get the playoff participants and
+* `compute_conference_seeds()` to get the playoff participants, and
 * `compute_draft_order()` to find the resulting draft pick for each team.
 
 The following sections will demonstrate how to use them and what input is required.
@@ -343,12 +347,21 @@ options(digits = 3)
 options(warn = -1)
 ```
 
+## Load Sharpe Games
+
+```
+games <- load_sharpe_games()
+```
+
+This pulls game information from the games.rds file (equivalent to the games.csv file) from
+[Lee Sharpe's NFL Data Github](https://github.com/leesharpe/nfldata/tree/master/data)
+
 ## Find Division Ranks
 
 This functions computes division ranks based on a data frame containing game results of one or more NFL seasons. SO let's load some game data first (this example uses the game data of the 2012 and 2019 seasons):
 
 ```{r}
-games <- readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
+games <- load_sharpe_games() %>%
   dplyr::filter(season %in% c(2012, 2019)) %>%
   dplyr::select(sim = season, game_type, week, away_team, home_team, result)
 
