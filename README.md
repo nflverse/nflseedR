@@ -218,7 +218,7 @@ alphabetically are virtually certain to be at the top of the draft order.
 ## Adding In Your Own Data
 
 This is all well and good, you might be thinking, but your model works off of
-other data not in the simulator! How can that work. This is where we utilize R's
+other data not in the simulator! How can that work? This is where we utilize R's
 ability to have generic arguments.
 
 The `...` at the end of the function definition means that the function can be
@@ -269,8 +269,10 @@ biased_games_model <- function(t, g, w, ...) {
 ```
 
 This allows us to define `best` and `worst`, and use that information to
-determine a result. While `best` and `worst` are in this example single-length
-character vectors, they can be data frames or any other R data type.
+determine a result (in this case, have the best team always win and the 
+worst team always lose). While `best` and `worst` are in this example
+single-length character vectors, they can be data frames or any other R
+data type.
 
 Let's simulate using this:
 
@@ -294,10 +296,12 @@ Let's simulate using this:
 
 And this shows exactly what we expect. By defining the Bears as the best team,
 they always go 16-0, win the division, and win the Super Bowl. Interestingly,
-they do not always get the #1 seed. This however makes sense. Since in games 
-without the Bears or the Packers the alphabetically earlier teams still wins 
-90% of the time, the Cardinals would be expected to go 16-0 in some simulations,
-and have tiebreakers over the Bears. However, they'll still ose to them in the end.
+they do not always get the #1 seed. This makes sense, however, as in games 
+without the Bears or the Packers, the alphabetically earlier teams still wins 
+90% of the time. The Cardinals would therefore be expected to go 16-0 in some
+of the simulations, and in some of those have thee tiebreakers over the Bears
+However, even in these simulations, they'll still lose to Bears in the end
+when they meet in the playoffs.
 
 Similarly, the Packers always go 0-16, and never have any kind of realistic
 postseason. They do almost always get the #1 draft pick -- but not always. Using the same
