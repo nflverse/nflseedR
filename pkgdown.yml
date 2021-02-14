@@ -1,0 +1,11 @@
+pandoc: 2.7.3
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  articles/nflseedR: nflseedR.html
+  articles/nflsim: nflsim.html
+last_built: 2021-02-14T20:14Z
+urls:
+  reference: https://leesharpe.github.io/nflseedR/reference
+  article: https://leesharpe.github.io/nflseedR/articles
+
