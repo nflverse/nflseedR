@@ -8,7 +8,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-ifelse(future::supportsMulticore(), future::plan("multicore"), future::plan("multisession"))
+# ifelse(future::supportsMulticore(), future::plan("multicore"), future::plan("multisession"))
 ```
 
 # Running a Simulation
@@ -23,15 +23,16 @@ Loading the package is obligatory, so it is done first (along with `dplyr` for d
 ```{r setup}
 library(nflseedR)
 library(dplyr, warn.conflicts = FALSE)
+options(digits = 3)
 ```
 
 By default, 1000 simulations are done. We'll set an initial random seed for
 this demonstration so you can follow along and get the same results, but normally
-you wouldn't do that.
+you wouldn't do that (for the same reason we set `sims_per_round = 1000`).
 
 ```{r}
 set.seed(4)
-sims <- simulate_nfl(2020, fresh_season = TRUE)
+sims <- simulate_nfl(2020, fresh_season = TRUE, sims_per_round = 1000)
 ```
 
 The output contains a lot of pre-aggregated information, as well as the individual
@@ -113,7 +114,7 @@ game results in your function, whether you meant to do so or not. !!
 Let's run a simulation with `stupid_games_model` and see what happens:
 
 ```{r}
-sims2 <- simulate_nfl(2020, process_games = stupid_games_model, fresh_season = TRUE)
+sims2 <- simulate_nfl(2020, process_games = stupid_games_model, fresh_season = TRUE, sims_per_round = 1000)
 
 sims2$overall %>% dplyr::arrange(team) %>% utils::head() %>% knitr::kable()
 sims2$overall %>% dplyr::arrange(team) %>% utils::tail() %>% knitr::kable()
@@ -189,7 +190,8 @@ sims3 <- simulate_nfl(
   process_games = biased_games_model, 
   fresh_season = TRUE, 
   best = "CHI", 
-  worst = "GB"
+  worst = "GB",
+  sims_per_round = 1000
 )
 sims3$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
 sims3$overall %>% dplyr::filter(team == "GB") %>% knitr::kable()
