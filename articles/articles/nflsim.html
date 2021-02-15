@@ -63,7 +63,14 @@
   <a href="../../articles/articles/nflsim.html">Season-Simulator</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/leesharpe/nflseedR/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -80,7 +87,7 @@
                         <h4 class="author">Lee Sharpe</h4>
             
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/leesharpe/nflseedR/blob/master/vignettes/articles/nflsim.Rmd"><code>vignettes/articles/nflsim.Rmd</code></a></small>
       <div class="hidden name"><code>nflsim.Rmd</code></div>
 
     </div>
@@ -94,32 +101,20 @@
 <p>Loading the package is obligatory, so it is done first (along with <code>dplyr</code> for data wrangling and the <code>pipe</code>):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.nflseedr.com">nflseedR</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<p>By default, 1000 simulations are done. We’ll set an initial random seed for this demonstration so you can follow along and get the same results, but normally you wouldn’t do that.</p>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
+<p>By default, 1000 simulations are done. We’ll set an initial random seed for this demonstration so you can follow along and get the same results, but normally you wouldn’t do that (for the same reason we set <code>sims_per_round = 1000</code>).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
-<span class="va">sims</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span><span class="fl">2020</span>, fresh_season <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-15 12:07:58: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-15 12:07:58: Beginning simulation of 1000 seasons in 2 rounds</span>
-<span class="co">#&gt; ● 2021-02-15 12:09:18: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-15 12:09:18: Aggregating across simulations</span></code></pre></div>
+<span class="va">sims</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span><span class="fl">2020</span>, fresh_season <span class="op">=</span> <span class="cn">TRUE</span>, sims_per_round <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>
+<span class="co">#&gt; ● 2021-02-15 12:49:07: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-15 12:49:07: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-15 12:50:55: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-15 12:50:55: Aggregating across simulations</span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
-<colgroup>
-<col width="5%">
-<col width="10%">
-<col width="5%">
-<col width="9%">
-<col width="10%">
-<col width="10%">
-<col width="10%">
-<col width="10%">
-<col width="9%">
-<col width="10%">
-<col width="10%">
-</colgroup>
 <thead><tr class="header">
 <th align="left">conf</th>
 <th align="left">division</th>
@@ -137,14 +132,14 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">CHI</td>
-<td align="right">8.362362</td>
-<td align="right">0.5615616</td>
-<td align="right">0.2332332</td>
-<td align="right">0.0770771</td>
-<td align="right">0.0690691</td>
-<td align="right">0.023023</td>
-<td align="right">0.0620621</td>
-<td align="right">0.2182182</td>
+<td align="right">10.7</td>
+<td align="right">0.821</td>
+<td align="right">0.347</td>
+<td align="right">0.117</td>
+<td align="right">0.113</td>
+<td align="right">0.041</td>
+<td align="right">0</td>
+<td align="right">0.003</td>
 </tr></tbody>
 </table>
 <p>We can see the Bears got 10.6 wins on average. They made the playoffs 82% of the time, won the division 35% of the time, and won the Super Bowl in 4%, and rarely received a top 5 draft pick. The <code>teams</code> section of the output will show how a team did in each simulated season.</p>
@@ -156,18 +151,18 @@
 <col width="4%">
 <col width="4%">
 <col width="8%">
+<col width="5%">
 <col width="4%">
-<col width="4%">
 <col width="8%">
-<col width="6%">
-<col width="8%">
-<col width="8%">
-<col width="8%">
-<col width="8%">
+<col width="7%">
+<col width="7%">
+<col width="7%">
+<col width="5%">
+<col width="5%">
 <col width="7%">
 <col width="4%">
 <col width="4%">
-<col width="9%">
+<col width="10%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">sim</th>
@@ -194,17 +189,17 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">11</td>
-<td align="right">11</td>
-<td align="right">0.6875</td>
-<td align="right">0.6666667</td>
-<td align="right">0.6666667</td>
-<td align="right">0.3977273</td>
-<td align="right">0.4414062</td>
-<td align="right">2</td>
-<td align="right">6</td>
-<td align="right">18</td>
-<td align="right">22</td>
+<td align="right">15</td>
+<td align="right">15</td>
+<td align="right">0.938</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">0.446</td>
+<td align="right">0.449</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">20</td>
+<td align="right">30</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
@@ -212,15 +207,15 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">11</td>
-<td align="right">11</td>
-<td align="right">0.6875</td>
-<td align="right">0.5000000</td>
-<td align="right">0.7500000</td>
-<td align="right">0.3409091</td>
-<td align="right">0.4257812</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right">0.500</td>
+<td align="right">0.667</td>
+<td align="right">0.667</td>
+<td align="right">0.352</td>
+<td align="right">0.465</td>
 <td align="right">2</td>
-<td align="right">5</td>
+<td align="right">7</td>
 <td align="right">22</td>
 <td align="right">32</td>
 </tr>
@@ -230,17 +225,17 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">13</td>
-<td align="right">13</td>
-<td align="right">0.8125</td>
-<td align="right">1.0000000</td>
-<td align="right">0.9166667</td>
-<td align="right">0.3173077</td>
-<td align="right">0.3632812</td>
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">20</td>
-<td align="right">29</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right">0.500</td>
+<td align="right">0.667</td>
+<td align="right">0.500</td>
+<td align="right">0.312</td>
+<td align="right">0.445</td>
+<td align="right">2</td>
+<td align="right">6</td>
+<td align="right">19</td>
+<td align="right">25</td>
 </tr>
 <tr class="even">
 <td align="right">4</td>
@@ -248,17 +243,17 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">12</td>
-<td align="right">12</td>
-<td align="right">0.7500</td>
-<td align="right">0.5000000</td>
-<td align="right">0.7500000</td>
-<td align="right">0.3906250</td>
-<td align="right">0.4609375</td>
-<td align="right">2</td>
-<td align="right">5</td>
-<td align="right">18</td>
-<td align="right">22</td>
+<td align="right">11</td>
+<td align="right">11</td>
+<td align="right">0.688</td>
+<td align="right">0.833</td>
+<td align="right">0.750</td>
+<td align="right">0.352</td>
+<td align="right">0.406</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">20</td>
+<td align="right">29</td>
 </tr>
 <tr class="odd">
 <td align="right">5</td>
@@ -266,71 +261,71 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">14</td>
-<td align="right">14</td>
-<td align="right">0.8750</td>
-<td align="right">1.0000000</td>
-<td align="right">0.9166667</td>
-<td align="right">0.3928571</td>
-<td align="right">0.4179688</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">0.438</td>
+<td align="right">0.167</td>
+<td align="right">0.500</td>
+<td align="right">0.402</td>
+<td align="right">0.469</td>
+<td align="right">3</td>
+<td align="right">NA</td>
+<td align="right">17</td>
+<td align="right">13</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">16</td>
+<td align="right">13</td>
+<td align="right">13</td>
+<td align="right">0.812</td>
+<td align="right">0.833</td>
+<td align="right">0.917</td>
+<td align="right">0.375</td>
+<td align="right">0.426</td>
 <td align="right">1</td>
 <td align="right">1</td>
+<td align="right">20</td>
+<td align="right">29</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">16</td>
+<td align="right">12</td>
+<td align="right">12</td>
+<td align="right">0.750</td>
+<td align="right">0.667</td>
+<td align="right">0.833</td>
+<td align="right">0.312</td>
+<td align="right">0.434</td>
+<td align="right">2</td>
+<td align="right">5</td>
 <td align="right">19</td>
 <td align="right">28</td>
 </tr>
 <tr class="even">
-<td align="right">6</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">12</td>
-<td align="right">12</td>
-<td align="right">0.7500</td>
-<td align="right">0.8333333</td>
-<td align="right">0.7500000</td>
-<td align="right">0.4218750</td>
-<td align="right">0.4218750</td>
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">18</td>
-<td align="right">21</td>
-</tr>
-<tr class="odd">
-<td align="right">7</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">12</td>
-<td align="right">12</td>
-<td align="right">0.7500</td>
-<td align="right">0.6666667</td>
-<td align="right">0.7500000</td>
-<td align="right">0.3281250</td>
-<td align="right">0.4218750</td>
-<td align="right">2</td>
-<td align="right">5</td>
-<td align="right">21</td>
-<td align="right">31</td>
-</tr>
-<tr class="even">
 <td align="right">8</td>
 <td align="left">CHI</td>
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">9</td>
-<td align="right">9</td>
-<td align="right">0.5625</td>
-<td align="right">0.3333333</td>
-<td align="right">0.5833333</td>
-<td align="right">0.3194444</td>
-<td align="right">0.4531250</td>
+<td align="right">11</td>
+<td align="right">11</td>
+<td align="right">0.688</td>
+<td align="right">0.667</td>
+<td align="right">0.750</td>
+<td align="right">0.364</td>
+<td align="right">0.402</td>
+<td align="right">1</td>
 <td align="right">3</td>
-<td align="right">7</td>
 <td align="right">18</td>
-<td align="right">19</td>
+<td align="right">23</td>
 </tr>
 <tr class="odd">
 <td align="right">9</td>
@@ -338,17 +333,17 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">9</td>
-<td align="right">9</td>
-<td align="right">0.5625</td>
-<td align="right">0.6666667</td>
-<td align="right">0.6666667</td>
-<td align="right">0.3888889</td>
-<td align="right">0.4453125</td>
+<td align="right">13</td>
+<td align="right">13</td>
+<td align="right">0.812</td>
+<td align="right">0.833</td>
+<td align="right">0.917</td>
+<td align="right">0.413</td>
+<td align="right">0.422</td>
 <td align="right">1</td>
-<td align="right">3</td>
-<td align="right">18</td>
-<td align="right">20</td>
+<td align="right">2</td>
+<td align="right">19</td>
+<td align="right">27</td>
 </tr>
 <tr class="even">
 <td align="right">10</td>
@@ -356,125 +351,125 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">0.562</td>
+<td align="right">0.333</td>
+<td align="right">0.667</td>
+<td align="right">0.347</td>
+<td align="right">0.410</td>
+<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">19</td>
+<td align="right">25</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">16</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">0.562</td>
+<td align="right">0.500</td>
+<td align="right">0.583</td>
+<td align="right">0.403</td>
+<td align="right">0.438</td>
+<td align="right">2</td>
+<td align="right">6</td>
+<td align="right">19</td>
+<td align="right">25</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">16</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">0.562</td>
+<td align="right">0.667</td>
+<td align="right">0.667</td>
+<td align="right">0.306</td>
+<td align="right">0.430</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">18</td>
+<td align="right">19</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">16</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right">0.625</td>
+<td align="right">0.500</td>
+<td align="right">0.583</td>
+<td align="right">0.306</td>
+<td align="right">0.434</td>
+<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">19</td>
+<td align="right">27</td>
+</tr>
+<tr class="even">
+<td align="right">14</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">16</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right">0.625</td>
+<td align="right">0.500</td>
+<td align="right">0.667</td>
+<td align="right">0.275</td>
+<td align="right">0.414</td>
+<td align="right">2</td>
+<td align="right">5</td>
+<td align="right">18</td>
+<td align="right">21</td>
+</tr>
+<tr class="odd">
+<td align="right">15</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">16</td>
 <td align="right">11</td>
 <td align="right">11</td>
-<td align="right">0.6875</td>
-<td align="right">0.6666667</td>
-<td align="right">0.7500000</td>
-<td align="right">0.4204545</td>
-<td align="right">0.4648438</td>
+<td align="right">0.688</td>
+<td align="right">0.500</td>
+<td align="right">0.667</td>
+<td align="right">0.375</td>
+<td align="right">0.414</td>
 <td align="right">2</td>
 <td align="right">5</td>
 <td align="right">20</td>
 <td align="right">29</td>
 </tr>
-<tr class="odd">
-<td align="right">11</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">0.5000</td>
-<td align="right">0.3333333</td>
-<td align="right">0.5833333</td>
-<td align="right">0.2265625</td>
-<td align="right">0.4414062</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">15</td>
-</tr>
 <tr class="even">
-<td align="right">12</td>
+<td align="right">16</td>
 <td align="left">CHI</td>
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">10</td>
-<td align="right">10</td>
-<td align="right">0.6250</td>
-<td align="right">0.5000000</td>
-<td align="right">0.5833333</td>
-<td align="right">0.3250000</td>
-<td align="right">0.4687500</td>
-<td align="right">2</td>
-<td align="right">6</td>
-<td align="right">19</td>
-<td align="right">27</td>
-</tr>
-<tr class="odd">
-<td align="right">13</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">6</td>
-<td align="right">6</td>
-<td align="right">0.3750</td>
-<td align="right">0.3333333</td>
-<td align="right">0.5000000</td>
-<td align="right">0.2916667</td>
-<td align="right">0.4453125</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-<td align="right">17</td>
 <td align="right">9</td>
-</tr>
-<tr class="even">
-<td align="right">14</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">12</td>
-<td align="right">12</td>
-<td align="right">0.7500</td>
-<td align="right">0.8333333</td>
-<td align="right">0.8333333</td>
-<td align="right">0.3281250</td>
-<td align="right">0.3906250</td>
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">19</td>
-<td align="right">25</td>
-</tr>
-<tr class="odd">
-<td align="right">15</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">12</td>
-<td align="right">12</td>
-<td align="right">0.7500</td>
-<td align="right">1.0000000</td>
-<td align="right">0.9166667</td>
-<td align="right">0.3593750</td>
-<td align="right">0.4179688</td>
-<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">0.562</td>
+<td align="right">0.833</td>
+<td align="right">0.667</td>
+<td align="right">0.361</td>
+<td align="right">0.469</td>
 <td align="right">2</td>
-<td align="right">19</td>
-<td align="right">25</td>
-</tr>
-<tr class="even">
-<td align="right">16</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">14</td>
-<td align="right">14</td>
-<td align="right">0.8750</td>
-<td align="right">0.8333333</td>
-<td align="right">0.9166667</td>
-<td align="right">0.3973214</td>
-<td align="right">0.4101562</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">20</td>
-<td align="right">30</td>
+<td align="right">NA</td>
+<td align="right">17</td>
+<td align="right">17</td>
 </tr>
 <tr class="odd">
 <td align="right">17</td>
@@ -482,17 +477,17 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">13</td>
-<td align="right">13</td>
-<td align="right">0.8125</td>
-<td align="right">0.8333333</td>
-<td align="right">0.9166667</td>
-<td align="right">0.3701923</td>
-<td align="right">0.4179688</td>
+<td align="right">15</td>
+<td align="right">15</td>
+<td align="right">0.938</td>
+<td align="right">0.833</td>
+<td align="right">0.917</td>
+<td align="right">0.358</td>
+<td align="right">0.383</td>
 <td align="right">1</td>
 <td align="right">2</td>
-<td align="right">19</td>
-<td align="right">26</td>
+<td align="right">21</td>
+<td align="right">31</td>
 </tr>
 <tr class="even">
 <td align="right">18</td>
@@ -500,17 +495,17 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">10</td>
-<td align="right">10</td>
-<td align="right">0.6250</td>
-<td align="right">0.5000000</td>
-<td align="right">0.6666667</td>
-<td align="right">0.4062500</td>
-<td align="right">0.4492188</td>
+<td align="right">13</td>
+<td align="right">13</td>
+<td align="right">0.812</td>
+<td align="right">0.667</td>
+<td align="right">0.833</td>
+<td align="right">0.389</td>
+<td align="right">0.402</td>
+<td align="right">1</td>
 <td align="right">2</td>
-<td align="right">5</td>
 <td align="right">19</td>
-<td align="right">25</td>
+<td align="right">27</td>
 </tr>
 <tr class="odd">
 <td align="right">19</td>
@@ -518,17 +513,17 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">9</td>
-<td align="right">9</td>
-<td align="right">0.5625</td>
-<td align="right">0.5000000</td>
-<td align="right">0.5833333</td>
-<td align="right">0.2638889</td>
-<td align="right">0.4062500</td>
-<td align="right">2</td>
-<td align="right">6</td>
-<td align="right">19</td>
-<td align="right">25</td>
+<td align="right">12</td>
+<td align="right">12</td>
+<td align="right">0.750</td>
+<td align="right">0.833</td>
+<td align="right">0.917</td>
+<td align="right">0.328</td>
+<td align="right">0.395</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">21</td>
+<td align="right">31</td>
 </tr>
 <tr class="even">
 <td align="right">20</td>
@@ -536,17 +531,17 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="right">16</td>
-<td align="right">13</td>
-<td align="right">13</td>
-<td align="right">0.8125</td>
-<td align="right">0.8333333</td>
-<td align="right">0.8333333</td>
-<td align="right">0.4038462</td>
-<td align="right">0.4179688</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">20</td>
-<td align="right">30</td>
+<td align="right">11</td>
+<td align="right">11</td>
+<td align="right">0.688</td>
+<td align="right">0.667</td>
+<td align="right">0.750</td>
+<td align="right">0.318</td>
+<td align="right">0.426</td>
+<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">19</td>
+<td align="right">25</td>
 </tr>
 </tbody>
 </table>
@@ -570,52 +565,52 @@
 <td align="right">2</td>
 <td align="left">WC</td>
 <td align="right">18</td>
-<td align="left">MIA</td>
-<td align="left">IND</td>
+<td align="left">DEN</td>
+<td align="left">NYJ</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="left">Home</td>
-<td align="right">-14</td>
+<td align="right">-21</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="left">WC</td>
 <td align="right">18</td>
-<td align="left">BUF</td>
-<td align="left">CLE</td>
+<td align="left">KC</td>
+<td align="left">IND</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="left">Home</td>
-<td align="right">-9</td>
+<td align="right">22</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
 <td align="left">WC</td>
 <td align="right">18</td>
 <td align="left">PIT</td>
-<td align="left">DEN</td>
+<td align="left">CLE</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="left">Home</td>
-<td align="right">22</td>
+<td align="right">-9</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="left">WC</td>
 <td align="right">18</td>
-<td align="left">CHI</td>
+<td align="left">DAL</td>
 <td align="left">TB</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="left">Home</td>
-<td align="right">-14</td>
+<td align="right">-15</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
 <td align="left">WC</td>
 <td align="right">18</td>
 <td align="left">PHI</td>
-<td align="left">SF</td>
+<td align="left">LA</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="left">Home</td>
@@ -625,10 +620,32 @@
 <td align="right">2</td>
 <td align="left">WC</td>
 <td align="right">18</td>
-<td align="left">NO</td>
-<td align="left">DAL</td>
+<td align="left">CHI</td>
+<td align="left">WAS</td>
 <td align="right">7</td>
 <td align="right">7</td>
+<td align="left">Home</td>
+<td align="right">-6</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="left">DIV</td>
+<td align="right">19</td>
+<td align="left">DEN</td>
+<td align="left">IND</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="left">Home</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">DIV</td>
+<td align="right">19</td>
+<td align="left">PIT</td>
+<td align="left">LAC</td>
+<td align="right">7</td>
+<td align="right">14</td>
 <td align="left">Home</td>
 <td align="right">1</td>
 </tr>
@@ -636,78 +653,56 @@
 <td align="right">2</td>
 <td align="left">DIV</td>
 <td align="right">19</td>
-<td align="left">MIA</td>
-<td align="left">DEN</td>
+<td align="left">PHI</td>
+<td align="left">DAL</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="left">Home</td>
-<td align="right">12</td>
+<td align="right">6</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="left">DIV</td>
 <td align="right">19</td>
-<td align="left">BUF</td>
-<td align="left">NYJ</td>
+<td align="left">CHI</td>
+<td align="left">MIN</td>
 <td align="right">7</td>
 <td align="right">14</td>
 <td align="left">Home</td>
-<td align="right">19</td>
+<td align="right">-9</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
-<td align="left">DIV</td>
-<td align="right">19</td>
+<td align="left">CON</td>
+<td align="right">20</td>
+<td align="left">IND</td>
+<td align="left">LAC</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="left">Home</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">CON</td>
+<td align="right">20</td>
 <td align="left">CHI</td>
 <td align="left">DAL</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="left">Home</td>
-<td align="right">-5</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="left">DIV</td>
-<td align="right">19</td>
-<td align="left">PHI</td>
-<td align="left">MIN</td>
-<td align="right">7</td>
-<td align="right">14</td>
-<td align="left">Home</td>
-<td align="right">11</td>
-</tr>
-<tr class="odd">
-<td align="right">2</td>
-<td align="left">CON</td>
-<td align="right">20</td>
-<td align="left">DEN</td>
-<td align="left">NYJ</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="left">Home</td>
 <td align="right">-9</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="left">CON</td>
-<td align="right">20</td>
-<td align="left">CHI</td>
-<td align="left">MIN</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="left">Home</td>
-<td align="right">-14</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
 <td align="left">SB</td>
 <td align="right">21</td>
 <td align="left">CHI</td>
-<td align="left">DEN</td>
+<td align="left">LAC</td>
 <td align="right">14</td>
 <td align="right">14</td>
 <td align="left">Neutral</td>
-<td align="right">-17</td>
+<td align="right">-10</td>
 </tr>
 </tbody>
 </table>
@@ -740,11 +735,11 @@
 <p>!! Also, make sure you aren’t overriding completed games or games that aren’t in the current week of <code>w</code>. The simulator will <strong>not</strong> stop you from setting past, present, or future game results in your function, whether you meant to do so or not. !!</p>
 <p>Let’s run a simulation with <code>stupid_games_model</code> and see what happens:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sims2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span><span class="fl">2020</span>, process_games <span class="op">=</span> <span class="va">stupid_games_model</span>, fresh_season <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-15 12:09:19: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-15 12:09:19: Beginning simulation of 1000 seasons in 2 rounds</span>
-<span class="co">#&gt; ● 2021-02-15 12:10:30: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-15 12:10:30: Aggregating across simulations</span>
+<code class="sourceCode R"><span class="va">sims2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span><span class="fl">2020</span>, process_games <span class="op">=</span> <span class="va">stupid_games_model</span>, fresh_season <span class="op">=</span> <span class="cn">TRUE</span>, sims_per_round <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>
+<span class="co">#&gt; ● 2021-02-15 12:50:56: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-15 12:50:56: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-15 12:52:26: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-15 12:52:26: Aggregating across simulations</span>
 
 <span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -766,12 +761,12 @@
 <td align="left">NFC</td>
 <td align="left">NFC West</td>
 <td align="left">ARI</td>
-<td align="right">14.49449</td>
-<td align="right">1.000000</td>
-<td align="right">0.9819820</td>
-<td align="right">0.4414414</td>
-<td align="right">0.7817818</td>
-<td align="right">0.6846847</td>
+<td align="right">14.4</td>
+<td align="right">1.000</td>
+<td align="right">0.985</td>
+<td align="right">0.411</td>
+<td align="right">0.762</td>
+<td align="right">0.684</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -779,12 +774,12 @@
 <td align="left">NFC</td>
 <td align="left">NFC South</td>
 <td align="left">ATL</td>
-<td align="right">14.37538</td>
-<td align="right">0.996997</td>
-<td align="right">0.9139139</td>
-<td align="right">0.4884885</td>
-<td align="right">0.1641642</td>
-<td align="right">0.1531532</td>
+<td align="right">14.4</td>
+<td align="right">1.000</td>
+<td align="right">0.902</td>
+<td align="right">0.508</td>
+<td align="right">0.193</td>
+<td align="right">0.181</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -792,12 +787,12 @@
 <td align="left">AFC</td>
 <td align="left">AFC North</td>
 <td align="left">BAL</td>
-<td align="right">14.36436</td>
-<td align="right">1.000000</td>
-<td align="right">0.8358358</td>
-<td align="right">0.5855856</td>
-<td align="right">0.7597598</td>
-<td align="right">0.1241241</td>
+<td align="right">14.4</td>
+<td align="right">1.000</td>
+<td align="right">0.850</td>
+<td align="right">0.605</td>
+<td align="right">0.774</td>
+<td align="right">0.103</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -805,12 +800,12 @@
 <td align="left">AFC</td>
 <td align="left">AFC East</td>
 <td align="left">BUF</td>
-<td align="right">13.61461</td>
-<td align="right">0.997998</td>
-<td align="right">0.9979980</td>
-<td align="right">0.2902903</td>
-<td align="right">0.1811812</td>
-<td align="right">0.0250250</td>
+<td align="right">13.6</td>
+<td align="right">1.000</td>
+<td align="right">0.999</td>
+<td align="right">0.299</td>
+<td align="right">0.176</td>
+<td align="right">0.022</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -818,12 +813,12 @@
 <td align="left">NFC</td>
 <td align="left">NFC South</td>
 <td align="left">CAR</td>
-<td align="right">12.02402</td>
-<td align="right">0.973974</td>
-<td align="right">0.0860861</td>
-<td align="right">0.0150150</td>
-<td align="right">0.0380380</td>
-<td align="right">0.0020020</td>
+<td align="right">12.0</td>
+<td align="right">0.975</td>
+<td align="right">0.098</td>
+<td align="right">0.022</td>
+<td align="right">0.026</td>
+<td align="right">0.003</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -831,12 +826,12 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">CHI</td>
-<td align="right">12.79079</td>
-<td align="right">0.989990</td>
-<td align="right">0.8968969</td>
-<td align="right">0.0480480</td>
-<td align="right">0.0120120</td>
-<td align="right">0.0020020</td>
+<td align="right">12.8</td>
+<td align="right">0.988</td>
+<td align="right">0.894</td>
+<td align="right">0.054</td>
+<td align="right">0.010</td>
+<td align="right">0.000</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -863,79 +858,79 @@
 <td align="left">AFC</td>
 <td align="left">AFC North</td>
 <td align="left">PIT</td>
-<td align="right">3.255255</td>
-<td align="right">0.001001</td>
+<td align="right">3.25</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.0070070</td>
-<td align="right">0.3633634</td>
+<td align="right">0</td>
+<td align="right">0.005</td>
+<td align="right">0.365</td>
 </tr>
 <tr class="even">
 <td align="left">NFC</td>
 <td align="left">NFC West</td>
 <td align="left">SEA</td>
-<td align="right">3.996997</td>
-<td align="right">0.000000</td>
+<td align="right">3.99</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.0160160</td>
-<td align="right">0.3593594</td>
+<td align="right">0</td>
+<td align="right">0.015</td>
+<td align="right">0.334</td>
 </tr>
 <tr class="odd">
 <td align="left">NFC</td>
 <td align="left">NFC West</td>
 <td align="left">SF</td>
-<td align="right">2.410410</td>
-<td align="right">0.000000</td>
+<td align="right">2.44</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.1721722</td>
-<td align="right">0.8368368</td>
+<td align="right">0</td>
+<td align="right">0.161</td>
+<td align="right">0.840</td>
 </tr>
 <tr class="even">
 <td align="left">NFC</td>
 <td align="left">NFC South</td>
 <td align="left">TB</td>
-<td align="right">1.561562</td>
-<td align="right">0.000000</td>
+<td align="right">1.56</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.2362362</td>
-<td align="right">0.8678679</td>
+<td align="right">0</td>
+<td align="right">0.222</td>
+<td align="right">0.864</td>
 </tr>
 <tr class="odd">
 <td align="left">AFC</td>
 <td align="left">AFC South</td>
 <td align="left">TEN</td>
-<td align="right">1.596597</td>
-<td align="right">0.000000</td>
+<td align="right">1.66</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.2032032</td>
-<td align="right">0.8618619</td>
+<td align="right">0</td>
+<td align="right">0.211</td>
+<td align="right">0.839</td>
 </tr>
 <tr class="even">
 <td align="left">NFC</td>
 <td align="left">NFC East</td>
 <td align="left">WAS</td>
-<td align="right">1.617618</td>
-<td align="right">0.000000</td>
+<td align="right">1.58</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.3373373</td>
-<td align="right">0.8858859</td>
+<td align="right">0</td>
+<td align="right">0.353</td>
+<td align="right">0.887</td>
 </tr>
 </tbody>
 </table>
@@ -990,12 +985,13 @@
   process_games <span class="op">=</span> <span class="va">biased_games_model</span>, 
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>, 
   best <span class="op">=</span> <span class="st">"CHI"</span>, 
-  worst <span class="op">=</span> <span class="st">"GB"</span>
+  worst <span class="op">=</span> <span class="st">"GB"</span>,
+  sims_per_round <span class="op">=</span> <span class="fl">1000</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-15 12:10:31: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-15 12:10:32: Beginning simulation of 1000 seasons in 2 rounds</span>
-<span class="co">#&gt; ● 2021-02-15 12:11:39: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-15 12:11:40: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-02-15 12:52:26: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-15 12:52:27: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-15 12:53:55: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-15 12:53:55: Aggregating across simulations</span>
 <span class="va">sims3</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -1018,7 +1014,7 @@
 <td align="right">16</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">0.96997</td>
+<td align="right">0.974</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">0</td>
@@ -1051,7 +1047,7 @@
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.996997</td>
+<td align="right">0.994</td>
 <td align="right">1</td>
 </tr></tbody>
 </table>
