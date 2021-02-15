@@ -51,7 +51,7 @@
 broadly used information on games in the National Football League. This
 function is a convenient helper to download the file into memory without
 having to remember the correct url." />
-<meta property="og:image" content="https://leesharpe.github.io/nflseedR/logo.png" />
+<meta property="og:image" content="https://www.nflseedr.com/logo.png" />
 
 
 
@@ -96,25 +96,16 @@ having to remember the correct url." />
   </a>
 </li>
 <li>
-  <a href="../articles/articles/nflseedR.html">Get started</a>
-</li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/articles/nflsim.html">Simulating NFL seasons using nflseedR</a>
-    </li>
-  </ul>
+  <a href="../reference/index.html">Functions</a>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
+</li>
+<li>
+  <a href="../articles/articles/nflseedR.html">Get started</a>
+</li>
+<li>
+  <a href="../articles/articles/nflsim.html">Season-Simulator</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -152,7 +143,6 @@ having to remember the correct url.</p>
     <p>A data frame containing the following variables for all NFL games
 since 1999:</p><dl>
 <dt>game_id</dt><dd><p>The ID of the game as assigned by the NFL. Note that this value matches the <code>game_id</code> field in nflscrapR if you wish to join the data.</p></dd>
-<dt>alt_game_id</dt><dd><p>This is a more human-readable ID. It consists of: The season, an underscore, the two-digit week number, an underscore, the away team, an underscore, the home team.</p></dd>
 <dt>season</dt><dd><p>The year of the NFL season. This reperesents the whole season, so regular season games that happen in January as well as playoff games will occur in the year after this number.</p></dd>
 <dt>game_type</dt><dd><p>What type of game? One of the following values:
 <ul>
@@ -171,28 +161,36 @@ since 1999:</p><dl>
 <dt>home_team</dt><dd><p>The home team. Note that this contains the designated home team for games which no team is playing at home such as Super Bowls or NFL International games.</p></dd>
 <dt>home_score</dt><dd><p>The number of points the home team scored. Is <code>NA</code> for games which haven't yet been played.</p></dd>
 <dt>location</dt><dd><p>Either <code>Home</code> if the home team is playing in their home stadium, or <code>Neutral</code> if the game is being played at a neutral location. This still shows as <code>Home</code> for games between the Giants and Jets even though they share the same home stadium.</p></dd>
-<dt>result</dt><dd><p>The number of points the home team scored minus the number of points the visiting team scored. Equals <code>h_score - v_score</code>. Is <code>NA</code> for games which haven't yet been played. Convenient for evaluating against the spread bets.</p></dd>
-<dt>total</dt><dd><p>The sum of each team's score in the game. Equals <code>h_score + v_score</code>. Is <code>NA</code> for games which haven't yet been played. Convenient for evaluating over/under total bets.</p></dd>
-<dt>gsis</dt><dd><p>The id of the game issued by the NFL Game Statistics &amp; Information System.</p></dd>
-<dt>pfr</dt><dd><p>The id of the game issued by <a href='https://www.pro-football-reference.com/'>Pro Football Reference</a></p></dd>
-<dt>pff</dt><dd><p>The id of the game issued by <a href='https://www.pff.com/'>Pro Football Focus</a></p></dd>
-<dt>espn</dt><dd><p>The id of the game issued by <a href='https://www.espn.com/'>ESPN</a></p></dd>
+<dt>result</dt><dd><p>Equals <code>home_score - away_score</code>. The number of points the home team scored minus the number of points the away team scored. Is <code>NA</code> for games which haven't yet been played. Convenient for evaluating against the spread bets.</p></dd>
+<dt>total</dt><dd><p>The sum of each team's score in the game. Equals <code>home_score + away_score</code>. Is <code>NA</code> for games which haven't yet been played. Convenient for evaluating over/under total bets.</p></dd>
+<dt>overtime</dt><dd><p>Whether the game went into overtime (= 1) or not (= 0).</p></dd>
+<dt>old_game_id</dt><dd><p>The id of the game issued by the NFL Game Statistics &amp; Information System.</p></dd>
+<dt>away_rest</dt><dd><p>The number of days since that away team's previous game (7 is used for the team's first game of the season).</p></dd>
+<dt>home_rest</dt><dd><p>The number of days since that home team's previous game (7 is used for the team's first game of the season).</p></dd>
+<dt>away_moneyline</dt><dd><p>Odd of the away_team winning the game.</p></dd>
+<dt>home_moneyline</dt><dd><p>Odd of the home_team winning the game.</p></dd>
 <dt>spread_line</dt><dd><p>The spread line for the game. A positive number means the home team was favored by that many points, a negative number means the away team was favored by that many points. This lines up with the <code>result</code> column.</p></dd>
+<dt>away_spread_odds</dt><dd><p>Odd of the away_team covering the <code>spread_line</code>.</p></dd>
+<dt>home_spread_odds</dt><dd><p>Odd of the home_team covering the <code>spread_line</code>.</p></dd>
 <dt>total_line</dt><dd><p>The total line for the game.</p></dd>
+<dt>under_odds</dt><dd><p>Odd of the <code>total</code> being under the <code>total_line</code>.</p></dd>
+<dt>over_odds</dt><dd><p>Odd of the <code>total</code> being over the <code>total_line</code>.</p></dd>
+<dt>div_game</dt><dd><p>Whether the game was a divisional game (= 1) or not (= 0).</p></dd>
 <dt>roof</dt><dd><p>What was the status of the stadium's roof? Will be one of the following values:
 <ul>
-<li><p><code>outdoors</code>: An outdoor stadium</p></li>
-<li><p><code>open</code>: Stadium has a retractable roof which was open</p></li>
 <li><p><code>closed</code>: Stadium has a retractable roof which was closed</p></li>
 <li><p><code>dome</code>: An indoor stadium</p></li>
+<li><p><code>open</code>: Stadium has a retractable roof which was open</p></li>
+<li><p><code>outdoors</code>: An outdoor stadium</p></li>
 </ul></p></dd>
-<dt>surface</dt><dd><p>What type of ground the game was played on</p></dd>
-<dt>temp</dt><dd><p>The temperature at the stadium (for <code>outdoors</code> and <code>open</code> only)</p></dd>
-<dt>wind</dt><dd><p>The speed of the wind in miles/hour (for <code>outdoors</code> and <code>open</code> only)</p></dd>
-<dt>away_coach</dt><dd><p>Name of the head coach of the away team</p></dd>
-<dt>home_coach</dt><dd><p>Name of the head coach of the home team</p></dd>
-<dt>referee</dt><dd><p>Name of the game's referee (head official)</p></dd>
-<dt>stadium</dt><dd><p>Name of the stadium</p></dd>
+<dt>surface</dt><dd><p>What type of ground the game was played on.</p></dd>
+<dt>temp</dt><dd><p>The temperature at the stadium (for <code>roof</code> types <code>outdoors</code> and <code>open</code> only).</p></dd>
+<dt>wind</dt><dd><p>The speed of the wind in miles/hour (for <code>roof</code> types <code>outdoors</code> and <code>open</code> only).</p></dd>
+<dt>away_coach</dt><dd><p>Name of the head coach of the away team.</p></dd>
+<dt>home_coach</dt><dd><p>Name of the head coach of the home team.</p></dd>
+<dt>referee</dt><dd><p>Name of the game's referee (head official).</p></dd>
+<dt>stadium_id</dt><dd><p><a href='https://www.pro-football-reference.com/'>Pro Football Reference</a> ID of the stadium.</p></dd>
+<dt>stadium</dt><dd><p>Name of the stadium.</p></dd>
 
 </dl>
 

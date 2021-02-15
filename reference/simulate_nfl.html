@@ -53,8 +53,9 @@ season including playoffs and draft order.
 It is possible to run the function in parallel processes by calling the
 appropriate plan.
 Progress updates can be activated by calling handlers
-before the start of the simulations." />
-<meta property="og:image" content="https://leesharpe.github.io/nflseedR/logo.png" />
+before the start of the simulations.
+Please see the below given section &quot;Details&quot; for further information." />
+<meta property="og:image" content="https://www.nflseedr.com/logo.png" />
 
 
 
@@ -99,25 +100,16 @@ before the start of the simulations." />
   </a>
 </li>
 <li>
-  <a href="../articles/articles/nflseedR.html">Get started</a>
-</li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/articles/nflsim.html">Simulating NFL seasons using nflseedR</a>
-    </li>
-  </ul>
+  <a href="../reference/index.html">Functions</a>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
+</li>
+<li>
+  <a href="../articles/articles/nflseedR.html">Get started</a>
+</li>
+<li>
+  <a href="../articles/articles/nflsim.html">Season-Simulator</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -147,7 +139,8 @@ season including playoffs and draft order.
 It is possible to run the function in parallel processes by calling the
 appropriate <a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a>.
 Progress updates can be activated by calling <a href='https://rdrr.io/pkg/progressr/man/handlers.html'>handlers</a>
-before the start of the simulations.</p>
+before the start of the simulations.
+Please see the below given section "Details" for further information.</p>
     </div>
 
     <pre class="usage"><span class='fu'>simulate_nfl</span><span class='op'>(</span>
@@ -160,7 +153,7 @@ before the start of the simulations.</p>
   fresh_playoffs <span class='op'>=</span> <span class='cn'>FALSE</span>,
   tiebreaker_depth <span class='op'>=</span> <span class='fl'>3</span>,
   simulations <span class='op'>=</span> <span class='fl'>1000</span>,
-  sims_per_round <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span><span class='op'>(</span><span class='fl'>1000</span>, <span class='va'>simulations</span><span class='op'>)</span>,
+  sims_per_round <span class='op'>=</span> <span class='va'>simulations</span><span class='op'>/</span><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/re-exports.html'>availableCores</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>2</span>,
   .debug <span class='op'>=</span> <span class='cn'>FALSE</span>,
   print_summary <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
@@ -223,7 +216,10 @@ values are valid:</p><dl>
       <th>sims_per_round</th>
       <td><p>The number of <code>simulations</code> can be split into
 multiple rounds and be processed parallel. This parameter controls the number
-of simulations per round.</p></td>
+of simulations per round. The default value determines the number of
+locally available cores and calculates the number of simulations per round
+to be equal to half of the available cores (various benchmarks showed this
+results in optimal performance).</p></td>
     </tr>
     <tr>
       <th>.debug</th>
@@ -239,13 +235,59 @@ are currently performing.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list of three data frames with the results of all simulated games,
+    <p>A list of 4 data frames with the results of all simulated games,
 the final standings in each simulated season (incl. playoffs and draft order)
 and summary statistics across all simulated seasons.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>More Speed Using Parallel Processing</h3>
+
+
+<p>We recommend choosing a default parallel processing method and saving it
+as an environment variable in the R user profile to make sure all futures
+will be resolved with the chosen method by default.
+This can be done by following the below given steps.</p>
+<p>First, run the following line and the user profile should be opened automatically.
+If you haven't saved any environment variables yet, this will be an empty file.</p><pre><span class='fu'>usethis</span><span class='fu'>::</span><span class='fu'>edit_r_environ</span><span class='op'>(</span><span class='op'>)</span>
+</pre>
+
+<p>In the opened file add the next line, then save the file and restart your R session.
+Please note that this example sets "multisession" as default. For most users
+this should be the appropriate plan but please make sure it truly is.</p><pre><span class='va'>R_FUTURE_PLAN</span><span class='op'>=</span><span class='st'>"multisession"</span>
+</pre>
+
+<p>After the session is freshly retarted please check if the above method worked
+by running the next line. If the output is <code>FALSE</code> you successfully set up a
+default non-sequential <code><a href='https://rdrr.io/pkg/future/man/plan.html'>future::plan()</a></code>. If the output is <code>TRUE</code> all functions
+will behave like they were called with <code><a href='https://purrr.tidyverse.org/reference/map.html'>purrr::map()</a></code> and NOT in multisession.</p><pre><span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span><span class='op'>(</span><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"sequential"</span><span class='op'>)</span>
+</pre>
+
+<p>For more information on possible plans please see
+<a href='https://github.com/HenrikBengtsson/future/blob/develop/README.md'>the future package Readme</a>.</p>
+
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Get Progress Updates while Functions are Running</h3>
+
+
+<p>Most nflfastR functions are able to show progress updates
+using <code><a href='https://rdrr.io/pkg/progressr/man/progressor.html'>progressr::progressor()</a></code> if they are turned on before the function is
+called. There are at least two basic ways to do this by either activating
+progress updates globally (for the current session) with</p><pre><span class='fu'>progressr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/progressr/man/handlers.html'>handlers</a></span><span class='op'>(</span>global <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</pre>
+
+<p>or by piping the function call into <code><a href='https://rdrr.io/pkg/progressr/man/with_progress.html'>progressr::with_progress()</a></code>:</p><pre><span class='fu'>simulate_nfl</span><span class='op'>(</span><span class='fl'>2020</span>, fresh_season <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>progressr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/progressr/man/with_progress.html'>with_progress</a></span><span class='op'>(</span><span class='op'>)</span>
+</pre>
+
+<p>For more information how to work with progress handlers please see <a href='https://rdrr.io/pkg/progressr/man/progressr.html'>progressr::progressr</a>.</p>
+
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>The examples <a href='https://leesharpe.github.io/nflseedR/articles/articles/nflsim.html'>on the package website</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://leesharpe.github.io/nflseedR'>nflseedR</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://www.nflseedr.com'>nflseedR</a></span><span class='op'>)</span>
 
 <span class='co'># Activate progress updates</span>
 <span class='co'># progressr::handlers(global = TRUE)</span>
@@ -260,7 +302,9 @@ and summary statistics across all simulated seasons.</p>
   simulations <span class='op'>=</span> <span class='fl'>4</span>,
   sims_per_round <span class='op'>=</span> <span class='fl'>2</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>●</span><span> 2021-02-15 04:59:35: Loading games data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-15 04:59:35: Beginning simulation of 4 seasons in 2 rounds</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-15 04:59:47: Combining simulation data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-15 04:59:47: Aggregating across simulations</span></div><div class='input'><span class='co'># }</span>
+</div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>●</span><span> 2021-02-15 11:12:48: Loading games data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBB00;'>ℹ</span><span> Computation in multiple rounds can be accelerated with parallel processing.</span>
+#&gt; <span class='message'></span><span style='color: #BBBB00;'>ℹ</span><span> You should consider calling a `future::plan()`. Please see the function documentation for further information.</span>
+#&gt; <span class='message'></span><span style='color: #BBBB00;'>ℹ</span><span> Will go on sequentially...</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-15 11:12:49: Beginning simulation of 4 seasons in 2 rounds</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-15 11:12:58: Combining simulation data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-15 11:12:58: Aggregating across simulations</span></div><div class='input'><span class='co'># }</span>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
