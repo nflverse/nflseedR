@@ -43,7 +43,7 @@ results for the Bears:
 sims$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
 ```
 
-We can see the Bears got 10.6 wins on average. They made the playoffs 82% of the time, won the division 35% of the time, and won the Super Bowl in 4%, and rarely received a top 5 draft pick. The `teams` section of the output will show how a team did in each simulated season. 
+We can see the Bears got 10.7 wins on average. They made the playoffs 82% of the time, won the division 35% of the time, and won the Super Bowl in 4%, and rarely received a top 5 draft pick. The `teams` section of the output will show how a team did in each simulated season. 
 
 ```{r}
 sims$teams %>% dplyr::filter(team == "CHI") %>% utils::head(20) %>% knitr::kable()
