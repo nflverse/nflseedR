@@ -24,41 +24,39 @@ which blanks out all of the game results and simulates everything from scratch.
 This is a Monte Carlo style of simulation, meaning that there are seasons
 simulated.
 
-By default, 1000 simulations are done. 
+By default, 1000 simulations are done. We'll set an initial random seed for
+this demonstration so you can follow along and get the same results, but normally
+you wouldn't do that.
 
 ```{r}
-sims <- simulate_nfl(fresh_season = TRUE)
+set.seed(4)
+sims <- simulate_nfl(2020, fresh_season = TRUE)
 ```
 
 The output contains a lot of pre-aggregated information, as well as the individual
 results from each game of each simulation. For example, let's look at the overall
 results for the Bears:
 
-*Note: This is example randomized output, your output will differ.*
-
 ```{r}
-bears <- sims$overall %>% dplyr::filter(team == "CHI")
-bears %>% knitr::kable()
+sims$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
 ```
 
-We can see the Bears got `r round(bears$wins, 2)` wins on average. They made the playoffs `r scales::percent(bears$playoff, accuracy = 1)` of the time, and won the division `r scales::percent(bears$div1, accuracy = 1)` of the time. They won the Super Bowl in `r scales::percent(bears$won_sb, accuracy = 1)`, and have no realistic shot at the #1 or even a top 5 draft pick. The `teams` section of the output will show how a team did in each simulated season. 
+We can see the Bears got 10.6 wins on average. They made the playoffs 82% of the time, won the division 35% of the time, and won the Super Bowl in 4%, and rarely received a top 5 draft pick. The `teams` section of the output will show how a team did in each simulated season. 
 
 ```{r}
 sims$teams %>% dplyr::filter(team == "CHI")
 ```
 
-Oh hey, the Bears got the 32nd draft pick and Week "22" exit, which both mean they
-won the Super Bowl! Let's check the individual games and see how that unfolded.
+Wow that second sim is wild! The Bears went 8-8, but then went on to win the Super Bowl
+as the 7th seed! Let's check out those playoff games:
 
 ```{r}
 sims$games %>% 
-  dplyr::filter(sim == 1, game_type != "REG") %>% 
+  dplyr::filter(sim == 2, game_type != "REG") %>% 
   knitr::kable()
 ```
 
-Coming off the playoff bye, the Bears squeaked out a 1 point victory over the Lions,
-won the NFC Conference Championship by 3 points, but then decisively took care of
-the Jets in the Super Bowl.
+In this simulation, as the 7th seed, the Bears played three road playoff games, defeating the Washington football team by 6 points in the wildcard round, the Vikings by 9 in the divisional around, and the Cowboys also by 9 in the NFC Conference Championship. Finally, they defeated the Chargers by 10 in the Super Bowl.
 
 As you may have gathered at this point, the default simulation code picks a random
 Elo for every team, and uses those as the starting Elo ratings for all 32 teams.
@@ -116,14 +114,14 @@ game results in your function, whether you meant to do so or not. !!
 Let's run a simulation with `stupid_games_model` and see what happens:
 
 ```{r}
-sims2 <- simulate_nfl(process_games = stupid_games_model, fresh_season = TRUE)
+sims2 <- simulate_nfl(2020, process_games = stupid_games_model, fresh_season = TRUE)
 
 sims2$overall %>% dplyr::arrange(team) %>% utils::head() %>% knitr::kable()
 sims2$overall %>% dplyr::arrange(team) %>% utils::tail() %>% knitr::kable()
 ```
 
 As you might expect, the earliest alphbetical teams win a lot. The Cardinals
-win the Super Bowl in 68% of seasons! Meanwhile, the teams at the bottom
+won the Super Bowl in 68% of seasons! Meanwhile, the teams at the bottom
 alphabetically are virtually certain to be at the top of the draft order.
 
 ## Adding In Your Own Data
