@@ -1,4 +1,4 @@
-url: https://leesharpe.github.io/nflseedR
+url: https://www.nflseedr.com
 
 template:
   params:
@@ -12,3 +12,14 @@ authors:
     href: https://twitter.com/LeeSharpeNFL
   Sebastian Carl:
     href: https://twitter.com/mrcaseb
+
+navbar:
+  structure:
+    right: [github]
+  components:
+    reference:
+      text: "Functions"
+      href: reference/index.html
+    articles:
+      text: "Season-Simulator"
+      href: articles/articles/nflsim.html
