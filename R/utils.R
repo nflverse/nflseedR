@@ -12,6 +12,17 @@ report <- function(msg) {
   )
 }
 
+sim_info <- function(msg) {
+  rlang::inform(
+    paste0(
+      crayon::yellow(cli::symbol$info),
+      " ",
+      msg,
+      collapse = "\n"
+    )
+  )
+}
+
 # this makes it so there's two rows per game (one/team)
 double_games <- function(g) {
   g1 <- g %>%
