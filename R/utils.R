@@ -32,3 +32,6 @@ double_games <- function(g) {
 }
 
 is_single_digit_numeric <- function(x) is.numeric(x) && length(x) == 1L && !is.na(x)
+
+# Identify sessions with sequential future resolving
+is_sequential <- function() inherits(future::plan(), "sequential")
