@@ -113,7 +113,7 @@
 <p>The following sections will demonstrate how to use them and what input is required.</p>
 <p>Loading the package is obligatory, so it is done first (along with <code>dplyr</code> for data wrangling and the <code>pipe</code>):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.nflseedr.com">nflseedR</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://leesharpe.github.io/nflseedR">nflseedR</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>warn <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
@@ -154,24 +154,24 @@
 <p>Now the games data frame can be used to compute the division ranks (the parameter <code>.debug</code> is set to <code>TRUE</code> to show what the function is doing).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">div_standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../../reference/compute_division_ranks.html">compute_division_ranks</a></span><span class="op">(</span><span class="va">games</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:56: Calculating team data</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:56: Calculating head to head</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:56: Calculating division rank #1</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:56: DIV (2): Head-to-head</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: DIV (2): Division Record</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: Calculating division rank #2</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: DIV (3): Head-to-head</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: DIV (3): Division Record</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: DIV (3): Common Record</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: DIV (2): Head-to-head</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: DIV (2): Division Record</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: DIV (2): Common Record</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: DIV (2): Conference Record</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: Calculating division rank #3</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: DIV (2): Head-to-head</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: DIV (2): Division Record</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: DIV (2): Common Record</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:57: Calculating division rank #4</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: Calculating team data</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: Calculating head to head</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: Calculating division rank #1</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: DIV (2): Head-to-head</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: DIV (2): Division Record</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: Calculating division rank #2</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: DIV (3): Head-to-head</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: DIV (3): Division Record</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: DIV (3): Common Record</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: DIV (2): Head-to-head</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: DIV (2): Division Record</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: DIV (2): Common Record</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: DIV (2): Conference Record</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: Calculating division rank #3</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: DIV (2): Head-to-head</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:54: DIV (2): Division Record</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: DIV (2): Common Record</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: Calculating division rank #4</span>
 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">div_standings</span><span class="op">)</span>
 <span class="co">#&gt; List of 2</span>
 <span class="co">#&gt;  $ standings: tibble [64 × 14] (S3: tbl_df/tbl/data.frame)</span>
@@ -646,16 +646,16 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">seeds</span> <span class="op">&lt;-</span> <span class="va">div_standings</span> <span class="op">%&gt;%</span> 
   <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../../reference/compute_conference_seeds.html">compute_conference_seeds</a></span><span class="op">(</span>h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, playoff_seeds <span class="op">=</span> <span class="fl">6</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:58: Calculating seed #1</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:58: CONF (3): Head-to-head Sweep</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:58: Calculating seed #2</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:58: CONF (2): Head-to-head Sweep</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:58: CONF (2): Conference Record</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:58: Calculating seed #3</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:58: Calculating seed #4</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:58: Calculating seed #5</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:58: Calculating seed #6</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:58: CONF (2): Best-in-division reduction</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: Calculating seed #1</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: CONF (3): Head-to-head Sweep</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: Calculating seed #2</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: CONF (2): Head-to-head Sweep</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: CONF (2): Conference Record</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: Calculating seed #3</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: Calculating seed #4</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: Calculating seed #5</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: Calculating seed #6</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:55: CONF (2): Best-in-division reduction</span>
 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">seeds</span><span class="op">)</span>
 <span class="co">#&gt; List of 2</span>
 <span class="co">#&gt;  $ standings: tibble [64 × 15] (S3: tbl_df/tbl/data.frame)</span>
@@ -1162,46 +1162,46 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">draft</span> <span class="op">&lt;-</span> <span class="va">seeds</span> <span class="op">%&gt;%</span> 
   <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../../reference/compute_draft_order.html">compute_draft_order</a></span><span class="op">(</span>games <span class="op">=</span> <span class="va">games</span>, h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:58: Processing Playoffs Week 18</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Processing Playoffs Week 19</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Processing Playoffs Week 20</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Processing Playoffs Week 21</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #32</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #31</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #30</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #29</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #28</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #27</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #26</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #25</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #24</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #23</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #22</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #21</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #20</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #19</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #18</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #17</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #16</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #15</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #14</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #13</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #12</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #11</span>
-<span class="co">#&gt; ● 2021-02-15 11:24:59: Calculating draft order #10</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: DRAFT: Divisional Rank</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: DRAFT: Conference Rank</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: CONF (2): Best-in-division reduction</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: CONF (2): Head-to-head Sweep</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: Calculating draft order #9</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: Calculating draft order #8</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: Calculating draft order #7</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: Calculating draft order #6</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: Calculating draft order #5</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: Calculating draft order #4</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: Calculating draft order #3</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: Calculating draft order #2</span>
-<span class="co">#&gt; ● 2021-02-15 11:25:00: Calculating draft order #1</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Processing Playoffs Week 18</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Processing Playoffs Week 19</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Processing Playoffs Week 20</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Processing Playoffs Week 21</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #32</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #31</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #30</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #29</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #28</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #27</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #26</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #25</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #24</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #23</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #22</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #21</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #20</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #19</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #18</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #17</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #16</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #15</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #14</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #13</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #12</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:56: Calculating draft order #11</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: Calculating draft order #10</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: DRAFT: Divisional Rank</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: DRAFT: Conference Rank</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: CONF (2): Best-in-division reduction</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: CONF (2): Head-to-head Sweep</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: Calculating draft order #9</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: Calculating draft order #8</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: Calculating draft order #7</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: Calculating draft order #6</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: Calculating draft order #5</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: Calculating draft order #4</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: Calculating draft order #3</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: Calculating draft order #2</span>
+<span class="co">#&gt; ● 2021-02-15 11:55:57: Calculating draft order #1</span>
 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">draft</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 64</span>
 <span class="co">#&gt; Columns: 16</span>
