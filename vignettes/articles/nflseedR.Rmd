@@ -23,7 +23,7 @@ You can get NFL game data from this function:
 * `load_sharpe_games()` to collect game information and results
 
 And if you prefer, you can take or generate any set of game outcomes and let nflseedR
-handle all of the NFL seeding and tiebreker math for you with three in-simulation
+handle all of the NFL seeding and tiebreaker math for you with three in-simulation
 functions (each can handle thousands of seasons at once):
 
 * `compute_division_ranks()` to find all division winners,
