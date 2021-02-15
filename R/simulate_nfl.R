@@ -25,9 +25,54 @@
 #'   appropriate \link[future]{plan}.
 #'   Progress updates can be activated by calling \link[progressr]{handlers}
 #'   before the start of the simulations.
+#'   Please see the below given section "Details" for further information.
+#' @details ## More Speed Using Parallel Processing
+#' We recommend choosing a default parallel processing method and saving it
+#' as an environment variable in the R user profile to make sure all futures
+#' will be resolved with the chosen method by default.
+#' This can be done by following the below given steps.
+#'
+#' First, run the following line and the user profile should be opened automatically.
+#' If you haven't saved any environment variables yet, this will be an empty file.
+#' ```
+#' usethis::edit_r_environ()
+#'```
+#' In the opened file add the next line, then save the file and restart your R session.
+#' Please note that this example sets "multisession" as default. For most users
+#' this should be the appropriate plan but please make sure it truly is.
+#' ```
+#' R_FUTURE_PLAN="multisession"
+#' ```
+#' After the session is freshly retarted please check if the above method worked
+#' by running the next line. If the output is `FALSE` you successfully set up a
+#' default non-sequential [future::plan()]. If the output is `TRUE` all functions
+#' will behave like they were called with [purrr::map()] and NOT in multisession.
+#' ```
+#' inherits(future::plan(), "sequential")
+#' ```
+#' For more information on possible plans please see
+#' [the future package Readme](https://github.com/HenrikBengtsson/future/blob/develop/README.md).
+#'
+#' ## Get Progress Updates while Functions are Running
+#'
+#' Most nflfastR functions are able to show progress updates
+#' using [progressr::progressor()] if they are turned on before the function is
+#' called. There are at least two basic ways to do this by either activating
+#' progress updates globally (for the current session) with
+#' ```
+#' progressr::handlers(global = TRUE)
+#' ```
+#' or by piping the function call into [progressr::with_progress()]:
+#' ```
+#' simulate_nfl(2020, fresh_season = TRUE) %>%
+#'   progressr::with_progress()
+#' ```
+#'
+#' For more information how to work with progress handlers please see [progressr::progressr].
 #' @returns A list of three data frames with the results of all simulated games,
 #'   the final standings in each simulated season (incl. playoffs and draft order)
 #'   and summary statistics across all simulated seasons.
+#' @seealso The examples [on the package website](https://leesharpe.github.io/nflseedR/articles/articles/nflsim.html)
 #' @export
 #' @examples
 #' \donttest{
@@ -223,7 +268,13 @@ simulate_nfl <- function(nfl_season = NULL,
   #### SET UP SIMULATIONS ####
   sim_rounds <- ceiling(simulations / sims_per_round)
 
-  report(glue("Beginning simulation of {simulations} seasons in {sim_rounds} rounds"))
+  if (sim_rounds > 1 && is_sequential()){
+    message("Computation in multiple rounds can be accelerated with parallel processing.\n",
+            "You should consider calling a `future::plan()`. Please see the function documentation for further information.\n",
+            "Will go on sequentially...")
+  }
+
+  report(glue("Beginning simulation of {simulations} seasons in {sim_rounds} {ifelse(sim_rounds == 1, 'round', 'rounds')}"))
 
   p <- progressr::progressor(along = seq_len(sim_rounds))
 

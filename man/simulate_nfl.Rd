@@ -76,6 +76,49 @@ It is possible to run the function in parallel processes by calling the
 appropriate \link[future]{plan}.
 Progress updates can be activated by calling \link[progressr]{handlers}
 before the start of the simulations.
+Please see the below given section "Details" for further information.
+}
+\details{
+\subsection{More Speed Using Parallel Processing}{
+
+We recommend choosing a default parallel processing method and saving it
+as an environment variable in the R user profile to make sure all futures
+will be resolved with the chosen method by default.
+This can be done by following the below given steps.
+
+First, run the following line and the user profile should be opened automatically.
+If you haven't saved any environment variables yet, this will be an empty file.\preformatted{usethis::edit_r_environ()
+}
+
+In the opened file add the next line, then save the file and restart your R session.
+Please note that this example sets "multisession" as default. For most users
+this should be the appropriate plan but please make sure it truly is.\preformatted{R_FUTURE_PLAN="multisession"
+}
+
+After the session is freshly retarted please check if the above method worked
+by running the next line. If the output is \code{FALSE} you successfully set up a
+default non-sequential \code{\link[future:plan]{future::plan()}}. If the output is \code{TRUE} all functions
+will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and NOT in multisession.\preformatted{inherits(future::plan(), "sequential")
+}
+
+For more information on possible plans please see
+\href{https://github.com/HenrikBengtsson/future/blob/develop/README.md}{the future package Readme}.
+}
+
+\subsection{Get Progress Updates while Functions are Running}{
+
+Most nflfastR functions are able to show progress updates
+using \code{\link[progressr:progressor]{progressr::progressor()}} if they are turned on before the function is
+called. There are at least two basic ways to do this by either activating
+progress updates globally (for the current session) with\preformatted{progressr::handlers(global = TRUE)
+}
+
+or by piping the function call into \code{\link[progressr:with_progress]{progressr::with_progress()}}:\preformatted{simulate_nfl(2020, fresh_season = TRUE) \%>\%
+  progressr::with_progress()
+}
+
+For more information how to work with progress handlers please see \link[progressr:progressr]{progressr::progressr}.
+}
 }
 \examples{
 \donttest{
@@ -95,4 +138,7 @@ sim <- nflseedR::simulate_nfl(
   sims_per_round = 2
 )
 }
+}
+\seealso{
+The examples \href{https://leesharpe.github.io/nflseedR/articles/articles/nflsim.html}{on the package website}
 }
