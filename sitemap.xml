@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://leesharpe.github.io/nflseedR/index.html</loc>
+    <loc>https://www.nflseedr.com/index.html</loc>
   </url>
   <url>
-    <loc>https://leesharpe.github.io/nflseedR/reference/compute_conference_seeds.html</loc>
+    <loc>https://www.nflseedr.com/reference/compute_conference_seeds.html</loc>
   </url>
   <url>
-    <loc>https://leesharpe.github.io/nflseedR/reference/compute_division_ranks.html</loc>
+    <loc>https://www.nflseedr.com/reference/compute_division_ranks.html</loc>
   </url>
   <url>
-    <loc>https://leesharpe.github.io/nflseedR/reference/compute_draft_order.html</loc>
+    <loc>https://www.nflseedr.com/reference/compute_draft_order.html</loc>
   </url>
   <url>
-    <loc>https://leesharpe.github.io/nflseedR/reference/divisions.html</loc>
+    <loc>https://www.nflseedr.com/reference/divisions.html</loc>
   </url>
   <url>
-    <loc>https://leesharpe.github.io/nflseedR/reference/load_sharpe_games.html</loc>
+    <loc>https://www.nflseedr.com/reference/load_sharpe_games.html</loc>
   </url>
   <url>
-    <loc>https://leesharpe.github.io/nflseedR/reference/nflseedR-package.html</loc>
+    <loc>https://www.nflseedr.com/reference/nflseedR-package.html</loc>
   </url>
   <url>
-    <loc>https://leesharpe.github.io/nflseedR/reference/simulate_nfl.html</loc>
+    <loc>https://www.nflseedr.com/reference/simulate_nfl.html</loc>
   </url>
   <url>
-    <loc>https://leesharpe.github.io/nflseedR/articles/articles/nflseedR.html</loc>
+    <loc>https://www.nflseedr.com/articles/articles/nflseedR.html</loc>
   </url>
   <url>
-    <loc>https://leesharpe.github.io/nflseedR/articles/articles/nflsim.html</loc>
+    <loc>https://www.nflseedr.com/articles/articles/nflsim.html</loc>
   </url>
 </urlset>
