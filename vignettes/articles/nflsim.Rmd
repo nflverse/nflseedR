@@ -8,14 +8,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+ifelse(future::supportsMulticore(), future::plan("multicore"), future::plan("multisession"))
 ```
-
-```{r setup}
-library(nflseedR)
-library(tidyverse)
-```
-
-How to simulate NFL seasons and use nflseedR for tiebreakers
 
 # Running a Simulation
 
@@ -23,6 +17,13 @@ Let's do a quick simulation! We'll apply the `fresh_season = TRUE` option,
 which blanks out all of the game results and simulates everything from scratch.
 This is a Monte Carlo style of simulation, meaning that there are seasons
 simulated.
+
+Loading the package is obligatory, so it is done first (along with `dplyr` for data wrangling and the `pipe`):
+
+```{r setup}
+library(nflseedR)
+library(dplyr, warn.conflicts = FALSE)
+```
 
 By default, 1000 simulations are done. We'll set an initial random seed for
 this demonstration so you can follow along and get the same results, but normally
@@ -44,16 +45,14 @@ sims$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
 We can see the Bears got 10.6 wins on average. They made the playoffs 82% of the time, won the division 35% of the time, and won the Super Bowl in 4%, and rarely received a top 5 draft pick. The `teams` section of the output will show how a team did in each simulated season. 
 
 ```{r}
-sims$teams %>% dplyr::filter(team == "CHI")
+sims$teams %>% dplyr::filter(team == "CHI") %>% utils::head(20) %>% knitr::kable()
 ```
 
 Wow that second sim is wild! The Bears went 8-8, but then went on to win the Super Bowl
 as the 7th seed! Let's check out those playoff games:
 
 ```{r}
-sims$games %>% 
-  dplyr::filter(sim == 2, game_type != "REG") %>% 
-  knitr::kable()
+sims$games %>% dplyr::filter(sim == 2, game_type != "REG") %>% knitr::kable()
 ```
 
 In this simulation, as the 7th seed, the Bears played three road playoff games, defeating the Washington football team by 6 points in the wildcard round, the Vikings by 9 in the divisional around, and the Cowboys also by 9 in the NFC Conference Championship. Finally, they defeated the Chargers by 10 in the Super Bowl.
@@ -66,7 +65,7 @@ each week is simulated. (The Elo model used is loosely based off of that of
 
 ## Use Your Own Model
 
-But of course the real value is putting in your own model into the simulatior. To
+But of course the real value is putting in your own model into the simulator. To
 accomplish this, you can write your own function which will determine the output of
 games instead. As an example, here's a very stupid model that makes the team earlier
 alphabetically win by 3 points 90% of the time, and lose by 3 points the other 10% of
@@ -120,7 +119,7 @@ sims2$overall %>% dplyr::arrange(team) %>% utils::head() %>% knitr::kable()
 sims2$overall %>% dplyr::arrange(team) %>% utils::tail() %>% knitr::kable()
 ```
 
-As you might expect, the earliest alphbetical teams win a lot. The Cardinals
+As you might expect, the earliest alphabetical teams win a lot. The Cardinals
 won the Super Bowl in 68% of seasons! Meanwhile, the teams at the bottom
 alphabetically are virtually certain to be at the top of the draft order.
 
@@ -192,8 +191,8 @@ sims3 <- simulate_nfl(
   best = "CHI", 
   worst = "GB"
 )
-sims3$overall %>% dplyr::filter(team == "CHI")
-sims3$overall %>% dplyr::filter(team == "GB")
+sims3$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
+sims3$overall %>% dplyr::filter(team == "GB") %>% knitr::kable()
 ```
 
 And this shows exactly what we expect. By defining the Bears as the best team,
@@ -240,7 +239,7 @@ The default is `FALSE` in which case playoff games that are completed are accept
 as they occurred,
 * **tiebreaker_depth** - How far do you want tiebreakers to be utilized? Usually 
 leaving it at the default below (`3`) is fine, but before the season starts, you
-may wish to have less tiebreaking in order to 
+may wish to have less tie-breaking in order to 
   * `1`: All teams with the same record have any ties broken randomly.
   * `2`: Instead of evaluating common games if that step is reached, break any ties
 randomly. But all earlier tiebreakers are handled correctly.
@@ -248,8 +247,10 @@ randomly. But all earlier tiebreakers are handled correctly.
 processed (or through strength of victory for draft pick order). In the unlikely
 event of a further tie, it will be broken randomly.
 * **simulations** - How many simulations should be run? Defaults to 1000.
-* **sims_per_round** - The simulator can break things up into chunks of simualted
+* **sims_per_round** - The simulator can break things up into chunks of simulated
 seasons, process each chunk on its own (called a round), and then aggregate everything
-together at the end. Defaults to `simulations` or 1000, whichever is lower. If your
-computer is hanging and forces a restart while running this simulation, it is recommended
-that you lower this number.
+together at the end. The default value determines the number of locally available 
+cores and calculates the number of simulations per round to be equal to half of 
+the available cores (various benchmarks showed this results in optimal performance
+in parallel processes). If your computer is hanging and forces a restart while 
+running this simulation, it is recommended that you lower this number.
