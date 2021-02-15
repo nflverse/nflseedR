@@ -16,7 +16,10 @@
 #' @param simulations Equals the number of times the given NFL season shall be simulated
 #' @param sims_per_round The number of \code{simulations} can be split into
 #'   multiple rounds and be processed parallel. This parameter controls the number
-#'   of simulations per round.
+#'   of simulations per round. The default value determines the number of
+#'   locally available cores and calculates the number of simulations per round
+#'   to be equal to half of the available cores (various benchmarks showed this
+#'   results in optimal performance).
 #' @param print_summary If \code{TRUE}, prints the summary statistics to the console.
 #' @description This function simulates a given NFL season multiple times using custom functions
 #'   to estimate and simulate game results and computes the outcome of the given
@@ -69,7 +72,7 @@
 #' ```
 #'
 #' For more information how to work with progress handlers please see [progressr::progressr].
-#' @returns A list of three data frames with the results of all simulated games,
+#' @returns A list of 4 data frames with the results of all simulated games,
 #'   the final standings in each simulated season (incl. playoffs and draft order)
 #'   and summary statistics across all simulated seasons.
 #' @seealso The examples [on the package website](https://leesharpe.github.io/nflseedR/articles/articles/nflsim.html)
@@ -101,7 +104,7 @@ simulate_nfl <- function(nfl_season = NULL,
                          fresh_playoffs = FALSE,
                          tiebreaker_depth = 3,
                          simulations = 1000,
-                         sims_per_round = min(1000, simulations),
+                         sims_per_round = simulations / future::availableCores() * 2,
                          .debug = FALSE,
                          print_summary = FALSE) {
 
@@ -269,9 +272,9 @@ simulate_nfl <- function(nfl_season = NULL,
   sim_rounds <- ceiling(simulations / sims_per_round)
 
   if (sim_rounds > 1 && is_sequential()){
-    message("Computation in multiple rounds can be accelerated with parallel processing.\n",
-            "You should consider calling a `future::plan()`. Please see the function documentation for further information.\n",
-            "Will go on sequentially...")
+    sim_info(c("Computation in multiple rounds can be accelerated with parallel processing.",
+            "You should consider calling a `future::plan()`. Please see the function documentation for further information.",
+            "Will go on sequentially..."))
   }
 
   report(glue("Beginning simulation of {simulations} seasons in {sim_rounds} {ifelse(sim_rounds == 1, 'round', 'rounds')}"))

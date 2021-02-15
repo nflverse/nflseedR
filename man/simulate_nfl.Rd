@@ -14,7 +14,7 @@ simulate_nfl(
   fresh_playoffs = FALSE,
   tiebreaker_depth = 3,
   simulations = 1000,
-  sims_per_round = min(1000, simulations),
+  sims_per_round = simulations/future::availableCores() * 2,
   .debug = FALSE,
   print_summary = FALSE
 )
@@ -55,7 +55,10 @@ values are valid:
 
 \item{sims_per_round}{The number of \code{simulations} can be split into
 multiple rounds and be processed parallel. This parameter controls the number
-of simulations per round.}
+of simulations per round. The default value determines the number of
+locally available cores and calculates the number of simulations per round
+to be equal to half of the available cores (various benchmarks showed this
+results in optimal performance).}
 
 \item{.debug}{Either \code{TRUE} or \code{FALSE}. Controls whether additional
 messages are printed to the console showing what the tiebreaking algorithms
@@ -64,7 +67,7 @@ are currently performing.}
 \item{print_summary}{If \code{TRUE}, prints the summary statistics to the console.}
 }
 \value{
-A list of three data frames with the results of all simulated games,
+A list of 4 data frames with the results of all simulated games,
 the final standings in each simulated season (incl. playoffs and draft order)
 and summary statistics across all simulated seasons.
 }
