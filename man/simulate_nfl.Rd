@@ -143,5 +143,5 @@ sim <- nflseedR::simulate_nfl(
 }
 }
 \seealso{
-The examples \href{https://leesharpe.github.io/nflseedR/articles/articles/nflsim.html}{on the package website}
+The examples \href{https://nflseedr.com/articles/articles/nflsim.html}{on the package website}
 }

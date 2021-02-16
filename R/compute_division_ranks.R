@@ -51,12 +51,12 @@
 #' \donttest{
 #' options(digits = 3)
 #' options(tibble.print_min = 64)
-#' library(dplyr)
+#' library(dplyr, warn.conflicts = FALSE)
 #'
-#' readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
+#' nflseedR::load_sharpe_games() %>%
 #'   dplyr::filter(season %in% 2019:2020) %>%
 #'   dplyr::select(sim = season, game_type, week, away_team, home_team, result) %>%
-#'   compute_division_ranks() %>%
+#'   nflseedR::compute_division_ranks() %>%
 #'   purrr::pluck("standings")
 #' }
 compute_division_ranks <- function(games,

@@ -75,7 +75,7 @@
 #' @returns A list of 4 data frames with the results of all simulated games,
 #'   the final standings in each simulated season (incl. playoffs and draft order)
 #'   and summary statistics across all simulated seasons.
-#' @seealso The examples [on the package website](https://leesharpe.github.io/nflseedR/articles/articles/nflsim.html)
+#' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflsim.html)
 #' @export
 #' @examples
 #' \donttest{
