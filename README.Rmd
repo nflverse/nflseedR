@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# **nflseedR** <img src='man/figures/logo.png' align="right" style="width:25%;min-width:120px;max-width:100%;"/>
+# **nflseedR** <img src='man/figures/logo.png' align="right" width="25%" min-width="120px"/>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/leesharpe/nflseedR/workflows/R-CMD-check/badge.svg)](https://github.com/leesharpe/nflseedR/actions)
