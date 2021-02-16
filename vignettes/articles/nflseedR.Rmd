@@ -52,7 +52,7 @@ This pulls game information from the games.rds file (equivalent to the games.csv
 
 ## Find Division Ranks
 
-This functions computes division ranks based on a data frame containing game results of one or more NFL seasons. SO let's load some game data first (this example uses the game data of the 2012 and 2019 seasons):
+This functions computes division ranks based on a data frame containing game results of one or more NFL seasons. So let's load some game data first (this example uses the game data of the 2012 and 2019 seasons):
 
 ```{r}
 games <- nflseedR::load_sharpe_games() %>%
