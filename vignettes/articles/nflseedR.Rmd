@@ -45,6 +45,7 @@ options(warn = -1)
 
 ```{r}
 games <- nflseedR::load_sharpe_games()
+games %>% utils::tail(20) %>% knitr::kable()
 ```
 
 This pulls game information from the games.rds file (equivalent to the games.csv file) from
