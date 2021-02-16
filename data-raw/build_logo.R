@@ -34,10 +34,10 @@ sticker(
   h_fill = "#323232",
   h_color = "black",
   h_size = 0.8,
-  filename = "data-raw/logo.png",
-  url = "https://github.com/leesharpe/nflseedR",
+  filename = "man/figures/logo.png",
+  url = "https://nflseedr.com",
   u_color = "white",
-  u_size = 3
+  u_size = 5
 )
 
-usethis::use_logo("data-raw/logo.png")
+# usethis::use_logo("data-raw/logo.png")

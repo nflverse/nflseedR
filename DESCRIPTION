@@ -13,7 +13,7 @@ Authors@R:
 Description: A set of functions to simulate National Football
     League seasons including the sophisticated tiebreaking procedures.
 License: MIT + file LICENSE
-URL: https://www.nflseedr.com,
+URL: https://nflseedr.com,
     https://leesharpe.github.io/nflseedR,
     https://github.com/leesharpe/nflseedR,
 BugReports: https://github.com/leesharpe/nflseedR/issues
