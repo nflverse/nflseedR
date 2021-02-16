@@ -51,7 +51,7 @@ remotes::install_github("leesharpe/nflseedR")
 ## Get Started
 
 With nflseedR it’s possible to [simulate complete
-seasons](https://leesharpe.github.io/nflseedR/articles/articles/nflsim.html)
-or use it’s [seeding
-functions](https://leesharpe.github.io/nflseedR/articles/articles/nflseedR.html)
-in custom simulations.
+seasons](https://nflseedr.com/articles/articles/nflsim.html) or use it’s
+[seeding
+functions](https://nflseedr.com/articles/articles/nflseedR.html) in
+custom simulations.
