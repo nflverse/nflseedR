@@ -104,20 +104,22 @@ simulate_nfl <- function(nfl_season = NULL,
                          fresh_playoffs = FALSE,
                          tiebreaker_depth = 3,
                          simulations = 1000,
-                         sims_per_round = simulations / future::availableCores() * 2,
+                         sims_per_round = ceiling(simulations / future::availableCores() * 2),
                          .debug = FALSE,
                          print_summary = FALSE) {
 
   # Define simple estimate and simulate functions
 
   if (is.null(process_games)) {
-    process_games <- function(t, g, w, ...) {
-      # t = teams data
-      # g = games data
+    process_games <- function(teams, games, week_num, ...) {
+      # teams = teams data
+      # games = games data
+      #
+      # this example estimates at PK/0 and 50%
       # estimate = is the median spread expected (positive = home team favored)
       # wp = is the probability of the team winning the game
-      # this example estimates at PK/0 and 50%
-      # only simulate games through week w
+      #
+      # only simulate games through week week_num
       # only simulate games with is.na(result)
       # result = how many points home team won by
 
@@ -129,28 +131,28 @@ simulate_nfl <- function(nfl_season = NULL,
       }
 
       # get elo if not in teams data already
-      if (!("elo" %in% colnames(t))) {
+      if (!("elo" %in% colnames(teams))) {
         args <- list(...)
         if ("elo" %in% names(args)) {
           # pull from custom arguments
-          t <- t %>%
+          teams <- teams %>%
             dplyr::inner_join(args$elo %>% select(team, elo), by = c("team"="team"))
         } else {
           # start everyone at a random default elo
           ratings <- tibble(
-            team = unique(t$team),
+            team = unique(teams$team),
             elo = rnorm(length(unique(team)), 1500, 150)
           )
-          t <- t %>%
+          teams <- teams %>%
             dplyr::inner_join(ratings, by="team")
         }
       }
 
       # pull ratings from teams data
-      ratings <- t %>% select(sim, team, elo)
+      ratings <- teams %>% select(sim, team, elo)
 
       # mark estimate, wp, and result for games
-      g <- g %>%
+      games <- games %>%
         dplyr::inner_join(ratings, by = c("sim"="sim","away_team"="team")) %>%
         dplyr::rename(away_elo = elo) %>%
         dplyr::inner_join(ratings, by = c("sim"="sim","home_team"="team")) %>%
@@ -163,9 +165,9 @@ simulate_nfl <- function(nfl_season = NULL,
           wp = 1 / (10^(-elo_diff / 400) + 1),
           estimate = elo_diff / 25,
           result = case_when(
-            !is.na(result) ~ as.integer(result),
-            week <= w ~ as.integer(round_out(rnorm(n(), estimate, 13))),
-            TRUE ~ NA_integer_
+            is.na(result) & week == week_num ~
+              as.integer(round_out(rnorm(n(), estimate, 13))),
+            TRUE ~ as.integer(result)
           ),
           outcome = case_when(
             is.na(result) ~ NA_real_,
@@ -186,21 +188,25 @@ simulate_nfl <- function(nfl_season = NULL,
                       -outcome, -elo_input, -elo_mult)
 
       # apply elo shifts
-      t <- t %>%
-        dplyr::left_join(g %>% filter(week == w) %>% select(sim, away_team, elo_shift),
+      teams <- teams %>%
+        dplyr::left_join(games %>%
+                           filter(week == week_num) %>%
+                           select(sim, away_team, elo_shift),
                          by = c("sim"="sim","team"="away_team")) %>%
         dplyr::mutate(elo = elo - ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
         dplyr::select(-elo_shift) %>%
-        dplyr::left_join(g %>% filter(week == w) %>% select(sim, home_team, elo_shift),
+        dplyr::left_join(games %>%
+                           filter(week == week_num) %>%
+                           select(sim, home_team, elo_shift),
                          by = c("sim"="sim","team"="home_team")) %>%
         dplyr::mutate(elo = elo + ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
         dplyr::select(-elo_shift)
 
       # remove elo shift
-      g <- g %>%
+      games <- games %>%
         dplyr::select(-elo_shift)
 
-      return(list(teams = t, games = g))
+      return(list(teams = teams, games = games))
     }
   }
 
