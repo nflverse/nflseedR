@@ -46,7 +46,7 @@ sims$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
 We can see the Bears got 10.7 wins on average. They made the playoffs 82% of the time, won the division 35% of the time, and won the Super Bowl in 4%, and rarely received a top 5 draft pick. The `teams` section of the output will show how a team did in each simulated season. 
 
 ```{r}
-sims$teams %>% dplyr::filter(team == "CHI") %>% utils::head(20) %>% knitr::kable()
+sims$teams %>% dplyr::filter(team == "CHI") %>% utils::head(6) %>% select(sim, team, wins, seed, draft_order) %>% knitr::kable()
 ```
 
 Wow that second sim is wild! The Bears went 8-8, but then went on to win the Super Bowl
@@ -73,12 +73,12 @@ alphabetically win by 3 points 90% of the time, and lose by 3 points the other 1
 the time.
 
 ```{r}
-stupid_games_model <- function(t, g, w, ...) {
+stupid_games_model <- function(teams, games, week_num,, ...) {
   # make the earlier alphabetical team win 90% of the time
-  g <- g %>%
+  games <- games %>%
     dplyr::mutate(
       result = dplyr::case_when(
-        week != w ~ result,
+        !is.na(result) | week != week_num ~ result,
         away_team < home_team ~ sample(c(-3, 3), n(), prob = c(0.9, 0.1), replace = TRUE),
         away_team > home_team ~ sample(c(-3, 3), n(), prob = c(0.1, 0.9), replace = TRUE),
         TRUE ~ 0
@@ -86,7 +86,7 @@ stupid_games_model <- function(t, g, w, ...) {
     )
   
   # return values
-  return(list(teams = t, games = g))
+  return(list(teams = teams, games = games))
 }
 ```
 
@@ -141,7 +141,7 @@ simulator will in turn pass these on to *your* function that processes games.
 For example, let's slightly modify our last example:
 
 ```{r}
-biased_games_model <- function(t, g, w, ...) {
+biased_games_model <- function(teams, games, week_num, ...) {
   
   # arguments
   args <- list(...)
@@ -160,10 +160,10 @@ biased_games_model <- function(t, g, w, ...) {
 
   # make the best team always win and the worst team always lose
   # otherwise, make the earlier alphabetical team win 90% of the time
-  g <- g %>%
+  games <- games %>%
     dplyr::mutate(
       result = dplyr::case_when(
-        week != w ~ result,
+        !is.na(result) | week != week_num ~ result,
         away_team == best | home_team == worst ~ -3,
         away_team == worst | home_team == best ~ 3,
         away_team < home_team ~ sample(c(-3, 3), n(), prob = c(0.9, 0.1), replace = TRUE),
@@ -173,7 +173,7 @@ biased_games_model <- function(t, g, w, ...) {
     )
   
   # return values
-  return(list(teams = t, games = g))
+  return(list(teams = teams, games = games))
 }
 ```
 
@@ -187,6 +187,7 @@ Let's simulate using this:
 
 ```{r}
 sims3 <- simulate_nfl(
+  nfl_season = 2020,
   process_games = biased_games_model, 
   fresh_season = TRUE, 
   best = "CHI", 
