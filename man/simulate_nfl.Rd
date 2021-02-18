@@ -14,7 +14,7 @@ simulate_nfl(
   fresh_playoffs = FALSE,
   tiebreaker_depth = 3,
   simulations = 1000,
-  sims_per_round = simulations/future::availableCores() * 2,
+  sims_per_round = ceiling(simulations/future::availableCores() * 2),
   .debug = FALSE,
   print_summary = FALSE
 )
