@@ -107,10 +107,10 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
 <span class="va">sims</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span><span class="fl">2020</span>, fresh_season <span class="op">=</span> <span class="cn">TRUE</span>, sims_per_round <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-18 07:16:57: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-18 07:16:58: Beginning simulation of 1000 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-18 07:18:44: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-18 07:18:44: Aggregating across simulations</span></code></pre></div>
+<span class="co">#&gt; ● 2021-02-18 07:39:42: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-18 07:39:43: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-18 07:41:30: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-18 07:41:30: Aggregating across simulations</span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -144,404 +144,57 @@
 </table>
 <p>We can see the Bears got 10.7 wins on average. They made the playoffs 82% of the time, won the division 35% of the time, and won the Super Bowl in 4%, and rarely received a top 5 draft pick. The <code>teams</code> section of the output will show how a team did in each simulated season.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">teams</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">teams</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sim</span>, <span class="va">team</span>, <span class="va">wins</span>, <span class="va">seed</span>, <span class="va">draft_order</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
-<colgroup>
-<col width="3%">
-<col width="4%">
-<col width="4%">
-<col width="8%">
-<col width="5%">
-<col width="4%">
-<col width="8%">
-<col width="7%">
-<col width="7%">
-<col width="7%">
-<col width="5%">
-<col width="5%">
-<col width="7%">
-<col width="4%">
-<col width="4%">
-<col width="10%">
-</colgroup>
 <thead><tr class="header">
 <th align="right">sim</th>
 <th align="left">team</th>
-<th align="left">conf</th>
-<th align="left">division</th>
-<th align="right">games</th>
 <th align="right">wins</th>
-<th align="right">true_wins</th>
-<th align="right">win_pct</th>
-<th align="right">div_pct</th>
-<th align="right">conf_pct</th>
-<th align="right">sov</th>
-<th align="right">sos</th>
-<th align="right">div_rank</th>
 <th align="right">seed</th>
-<th align="right">exit</th>
 <th align="right">draft_order</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
 <td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
 <td align="right">15</td>
-<td align="right">15</td>
-<td align="right">0.938</td>
-<td align="right">1.000</td>
-<td align="right">1.000</td>
-<td align="right">0.446</td>
-<td align="right">0.449</td>
 <td align="right">1</td>
-<td align="right">1</td>
-<td align="right">20</td>
 <td align="right">30</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
 <td align="right">8</td>
-<td align="right">8</td>
-<td align="right">0.500</td>
-<td align="right">0.667</td>
-<td align="right">0.667</td>
-<td align="right">0.352</td>
-<td align="right">0.465</td>
-<td align="right">2</td>
 <td align="right">7</td>
-<td align="right">22</td>
 <td align="right">32</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
 <td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
 <td align="right">8</td>
-<td align="right">8</td>
-<td align="right">0.500</td>
-<td align="right">0.667</td>
-<td align="right">0.500</td>
-<td align="right">0.312</td>
-<td align="right">0.445</td>
-<td align="right">2</td>
 <td align="right">6</td>
-<td align="right">19</td>
 <td align="right">25</td>
 </tr>
 <tr class="even">
 <td align="right">4</td>
 <td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
 <td align="right">11</td>
-<td align="right">11</td>
-<td align="right">0.688</td>
-<td align="right">0.833</td>
-<td align="right">0.750</td>
-<td align="right">0.352</td>
-<td align="right">0.406</td>
-<td align="right">1</td>
 <td align="right">3</td>
-<td align="right">20</td>
 <td align="right">29</td>
 </tr>
 <tr class="odd">
 <td align="right">5</td>
 <td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
 <td align="right">7</td>
-<td align="right">7</td>
-<td align="right">0.438</td>
-<td align="right">0.167</td>
-<td align="right">0.500</td>
-<td align="right">0.402</td>
-<td align="right">0.469</td>
-<td align="right">3</td>
 <td align="right">NA</td>
-<td align="right">17</td>
 <td align="right">13</td>
 </tr>
 <tr class="even">
 <td align="right">6</td>
 <td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
 <td align="right">13</td>
-<td align="right">13</td>
-<td align="right">0.812</td>
-<td align="right">0.833</td>
-<td align="right">0.917</td>
-<td align="right">0.375</td>
-<td align="right">0.426</td>
 <td align="right">1</td>
-<td align="right">1</td>
-<td align="right">20</td>
 <td align="right">29</td>
-</tr>
-<tr class="odd">
-<td align="right">7</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">12</td>
-<td align="right">12</td>
-<td align="right">0.750</td>
-<td align="right">0.667</td>
-<td align="right">0.833</td>
-<td align="right">0.312</td>
-<td align="right">0.434</td>
-<td align="right">2</td>
-<td align="right">5</td>
-<td align="right">19</td>
-<td align="right">28</td>
-</tr>
-<tr class="even">
-<td align="right">8</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">11</td>
-<td align="right">11</td>
-<td align="right">0.688</td>
-<td align="right">0.667</td>
-<td align="right">0.750</td>
-<td align="right">0.364</td>
-<td align="right">0.402</td>
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">18</td>
-<td align="right">23</td>
-</tr>
-<tr class="odd">
-<td align="right">9</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">13</td>
-<td align="right">13</td>
-<td align="right">0.812</td>
-<td align="right">0.833</td>
-<td align="right">0.917</td>
-<td align="right">0.413</td>
-<td align="right">0.422</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">19</td>
-<td align="right">27</td>
-</tr>
-<tr class="even">
-<td align="right">10</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">9</td>
-<td align="right">9</td>
-<td align="right">0.562</td>
-<td align="right">0.333</td>
-<td align="right">0.667</td>
-<td align="right">0.347</td>
-<td align="right">0.410</td>
-<td align="right">2</td>
-<td align="right">7</td>
-<td align="right">19</td>
-<td align="right">25</td>
-</tr>
-<tr class="odd">
-<td align="right">11</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">9</td>
-<td align="right">9</td>
-<td align="right">0.562</td>
-<td align="right">0.500</td>
-<td align="right">0.583</td>
-<td align="right">0.403</td>
-<td align="right">0.438</td>
-<td align="right">2</td>
-<td align="right">6</td>
-<td align="right">19</td>
-<td align="right">25</td>
-</tr>
-<tr class="even">
-<td align="right">12</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">9</td>
-<td align="right">9</td>
-<td align="right">0.562</td>
-<td align="right">0.667</td>
-<td align="right">0.667</td>
-<td align="right">0.306</td>
-<td align="right">0.430</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">18</td>
-<td align="right">19</td>
-</tr>
-<tr class="odd">
-<td align="right">13</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">10</td>
-<td align="right">10</td>
-<td align="right">0.625</td>
-<td align="right">0.500</td>
-<td align="right">0.583</td>
-<td align="right">0.306</td>
-<td align="right">0.434</td>
-<td align="right">2</td>
-<td align="right">7</td>
-<td align="right">19</td>
-<td align="right">27</td>
-</tr>
-<tr class="even">
-<td align="right">14</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">10</td>
-<td align="right">10</td>
-<td align="right">0.625</td>
-<td align="right">0.500</td>
-<td align="right">0.667</td>
-<td align="right">0.275</td>
-<td align="right">0.414</td>
-<td align="right">2</td>
-<td align="right">5</td>
-<td align="right">18</td>
-<td align="right">21</td>
-</tr>
-<tr class="odd">
-<td align="right">15</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">11</td>
-<td align="right">11</td>
-<td align="right">0.688</td>
-<td align="right">0.500</td>
-<td align="right">0.667</td>
-<td align="right">0.375</td>
-<td align="right">0.414</td>
-<td align="right">2</td>
-<td align="right">5</td>
-<td align="right">20</td>
-<td align="right">29</td>
-</tr>
-<tr class="even">
-<td align="right">16</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">9</td>
-<td align="right">9</td>
-<td align="right">0.562</td>
-<td align="right">0.833</td>
-<td align="right">0.667</td>
-<td align="right">0.361</td>
-<td align="right">0.469</td>
-<td align="right">2</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">17</td>
-</tr>
-<tr class="odd">
-<td align="right">17</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">15</td>
-<td align="right">15</td>
-<td align="right">0.938</td>
-<td align="right">0.833</td>
-<td align="right">0.917</td>
-<td align="right">0.358</td>
-<td align="right">0.383</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">21</td>
-<td align="right">31</td>
-</tr>
-<tr class="even">
-<td align="right">18</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">13</td>
-<td align="right">13</td>
-<td align="right">0.812</td>
-<td align="right">0.667</td>
-<td align="right">0.833</td>
-<td align="right">0.389</td>
-<td align="right">0.402</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">19</td>
-<td align="right">27</td>
-</tr>
-<tr class="odd">
-<td align="right">19</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">12</td>
-<td align="right">12</td>
-<td align="right">0.750</td>
-<td align="right">0.833</td>
-<td align="right">0.917</td>
-<td align="right">0.328</td>
-<td align="right">0.395</td>
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">21</td>
-<td align="right">31</td>
-</tr>
-<tr class="even">
-<td align="right">20</td>
-<td align="left">CHI</td>
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">11</td>
-<td align="right">11</td>
-<td align="right">0.688</td>
-<td align="right">0.667</td>
-<td align="right">0.750</td>
-<td align="right">0.318</td>
-<td align="right">0.426</td>
-<td align="right">2</td>
-<td align="right">7</td>
-<td align="right">19</td>
-<td align="right">25</td>
 </tr>
 </tbody>
 </table>
@@ -713,12 +366,12 @@
 <a href="#use-your-own-model" class="anchor"></a>Use Your Own Model</h2>
 <p>But of course the real value is putting in your own model into the simulator. To accomplish this, you can write your own function which will determine the output of games instead. As an example, here’s a very stupid model that makes the team earlier alphabetically win by 3 points 90% of the time, and lose by 3 points the other 10% of the time.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">stupid_games_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">g</span>, <span class="va">w</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
+<code class="sourceCode R"><span class="va">stupid_games_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">teams</span>, <span class="va">games</span>, <span class="va">week_num</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="co"># make the earlier alphabetical team win 90% of the time</span>
-  <span class="va">g</span> <span class="op">&lt;-</span> <span class="va">g</span> <span class="op">%&gt;%</span>
+  <span class="va">games</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op">%&gt;%</span>
     <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
       result <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span><span class="op">(</span>
-        <span class="va">week</span> <span class="op">!=</span> <span class="va">w</span> <span class="op">~</span> <span class="va">result</span>,
+        <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">|</span> <span class="va">week</span> <span class="op">!=</span> <span class="va">week_num</span> <span class="op">~</span> <span class="va">result</span>,
         <span class="va">away_team</span> <span class="op">&lt;</span> <span class="va">home_team</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.1</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
         <span class="va">away_team</span> <span class="op">&gt;</span> <span class="va">home_team</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
         <span class="cn">TRUE</span> <span class="op">~</span> <span class="fl">0</span>
@@ -726,7 +379,7 @@
     <span class="op">)</span>
   
   <span class="co"># return values</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>teams <span class="op">=</span> <span class="va">t</span>, games <span class="op">=</span> <span class="va">g</span><span class="op">)</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>teams <span class="op">=</span> <span class="va">teams</span>, games <span class="op">=</span> <span class="va">games</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p>When you create this function, the first two inputs are data on the teams (one row per team per sim), and data on the games (one row per game per sim). The third argument is the week number currently being simulated, as only one week is processed at a time.</p>
 <p>Your function’s job - by whatever means you choose - is to update the <code>result</code> column for that week’s games in each of the sims with the number of points the home team won by (or lost by if negative, or 0 if the game ended in a tie).</p>
@@ -736,10 +389,10 @@
 <p>Let’s run a simulation with <code>stupid_games_model</code> and see what happens:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span><span class="fl">2020</span>, process_games <span class="op">=</span> <span class="va">stupid_games_model</span>, fresh_season <span class="op">=</span> <span class="cn">TRUE</span>, sims_per_round <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-18 07:18:44: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-18 07:18:45: Beginning simulation of 1000 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-18 07:20:17: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-18 07:20:17: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-02-18 07:41:31: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-18 07:41:32: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-18 07:43:04: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-18 07:43:04: Aggregating across simulations</span>
 
 <span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -944,7 +597,7 @@
 <p>When you call the <code><a href="../../reference/simulate_nfl.html">simulate_nfl()</a></code> function, it too uses the <code>...</code> syntax, which allows you to pass in any number of additional arguments to the function. The simulator will in turn pass these on to <em>your</em> function that processes games.</p>
 <p>For example, let’s slightly modify our last example:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">biased_games_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">g</span>, <span class="va">w</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
+<code class="sourceCode R"><span class="va">biased_games_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">teams</span>, <span class="va">games</span>, <span class="va">week_num</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   
   <span class="co"># arguments</span>
   <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
@@ -963,10 +616,10 @@
 
   <span class="co"># make the best team always win and the worst team always lose</span>
   <span class="co"># otherwise, make the earlier alphabetical team win 90% of the time</span>
-  <span class="va">g</span> <span class="op">&lt;-</span> <span class="va">g</span> <span class="op">%&gt;%</span>
+  <span class="va">games</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op">%&gt;%</span>
     <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
       result <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span><span class="op">(</span>
-        <span class="va">week</span> <span class="op">!=</span> <span class="va">w</span> <span class="op">~</span> <span class="va">result</span>,
+        <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">|</span> <span class="va">week</span> <span class="op">!=</span> <span class="va">week_num</span> <span class="op">~</span> <span class="va">result</span>,
         <span class="va">away_team</span> <span class="op">==</span> <span class="va">best</span> <span class="op">|</span> <span class="va">home_team</span> <span class="op">==</span> <span class="va">worst</span> <span class="op">~</span> <span class="op">-</span><span class="fl">3</span>,
         <span class="va">away_team</span> <span class="op">==</span> <span class="va">worst</span> <span class="op">|</span> <span class="va">home_team</span> <span class="op">==</span> <span class="va">best</span> <span class="op">~</span> <span class="fl">3</span>,
         <span class="va">away_team</span> <span class="op">&lt;</span> <span class="va">home_team</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.1</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
@@ -976,22 +629,23 @@
     <span class="op">)</span>
   
   <span class="co"># return values</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>teams <span class="op">=</span> <span class="va">t</span>, games <span class="op">=</span> <span class="va">g</span><span class="op">)</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>teams <span class="op">=</span> <span class="va">teams</span>, games <span class="op">=</span> <span class="va">games</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p>This allows us to define <code>best</code> and <code>worst</code>, and use that information to determine a result (in this case, have the best team always win and the worst team always lose). While <code>best</code> and <code>worst</code> are in this example single-length character vectors, they can be data frames or any other R data type.</p>
 <p>Let’s simulate using this:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span>
+  nfl_season <span class="op">=</span> <span class="fl">2020</span>,
   process_games <span class="op">=</span> <span class="va">biased_games_model</span>, 
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>, 
   best <span class="op">=</span> <span class="st">"CHI"</span>, 
   worst <span class="op">=</span> <span class="st">"GB"</span>,
   sims_per_round <span class="op">=</span> <span class="fl">1000</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-18 07:20:17: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-18 07:20:18: Beginning simulation of 1000 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-18 07:21:51: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-18 07:21:51: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-02-18 07:43:04: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-18 07:43:05: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-18 07:44:41: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-18 07:44:41: Aggregating across simulations</span>
 <span class="va">sims3</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
