@@ -73,7 +73,7 @@ alphabetically win by 3 points 90% of the time, and lose by 3 points the other 1
 the time.
 
 ```{r}
-stupid_games_model <- function(teams, games, week_num,, ...) {
+stupid_games_model <- function(teams, games, week_num, ...) {
   # make the earlier alphabetical team win 90% of the time
   games <- games %>%
     dplyr::mutate(
