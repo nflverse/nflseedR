@@ -41,6 +41,20 @@ simulate_round <- function(sim_round,
     # report(glue("Processing Week {week_num}"))
     list[teams, games] <-
       process_games(teams, games, week_num, ...)
+
+    # compare results of the first two simulated weeks to catch a possible
+    # bug in the custom function that leads to changing all results instead of
+    # the current week only.
+    if (week_num == weeks_to_sim[1]) old <- games$result[games$week == weeks_to_sim[1]]
+    if (week_num == weeks_to_sim[2]){
+      new <- games$result[games$week == weeks_to_sim[1]]
+      if (!all(old == new)){
+        stop(
+          "The custom function `process_games()` changes the result of multiple ",
+          "weeks instead of using the argument `w` to only process a given week."
+        )
+      }
+    }
   }
 
   #### FIND DIVISIONAL STANDINGS AND PLAYOFF SEEDINGS ####
