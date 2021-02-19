@@ -60,4 +60,5 @@ conf_rank <-
   elo_input <-
   elo_mult <-
   wp <-
-  elo_shift <- NULL
+  elo_shift <-
+  problem <- NULL
