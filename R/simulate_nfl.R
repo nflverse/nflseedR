@@ -136,7 +136,7 @@ simulate_nfl <- function(nfl_season = NULL,
         if ("elo" %in% names(args)) {
           # pull from custom arguments
           teams <- teams %>%
-            dplyr::inner_join(args$elo %>% select(team, elo), by = c("team"="team"))
+            dplyr::inner_join(args$elo %>% select(team, elo), by = c("team" = "team"))
         } else {
           # start everyone at a random default elo
           ratings <- tibble(
@@ -144,7 +144,7 @@ simulate_nfl <- function(nfl_season = NULL,
             elo = rnorm(length(unique(team)), 1500, 150)
           )
           teams <- teams %>%
-            dplyr::inner_join(ratings, by="team")
+            dplyr::inner_join(ratings, by = "team")
         }
       }
 
@@ -153,9 +153,9 @@ simulate_nfl <- function(nfl_season = NULL,
 
       # mark estimate, wp, and result for games
       games <- games %>%
-        dplyr::inner_join(ratings, by = c("sim"="sim","away_team"="team")) %>%
+        dplyr::inner_join(ratings, by = c("sim" = "sim", "away_team" = "team")) %>%
         dplyr::rename(away_elo = elo) %>%
-        dplyr::inner_join(ratings, by = c("sim"="sim","home_team"="team")) %>%
+        dplyr::inner_join(ratings, by = c("sim" = "sim", "home_team" = "team")) %>%
         dplyr::rename(home_elo = elo) %>%
         dplyr::mutate(
           elo_diff = home_elo - away_elo,
@@ -166,7 +166,7 @@ simulate_nfl <- function(nfl_season = NULL,
           estimate = elo_diff / 25,
           result = case_when(
             is.na(result) & week == week_num ~
-              as.integer(round_out(rnorm(n(), estimate, 13))),
+            as.integer(round_out(rnorm(n(), estimate, 13))),
             TRUE ~ as.integer(result)
           ),
           outcome = case_when(
@@ -184,21 +184,25 @@ simulate_nfl <- function(nfl_season = NULL,
           elo_mult = log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input,
           elo_shift = 20 * elo_mult * (outcome - wp)
         ) %>%
-        dplyr::select(-away_elo, -home_elo, -elo_diff, -wp, -estimate,
-                      -outcome, -elo_input, -elo_mult)
+        dplyr::select(
+          -away_elo, -home_elo, -elo_diff, -wp, -estimate,
+          -outcome, -elo_input, -elo_mult
+        )
 
       # apply elo shifts
       teams <- teams %>%
         dplyr::left_join(games %>%
-                           filter(week == week_num) %>%
-                           select(sim, away_team, elo_shift),
-                         by = c("sim"="sim","team"="away_team")) %>%
+          filter(week == week_num) %>%
+          select(sim, away_team, elo_shift),
+        by = c("sim" = "sim", "team" = "away_team")
+        ) %>%
         dplyr::mutate(elo = elo - ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
         dplyr::select(-elo_shift) %>%
         dplyr::left_join(games %>%
-                           filter(week == week_num) %>%
-                           select(sim, home_team, elo_shift),
-                         by = c("sim"="sim","team"="home_team")) %>%
+          filter(week == week_num) %>%
+          select(sim, home_team, elo_shift),
+        by = c("sim" = "sim", "team" = "home_team")
+        ) %>%
         dplyr::mutate(elo = elo + ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
         dplyr::select(-elo_shift)
 
@@ -233,8 +237,10 @@ simulate_nfl <- function(nfl_season = NULL,
   # load games data
   report("Loading games data")
   schedule <- load_sharpe_games() %>%
-    select(season, game_type, week, away_team, home_team,
-           away_rest, home_rest, location, result)
+    select(
+      season, game_type, week, away_team, home_team,
+      away_rest, home_rest, location, result
+    )
 
   if (is.null(nfl_season)) {
     nfl_season <- max(schedule$season)
@@ -277,10 +283,12 @@ simulate_nfl <- function(nfl_season = NULL,
   #### SET UP SIMULATIONS ####
   sim_rounds <- ceiling(simulations / sims_per_round)
 
-  if (sim_rounds > 1 && is_sequential()){
-    sim_info(c("Computation in multiple rounds can be accelerated with parallel processing.",
-            "You should consider calling a `future::plan()`. Please see the function documentation for further information.",
-            "Will go on sequentially..."))
+  if (sim_rounds > 1 && is_sequential()) {
+    sim_info(c(
+      "Computation in multiple rounds can be accelerated with parallel processing.",
+      "You should consider calling a `future::plan()`. Please see the function documentation for further information.",
+      "Will go on sequentially..."
+    ))
   }
 
   report(glue("Beginning simulation of {simulations} seasons in {sim_rounds} {ifelse(sim_rounds == 1, 'round', 'rounds')}"))
@@ -331,12 +339,12 @@ simulate_nfl <- function(nfl_season = NULL,
 
   team_wins <-
     tibble(
-      team = rep(sort(unique(all_teams$team)), each = max(all_teams$games)*2+1),
+      team = rep(sort(unique(all_teams$team)), each = max(all_teams$games) * 2 + 1),
       wins = rep(seq(0, max(all_teams$games), 0.5), length(unique(all_teams$team)))
     ) %>%
     inner_join(
       all_teams %>% select(team, true_wins),
-      by=c("team")
+      by = c("team")
     ) %>%
     group_by(team, wins) %>%
     summarize(
