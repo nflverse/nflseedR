@@ -91,7 +91,7 @@ simulate_round <- function(sim_round,
     problems <- paste(problems,collapse = ", ")
     if (problems != "") {
       stop(
-        "During Week ", week_num, ", your `process_games()` function had the",
+        "During Week ", week_num, ", your `process_games()` function had the ",
         "following issues: ", problems, ". "
       )
     }
@@ -110,6 +110,8 @@ simulate_round <- function(sim_round,
           "a known result outside the current week was updated",
         !is.na(.old_result) & is.na(result) ~
           "a known result was blanked out",
+        !is.na(result) & result == 0 & game_type != "REG" ~
+          "a playoff game resulted in a tie (had result == 0)",
         TRUE ~ NA_character_
       )) %>%
       filter(!is.na(problem)) %>%
@@ -280,7 +282,7 @@ simulate_round <- function(sim_round,
     # if at one team per conf, loop once more for the super bowl
     if (num_teams == 1 && !any(playoff_teams$conf == "SB")) {
       playoff_teams <- playoff_teams %>%
-        mutate(conf = "SB", seed = rep(1:2, n() / 2))
+        mutate(conf = "SB", seed = 1)
       num_teams <- 2
     }
   } # end playoff loop
