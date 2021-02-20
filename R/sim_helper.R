@@ -7,6 +7,7 @@ simulate_round <- function(sim_round,
                            process_games,
                            ...,
                            tiebreaker_depth,
+                           test_week,
                            .debug,
                            playoff_seeds,
                            p) {
@@ -30,7 +31,7 @@ simulate_round <- function(sim_round,
     select(sim, everything())
 
   # function to simulate a week
-  simulate_week <- function(teams, games, week_num, ...) {
+  simulate_week <- function(teams, games, week_num, test_week, ...) {
 
     # recall old data for comparison
     old_teams <- teams
@@ -39,6 +40,11 @@ simulate_round <- function(sim_round,
 
     # estimate and simulate games
     return_value <- process_games(teams, games, week_num, ...)
+
+    # testing?
+    if (!is.null(test_week) && week_num == test_week) {
+      return(return_value)
+    }
 
     # did we get the right data back?
     problems <- c()
@@ -140,8 +146,12 @@ simulate_round <- function(sim_round,
   # simulate remaining regular season games
   for (week_num in weeks_to_sim)
   {
-    list[teams, games] <-
-      simulate_week(teams, games, week_num, ...)
+    return_value <-
+      simulate_week(teams, games, week_num, test_week, ...)
+    if (!is.null(test_week) && week_num == test_week) {
+      return(return_value)
+    }
+    list[teams, games] <- return_value
   }
 
   #### FIND DIVISIONAL STANDINGS AND PLAYOFF SEEDINGS ####
@@ -242,8 +252,12 @@ simulate_round <- function(sim_round,
     }
 
     # process any new games
-    list[teams, games] <-
-      simulate_week(teams, games, week_num, ...)
+    return_value <-
+      simulate_week(teams, games, week_num, test_week, ...)
+    if (!is.null(test_week) && week_num == test_week) {
+      return(return_value)
+    }
+    list[teams, games] <- return_value
 
     # record losers
     teams <- games %>%
