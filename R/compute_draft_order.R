@@ -78,6 +78,12 @@ compute_draft_order <- function(teams,
     )
   }
 
+  # week tracker
+  week_num <- games %>%
+    filter(game_type == "REG") %>%
+    pull(week) %>%
+    max()
+
   # identify playoff teams
   playoff_teams <- teams %>%
     filter(!is.na(seed)) %>%
@@ -91,27 +97,18 @@ compute_draft_order <- function(teams,
     pull(count) %>%
     max()
 
-  week_num <- games %>%
-    filter(game_type == "REG") %>%
-    pull(week) %>%
-    max()
+  # bye count (per conference)
+  num_byes <- 2^ceiling(log(num_teams, 2)) - num_teams
 
-  week_max <- week_num + 4L
+  # first playoff week
+  first_playoff_week <- week_num + 1
+
+  # final week of season (Super Bowl week)
+  week_max <- week_num +
+    ceiling(log(num_teams * length(unique(playoff_teams$conf)), 2))
 
   # playoff weeks
-  while (num_teams > 1) {
-
-    # inseed_numement week number
-    week_num <- week_num + 1L
-
-    if(week_num > week_max){
-      stop(
-        "Something went wrong and the function has entered an infinite loop. ",
-        "Does the number of postseason games match the number of playoff seeds?"
-      )
-    }
-
-    report(paste("Processing Playoffs Week", week_num))
+  for (week_num in first_playoff_week:week_max) {
 
     # record losers
     teams <- games %>%
@@ -190,6 +187,15 @@ compute_draft_order <- function(teams,
       mutate(draft_order = ifelse(!is.na(new_do), new_do, draft_order)) %>%
       select(-new_do)
   } # end draft order loop
+
+  # playoff error?
+  if (any(is.na(teams$draft_order))) {
+    stop(
+      "The playoff games did not function normally. Make sure that either `fresh_season` ",
+      "or `fresh_playoffs` to `TRUE`, or have playoff_seeds match the correct number of ",
+      "seeds for the season being simulated."
+    )
+  }
 
   return(teams)
 }
