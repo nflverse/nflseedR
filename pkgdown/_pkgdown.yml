@@ -3,6 +3,9 @@ url: https://nflseedr.com
 template:
   params:
     bootswatch: yeti
+  opengraph:
+    image:
+      src: https://raw.githubusercontent.com/leesharpe/nflseedR/master/man/figures/gh_preview.png
 
 toc:
   depth: 3
