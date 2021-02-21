@@ -50,7 +50,7 @@ are currently performing.}
 \value{
 A data frame of standings including the final draft pick number and
 the variable \code{exit} which indicates the week number of the teams final
-game (Super Bowl Winner = 22, SUper Bowl Loser = 21).
+game (Super Bowl Winner is one week higher).
 }
 \description{
 Compute NFL Draft Order using Game Results and Divisional Rankings

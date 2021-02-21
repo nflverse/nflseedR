@@ -13,6 +13,7 @@ simulate_nfl(
   fresh_season = FALSE,
   fresh_playoffs = FALSE,
   tiebreaker_depth = 3,
+  test_week = NULL,
   simulations = 1000,
   sims_per_round = ceiling(simulations/future::availableCores() * 2),
   .debug = FALSE,
@@ -50,6 +51,9 @@ values are valid:
 \item{tiebreaker_depth = 2}{Apply head-to-head and division win percentage tiebreakers. Random if still tied.}
 \item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule. Random if still tied.}
 }}
+
+\item{test_week}{Aborts after the simulator reaches this week and returns the results
+from your process games call.}
 
 \item{simulations}{Equals the number of times the given NFL season shall be simulated}
 
@@ -135,7 +139,7 @@ library(nflseedR)
 
 # Simulate the season 4 times in 2 rounds
 sim <- nflseedR::simulate_nfl(
-  2020,
+  nfl_season = 2020,
   fresh_season = TRUE,
   simulations = 4,
   sims_per_round = 2
