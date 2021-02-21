@@ -46,7 +46,7 @@ sims$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
 We can see the Bears got 10.7 wins on average. They made the playoffs 82% of the time, won the division 35% of the time, and won the Super Bowl in 4%, and rarely received a top 5 draft pick. The `teams` section of the output will show how a team did in each simulated season. 
 
 ```{r}
-sims$teams %>% dplyr::filter(team == "CHI") %>% utils::head(6) %>% select(sim, team, wins, seed, draft_order) %>% knitr::kable()
+sims$teams %>% dplyr::filter(team == "CHI") %>% utils::head(6) %>% dplyr::select(sim, team, wins, seed, draft_order) %>% knitr::kable()
 ```
 
 Wow that second sim is wild! The Bears went 8-8, but then went on to win the Super Bowl
@@ -217,11 +217,12 @@ beat the Packers out for the #1 pick through tiebreakers.
 Sometimes though you want your data to keep updating as the simulation progresses.
 For example, an Elo-based model that updates each team's Elo after each game. You
 can pass in the starting Elo values per team, and as games are simulated, update
-the Elo values for teach team and store them in the `teams` data. This column will
+the Elo values for each team and store them in the `teams` data. This column will
 be part of the `teams` data passed into your function when the following week is
 simulated and your function is called.
 
 Read the comments in the code below for specific tips on doing this but here are good ones:
+
 * You can add columns to `teams` and/or `games` if you want.
 * When doing joins to do the above, do left joins to make sure no rows are removed.
 * Remove any "helper" columns you generate along the way you don't actually need before returning.
@@ -249,7 +250,7 @@ elo_model <- function(teams, games, week_num, ...) {
     if ("elo" %in% names(args)) {
       # pull the elo info from custom arguments
       teams <- teams %>%
-        dplyr::inner_join(args$elo %>% select(team, elo), by = c("team" = "team"))
+        dplyr::inner_join(args$elo %>% dplyr::select(team, elo), by = c("team" = "team"))
     } else {
       # error with a friendly error message if no elo data is passed in
       stop("Pass in a tibble `elo` as an argument to `simulate_nfl()`")
@@ -258,7 +259,7 @@ elo_model <- function(teams, games, week_num, ...) {
 
   # isolate the ratings data by sim and by team only
   # we will want to join to the games data later and don't want excess columns
-  ratings <- teams %>% select(sim, team, elo)
+  ratings <- teams %>% dplyr::select(sim, team, elo)
 
   # simulate game outcomes
   games <- games %>%
@@ -283,7 +284,7 @@ elo_model <- function(teams, games, week_num, ...) {
       wp = 1 / (10^(-elo_diff / 400) + 1),
       # we also can calculate the estimate (mean points home team wins by)
       estimate = elo_diff / 25,
-      result = case_when(
+      result = dplyr::case_when(
         # !!! ALWAYS DO THIS NEXT LINE IN YOUR `result` CHANGES !!!
         # you have to make sure you're only changing unfinished games in current week
         # if you don't do this, it will usually error out on a friendly error message
@@ -293,14 +294,14 @@ elo_model <- function(teams, games, week_num, ...) {
         TRUE ~ as.integer(result)
       ),
       # simplify to 1 = win, 0 = loss, 0.5 = tie to help calculate elo shift
-      outcome = case_when(
+      outcome = dplyr::case_when(
         is.na(result) ~ NA_real_,
         result > 0 ~ 1,
         result < 0 ~ 0,
         TRUE ~ 0.5
       ),
       # calculate the amount to adjust home team's elo by
-      elo_input = case_when(
+      elo_input = dplyr::case_when(
         is.na(result) ~ NA_real_,
         result > 0 ~ elo_diff * 0.001 + 2.2,
         result < 0 ~ -elo_diff * 0.001 + 2.2,
@@ -323,8 +324,8 @@ elo_model <- function(teams, games, week_num, ...) {
     # join games results from this week to away teams (within same sim!)
     # note this is a LEFT join, we don't want to remove any teams rows
     dplyr::left_join(games %>%
-        filter(week == week_num) %>%
-        select(sim, away_team, elo_shift),
+        dplyr::filter(week == week_num) %>%
+        dplyr::select(sim, away_team, elo_shift),
       by = c("sim" = "sim", "team" = "away_team")
     ) %>%
     # away team's elo gets subtracted by elo amount
@@ -334,8 +335,8 @@ elo_model <- function(teams, games, week_num, ...) {
     dplyr::select(-elo_shift) %>%
     # repeat the above except now do it for the home team
     dplyr::left_join(games %>%
-        filter(week == week_num) %>%
-        select(sim, home_team, elo_shift),
+        dplyr::filter(week == week_num) %>%
+        dplyr::select(sim, home_team, elo_shift),
       by = c("sim" = "sim", "team" = "home_team")
     ) %>%
     # note that a team on a bye will have `elo_shift` as NA for both joins
@@ -362,7 +363,7 @@ abort after simulating Week 3, and instead return the result of our `elo_model()
 function. 
 
 ```{r}
-initial_elo <- tibble(
+initial_elo <- tibble::tibble(
   team = unique(nflseedR::divisions$team),
   elo = rnorm(length(unique(nflseedR::divisions$team)), 1500, 150)
 )
@@ -374,7 +375,7 @@ test <- simulate_nfl(
   sims_per_round = 1000,
   test_week = 3
 )
-test$teams %>% filter(team == "CHI") %>% utils::head() %>% knitr::kable()
+test$teams %>% dplyr::filter(team == "CHI") %>% utils::head() %>% knitr::kable()
 ```
 
 You can see the Bears' Elo rating after Week 3 in each of the first six simulations.
