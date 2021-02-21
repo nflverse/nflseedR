@@ -363,7 +363,7 @@ function.
 
 ```{r}
 initial_elo <- tibble(
-  team = unique(nflseedR::divisions$team)
+  team = unique(nflseedR::divisions$team),
   elo = rnorm(length(unique(nflseedR::divisions$team)), 1500, 150)
 )
 test <- simulate_nfl(
@@ -374,11 +374,15 @@ test <- simulate_nfl(
   sims_per_round = 1000,
   test_week = 3
 )
-test$teams %>% filter(team == "ARI") %>% utils::head() %>% knitr::kable()
+test$teams %>% filter(team == "CHI") %>% utils::head() %>% knitr::kable()
 ```
 
-You can see the Cardinals' Elo rating after Week 3 in each of the first six simulations.
+You can see the Bears' Elo rating after Week 3 in each of the first six simulations.
+The second simulation has been the worst of these six, while the fifth is the highest.
 
+Let's check out the results of those games:
+
+~ RESUMED EDITING HERE ~
 
 ## Simulation Configuration
 
