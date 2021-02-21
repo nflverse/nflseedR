@@ -146,11 +146,53 @@ information, including franchises in multiple cities:</p><dl>
 <dt>division</dt><dd><p>Division name</p></dd>
 <dt>sdiv</dt><dd><p>Division abbreviation</p></dd>
 
-</dl>
-
+</dl><p>This data frame is created using the <code>teams_colors_logos</code> data frame of the
+<code>nflfastR</code> package. Please see <code>data-raw/divisions.R</code> for the code to create
+this data.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"></pre>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='va'>divisions</span>
+</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 36 x 4</span><span>
+#&gt;    team  conf  division  sdiv 
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> ARI   NFC   NFC West  NFCW 
+#&gt; </span><span style='color: #555555;'> 2</span><span> ATL   NFC   NFC South NFCS 
+#&gt; </span><span style='color: #555555;'> 3</span><span> BAL   AFC   AFC North AFCN 
+#&gt; </span><span style='color: #555555;'> 4</span><span> BUF   AFC   AFC East  AFCE 
+#&gt; </span><span style='color: #555555;'> 5</span><span> CAR   NFC   NFC South NFCS 
+#&gt; </span><span style='color: #555555;'> 6</span><span> CHI   NFC   NFC North NFCN 
+#&gt; </span><span style='color: #555555;'> 7</span><span> CIN   AFC   AFC North AFCN 
+#&gt; </span><span style='color: #555555;'> 8</span><span> CLE   AFC   AFC North AFCN 
+#&gt; </span><span style='color: #555555;'> 9</span><span> DAL   NFC   NFC East  NFCE 
+#&gt; </span><span style='color: #555555;'>10</span><span> DEN   AFC   AFC West  AFCW 
+#&gt; </span><span style='color: #555555;'>11</span><span> DET   NFC   NFC North NFCN 
+#&gt; </span><span style='color: #555555;'>12</span><span> GB    NFC   NFC North NFCN 
+#&gt; </span><span style='color: #555555;'>13</span><span> HOU   AFC   AFC South AFCS 
+#&gt; </span><span style='color: #555555;'>14</span><span> IND   AFC   AFC South AFCS 
+#&gt; </span><span style='color: #555555;'>15</span><span> JAX   AFC   AFC South AFCS 
+#&gt; </span><span style='color: #555555;'>16</span><span> KC    AFC   AFC West  AFCW 
+#&gt; </span><span style='color: #555555;'>17</span><span> LA    NFC   NFC West  NFCW 
+#&gt; </span><span style='color: #555555;'>18</span><span> LAC   AFC   AFC West  AFCW 
+#&gt; </span><span style='color: #555555;'>19</span><span> LAR   NFC   NFC West  NFCW 
+#&gt; </span><span style='color: #555555;'>20</span><span> LV    AFC   AFC West  AFCW 
+#&gt; </span><span style='color: #555555;'>21</span><span> MIA   AFC   AFC East  AFCE 
+#&gt; </span><span style='color: #555555;'>22</span><span> MIN   NFC   NFC North NFCN 
+#&gt; </span><span style='color: #555555;'>23</span><span> NE    AFC   AFC East  AFCE 
+#&gt; </span><span style='color: #555555;'>24</span><span> NO    NFC   NFC South NFCS 
+#&gt; </span><span style='color: #555555;'>25</span><span> NYG   NFC   NFC East  NFCE 
+#&gt; </span><span style='color: #555555;'>26</span><span> NYJ   AFC   AFC East  AFCE 
+#&gt; </span><span style='color: #555555;'>27</span><span> OAK   AFC   AFC West  AFCW 
+#&gt; </span><span style='color: #555555;'>28</span><span> PHI   NFC   NFC East  NFCE 
+#&gt; </span><span style='color: #555555;'>29</span><span> PIT   AFC   AFC North AFCN 
+#&gt; </span><span style='color: #555555;'>30</span><span> SD    AFC   AFC West  AFCW 
+#&gt; </span><span style='color: #555555;'>31</span><span> SEA   NFC   NFC West  NFCW 
+#&gt; </span><span style='color: #555555;'>32</span><span> SF    NFC   NFC West  NFCW 
+#&gt; </span><span style='color: #555555;'>33</span><span> STL   NFC   NFC West  NFCW 
+#&gt; </span><span style='color: #555555;'>34</span><span> TB    NFC   NFC South NFCS 
+#&gt; </span><span style='color: #555555;'>35</span><span> TEN   AFC   AFC South AFCS 
+#&gt; </span><span style='color: #555555;'>36</span><span> WAS   NFC   NFC East  NFCE </div><div class='input'><span class='co'># }</span>
+</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
