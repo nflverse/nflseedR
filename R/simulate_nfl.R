@@ -107,7 +107,7 @@ simulate_nfl <- function(nfl_season = NULL,
                          tiebreaker_depth = 3,
                          test_week = NULL,
                          simulations = 1000,
-                         sims_per_round = ceiling(simulations / future::availableCores() * 2),
+                         sims_per_round = max(ceiling(simulations / future::availableCores() * 2), 100),
                          .debug = FALSE,
                          print_summary = FALSE) {
 
