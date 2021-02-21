@@ -13,6 +13,8 @@
 #' @param fresh_playoffs Either \code{TRUE} or \code{FALSE}. Whether to blank out all playoff
 #'   game results and simulate the postseason from scratch (TRUE) or take game results so far
 #'   as a given and only simulate the rest (FALSE).
+#' @param test_week Aborts after the simulator reaches this week and returns the results
+#'   from your process games call.
 #' @param simulations Equals the number of times the given NFL season shall be simulated
 #' @param sims_per_round The number of \code{simulations} can be split into
 #'   multiple rounds and be processed parallel. This parameter controls the number
@@ -89,7 +91,7 @@
 #'
 #' # Simulate the season 4 times in 2 rounds
 #' sim <- nflseedR::simulate_nfl(
-#'   2020,
+#'   nfl_season = 2020,
 #'   fresh_season = TRUE,
 #'   simulations = 4,
 #'   sims_per_round = 2
@@ -103,6 +105,7 @@ simulate_nfl <- function(nfl_season = NULL,
                          fresh_season = FALSE,
                          fresh_playoffs = FALSE,
                          tiebreaker_depth = 3,
+                         test_week = NULL,
                          simulations = 1000,
                          sims_per_round = ceiling(simulations / future::availableCores() * 2),
                          .debug = FALSE,
@@ -218,12 +221,13 @@ simulate_nfl <- function(nfl_season = NULL,
 
   if (!all(
     is.null(nfl_season) || is_single_digit_numeric(nfl_season),
+    is.null(test_week) || is_single_digit_numeric(test_week),
     is_single_digit_numeric(tiebreaker_depth),
     is_single_digit_numeric(simulations),
     is_single_digit_numeric(sims_per_round)
   )) {
     stop(
-      "One or more of the parameters `nfl_season`, `tiebreaker_depth`, ",
+      "One or more of the parameters `nfl_season`, `tiebreaker_depth`, `test_week`, ",
       "`simulations` and `sims_per_round` are not single digit numeric values!"
     )
   }
@@ -282,6 +286,9 @@ simulate_nfl <- function(nfl_season = NULL,
 
   #### SET UP SIMULATIONS ####
   sim_rounds <- ceiling(simulations / sims_per_round)
+  if (!is.null(test_week)) {
+    sim_rounds <- 1
+  }
 
   if (sim_rounds > 1 && is_sequential()) {
     sim_info(c(
@@ -307,6 +314,7 @@ simulate_nfl <- function(nfl_season = NULL,
       process_games = process_games,
       ...,
       tiebreaker_depth = tiebreaker_depth,
+      test_week = test_week,
       .debug = .debug,
       playoff_seeds = playoff_seeds,
       p = p,
@@ -315,6 +323,13 @@ simulate_nfl <- function(nfl_season = NULL,
   })
 
   if (isTRUE(.debug)) eval(run) else suppressMessages(eval(run))
+
+  if (!is.null(test_week)) {
+    report(glue(
+      "Aborting and returning your `process_games` function's results from Week {test_week}"
+    ))
+    return(all[[1]])
+  }
 
   report("Combining simulation data")
 
