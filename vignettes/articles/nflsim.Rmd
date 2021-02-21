@@ -368,7 +368,8 @@ initial_elo <- tibble(
 )
 test <- simulate_nfl(
   nfl_season = 2020,
-  process_games = elo_model, 
+  process_games = elo_model,
+  elo = initial_elo,
   fresh_season = TRUE, 
   sims_per_round = 1000,
   test_week = 3
