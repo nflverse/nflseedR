@@ -82,3 +82,6 @@ nflseedR::load_sharpe_games() \%>\%
   purrr::pluck("standings")
 }
 }
+\seealso{
+The examples \href{https://nflseedr.com/articles/articles/nflseedR.html}{on the package website}
+}

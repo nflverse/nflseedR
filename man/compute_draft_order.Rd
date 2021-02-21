@@ -72,3 +72,6 @@ games \%>\%
   nflseedR::compute_draft_order(games = games, h2h = .$h2h)
 }
 }
+\seealso{
+The examples \href{https://nflseedr.com/articles/articles/nflseedR.html}{on the package website}
+}

@@ -65,3 +65,6 @@ Compute NFL Playoff Seedings using Game Results and Divisional Rankings
    purrr::pluck("standings")
 }
 }
+\seealso{
+The examples \href{https://nflseedr.com/articles/articles/nflseedR.html}{on the package website}
+}

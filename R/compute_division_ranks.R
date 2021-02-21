@@ -46,6 +46,7 @@
 #'  \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
 #'  tiebreaking functions.}
 #'  }
+#' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflseedR.html)
 #' @export
 #' @examples
 #' \donttest{

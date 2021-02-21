@@ -7,7 +7,7 @@
 #' @returns A data frame of standings including the final draft pick number and
 #'  the variable \code{exit} which indicates the week number of the teams final
 #'  game (Super Bowl Winner is one week higher).
-#'
+#' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflseedR.html)
 #' @export
 #' @examples
 #' \donttest{
