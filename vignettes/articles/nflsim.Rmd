@@ -28,11 +28,11 @@ options(digits = 3)
 
 By default, 1000 simulations are done. We'll set an initial random seed for
 this demonstration so you can follow along and get the same results, but normally
-you wouldn't do that (for the same reason we set `sims_per_round = 1000`).
+you wouldn't do that.
 
 ```{r}
 set.seed(4)
-sims <- simulate_nfl(2020, fresh_season = TRUE, sims_per_round = 1000)
+sims <- simulate_nfl(2020, fresh_season = TRUE)
 ```
 
 The output contains a lot of pre-aggregated information, as well as the individual
@@ -46,17 +46,22 @@ sims$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
 We can see the Bears got 10.7 wins on average. They made the playoffs 82% of the time, won the division 35% of the time, and won the Super Bowl in 4%, and rarely received a top 5 draft pick. The `teams` section of the output will show how a team did in each simulated season. 
 
 ```{r}
-sims$teams %>% dplyr::filter(team == "CHI") %>% utils::head(6) %>% dplyr::select(sim, team, wins, seed, draft_order) %>% knitr::kable()
+sims$teams %>%
+  dplyr::filter(team == "CHI") %>%
+  dplyr::select(sim, team, wins, seed, draft_order) %>% 
+  utils::head(6) %>%
+  knitr::kable()
 ```
 
-Wow that second sim is wild! The Bears went 8-8, but then went on to win the Super Bowl
-as the 7th seed! Let's check out those playoff games:
+Let's check out the playoff games from the fourth simulation, where the Bears went 15-1.
 
 ```{r}
-sims$games %>% dplyr::filter(sim == 2, game_type != "REG") %>% knitr::kable()
+sims$games %>% dplyr::filter(sim == 4, game_type != "REG") %>% knitr::kable()
 ```
 
-In this simulation, as the 7th seed, the Bears played three road playoff games, defeating the Washington football team by 6 points in the wildcard round, the Vikings by 9 in the divisional around, and the Cowboys also by 9 in the NFC Conference Championship. Finally, they defeated the Chargers by 10 in the Super Bowl.
+In this simulation, the Bears after their playoff bye defeated the Buccaneers by 11, then
+the Washington Football Team by 17 in the NFC Championship Game, and finally the Chargers
+by 13 in the Super Bowl.
 
 As you may have gathered at this point, the default simulation code picks a random
 Elo for every team, and uses those as the starting Elo ratings for all 32 teams.
@@ -114,14 +119,14 @@ game results in your function, whether you meant to do so or not. !!
 Let's run a simulation with `stupid_games_model` and see what happens:
 
 ```{r}
-sims2 <- simulate_nfl(2020, process_games = stupid_games_model, fresh_season = TRUE, sims_per_round = 1000)
+sims2 <- simulate_nfl(2020, process_games = stupid_games_model, fresh_season = TRUE)
 
 sims2$overall %>% dplyr::arrange(team) %>% utils::head() %>% knitr::kable()
 sims2$overall %>% dplyr::arrange(team) %>% utils::tail() %>% knitr::kable()
 ```
 
 As you might expect, the earliest alphabetical teams win a lot. The Cardinals
-won the Super Bowl in 68% of seasons! Meanwhile, the teams at the bottom
+won the Super Bowl in 65% of seasons! Meanwhile, the teams at the bottom
 alphabetically are virtually certain to be at the top of the draft order.
 
 ## Adding In Your Own Data
@@ -191,8 +196,7 @@ sims3 <- simulate_nfl(
   process_games = biased_games_model, 
   fresh_season = TRUE, 
   best = "CHI", 
-  worst = "GB",
-  sims_per_round = 1000
+  worst = "GB"
 )
 sims3$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
 sims3$overall %>% dplyr::filter(team == "GB") %>% knitr::kable()
@@ -371,8 +375,7 @@ test <- simulate_nfl(
   nfl_season = 2020,
   process_games = elo_model,
   elo = initial_elo,
-  fresh_season = TRUE, 
-  sims_per_round = 1000,
+  fresh_season = TRUE,
   test_week = 3
 )
 test$teams %>% dplyr::filter(team == "CHI") %>% utils::head() %>% knitr::kable()
@@ -381,9 +384,18 @@ test$teams %>% dplyr::filter(team == "CHI") %>% utils::head() %>% knitr::kable()
 You can see the Bears' Elo rating after Week 3 in each of the first six simulations.
 The second simulation has been the worst of these six, while the fifth is the highest.
 
-Let's check out the results of those games:
+Let's check out the early Bears games from the latter:
 
-~ RESUMED EDITING HERE ~
+```{r}
+test$games %>%
+  filter(sim == 5) %>%
+  filter(away_team == "CHI" | home_team == "CHI")
+```
+
+First, note that only the first three weeks have the result filled in. Again, this because
+the `test_week = 3` input aborted the simulation after Week 3, which was useful for seeing
+the Elo above. It also makes sense that this would be a simulation where the Bears' Elo is
+particularly high, since they won all three games so far by multiple scores.
 
 ## Simulation Configuration
 
@@ -434,3 +446,54 @@ cores and calculates the number of simulations per round to be equal to half of
 the available cores (various benchmarks showed this results in optimal performance
 in parallel processes). If your computer is hanging and forces a restart while 
 running this simulation, it is recommended that you lower this number.
+
+## Simulation Output
+
+The output of `simulate_nfl()`, assuming you don't put in a `test_week` to debug
+your function, is a list of four data frames. Here are the contents of each:
+
+* **teams** - One row per team per simulation.
+  * **sim** - The ID number of the simulation. All rows with the same value of `sim` in both `teams` and `games` refer to the same simulated season.
+  * **team** - The abbreviation reperesenting the team
+  * **conf** - The conference the team is in (such as `AFC`)
+  * **division** - The division the team is in (such as `NFC West`)
+  * **games** - How many regular season games the team has played
+  * **wins** - The number of games the team has won, counting ties as 0.5 wins
+  * **true_wins** - The number of games the team has won, ignoring ties.
+  * **win_pct** - The win rate of the team. Equal to `wins / games`.
+  * **div_pct** - The win rate of the teams in games played agains teams in the same division.
+  * **conf_pct** - The win rate of the teams in games played agains teams in the same conference.
+  * **sov** - Strength of Victory. The combined win rate of teams this team has beaten.
+  * **sos** - Strength of Schedule. The combined win rate of teams this team has played.
+  * **div_rank** - What place the team finished in its division.
+  * **seed** - What playoff seed number the team earned. `NA` if the team did not make the playoffs.
+  * **exit** - The week of the team's last game. The Super Bowl winner's value will be one higher than the week of the Super Bowl.
+  * **draft_order** - Which pick the team earned in the following NFL Draft. Note that this value is before any trades, forfeits, or other modifications to draft picks.
+* **games** - One row per game per simulation.
+  * **sim** - The ID number of the simulation. All rows with the same value of `sim` in both `teams` and `games` refer to the same simulated season.
+  * **game_type** - What type of game this is
+    * `REG` - A regular season game
+    * `POST` - A playoff rounds earlier than a wildcard game (only used if simulating with lots of playoff teams)
+    * `WC` - A wildcard playoff game
+    * `DIV` - A divisonal playoff game
+    * `CON` - A conference championship game
+    * `SB` - A Super Bowl
+  * **week** - The numerical week the game takes place in. Continues incrementing after the regular season to each playoff round.
+  * **away_team** - The abbreviation of the away team in the game
+  * **home_team** - The abbreviation of the home team in the game
+  * **away_rest** - The number of days since the away team's last game. Is `7` for the team's first game of the season.
+  * **home_rest** - The number of days since the home team's last game. Is `7` for the team's first game of the season.
+  * **location** - Either `Home` if played at the home team's stadium, or `Neutral` for a game played elsewhere
+  * **result** - The amount of points the home team won by (or lost by if negative). Is `0` for tied games. It is `NA` for games which aren't yet complete or simulated, which should only ever be returned if you used `test_week`. 
+* **overall** - One row per team, aggregated across all simulations. Sorted by `conf` then `division` then `team`.
+  * **conf** - The conference the team is in (such as `AFC`)
+  * **division** - The division the team is in (such as `NFC West`)
+  * **team** - The abbreviation reperesenting the team
+  * **wins** - The mean (average) number of games won across the simulations, counting ties as 0.5 wins
+  * **playoff** - The rate this team made the playoffs across simulations
+  * **div1** - The rate this team won the division across simulations
+  * **seed1** - The rate this team had the first playoff seed across simulations
+  * **won_conf** - The rate this team won its conference across simulations
+  * **won_sb** - The rate this team won the Super Bowl across simulations
+  * **draft1** - The rate this team received the first pick in the next draft across simulations
+  * **draft5** - The rate this team received a top five pick in the next draft across simulations
