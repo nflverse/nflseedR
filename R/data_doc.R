@@ -9,11 +9,11 @@
 #'   \item{division}{Division name}
 #'   \item{sdiv}{Division abbreviation}
 #' }
+#' This data frame is created using the `teams_colors_logos` data frame of the
+#' `nflfastR` package. Please see `data-raw/divisions.R` for the code to create
+#' this data.
 #' @examples
 #' \donttest{
 #' divisions
 #' }
-#' This data frame is created using the `teams_colors_logos` data frame of the
-#' `nflfastR` package. Please see `data-raw/divisions.R` for the code to create
-#' this data.
 "divisions"

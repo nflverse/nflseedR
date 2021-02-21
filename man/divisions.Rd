@@ -13,6 +13,9 @@ information, including franchises in multiple cities:
 \item{division}{Division name}
 \item{sdiv}{Division abbreviation}
 }
+This data frame is created using the \code{teams_colors_logos} data frame of the
+\code{nflfastR} package. Please see \code{data-raw/divisions.R} for the code to create
+this data.
 }
 \usage{
 divisions
@@ -24,8 +27,5 @@ NFL team names and the conferences and divisions they belong to
 \donttest{
 divisions
 }
-This data frame is created using the `teams_colors_logos` data frame of the
-`nflfastR` package. Please see `data-raw/divisions.R` for the code to create
-this data.
 }
 \keyword{datasets}
