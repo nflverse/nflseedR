@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   articles/nflseedR: nflseedR.html
   articles/nflsim: nflsim.html
-last_built: 2021-02-21T12:42Z
+last_built: 2021-02-21T18:07Z
 urls:
   reference: https://nflseedr.com/reference
   article: https://nflseedr.com/articles
