@@ -78,84 +78,86 @@ compute_draft_order <- function(teams,
     )
   }
 
-  # week tracker
-  week_num <- games %>%
-    filter(game_type == "REG") %>%
-    pull(week) %>%
-    max()
+  if (any(is.na(teams$exit))){
+    # week tracker
+    week_num <- games %>%
+      filter(game_type == "REG") %>%
+      pull(week) %>%
+      max()
 
-  # identify playoff teams
-  playoff_teams <- teams %>%
-    filter(!is.na(seed)) %>%
-    select(sim, conf, seed, team) %>%
-    arrange(sim, conf, seed)
-
-  # num teams tracker
-  num_teams <- playoff_teams %>%
-    group_by(sim, conf) %>%
-    summarize(count = n()) %>%
-    pull(count) %>%
-    max()
-
-  # bye count (per conference)
-  num_byes <- 2^ceiling(log(num_teams, 2)) - num_teams
-
-  # first playoff week
-  first_playoff_week <- week_num + 1
-
-  # final week of season (Super Bowl week)
-  week_max <- week_num +
-    ceiling(log(num_teams * length(unique(playoff_teams$conf)), 2))
-
-  # playoff weeks
-  for (week_num in first_playoff_week:week_max) {
-
-    # record losers
-    teams <- games %>%
-      filter(week == week_num) %>%
-      double_games() %>%
-      filter(outcome == 0) %>%
-      select(sim, team, outcome) %>%
-      right_join(teams, by = c("sim", "team")) %>%
-      mutate(exit = ifelse(!is.na(outcome), week_num, exit)) %>%
-      select(-outcome)
-
-    # if super bowl, record winner
-    if (any(playoff_teams$conf == "SB")) {
-      # super bowl winner exit is +1 to SB week
-      teams <- games %>%
-        filter(week == week_num) %>%
-        double_games() %>%
-        filter(outcome == 1) %>%
-        select(sim, team, outcome) %>%
-        right_join(teams, by = c("sim", "team")) %>%
-        mutate(exit = ifelse(!is.na(outcome), week_num + 1, exit)) %>%
-        select(-outcome)
-    }
-
-    # filter to winners or byes
-    playoff_teams <- games %>%
-      filter(week == week_num) %>%
-      double_games() %>%
-      right_join(playoff_teams, by = c("sim", "team")) %>%
-      filter(is.na(result) | result > 0) %>%
+    # identify playoff teams
+    playoff_teams <- teams %>%
+      filter(!is.na(seed)) %>%
       select(sim, conf, seed, team) %>%
       arrange(sim, conf, seed)
 
-    # update number of teams
+    # num teams tracker
     num_teams <- playoff_teams %>%
       group_by(sim, conf) %>%
       summarize(count = n()) %>%
       pull(count) %>%
       max()
 
-    # if at one team per conf, loop once more for the super bowl
-    if (num_teams == 1 && !any(playoff_teams$conf == "SB")) {
-      playoff_teams <- playoff_teams %>%
-        mutate(conf = "SB", seed = rep(1:2, n() / 2))
-      num_teams <- 2
-    }
-  } # end playoff loop
+    # bye count (per conference)
+    num_byes <- 2^ceiling(log(num_teams, 2)) - num_teams
+
+    # first playoff week
+    first_playoff_week <- week_num + 1
+
+    # final week of season (Super Bowl week)
+    week_max <- week_num +
+      ceiling(log(num_teams * length(unique(playoff_teams$conf)), 2))
+
+    # playoff weeks
+    for (week_num in first_playoff_week:week_max) {
+
+      # record losers
+      teams <- games %>%
+        filter(week == week_num) %>%
+        double_games() %>%
+        filter(outcome == 0) %>%
+        select(sim, team, outcome) %>%
+        right_join(teams, by = c("sim", "team")) %>%
+        mutate(exit = ifelse(!is.na(outcome), week_num, exit)) %>%
+        select(-outcome)
+
+      # if super bowl, record winner
+      if (any(playoff_teams$conf == "SB")) {
+        # super bowl winner exit is +1 to SB week
+        teams <- games %>%
+          filter(week == week_num) %>%
+          double_games() %>%
+          filter(outcome == 1) %>%
+          select(sim, team, outcome) %>%
+          right_join(teams, by = c("sim", "team")) %>%
+          mutate(exit = ifelse(!is.na(outcome), week_num + 1, exit)) %>%
+          select(-outcome)
+      }
+
+      # filter to winners or byes
+      playoff_teams <- games %>%
+        filter(week == week_num) %>%
+        double_games() %>%
+        right_join(playoff_teams, by = c("sim", "team")) %>%
+        filter(is.na(result) | result > 0) %>%
+        select(sim, conf, seed, team) %>%
+        arrange(sim, conf, seed)
+
+      # update number of teams
+      num_teams <- playoff_teams %>%
+        group_by(sim, conf) %>%
+        summarize(count = n()) %>%
+        pull(count) %>%
+        max()
+
+      # if at one team per conf, loop once more for the super bowl
+      if (num_teams == 1 && !any(playoff_teams$conf == "SB")) {
+        playoff_teams <- playoff_teams %>%
+          mutate(conf = "SB", seed = rep(1:2, n() / 2))
+        num_teams <- 2
+      }
+    } # end playoff loop
+  }
 
   # set draft order variable
   teams <- teams %>%
