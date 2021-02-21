@@ -32,7 +32,7 @@ simulate_round <- function(sim_round,
 
   # playoff seeds bounds checking
   max_seeds <- teams %>%
-    group_by(sim, conf) %>%
+    group_by(sim,conf) %>%
     summarize(count=n()) %>%
     ungroup() %>%
     pull(count) %>%
