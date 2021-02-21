@@ -30,6 +30,17 @@ simulate_round <- function(sim_round,
     mutate(sim = rep(iter_sims, each = nrow(teams))) %>%
     select(sim, everything())
 
+  # playoff seeds bounds checking
+  max_seeds <- teams %>%
+    group_by(sim, conf) %>%
+    summarize(count=n()) %>%
+    ungroup() %>%
+    pull(count) %>%
+    min()
+  if (playoff_seeds < 1 || playoff_seeds > max_seeds) {
+    stop("`playoff_seeds` must be between 1 and ",max_seeds)
+  }
+
   # function to simulate a week
   simulate_week <- function(teams, games, week_num, test_week, ...) {
 
@@ -236,6 +247,7 @@ simulate_round <- function(sim_round,
           ),
           away_rest = case_when(
             conf == "SB" ~ 14,
+            week_num == first_playoff_week + 1 & seed.x <= num_byes ~ 14,
             TRUE ~ 7
           ),
           home_rest = case_when(
