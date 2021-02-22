@@ -103,17 +103,18 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://nflseedr.com">nflseedR</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
-<p>By default, 1000 simulations are done. We’ll set an initial random seed for this demonstration so you can follow along and get the same results, but normally you wouldn’t do that.</p>
+<p>For this guide, we’ll set an initial random seed of <code>4</code> at the beginning and <code>simulations = 100</code> for the purposes of this document so you can follow along by entering the samde code and get the same results shown here, but normally you wouldn’t do these things.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
-<span class="va">sims</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span><span class="fl">2020</span>, fresh_season <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 06:02:53: Loading games data</span>
-<span class="co">#&gt; ℹ Computation in multiple rounds can be accelerated with parallel processing.</span>
-<span class="co">#&gt; ℹ You should consider calling a `future::plan()`. Please see the function documentation for further information.</span>
-<span class="co">#&gt; ℹ Will go on sequentially...</span>
-<span class="co">#&gt; ● 2021-02-22 06:02:53: Beginning simulation of 1000 seasons in 2 rounds</span>
-<span class="co">#&gt; ● 2021-02-22 06:04:47: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-22 06:04:47: Aggregating across simulations</span></code></pre></div>
+<span class="va">sims</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span>
+  nfl_season <span class="op">=</span> <span class="fl">2020</span>,
+  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
+  simulations <span class="op">=</span> <span class="fl">100</span>
+<span class="op">)</span>
+<span class="co">#&gt; ● 2021-02-22 07:26:31: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 07:26:31: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 07:26:52: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 07:26:52: Aggregating across simulations</span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -135,17 +136,17 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">CHI</td>
-<td align="right">8.47</td>
-<td align="right">0.571</td>
-<td align="right">0.256</td>
-<td align="right">0.084</td>
-<td align="right">0.082</td>
-<td align="right">0.022</td>
-<td align="right">0.062</td>
-<td align="right">0.218</td>
+<td align="right">10.8</td>
+<td align="right">0.87</td>
+<td align="right">0.39</td>
+<td align="right">0.1</td>
+<td align="right">0.15</td>
+<td align="right">0.04</td>
+<td align="right">0</td>
+<td align="right">0.01</td>
 </tr></tbody>
 </table>
-<p>We can see the Bears got 10.7 wins on average. They made the playoffs 82% of the time, won the division 35% of the time, and won the Super Bowl in 4%, and rarely received a top 5 draft pick. The <code>teams</code> section of the output will show how a team did in each simulated season.</p>
+<p>We can see the Bears got 13.3 wins on average. They made the playoffs 87% of simulations, won the division in 39%, won the Super Bowl in 4%, and only in 1% did they receive a top five draft pick. The <code>teams</code> section of the output will show how a team did in each simulated season.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">teams</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -164,50 +165,50 @@
 <tr class="odd">
 <td align="right">1</td>
 <td align="left">CHI</td>
-<td align="right">9</td>
-<td align="right">NA</td>
-<td align="right">15</td>
+<td align="right">10</td>
+<td align="right">6</td>
+<td align="right">32</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="left">CHI</td>
 <td align="right">11</td>
-<td align="right">2</td>
-<td align="right">23</td>
+<td align="right">3</td>
+<td align="right">21</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
 <td align="left">CHI</td>
-<td align="right">8</td>
-<td align="right">NA</td>
-<td align="right">15</td>
+<td align="right">9</td>
+<td align="right">6</td>
+<td align="right">20</td>
 </tr>
 <tr class="even">
 <td align="right">4</td>
 <td align="left">CHI</td>
-<td align="right">15</td>
-<td align="right">1</td>
-<td align="right">30</td>
+<td align="right">10</td>
+<td align="right">6</td>
+<td align="right">26</td>
 </tr>
 <tr class="odd">
 <td align="right">5</td>
 <td align="left">CHI</td>
-<td align="right">7</td>
-<td align="right">NA</td>
 <td align="right">10</td>
+<td align="right">3</td>
+<td align="right">20</td>
 </tr>
 <tr class="even">
 <td align="right">6</td>
 <td align="left">CHI</td>
+<td align="right">6</td>
+<td align="right">NA</td>
 <td align="right">11</td>
-<td align="right">3</td>
-<td align="right">23</td>
 </tr>
 </tbody>
 </table>
-<p>Let’s check out the playoff games from the fourth simulation, where the Bears went 15-1.</p>
+<p>Let’s check out the playoff games from the first simulation, where the Bears went 10-6 and got the 6th seed.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">games</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">4</span>, <span class="va">game_type</span> <span class="op">!=</span> <span class="st">"REG"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">games</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">game_type</span> <span class="op">!=</span> <span class="st">"REG"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">sim</th>
@@ -222,156 +223,156 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="right">4</td>
-<td align="left">WC</td>
-<td align="right">18</td>
-<td align="left">NE</td>
-<td align="left">IND</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="left">Home</td>
 <td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="right">4</td>
 <td align="left">WC</td>
 <td align="right">18</td>
-<td align="left">LV</td>
+<td align="left">MIA</td>
 <td align="left">CLE</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="left">Home</td>
-<td align="right">-3</td>
+<td align="right">-8</td>
 </tr>
-<tr class="odd">
-<td align="right">4</td>
+<tr class="even">
+<td align="right">1</td>
 <td align="left">WC</td>
 <td align="right">18</td>
-<td align="left">KC</td>
+<td align="left">TEN</td>
+<td align="left">DEN</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="left">Home</td>
+<td align="right">24</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">WC</td>
+<td align="right">18</td>
 <td align="left">NYJ</td>
+<td align="left">IND</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="left">Home</td>
-<td align="right">23</td>
+<td align="right">14</td>
 </tr>
 <tr class="even">
-<td align="right">4</td>
-<td align="left">WC</td>
-<td align="right">18</td>
-<td align="left">MIN</td>
-<td align="left">ATL</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="left">Home</td>
-<td align="right">-7</td>
-</tr>
-<tr class="odd">
-<td align="right">4</td>
-<td align="left">WC</td>
-<td align="right">18</td>
-<td align="left">SF</td>
-<td align="left">DAL</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="left">Home</td>
-<td align="right">25</td>
-</tr>
-<tr class="even">
-<td align="right">4</td>
+<td align="right">1</td>
 <td align="left">WC</td>
 <td align="right">18</td>
 <td align="left">PHI</td>
-<td align="left">SEA</td>
+<td align="left">TB</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="left">Home</td>
-<td align="right">5</td>
+<td align="right">-6</td>
 </tr>
 <tr class="odd">
-<td align="right">4</td>
+<td align="right">1</td>
+<td align="left">WC</td>
+<td align="right">18</td>
+<td align="left">CHI</td>
+<td align="left">LA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="left">Home</td>
+<td align="right">-26</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">WC</td>
+<td align="right">18</td>
+<td align="left">DET</td>
+<td align="left">MIN</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="left">Home</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
 <td align="left">DIV</td>
 <td align="right">19</td>
+<td align="left">DEN</td>
 <td align="left">IND</td>
-<td align="left">NYJ</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="left">Home</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">DIV</td>
+<td align="right">19</td>
+<td align="left">MIA</td>
+<td align="left">NE</td>
+<td align="right">7</td>
+<td align="right">14</td>
+<td align="left">Home</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">DIV</td>
+<td align="right">19</td>
+<td align="left">PHI</td>
+<td align="left">MIN</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="left">Home</td>
+<td align="right">-12</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">DIV</td>
+<td align="right">19</td>
+<td align="left">CHI</td>
+<td align="left">DAL</td>
+<td align="right">7</td>
+<td align="right">14</td>
+<td align="left">Home</td>
+<td align="right">-11</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">CON</td>
+<td align="right">20</td>
+<td align="left">IND</td>
+<td align="left">NE</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="left">Home</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">CON</td>
+<td align="right">20</td>
+<td align="left">CHI</td>
+<td align="left">PHI</td>
 <td align="right">7</td>
 <td align="right">7</td>
 <td align="left">Home</td>
 <td align="right">-3</td>
 </tr>
-<tr class="even">
-<td align="right">4</td>
-<td align="left">DIV</td>
-<td align="right">19</td>
-<td align="left">LV</td>
-<td align="left">DEN</td>
-<td align="right">7</td>
-<td align="right">14</td>
-<td align="left">Home</td>
-<td align="right">27</td>
-</tr>
 <tr class="odd">
-<td align="right">4</td>
-<td align="left">DIV</td>
-<td align="right">19</td>
-<td align="left">DAL</td>
-<td align="left">SEA</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="left">Home</td>
-<td align="right">12</td>
-</tr>
-<tr class="even">
-<td align="right">4</td>
-<td align="left">DIV</td>
-<td align="right">19</td>
-<td align="left">MIN</td>
-<td align="left">CHI</td>
-<td align="right">7</td>
-<td align="right">14</td>
-<td align="left">Home</td>
-<td align="right">16</td>
-</tr>
-<tr class="odd">
-<td align="right">4</td>
-<td align="left">CON</td>
-<td align="right">20</td>
-<td align="left">IND</td>
-<td align="left">DEN</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="left">Home</td>
-<td align="right">-15</td>
-</tr>
-<tr class="even">
-<td align="right">4</td>
-<td align="left">CON</td>
-<td align="right">20</td>
-<td align="left">SEA</td>
-<td align="left">CHI</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="left">Home</td>
-<td align="right">-2</td>
-</tr>
-<tr class="odd">
-<td align="right">4</td>
+<td align="right">1</td>
 <td align="left">SB</td>
 <td align="right">21</td>
-<td align="left">SEA</td>
-<td align="left">IND</td>
+<td align="left">CHI</td>
+<td align="left">NE</td>
 <td align="right">14</td>
 <td align="right">14</td>
 <td align="left">Neutral</td>
-<td align="right">-2</td>
+<td align="right">-6</td>
 </tr>
 </tbody>
 </table>
-<p>In this simulation, the Bears after their playoff bye defeated the Buccaneers by 11, then the Washington Football Team by 17 in the NFC Championship Game, and finally the Chargers by 13 in the Super Bowl.</p>
+<p>In this simulation, the Bears beat the Rams in a wildcard game by 26 points, then beat the Cowboys in the divisional round by 11 points, took the Eagles by a field goal in the NFC Championship Game, and finally defeated the Patriots by 6 in the Super Bowl.</p>
 <p>As you may have gathered at this point, the default simulation code picks a random Elo for every team, and uses those as the starting Elo ratings for all 32 teams. However, the default code Elo will adjust independently within each simulation as each week is simulated. (The Elo model used is loosely based off of that of <a href="https://fivethirtyeight.com/methodology/how-our-nfl-predictions-work/">FiveThirtyEight</a>.)</p>
 <div id="use-your-own-model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#use-your-own-model" class="anchor"></a>Use Your Own Model</h2>
-<p>But of course the real value is putting in your own model into the simulator. To accomplish this, you can write your own function which will determine the output of games instead. As an example, here’s a very stupid model that makes the team earlier alphabetically win by 3 points 90% of the time, and lose by 3 points the other 10% of the time.</p>
+<p>But of course the real value of nflseedR is putting in your own model into the simulator. To accomplish this, you can write your own function which will determine the output of games instead. As an example, here’s a very stupid model that makes the team earlier alphabetically win by 3 points 90% of the time, and lose by 3 points the other 10% of the time.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">stupid_games_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">teams</span>, <span class="va">games</span>, <span class="va">week_num</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="co"># make the earlier alphabetical team win 90% of the time</span>
@@ -395,14 +396,16 @@
 <p>!! Also, make sure you aren’t overriding completed games or games that aren’t in the current week of <code>w</code>. The simulator will <strong>not</strong> stop you from setting past, present, or future game results in your function, whether you meant to do so or not. !!</p>
 <p>Let’s run a simulation with <code>stupid_games_model</code> and see what happens:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sims2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span><span class="fl">2020</span>, process_games <span class="op">=</span> <span class="va">stupid_games_model</span>, fresh_season <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 06:04:47: Loading games data</span>
-<span class="co">#&gt; ℹ Computation in multiple rounds can be accelerated with parallel processing.</span>
-<span class="co">#&gt; ℹ You should consider calling a `future::plan()`. Please see the function documentation for further information.</span>
-<span class="co">#&gt; ℹ Will go on sequentially...</span>
-<span class="co">#&gt; ● 2021-02-22 06:04:48: Beginning simulation of 1000 seasons in 2 rounds</span>
-<span class="co">#&gt; ● 2021-02-22 06:06:26: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-22 06:06:26: Aggregating across simulations</span>
+<code class="sourceCode R"><span class="va">sims2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span>
+  nfl_season <span class="op">=</span> <span class="fl">2020</span>,
+  process_games <span class="op">=</span> <span class="va">stupid_games_model</span>,
+  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
+  simulations <span class="op">=</span> <span class="fl">100</span>
+<span class="op">)</span>
+<span class="co">#&gt; ● 2021-02-22 07:26:53: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 07:26:54: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 07:27:11: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 07:27:11: Aggregating across simulations</span>
 
 <span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -424,12 +427,12 @@
 <td align="left">NFC</td>
 <td align="left">NFC West</td>
 <td align="left">ARI</td>
-<td align="right">14.4</td>
-<td align="right">0.999</td>
-<td align="right">0.971</td>
-<td align="right">0.418</td>
-<td align="right">0.792</td>
-<td align="right">0.691</td>
+<td align="right">14.3</td>
+<td align="right">1.00</td>
+<td align="right">0.97</td>
+<td align="right">0.40</td>
+<td align="right">0.64</td>
+<td align="right">0.59</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -437,12 +440,12 @@
 <td align="left">NFC</td>
 <td align="left">NFC South</td>
 <td align="left">ATL</td>
-<td align="right">14.5</td>
-<td align="right">0.998</td>
-<td align="right">0.917</td>
-<td align="right">0.521</td>
-<td align="right">0.158</td>
-<td align="right">0.142</td>
+<td align="right">14.4</td>
+<td align="right">1.00</td>
+<td align="right">0.91</td>
+<td align="right">0.47</td>
+<td align="right">0.29</td>
+<td align="right">0.26</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -451,11 +454,11 @@
 <td align="left">AFC North</td>
 <td align="left">BAL</td>
 <td align="right">14.4</td>
-<td align="right">1.000</td>
-<td align="right">0.856</td>
-<td align="right">0.600</td>
-<td align="right">0.780</td>
-<td align="right">0.132</td>
+<td align="right">1.00</td>
+<td align="right">0.82</td>
+<td align="right">0.60</td>
+<td align="right">0.79</td>
+<td align="right">0.09</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -463,12 +466,12 @@
 <td align="left">AFC</td>
 <td align="left">AFC East</td>
 <td align="left">BUF</td>
-<td align="right">13.6</td>
-<td align="right">1.000</td>
-<td align="right">0.999</td>
-<td align="right">0.283</td>
-<td align="right">0.160</td>
-<td align="right">0.022</td>
+<td align="right">13.7</td>
+<td align="right">1.00</td>
+<td align="right">1.00</td>
+<td align="right">0.29</td>
+<td align="right">0.16</td>
+<td align="right">0.04</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -477,11 +480,11 @@
 <td align="left">NFC South</td>
 <td align="left">CAR</td>
 <td align="right">12.0</td>
-<td align="right">0.967</td>
-<td align="right">0.083</td>
-<td align="right">0.013</td>
-<td align="right">0.035</td>
-<td align="right">0.003</td>
+<td align="right">0.96</td>
+<td align="right">0.09</td>
+<td align="right">0.03</td>
+<td align="right">0.03</td>
+<td align="right">0.01</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -489,12 +492,12 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">CHI</td>
-<td align="right">12.8</td>
-<td align="right">0.988</td>
-<td align="right">0.894</td>
-<td align="right">0.045</td>
-<td align="right">0.010</td>
-<td align="right">0.003</td>
+<td align="right">12.9</td>
+<td align="right">0.98</td>
+<td align="right">0.88</td>
+<td align="right">0.10</td>
+<td align="right">0.02</td>
+<td align="right">0.00</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -521,83 +524,83 @@
 <td align="left">AFC</td>
 <td align="left">AFC North</td>
 <td align="left">PIT</td>
-<td align="right">3.25</td>
-<td align="right">0.001</td>
+<td align="right">3.09</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.006</td>
-<td align="right">0.365</td>
+<td align="right">0</td>
+<td align="right">0.01</td>
+<td align="right">0.40</td>
 </tr>
 <tr class="even">
 <td align="left">NFC</td>
 <td align="left">NFC West</td>
 <td align="left">SEA</td>
-<td align="right">4.04</td>
-<td align="right">0.000</td>
+<td align="right">3.94</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.009</td>
-<td align="right">0.338</td>
+<td align="right">0</td>
+<td align="right">0.02</td>
+<td align="right">0.33</td>
 </tr>
 <tr class="odd">
 <td align="left">NFC</td>
 <td align="left">NFC West</td>
 <td align="left">SF</td>
-<td align="right">2.42</td>
-<td align="right">0.000</td>
+<td align="right">2.39</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.175</td>
-<td align="right">0.847</td>
+<td align="right">0</td>
+<td align="right">0.10</td>
+<td align="right">0.86</td>
 </tr>
 <tr class="even">
 <td align="left">NFC</td>
 <td align="left">NFC South</td>
 <td align="left">TB</td>
-<td align="right">1.58</td>
-<td align="right">0.000</td>
+<td align="right">1.63</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.216</td>
-<td align="right">0.854</td>
+<td align="right">0</td>
+<td align="right">0.24</td>
+<td align="right">0.85</td>
 </tr>
 <tr class="odd">
 <td align="left">AFC</td>
 <td align="left">AFC South</td>
 <td align="left">TEN</td>
-<td align="right">1.63</td>
-<td align="right">0.000</td>
+<td align="right">1.60</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.200</td>
-<td align="right">0.847</td>
+<td align="right">0</td>
+<td align="right">0.21</td>
+<td align="right">0.82</td>
 </tr>
 <tr class="even">
 <td align="left">NFC</td>
 <td align="left">NFC East</td>
 <td align="left">WAS</td>
-<td align="right">1.60</td>
-<td align="right">0.000</td>
+<td align="right">1.68</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.361</td>
-<td align="right">0.880</td>
+<td align="right">0</td>
+<td align="right">0.39</td>
+<td align="right">0.85</td>
 </tr>
 </tbody>
 </table>
-<p>As you might expect, the earliest alphabetical teams win a lot. The Cardinals won the Super Bowl in a nice 69% of seasons! Meanwhile, the teams at the bottom alphabetically are virtually certain to be at the top of the draft order.</p>
+<p>As you might expect, the earliest alphabetical teams win a lot. The Cardinals won the Super Bowl in 59% of seasons! Meanwhile, the teams at the bottom alphabetically are virtually certain to be at the top of the draft order.</p>
 </div>
 <div id="adding-in-your-own-data" class="section level2">
 <h2 class="hasAnchor">
@@ -648,16 +651,14 @@
   nfl_season <span class="op">=</span> <span class="fl">2020</span>,
   process_games <span class="op">=</span> <span class="va">biased_games_model</span>, 
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>, 
+  simulations <span class="op">=</span> <span class="fl">100</span>,
   best <span class="op">=</span> <span class="st">"CHI"</span>, 
   worst <span class="op">=</span> <span class="st">"GB"</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 06:06:27: Loading games data</span>
-<span class="co">#&gt; ℹ Computation in multiple rounds can be accelerated with parallel processing.</span>
-<span class="co">#&gt; ℹ You should consider calling a `future::plan()`. Please see the function documentation for further information.</span>
-<span class="co">#&gt; ℹ Will go on sequentially...</span>
-<span class="co">#&gt; ● 2021-02-22 06:06:27: Beginning simulation of 1000 seasons in 2 rounds</span>
-<span class="co">#&gt; ● 2021-02-22 06:08:05: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-22 06:08:05: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-02-22 07:27:12: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 07:27:12: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 07:27:31: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 07:27:31: Aggregating across simulations</span>
 <span class="va">sims3</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -680,7 +681,7 @@
 <td align="right">16</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">0.972</td>
+<td align="right">0.99</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">0</td>
@@ -713,12 +714,12 @@
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0.997</td>
+<td align="right">1</td>
 <td align="right">1</td>
 </tr></tbody>
 </table>
 <p>And this shows exactly what we expect. By defining the Bears as the best team, they always go 16-0, win the division, and win the Super Bowl. Interestingly, they do not always get the #1 seed. This makes sense, however, as in games without the Bears or the Packers, the alphabetically earlier teams still wins 90% of the time. The Cardinals would therefore be expected to go 16-0 in some of the simulations, and in some of those have thee tiebreakers over the Bears However, even in these simulations, they’ll still lose to Bears in the end when they meet in the playoffs.</p>
-<p>Similarly, the Packers always go 0-16, and never have any kind of realistic postseason. They do almost always get the #1 draft pick – but not always. Using the same logic as above, sometimes the Washington Football Team will go 0-16 too, and may beat the Packers out for the #1 pick through tiebreakers.</p>
+<p>Similarly, the Packers always go 0-16, and never make the playoffs. While in these simulated seasons they got the #1 draft pick every time, they aren’t guaranteed to do so. Using the same logic as above, sometimes the Washington Football Team will go 0-16 too, and may beat the Packers out for the #1 pick through tiebreakers.</p>
 </div>
 <div id="passing-data-in-from-one-week-to-the-next" class="section level2">
 <h2 class="hasAnchor">
@@ -871,10 +872,15 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   test_week <span class="op">=</span> <span class="fl">3</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 06:08:05: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-22 06:08:06: Beginning simulation of 1000 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-22 06:08:08: Aborting and returning your `process_games` function's results from Week 3</span>
-<span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="co">#&gt; ● 2021-02-22 07:27:31: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 07:27:31: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 07:27:33: Aborting and returning your `process_games` function's results from Week 3</span></code></pre></div>
+<p>Let’s look at the Bears’ Elo after Week 3 in a random sampling of the simulations:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op">%&gt;%</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/sample_n.html">sample_n</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">sim</th>
@@ -886,80 +892,192 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="right">1</td>
+<td align="right">278</td>
 <td align="left">CHI</td>
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1779</td>
+<td align="right">1814</td>
 </tr>
 <tr class="even">
-<td align="right">2</td>
+<td align="right">397</td>
 <td align="left">CHI</td>
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1744</td>
+<td align="right">1800</td>
 </tr>
 <tr class="odd">
-<td align="right">3</td>
+<td align="right">625</td>
 <td align="left">CHI</td>
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1817</td>
+<td align="right">1839</td>
 </tr>
 <tr class="even">
-<td align="right">4</td>
+<td align="right">291</td>
 <td align="left">CHI</td>
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1838</td>
+<td align="right">1819</td>
 </tr>
 <tr class="odd">
-<td align="right">5</td>
+<td align="right">177</td>
 <td align="left">CHI</td>
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1825</td>
+<td align="right">1805</td>
 </tr>
 <tr class="even">
-<td align="right">6</td>
+<td align="right">471</td>
 <td align="left">CHI</td>
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1825</td>
+<td align="right">1827</td>
+</tr>
+<tr class="odd">
+<td align="right">446</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1767</td>
+</tr>
+<tr class="even">
+<td align="right">119</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1766</td>
+</tr>
+<tr class="odd">
+<td align="right">533</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1757</td>
+</tr>
+<tr class="even">
+<td align="right">440</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1815</td>
+</tr>
+<tr class="odd">
+<td align="right">645</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1819</td>
+</tr>
+<tr class="even">
+<td align="right">392</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1797</td>
+</tr>
+<tr class="odd">
+<td align="right">458</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1804</td>
+</tr>
+<tr class="even">
+<td align="right">321</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1774</td>
+</tr>
+<tr class="odd">
+<td align="right">225</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1820</td>
+</tr>
+<tr class="even">
+<td align="right">304</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1795</td>
+</tr>
+<tr class="odd">
+<td align="right">52</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1786</td>
+</tr>
+<tr class="even">
+<td align="right">79</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1725</td>
+</tr>
+<tr class="odd">
+<td align="right">590</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1824</td>
+</tr>
+<tr class="even">
+<td align="right">452</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="left">NFCN</td>
+<td align="right">1781</td>
 </tr>
 </tbody>
 </table>
-<p>You can see the Bears’ Elo rating after Week 3 in each of the first six simulations. The second simulation has been the worst of these six, while the fourth is the highest. Let’s check out the early Bears games from that fourth season:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<p>The highest rating shown here is simulation number 304. Let’s examine the Bears’ games in that simulation:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">test</span><span class="op">$</span><span class="va">games</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">4</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">304</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">away_team</span> <span class="op">==</span> <span class="st">"CHI"</span> <span class="op">|</span> <span class="va">home_team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 16 x 9</span>
 <span class="co">#&gt;      sim game_type  week away_team home_team away_rest home_rest location result</span>
 <span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;         &lt;int&gt;     &lt;int&gt; &lt;chr&gt;     &lt;int&gt;</span>
-<span class="co">#&gt;  1     4 REG           1 CHI       DET               7         7 Home        -10</span>
-<span class="co">#&gt;  2     4 REG           2 NYG       CHI               6         7 Home         19</span>
-<span class="co">#&gt;  3     4 REG           3 CHI       ATL               7         7 Home        -24</span>
-<span class="co">#&gt;  4     4 REG           4 IND       CHI               7         7 Home         NA</span>
-<span class="co">#&gt;  5     4 REG           5 TB        CHI               4         4 Home         NA</span>
-<span class="co">#&gt;  6     4 REG           6 CHI       CAR              10         7 Home         NA</span>
-<span class="co">#&gt;  7     4 REG           7 CHI       LA                8         8 Home         NA</span>
-<span class="co">#&gt;  8     4 REG           8 NO        CHI               7         6 Home         NA</span>
-<span class="co">#&gt;  9     4 REG           9 CHI       TEN               7         7 Home         NA</span>
-<span class="co">#&gt; 10     4 REG          10 MIN       CHI               8         8 Home         NA</span>
-<span class="co">#&gt; 11     4 REG          12 CHI       GB               13         7 Home         NA</span>
-<span class="co">#&gt; 12     4 REG          13 DET       CHI              10         7 Home         NA</span>
-<span class="co">#&gt; 13     4 REG          14 HOU       CHI               7         7 Home         NA</span>
-<span class="co">#&gt; 14     4 REG          15 CHI       MIN               7         7 Home         NA</span>
-<span class="co">#&gt; 15     4 REG          16 CHI       JAX               7         7 Home         NA</span>
-<span class="co">#&gt; 16     4 REG          17 GB        CHI               7         7 Home         NA</span></code></pre></div>
-<p>First, note that only the first three weeks have the result filled in. Again, this because the <code>test_week = 3</code> input aborted the simulation after Week 3, which was useful for seeing the Elo above. It also makes sense that this would be a simulation where the Bears’ Elo is higher, since they won all 3 games.</p>
+<span class="co">#&gt;  1   304 REG           1 CHI       DET               7         7 Home        -16</span>
+<span class="co">#&gt;  2   304 REG           2 NYG       CHI               6         7 Home         15</span>
+<span class="co">#&gt;  3   304 REG           3 CHI       ATL               7         7 Home          2</span>
+<span class="co">#&gt;  4   304 REG           4 IND       CHI               7         7 Home         NA</span>
+<span class="co">#&gt;  5   304 REG           5 TB        CHI               4         4 Home         NA</span>
+<span class="co">#&gt;  6   304 REG           6 CHI       CAR              10         7 Home         NA</span>
+<span class="co">#&gt;  7   304 REG           7 CHI       LA                8         8 Home         NA</span>
+<span class="co">#&gt;  8   304 REG           8 NO        CHI               7         6 Home         NA</span>
+<span class="co">#&gt;  9   304 REG           9 CHI       TEN               7         7 Home         NA</span>
+<span class="co">#&gt; 10   304 REG          10 MIN       CHI               8         8 Home         NA</span>
+<span class="co">#&gt; 11   304 REG          12 CHI       GB               13         7 Home         NA</span>
+<span class="co">#&gt; 12   304 REG          13 DET       CHI              10         7 Home         NA</span>
+<span class="co">#&gt; 13   304 REG          14 HOU       CHI               7         7 Home         NA</span>
+<span class="co">#&gt; 14   304 REG          15 CHI       MIN               7         7 Home         NA</span>
+<span class="co">#&gt; 15   304 REG          16 CHI       JAX               7         7 Home         NA</span>
+<span class="co">#&gt; 16   304 REG          17 GB        CHI               7         7 Home         NA</span></code></pre></div>
+<p>First, note that only the first three weeks have the result filled in. Again, this because the <code>test_week = 3</code> input aborted the simulation after Week 3, which was useful for seeing the Elo above. It also makes sense that this would be a simulation where the Bears’ Elo is higher, since they won all three games by double digits.</p>
 </div>
 <div id="simulation-configuration" class="section level2">
 <h2 class="hasAnchor">
