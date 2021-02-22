@@ -191,13 +191,13 @@ values are valid:</p><dl>
     <tr>
       <th>.debug</th>
       <td><p>Either <code>TRUE</code> or <code>FALSE</code>. Controls whether additional
-messages are printed to the console showing what the tiebreaking algorithms
+messages are printed to the console showing what the tie-breaking algorithms
 are currently performing.</p></td>
     </tr>
     <tr>
       <th>h2h</th>
       <td><p>A data frame that is used for head-to-head tiebreakers across the
-tiebreaking functions. It is computed by the function
+tie-breaking functions. It is computed by the function
 <code>compute_division_ranks</code>.</p></td>
     </tr>
     </table>
@@ -207,7 +207,7 @@ tiebreaking functions. It is computed by the function
     <p>A list of two data frames:</p><dl>
 <dt>standings</dt><dd><p>Division standings.</p></dd>
 <dt>h2h</dt><dd><p>A data frame that is used for head-to-head tiebreakers across the
-tiebreaking functions.</p></dd>
+tie-breaking functions.</p></dd>
 
 </dl>
 
@@ -226,7 +226,7 @@ tiebreaking functions.</p></dd>
   <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span>sim <span class='op'>=</span> <span class='va'>season</span>, <span class='va'>game_type</span>, <span class='va'>week</span>, <span class='va'>away_team</span>, <span class='va'>home_team</span>, <span class='va'>result</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'>nflseedR</span><span class='fu'>::</span><span class='fu'>compute_division_ranks</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/pluck.html'>pluck</a></span><span class='op'>(</span><span class='st'>"standings"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>●</span><span> 2021-02-22 08:05:08: Calculating team data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-22 08:05:08: Calculating head to head</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-22 08:05:08: Calculating division rank #1</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-22 08:05:08: Calculating division rank #2</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-22 08:05:08: Calculating division rank #3</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-22 08:05:08: Calculating division rank #4</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 64 x 14</span><span>
+</div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>●</span><span> 2021-02-22 09:47:31: Calculating team data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-22 09:47:31: Calculating head to head</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-22 09:47:31: Calculating division rank #1</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-22 09:47:31: Calculating division rank #2</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-22 09:47:31: Calculating division rank #3</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-02-22 09:47:31: Calculating division rank #4</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 64 x 14</span><span>
 #&gt;      sim conf  division team  games  wins true_wins win_pct div_pct conf_pct
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span>  </span><span style='text-decoration: underline;'>2</span><span>019 AFC   AFC East BUF      16  10          10  0.625    0.5     0.583 

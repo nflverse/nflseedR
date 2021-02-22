@@ -110,10 +110,10 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   simulations <span class="op">=</span> <span class="fl">100</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 08:05:37: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-22 08:05:38: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-22 08:05:59: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-22 08:05:59: Aggregating across simulations</span></code></pre></div>
+<span class="co">#&gt; ● 2021-02-22 09:48:02: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 09:48:02: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 09:48:23: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 09:48:23: Aggregating across simulations</span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -145,7 +145,7 @@
 <td align="right">0.01</td>
 </tr></tbody>
 </table>
-<p>We can see the Bears got 13.3 wins on average. They made the playoffs 87% of simulations, won the division in 39%, won the Super Bowl in 4%, and only in 1% did they receive a top five draft pick. The <code>teams</code> section of the output will show how a team did in each simulated season.</p>
+<p>We can see the Bears got 10.8 wins on average. They made the playoffs 87% of simulations, won the division in 39%, won the Super Bowl in 4%, and only in 1% did they receive a top five draft pick. The <code>teams</code> section of the output will show how a team did in each simulated season.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">teams</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -401,10 +401,10 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   simulations <span class="op">=</span> <span class="fl">100</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 08:05:59: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-22 08:06:00: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-22 08:06:18: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-22 08:06:18: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-02-22 09:48:24: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 09:48:24: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 09:48:42: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 09:48:42: Aggregating across simulations</span>
 
 <span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -654,10 +654,10 @@
   best <span class="op">=</span> <span class="st">"CHI"</span>, 
   worst <span class="op">=</span> <span class="st">"GB"</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 08:06:18: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-22 08:06:18: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-22 08:06:36: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-22 08:06:36: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-02-22 09:48:42: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 09:48:42: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 09:49:01: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 09:49:01: Aggregating across simulations</span>
 <span class="va">sims3</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -871,9 +871,9 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   test_week <span class="op">=</span> <span class="fl">3</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 08:06:37: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-22 08:06:37: Beginning simulation of 1000 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-22 08:06:39: Aborting and returning your `process_games` function's results from Week 3</span></code></pre></div>
+<span class="co">#&gt; ● 2021-02-22 09:49:01: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 09:49:02: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 09:49:04: Aborting and returning your `process_games` function's results from Week 3</span></code></pre></div>
 <p>Let’s look at the Bears’ Elo after Week 3 in the top handful of simulations:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op">%&gt;%</span>
@@ -1014,7 +1014,7 @@
 <li>
 <strong>sim</strong> - The ID number of the simulation. All rows with the same value of <code>sim</code> in both <code>teams</code> and <code>games</code> refer to the same simulated season.</li>
 <li>
-<strong>team</strong> - The abbreviation reperesenting the team</li>
+<strong>team</strong> - The abbreviation representing the team</li>
 <li>
 <strong>conf</strong> - The conference the team is in (such as <code>AFC</code>)</li>
 <li>
@@ -1028,9 +1028,9 @@
 <li>
 <strong>win_pct</strong> - The win rate of the team. Equal to <code>wins / games</code>.</li>
 <li>
-<strong>div_pct</strong> - The win rate of the teams in games played agains teams in the same division.</li>
+<strong>div_pct</strong> - The win rate of the teams in games played against teams in the same division.</li>
 <li>
-<strong>conf_pct</strong> - The win rate of the teams in games played agains teams in the same conference.</li>
+<strong>conf_pct</strong> - The win rate of the teams in games played against teams in the same conference.</li>
 <li>
 <strong>sov</strong> - Strength of Victory. The combined win rate of teams this team has beaten.</li>
 <li>
@@ -1060,7 +1060,7 @@
 <li>
 <code>WC</code> - A wildcard playoff game</li>
 <li>
-<code>DIV</code> - A divisonal playoff game</li>
+<code>DIV</code> - A divisional playoff game</li>
 <li>
 <code>CON</code> - A conference championship game</li>
 <li>
@@ -1091,7 +1091,7 @@
 <li>
 <strong>division</strong> - The division the team is in (such as <code>NFC West</code>)</li>
 <li>
-<strong>team</strong> - The abbreviation reperesenting the team</li>
+<strong>team</strong> - The abbreviation representing the team</li>
 <li>
 <strong>wins</strong> - The mean (average) number of games won across the simulations, counting ties as 0.5 wins</li>
 <li>
@@ -1111,10 +1111,10 @@
 </ul>
 </li>
 <li>
-<strong>teams_wins</strong> - Each team has a row for 0 wins, 0.5 wins, 1 win, 1.5 wins, … , 15.5 wins, 16 wins. These are aggergated across all simulations and are intending to represent your model’s probability for teams being below or above a certain win total, making them an excellent reference for using your model to make win total bets.
+<strong>team_wins</strong> - Each team has a row for 0 wins, 0.5 wins, 1 win, 1.5 wins, … , 15.5 wins, 16 wins. These are aggregated across all simulations and are intending to represent your model’s probability for teams being below or above a certain win total, making them an excellent reference for using your model to make win total bets.
 <ul>
 <li>
-<strong>team</strong> - The abbreviation reperesenting the team</li>
+<strong>team</strong> - The abbreviation representing the team</li>
 <li>
 <strong>wins</strong> - A number of wins (either an integer halfway between two integers)</li>
 <li>
