@@ -107,13 +107,13 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
 <span class="va">sims</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span><span class="fl">2020</span>, fresh_season <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-21 22:31:51: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 00:22:28: Loading games data</span>
 <span class="co">#&gt; ℹ Computation in multiple rounds can be accelerated with parallel processing.</span>
 <span class="co">#&gt; ℹ You should consider calling a `future::plan()`. Please see the function documentation for further information.</span>
 <span class="co">#&gt; ℹ Will go on sequentially...</span>
-<span class="co">#&gt; ● 2021-02-21 22:31:52: Beginning simulation of 1000 seasons in 2 rounds</span>
-<span class="co">#&gt; ● 2021-02-21 22:33:50: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-21 22:33:50: Aggregating across simulations</span></code></pre></div>
+<span class="co">#&gt; ● 2021-02-22 00:22:29: Beginning simulation of 1000 seasons in 2 rounds</span>
+<span class="co">#&gt; ● 2021-02-22 00:24:22: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 00:24:22: Aggregating across simulations</span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -396,13 +396,13 @@
 <p>Let’s run a simulation with <code>stupid_games_model</code> and see what happens:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span><span class="fl">2020</span>, process_games <span class="op">=</span> <span class="va">stupid_games_model</span>, fresh_season <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-21 22:33:51: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 00:24:23: Loading games data</span>
 <span class="co">#&gt; ℹ Computation in multiple rounds can be accelerated with parallel processing.</span>
 <span class="co">#&gt; ℹ You should consider calling a `future::plan()`. Please see the function documentation for further information.</span>
 <span class="co">#&gt; ℹ Will go on sequentially...</span>
-<span class="co">#&gt; ● 2021-02-21 22:33:52: Beginning simulation of 1000 seasons in 2 rounds</span>
-<span class="co">#&gt; ● 2021-02-21 22:35:34: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-21 22:35:34: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-02-22 00:24:24: Beginning simulation of 1000 seasons in 2 rounds</span>
+<span class="co">#&gt; ● 2021-02-22 00:26:03: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 00:26:03: Aggregating across simulations</span>
 
 <span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -651,13 +651,13 @@
   best <span class="op">=</span> <span class="st">"CHI"</span>, 
   worst <span class="op">=</span> <span class="st">"GB"</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-21 22:35:34: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 00:26:03: Loading games data</span>
 <span class="co">#&gt; ℹ Computation in multiple rounds can be accelerated with parallel processing.</span>
 <span class="co">#&gt; ℹ You should consider calling a `future::plan()`. Please see the function documentation for further information.</span>
 <span class="co">#&gt; ℹ Will go on sequentially...</span>
-<span class="co">#&gt; ● 2021-02-21 22:35:34: Beginning simulation of 1000 seasons in 2 rounds</span>
-<span class="co">#&gt; ● 2021-02-21 22:37:17: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-21 22:37:17: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-02-22 00:26:04: Beginning simulation of 1000 seasons in 2 rounds</span>
+<span class="co">#&gt; ● 2021-02-22 00:27:42: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 00:27:42: Aggregating across simulations</span>
 <span class="va">sims3</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -871,9 +871,9 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   test_week <span class="op">=</span> <span class="fl">3</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-21 22:37:17: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-21 22:37:18: Beginning simulation of 1000 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-21 22:37:20: Aborting and returning your `process_games` function's results from Week 3</span>
+<span class="co">#&gt; ● 2021-02-22 00:27:42: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 00:27:43: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 00:27:45: Aborting and returning your `process_games` function's results from Week 3</span>
 <span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -935,32 +935,31 @@
 </tr>
 </tbody>
 </table>
-<p>You can see the Bears’ Elo rating after Week 3 in each of the first six simulations. The second simulation has been the worst of these six, while the fifth is the highest.</p>
-<p>Let’s check out the early Bears games from the latter:</p>
+<p>You can see the Bears’ Elo rating after Week 3 in each of the first six simulations. The second simulation has been the worst of these six, while the fourth is the highest. Let’s check out the early Bears games from that fourth season:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">test</span><span class="op">$</span><span class="va">games</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">5</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">4</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">away_team</span> <span class="op">==</span> <span class="st">"CHI"</span> <span class="op">|</span> <span class="va">home_team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 16 x 9</span>
 <span class="co">#&gt;      sim game_type  week away_team home_team away_rest home_rest location result</span>
 <span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;         &lt;int&gt;     &lt;int&gt; &lt;chr&gt;     &lt;int&gt;</span>
-<span class="co">#&gt;  1     5 REG           1 CHI       DET               7         7 Home        -23</span>
-<span class="co">#&gt;  2     5 REG           2 NYG       CHI               6         7 Home          6</span>
-<span class="co">#&gt;  3     5 REG           3 CHI       ATL               7         7 Home        -10</span>
-<span class="co">#&gt;  4     5 REG           4 IND       CHI               7         7 Home         NA</span>
-<span class="co">#&gt;  5     5 REG           5 TB        CHI               4         4 Home         NA</span>
-<span class="co">#&gt;  6     5 REG           6 CHI       CAR              10         7 Home         NA</span>
-<span class="co">#&gt;  7     5 REG           7 CHI       LA                8         8 Home         NA</span>
-<span class="co">#&gt;  8     5 REG           8 NO        CHI               7         6 Home         NA</span>
-<span class="co">#&gt;  9     5 REG           9 CHI       TEN               7         7 Home         NA</span>
-<span class="co">#&gt; 10     5 REG          10 MIN       CHI               8         8 Home         NA</span>
-<span class="co">#&gt; 11     5 REG          12 CHI       GB               13         7 Home         NA</span>
-<span class="co">#&gt; 12     5 REG          13 DET       CHI              10         7 Home         NA</span>
-<span class="co">#&gt; 13     5 REG          14 HOU       CHI               7         7 Home         NA</span>
-<span class="co">#&gt; 14     5 REG          15 CHI       MIN               7         7 Home         NA</span>
-<span class="co">#&gt; 15     5 REG          16 CHI       JAX               7         7 Home         NA</span>
-<span class="co">#&gt; 16     5 REG          17 GB        CHI               7         7 Home         NA</span></code></pre></div>
-<p>First, note that only the first three weeks have the result filled in. Again, this because the <code>test_week = 3</code> input aborted the simulation after Week 3, which was useful for seeing the Elo above. It also makes sense that this would be a simulation where the Bears’ Elo is particularly high, since they won all three games so far by multiple scores.</p>
+<span class="co">#&gt;  1     4 REG           1 CHI       DET               7         7 Home        -10</span>
+<span class="co">#&gt;  2     4 REG           2 NYG       CHI               6         7 Home         19</span>
+<span class="co">#&gt;  3     4 REG           3 CHI       ATL               7         7 Home        -24</span>
+<span class="co">#&gt;  4     4 REG           4 IND       CHI               7         7 Home         NA</span>
+<span class="co">#&gt;  5     4 REG           5 TB        CHI               4         4 Home         NA</span>
+<span class="co">#&gt;  6     4 REG           6 CHI       CAR              10         7 Home         NA</span>
+<span class="co">#&gt;  7     4 REG           7 CHI       LA                8         8 Home         NA</span>
+<span class="co">#&gt;  8     4 REG           8 NO        CHI               7         6 Home         NA</span>
+<span class="co">#&gt;  9     4 REG           9 CHI       TEN               7         7 Home         NA</span>
+<span class="co">#&gt; 10     4 REG          10 MIN       CHI               8         8 Home         NA</span>
+<span class="co">#&gt; 11     4 REG          12 CHI       GB               13         7 Home         NA</span>
+<span class="co">#&gt; 12     4 REG          13 DET       CHI              10         7 Home         NA</span>
+<span class="co">#&gt; 13     4 REG          14 HOU       CHI               7         7 Home         NA</span>
+<span class="co">#&gt; 14     4 REG          15 CHI       MIN               7         7 Home         NA</span>
+<span class="co">#&gt; 15     4 REG          16 CHI       JAX               7         7 Home         NA</span>
+<span class="co">#&gt; 16     4 REG          17 GB        CHI               7         7 Home         NA</span></code></pre></div>
+<p>First, note that only the first three weeks have the result filled in. Again, this because the <code>test_week = 3</code> input aborted the simulation after Week 3, which was useful for seeing the Elo above. It also makes sense that this would be a simulation where the Bears’ Elo is higher, since they won all 3 games.</p>
 </div>
 <div id="simulation-configuration" class="section level2">
 <h2 class="hasAnchor">
@@ -1079,7 +1078,7 @@
 </ul>
 </li>
 <li>
-<strong>overall</strong> - One row per team, aggregated across all simulations. Sorted by <code>conf</code> then <code>division</code> then <code>team</code>.
+<strong>overall</strong> - One row per team, aggregated across all simulations. Sorted by <code>conf</code> then <code>division</code> then <code>team</code>. This is a good reference for looking at futures bets, since this should represents your model’s chances of various things happening for each team.
 <ul>
 <li>
 <strong>conf</strong> - The conference the team is in (such as <code>AFC</code>)</li>
@@ -1103,6 +1102,19 @@
 <strong>draft1</strong> - The rate this team received the first pick in the next draft across simulations</li>
 <li>
 <strong>draft5</strong> - The rate this team received a top five pick in the next draft across simulations</li>
+</ul>
+</li>
+<li>
+<strong>teams_wins</strong> - Each team has a row for 0 wins, 0.5 wins, 1 win, 1.5 wins, … , 15.5 wins, 16 wins. These are aggergated across all simulations and are intending to represent your model’s probability for teams being below or above a certain win total, making them an excellent reference for using your model to make win total bets.
+<ul>
+<li>
+<strong>team</strong> - The abbreviation reperesenting the team</li>
+<li>
+<strong>wins</strong> - A number of wins (either an integer halfway between two integers)</li>
+<li>
+<strong>over_prob</strong> - The rate this team had more wins than this number aggregated across simulations. Ties are ignored.</li>
+<li>
+<strong>under_prob</strong> - The rate this team had fewer wins than this number aggregated across simulations. Ties are ignored. Note that if <code>wins</code> is an integer, <code>1-over_prob-under_prob</code> represents the rate at which the team finished at exactly that many wins.</li>
 </ul>
 </li>
 </ul>
