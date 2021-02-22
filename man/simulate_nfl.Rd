@@ -65,7 +65,7 @@ to be equal to half of the available cores (various benchmarks showed this
 results in optimal performance).}
 
 \item{.debug}{Either \code{TRUE} or \code{FALSE}. Controls whether additional
-messages are printed to the console showing what the tiebreaking algorithms
+messages are printed to the console showing what the tie-breaking algorithms
 are currently performing.}
 
 \item{print_summary}{If \code{TRUE}, prints the summary statistics to the console.}
@@ -103,7 +103,7 @@ Please note that this example sets "multisession" as default. For most users
 this should be the appropriate plan but please make sure it truly is.\preformatted{R_FUTURE_PLAN="multisession"
 }
 
-After the session is freshly retarted please check if the above method worked
+After the session is freshly restarted please check if the above method worked
 by running the next line. If the output is \code{FALSE} you successfully set up a
 default non-sequential \code{\link[future:plan]{future::plan()}}. If the output is \code{TRUE} all functions
 will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and NOT in multisession.\preformatted{inherits(future::plan(), "sequential")

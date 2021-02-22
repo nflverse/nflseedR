@@ -35,16 +35,16 @@
 #'  \item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule. Random if still tied.}
 #'  }
 #' @param .debug Either \code{TRUE} or \code{FALSE}. Controls whether additional
-#' messages are printed to the console showing what the tiebreaking algorithms
+#' messages are printed to the console showing what the tie-breaking algorithms
 #' are currently performing.
 #' @param h2h A data frame that is used for head-to-head tiebreakers across the
-#' tiebreaking functions. It is computed by the function
+#' tie-breaking functions. It is computed by the function
 #' \code{\link{compute_division_ranks}}.
 #' @returns A list of two data frames:
 #'  \describe{
 #'  \item{standings}{Division standings.}
 #'  \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
-#'  tiebreaking functions.}
+#'  tie-breaking functions.}
 #'  }
 #' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflseedR.html)
 #' @export

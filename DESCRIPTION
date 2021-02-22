@@ -11,7 +11,7 @@ Authors@R:
              role = c("cre", "ctb"),
              email = "mrcaseb@gmail.com"))
 Description: A set of functions to simulate National Football
-    League seasons including the sophisticated tiebreaking procedures.
+    League seasons including the sophisticated tie-breaking procedures.
 License: MIT + file LICENSE
 URL: https://nflseedr.com,
     https://leesharpe.github.io/nflseedR,

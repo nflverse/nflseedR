@@ -48,7 +48,7 @@
 #' ```
 #' R_FUTURE_PLAN="multisession"
 #' ```
-#' After the session is freshly retarted please check if the above method worked
+#' After the session is freshly restarted please check if the above method worked
 #' by running the next line. If the output is `FALSE` you successfully set up a
 #' default non-sequential [future::plan()]. If the output is `TRUE` all functions
 #' will behave like they were called with [purrr::map()] and NOT in multisession.

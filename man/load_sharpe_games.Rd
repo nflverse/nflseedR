@@ -11,7 +11,7 @@ A data frame containing the following variables for all NFL games
 since 1999:
 \describe{
 \item{game_id}{The ID of the game as assigned by the NFL. Note that this value matches the \code{game_id} field in nflscrapR if you wish to join the data.}
-\item{season}{The year of the NFL season. This reperesents the whole season, so regular season games that happen in January as well as playoff games will occur in the year after this number.}
+\item{season}{The year of the NFL season. This represents the whole season, so regular season games that happen in January as well as playoff games will occur in the year after this number.}
 \item{game_type}{What type of game? One of the following values:
 \itemize{
 \item{\code{REG}}{: a regular season game}
@@ -23,7 +23,7 @@ since 1999:
 }
 \item{week}{The week of the NFL season the game occurs in. This will be 1-17 for the regular season, 18 for wildcard playoff games, 19 for divisional playoff games, 20 for conference championships and 21 for Super Bowls.}
 \item{gameday}{The date on which the game occurred.}
-\item{weekday}{The day of the week on which the game occcured.}
+\item{weekday}{The day of the week on which the game occured.}
 \item{gametime}{The kickoff time of the game. This is represented in 24-hour time and the Eastern time zone, regardless of what time zone the game was being played in.}
 \item{away_team}{The away team.}
 \item{away_score}{The number of points the away team scored. Is \code{NA} for games which haven't yet been played.}

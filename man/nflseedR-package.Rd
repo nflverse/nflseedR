@@ -10,7 +10,7 @@
 \if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
 
 A set of functions to simulate National Football
-    League seasons including the sophisticated tiebreaking procedures.
+    League seasons including the sophisticated tie-breaking procedures.
 }
 \seealso{
 Useful links:

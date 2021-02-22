@@ -30,7 +30,7 @@ following variables are required:
 }}
 
 \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
-tiebreaking functions. It is computed by the function
+tie-breaking functions. It is computed by the function
 \code{\link{compute_division_ranks}}.}
 
 \item{tiebreaker_depth}{A single value equal to 1, 2, or 3. The default is 3. The
@@ -44,7 +44,7 @@ values are valid:
 }}
 
 \item{.debug}{Either \code{TRUE} or \code{FALSE}. Controls whether additional
-messages are printed to the console showing what the tiebreaking algorithms
+messages are printed to the console showing what the tie-breaking algorithms
 are currently performing.}
 }
 \value{
