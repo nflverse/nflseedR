@@ -110,10 +110,10 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   simulations <span class="op">=</span> <span class="fl">100</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 07:57:49: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-22 07:57:50: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:11: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:11: Aggregating across simulations</span></code></pre></div>
+<span class="co">#&gt; ● 2021-02-22 08:05:37: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 08:05:38: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 08:05:59: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 08:05:59: Aggregating across simulations</span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -401,10 +401,10 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   simulations <span class="op">=</span> <span class="fl">100</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:12: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:12: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:31: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:31: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-02-22 08:05:59: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 08:06:00: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 08:06:18: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 08:06:18: Aggregating across simulations</span>
 
 <span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -654,10 +654,10 @@
   best <span class="op">=</span> <span class="st">"CHI"</span>, 
   worst <span class="op">=</span> <span class="st">"GB"</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:31: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:32: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:51: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:51: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-02-22 08:06:18: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 08:06:18: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 08:06:36: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-02-22 08:06:36: Aggregating across simulations</span>
 <span class="va">sims3</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -871,10 +871,10 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   test_week <span class="op">=</span> <span class="fl">3</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:52: Loading games data</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:52: Beginning simulation of 1000 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-02-22 07:58:54: Aborting and returning your `process_games` function's results from Week 3</span></code></pre></div>
-<p>Let’s look at the Bears’ Elo after Week 3 in a random sampling of the simulations:</p>
+<span class="co">#&gt; ● 2021-02-22 08:06:37: Loading games data</span>
+<span class="co">#&gt; ● 2021-02-22 08:06:37: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-02-22 08:06:39: Aborting and returning your `process_games` function's results from Week 3</span></code></pre></div>
+<p>Let’s look at the Bears’ Elo after Week 3 in the top handful of simulations:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -940,31 +940,32 @@
 </tr>
 </tbody>
 </table>
-<p>The highest rating shown here is simulation number 3. Let’s examine the Bears’ games in that simulation:</p>
+<p>You can see that different simulations have different Elo results for the Bears, as the simulated seasons had different results for the games, and the Elos were adjusted accordingly.</p>
+<p>Let’s examine the Bears’ games in that first simulation:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">test</span><span class="op">$</span><span class="va">games</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">3</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">away_team</span> <span class="op">==</span> <span class="st">"CHI"</span> <span class="op">|</span> <span class="va">home_team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 16 x 9</span>
 <span class="co">#&gt;      sim game_type  week away_team home_team away_rest home_rest location result</span>
 <span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;         &lt;int&gt;     &lt;int&gt; &lt;chr&gt;     &lt;int&gt;</span>
-<span class="co">#&gt;  1     3 REG           1 CHI       DET               7         7 Home         -1</span>
-<span class="co">#&gt;  2     3 REG           2 NYG       CHI               6         7 Home         12</span>
-<span class="co">#&gt;  3     3 REG           3 CHI       ATL               7         7 Home         -9</span>
-<span class="co">#&gt;  4     3 REG           4 IND       CHI               7         7 Home         NA</span>
-<span class="co">#&gt;  5     3 REG           5 TB        CHI               4         4 Home         NA</span>
-<span class="co">#&gt;  6     3 REG           6 CHI       CAR              10         7 Home         NA</span>
-<span class="co">#&gt;  7     3 REG           7 CHI       LA                8         8 Home         NA</span>
-<span class="co">#&gt;  8     3 REG           8 NO        CHI               7         6 Home         NA</span>
-<span class="co">#&gt;  9     3 REG           9 CHI       TEN               7         7 Home         NA</span>
-<span class="co">#&gt; 10     3 REG          10 MIN       CHI               8         8 Home         NA</span>
-<span class="co">#&gt; 11     3 REG          12 CHI       GB               13         7 Home         NA</span>
-<span class="co">#&gt; 12     3 REG          13 DET       CHI              10         7 Home         NA</span>
-<span class="co">#&gt; 13     3 REG          14 HOU       CHI               7         7 Home         NA</span>
-<span class="co">#&gt; 14     3 REG          15 CHI       MIN               7         7 Home         NA</span>
-<span class="co">#&gt; 15     3 REG          16 CHI       JAX               7         7 Home         NA</span>
-<span class="co">#&gt; 16     3 REG          17 GB        CHI               7         7 Home         NA</span></code></pre></div>
-<p>First, note that only the first three weeks have the result filled in. Again, this because the <code>test_week = 3</code> input aborted the simulation after Week 3, which was useful for seeing the Elo above. Second, it makes sense that this would be a simulations where the Bears’ Elo is on the high side - but not super high - relative to the others shown. The Bears went 2-1 in these games, with the loss being very close and the one of the wins being a blowout.</p>
+<span class="co">#&gt;  1     1 REG           1 CHI       DET               7         7 Home        -35</span>
+<span class="co">#&gt;  2     1 REG           2 NYG       CHI               6         7 Home          3</span>
+<span class="co">#&gt;  3     1 REG           3 CHI       ATL               7         7 Home          7</span>
+<span class="co">#&gt;  4     1 REG           4 IND       CHI               7         7 Home         NA</span>
+<span class="co">#&gt;  5     1 REG           5 TB        CHI               4         4 Home         NA</span>
+<span class="co">#&gt;  6     1 REG           6 CHI       CAR              10         7 Home         NA</span>
+<span class="co">#&gt;  7     1 REG           7 CHI       LA                8         8 Home         NA</span>
+<span class="co">#&gt;  8     1 REG           8 NO        CHI               7         6 Home         NA</span>
+<span class="co">#&gt;  9     1 REG           9 CHI       TEN               7         7 Home         NA</span>
+<span class="co">#&gt; 10     1 REG          10 MIN       CHI               8         8 Home         NA</span>
+<span class="co">#&gt; 11     1 REG          12 CHI       GB               13         7 Home         NA</span>
+<span class="co">#&gt; 12     1 REG          13 DET       CHI              10         7 Home         NA</span>
+<span class="co">#&gt; 13     1 REG          14 HOU       CHI               7         7 Home         NA</span>
+<span class="co">#&gt; 14     1 REG          15 CHI       MIN               7         7 Home         NA</span>
+<span class="co">#&gt; 15     1 REG          16 CHI       JAX               7         7 Home         NA</span>
+<span class="co">#&gt; 16     1 REG          17 GB        CHI               7         7 Home         NA</span></code></pre></div>
+<p>Note that only the first three weeks have the result filled in, while the others are <code>NA</code>, indicating that game hasn’t yet occurred or been simulated. This is because the <code>test_week = 3</code> input aborted the simulation after Week 3, which was useful for seeing the Elo above.</p>
 </div>
 <div id="simulation-configuration" class="section level2">
 <h2 class="hasAnchor">
