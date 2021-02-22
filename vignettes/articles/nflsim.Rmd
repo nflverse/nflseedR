@@ -396,23 +396,23 @@ Let's look at the Bears' Elo after Week 3 in a random sampling of the simulation
 ```{r}
 test$teams %>%
   dplyr::filter(team == "CHI") %>%
-  dplyr::sample_n(20) %>% 
+  dplyr::sample_n(10) %>% 
   knitr::kable()
 ```
 
-The highest rating shown here is simulation number 304. Let's examine the Bears' games
+The highest rating shown here is simulation number 177. Let's examine the Bears' games
 in that simulation:
 
 ```{r}
 test$games %>%
-  filter(sim == 304) %>%
+  filter(sim == 177) %>%
   filter(away_team == "CHI" | home_team == "CHI")
 ```
 
 First, note that only the first three weeks have the result filled in. Again, this because
 the `test_week = 3` input aborted the simulation after Week 3, which was useful for seeing
 the Elo above. It also makes sense that this would be a simulation where the Bears' Elo is
-higher, since they won all three games by double digits.
+higher, since they won all three of their games so far.
 
 ## Simulation Configuration
 
