@@ -382,20 +382,19 @@ test$teams %>% dplyr::filter(team == "CHI") %>% utils::head() %>% knitr::kable()
 ```
 
 You can see the Bears' Elo rating after Week 3 in each of the first six simulations.
-The second simulation has been the worst of these six, while the fifth is the highest.
-
-Let's check out the early Bears games from the latter:
+The second simulation has been the worst of these six, while the fourth is the highest.
+Let's check out the early Bears games from that fourth season:
 
 ```{r}
 test$games %>%
-  filter(sim == 5) %>%
+  filter(sim == 4) %>%
   filter(away_team == "CHI" | home_team == "CHI")
 ```
 
 First, note that only the first three weeks have the result filled in. Again, this because
 the `test_week = 3` input aborted the simulation after Week 3, which was useful for seeing
 the Elo above. It also makes sense that this would be a simulation where the Bears' Elo is
-particularly high, since they won all three games so far by multiple scores.
+higher, since they won all 3 games.
 
 ## Simulation Configuration
 
@@ -485,7 +484,7 @@ your function, is a list of four data frames. Here are the contents of each:
   * **home_rest** - The number of days since the home team's last game. Is `7` for the team's first game of the season.
   * **location** - Either `Home` if played at the home team's stadium, or `Neutral` for a game played elsewhere
   * **result** - The amount of points the home team won by (or lost by if negative). Is `0` for tied games. It is `NA` for games which aren't yet complete or simulated, which should only ever be returned if you used `test_week`. 
-* **overall** - One row per team, aggregated across all simulations. Sorted by `conf` then `division` then `team`.
+* **overall** - One row per team, aggregated across all simulations. Sorted by `conf` then `division` then `team`. This is a good reference for looking at futures bets, since this should represents your model's chances of various things happening for each team.
   * **conf** - The conference the team is in (such as `AFC`)
   * **division** - The division the team is in (such as `NFC West`)
   * **team** - The abbreviation reperesenting the team
@@ -497,3 +496,8 @@ your function, is a list of four data frames. Here are the contents of each:
   * **won_sb** - The rate this team won the Super Bowl across simulations
   * **draft1** - The rate this team received the first pick in the next draft across simulations
   * **draft5** - The rate this team received a top five pick in the next draft across simulations
+* **teams_wins** - Each team has a row for 0 wins, 0.5 wins, 1 win, 1.5 wins, ... , 15.5 wins, 16 wins. These are aggergated across all simulations and are intending to represent your model's probability for teams being below or above a certain win total, making them an excellent reference for using your model to make win total bets.
+  * **team** - The abbreviation reperesenting the team
+  * **wins** - A number of wins (either an integer halfway between two integers)
+  * **over_prob** - The rate this team had more wins than this number aggregated across simulations. Ties are ignored.
+  * **under_prob** - The rate this team had fewer wins than this number aggregated across simulations. Ties are ignored. Note that if `wins` is an integer, `1-over_prob-under_prob` represents the rate at which the team finished at exactly that many wins.
