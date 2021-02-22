@@ -387,7 +387,7 @@ test <- simulate_nfl(
 )
 ```
 
-Let's look at the Bears' Elo after Week 3 in a random sampling of the simulations:
+Let's look at the Bears' Elo after Week 3 in the top handful of simulations:
 
 ```{r}
 test$teams %>%
@@ -396,20 +396,21 @@ test$teams %>%
   knitr::kable()
 ```
 
-The highest rating shown here is simulation number 3. Let's examine the Bears' games
-in that simulation:
+You can see that different simulations have different Elo results for the Bears, as 
+the simulated seasons had different results for the games, and the Elos were adjusted accordingly.
+
+Let's examine the Bears' games in that first simulation:
 
 ```{r}
 test$games %>%
-  filter(sim == 3) %>%
+  filter(sim == 1) %>%
   filter(away_team == "CHI" | home_team == "CHI")
 ```
 
-First, note that only the first three weeks have the result filled in. Again, this because
-the `test_week = 3` input aborted the simulation after Week 3, which was useful for seeing
-the Elo above. Second, it makes sense that this would be a simulations where the Bears' Elo is
-on the high side - but not super high - relative to the others shown. The Bears went 2-1 in
-these games, with the loss being very close and the one of the wins being a blowout.
+Note that only the first three weeks have the result filled in, while the others are `NA`,
+indicating that game hasn't yet occurred or been simulated. This is because the
+`test_week = 3` input aborted the simulation after Week 3, which was useful for seeing
+the Elo above.
 
 ## Simulation Configuration
 
