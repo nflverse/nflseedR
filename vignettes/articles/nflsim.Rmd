@@ -13,11 +13,6 @@ knitr::opts_chunk$set(
 
 # Running a Simulation
 
-Let's do a quick simulation! We'll apply the `fresh_season = TRUE` option,
-which blanks out all of the game results and simulates everything from scratch.
-This is a Monte Carlo style of simulation, meaning that there are seasons
-simulated.
-
 Loading the package is obligatory, so it is done first (along with `dplyr` for data wrangling and the `pipe`):
 
 ```{r setup}
@@ -26,9 +21,10 @@ library(dplyr, warn.conflicts = FALSE)
 options(digits = 3)
 ```
 
-For this guide, we'll set an initial random seed of `4` at the beginning and `simulations = 100`
-for the purposes of this document so you can follow along by entering the samde code and get
-the same results shown here, but normally you wouldn't do these things.
+_Note: For this guide, we'll set an initial random seed of `4` at the beginning and `simulations = 100`
+for the purposes of this document so you can follow along by entering the same code and get
+the same results shown here. We'll also set `fresh_season = TRUE` to blank out the existing results
+from the 2020 season, but normally when simulating an incomplete season, you wouldn't do these things._
 
 ```{r}
 set.seed(4)
@@ -396,23 +392,24 @@ Let's look at the Bears' Elo after Week 3 in a random sampling of the simulation
 ```{r}
 test$teams %>%
   dplyr::filter(team == "CHI") %>%
-  dplyr::sample_n(10) %>% 
+  utils::head() %>%
   knitr::kable()
 ```
 
-The highest rating shown here is simulation number 177. Let's examine the Bears' games
+The highest rating shown here is simulation number 3. Let's examine the Bears' games
 in that simulation:
 
 ```{r}
 test$games %>%
-  filter(sim == 177) %>%
+  filter(sim == 3) %>%
   filter(away_team == "CHI" | home_team == "CHI")
 ```
 
 First, note that only the first three weeks have the result filled in. Again, this because
 the `test_week = 3` input aborted the simulation after Week 3, which was useful for seeing
-the Elo above. It also makes sense that this would be a simulation where the Bears' Elo is
-higher, since they won all three of their games so far.
+the Elo above. Second, it makes sense that this would be a simulations where the Bears' Elo is
+on the high side - but not super high - relative to the others shown. The Bears went 2-1 in
+these games, with the loss being very close and the one of the wins being a blowout.
 
 ## Simulation Configuration
 
