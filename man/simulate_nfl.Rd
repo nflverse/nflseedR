@@ -73,7 +73,8 @@ are currently performing.}
 \value{
 A list of 4 data frames with the results of all simulated games,
 the final standings in each simulated season (incl. playoffs and draft order)
-and summary statistics across all simulated seasons.
+and summary statistics across all simulated seasons. For a full list,
+please see \href{https://nflseedr.com/articles/articles/nflsim.html#simulation-output}{the package website}.
 }
 \description{
 This function simulates a given NFL season multiple times using custom functions

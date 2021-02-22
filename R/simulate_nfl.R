@@ -76,7 +76,8 @@
 #' For more information how to work with progress handlers please see [progressr::progressr].
 #' @returns A list of 4 data frames with the results of all simulated games,
 #'   the final standings in each simulated season (incl. playoffs and draft order)
-#'   and summary statistics across all simulated seasons.
+#'   and summary statistics across all simulated seasons. For a full list,
+#'   please see [the package website](https://nflseedr.com/articles/articles/nflsim.html#simulation-output).
 #' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflsim.html)
 #' @export
 #' @examples
