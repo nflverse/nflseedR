@@ -43,7 +43,7 @@ results for the Bears:
 sims$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
 ```
 
-We can see the Bears got 13.3 wins on average. They made the playoffs 87% of simulations, won the division in 39%, won the Super Bowl in 4%, and only in 1% did they receive a top five draft pick. The `teams` section of the output will show how a team did in each simulated season. 
+We can see the Bears got 10.8 wins on average. They made the playoffs 87% of simulations, won the division in 39%, won the Super Bowl in 4%, and only in 1% did they receive a top five draft pick. The `teams` section of the output will show how a team did in each simulated season. 
 
 ```{r}
 sims$teams %>%
@@ -469,28 +469,29 @@ your function, is a list of four data frames. Here are the contents of each:
 
 * **teams** - One row per team per simulation.
   * **sim** - The ID number of the simulation. All rows with the same value of `sim` in both `teams` and `games` refer to the same simulated season.
-  * **team** - The abbreviation reperesenting the team
+  * **team** - The abbreviation representing the team
   * **conf** - The conference the team is in (such as `AFC`)
   * **division** - The division the team is in (such as `NFC West`)
   * **games** - How many regular season games the team has played
   * **wins** - The number of games the team has won, counting ties as 0.5 wins
   * **true_wins** - The number of games the team has won, ignoring ties.
   * **win_pct** - The win rate of the team. Equal to `wins / games`.
-  * **div_pct** - The win rate of the teams in games played agains teams in the same division.
-  * **conf_pct** - The win rate of the teams in games played agains teams in the same conference.
+  * **div_pct** - The win rate of the teams in games played against teams in the same division.
+  * **conf_pct** - The win rate of the teams in games played against teams in the same conference.
   * **sov** - Strength of Victory. The combined win rate of teams this team has beaten.
   * **sos** - Strength of Schedule. The combined win rate of teams this team has played.
   * **div_rank** - What place the team finished in its division.
   * **seed** - What playoff seed number the team earned. `NA` if the team did not make the playoffs.
   * **exit** - The week of the team's last game. The Super Bowl winner's value will be one higher than the week of the Super Bowl.
   * **draft_order** - Which pick the team earned in the following NFL Draft. Note that this value is before any trades, forfeits, or other modifications to draft picks.
+  
 * **games** - One row per game per simulation.
   * **sim** - The ID number of the simulation. All rows with the same value of `sim` in both `teams` and `games` refer to the same simulated season.
   * **game_type** - What type of game this is
     * `REG` - A regular season game
     * `POST` - A playoff rounds earlier than a wildcard game (only used if simulating with lots of playoff teams)
     * `WC` - A wildcard playoff game
-    * `DIV` - A divisonal playoff game
+    * `DIV` - A divisional playoff game
     * `CON` - A conference championship game
     * `SB` - A Super Bowl
   * **week** - The numerical week the game takes place in. Continues incrementing after the regular season to each playoff round.
@@ -500,10 +501,11 @@ your function, is a list of four data frames. Here are the contents of each:
   * **home_rest** - The number of days since the home team's last game. Is `7` for the team's first game of the season.
   * **location** - Either `Home` if played at the home team's stadium, or `Neutral` for a game played elsewhere
   * **result** - The amount of points the home team won by (or lost by if negative). Is `0` for tied games. It is `NA` for games which aren't yet complete or simulated, which should only ever be returned if you used `test_week`. 
+
 * **overall** - One row per team, aggregated across all simulations. Sorted by `conf` then `division` then `team`. This is a good reference for looking at futures bets, since this should represents your model's chances of various things happening for each team.
   * **conf** - The conference the team is in (such as `AFC`)
   * **division** - The division the team is in (such as `NFC West`)
-  * **team** - The abbreviation reperesenting the team
+  * **team** - The abbreviation representing the team
   * **wins** - The mean (average) number of games won across the simulations, counting ties as 0.5 wins
   * **playoff** - The rate this team made the playoffs across simulations
   * **div1** - The rate this team won the division across simulations
@@ -512,8 +514,9 @@ your function, is a list of four data frames. Here are the contents of each:
   * **won_sb** - The rate this team won the Super Bowl across simulations
   * **draft1** - The rate this team received the first pick in the next draft across simulations
   * **draft5** - The rate this team received a top five pick in the next draft across simulations
-* **teams_wins** - Each team has a row for 0 wins, 0.5 wins, 1 win, 1.5 wins, ... , 15.5 wins, 16 wins. These are aggergated across all simulations and are intending to represent your model's probability for teams being below or above a certain win total, making them an excellent reference for using your model to make win total bets.
-  * **team** - The abbreviation reperesenting the team
+
+* **team_wins** - Each team has a row for 0 wins, 0.5 wins, 1 win, 1.5 wins, ... , 15.5 wins, 16 wins. These are aggregated across all simulations and are intending to represent your model's probability for teams being below or above a certain win total, making them an excellent reference for using your model to make win total bets.
+  * **team** - The abbreviation representing the team
   * **wins** - A number of wins (either an integer halfway between two integers)
   * **over_prob** - The rate this team had more wins than this number aggregated across simulations. Ties are ignored.
   * **under_prob** - The rate this team had fewer wins than this number aggregated across simulations. Ties are ignored. Note that if `wins` is an integer, `1-over_prob-under_prob` represents the rate at which the team finished at exactly that many wins.
