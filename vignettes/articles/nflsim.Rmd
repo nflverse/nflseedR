@@ -126,7 +126,7 @@ sims2$overall %>% dplyr::arrange(team) %>% utils::tail() %>% knitr::kable()
 ```
 
 As you might expect, the earliest alphabetical teams win a lot. The Cardinals
-won the Super Bowl in 65% of seasons! Meanwhile, the teams at the bottom
+won the Super Bowl in a nice 69% of seasons! Meanwhile, the teams at the bottom
 alphabetically are virtually certain to be at the top of the draft order.
 
 ## Adding In Your Own Data
