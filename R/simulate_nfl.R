@@ -236,6 +236,10 @@ simulate_nfl <- function(nfl_season = NULL,
     stop("The parameter `process_games` has to be a function!")
   }
 
+  if (nfl_season < 2002) {
+    stop("The earliest season that can be simulated is 2002.")
+  }
+
   #### LOAD DATA ####
 
   # load games data
@@ -253,6 +257,18 @@ simulate_nfl <- function(nfl_season = NULL,
   schedule <- schedule %>%
     filter(season == nfl_season) %>%
     select(-season)
+
+  if (nrow(schedule) == 0)
+  {
+    fn <- glue::glue("https://github.com/leesharpe/nfldata/blob/master/fake_schedule_{nfl_season}.csv?raw=true")
+    tryCatch({
+      options(readr.num_columns = 0)
+      schedule <- readr::read_csv(fn)
+      sim_info(glue::glue("No actual schedule exists for {nfl_season}, using fake schedule with correct opponents"))
+    }, error = function(cond) {
+      stop("Unable to locate a schedule for ", nfl_season)
+    })
+  }
 
   #### PREPROCESSING ####
 
