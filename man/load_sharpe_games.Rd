@@ -56,6 +56,22 @@ since 1999:
 \item{surface}{What type of ground the game was played on.}
 \item{temp}{The temperature at the stadium (for \code{roof} types \code{outdoors} and \code{open} only).}
 \item{wind}{The speed of the wind in miles/hour (for \code{roof} types \code{outdoors} and \code{open} only).}
+\item{away_qb_id}{GSIS ID of the "starting quarterback" of the away team identified as the first
+quarterback (per roster data) listed as \code{passer} (in \code{nflfastR} play by play data)
+in 2+ plays that game. In the final regular season game it is the QB with the
+most plays as the \code{passer}.}
+\item{home_qb_id}{GSIS ID of the "starting quarterback" of the home team identified as the first
+quarterback (per roster data) listed as \code{passer} (in \code{nflfastR} play by play data)
+in 2+ plays that game. In the final regular season game it is the QB with the
+most plays as the \code{passer}.}
+\item{away_qb_name}{Full name of the "starting quarterback" of the away team identified as the first
+quarterback (per roster data) listed as \code{passer} (in \code{nflfastR} play by play data)
+in 2+ plays that game. In the final regular season game it is the QB with the
+most plays as the \code{passer}.}
+\item{home_qb_name}{Full name of the "starting quarterback" of the home team identified as the first
+quarterback (per roster data) listed as \code{passer} (in \code{nflfastR} play by play data)
+in 2+ plays that game. In the final regular season game it is the QB with the
+most plays as the \code{passer}.}
 \item{away_coach}{Name of the head coach of the away team.}
 \item{home_coach}{Name of the head coach of the home team.}
 \item{referee}{Name of the game's referee (head official).}
