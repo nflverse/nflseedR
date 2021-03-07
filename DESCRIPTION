@@ -13,8 +13,7 @@ Authors@R:
 Description: A set of functions to simulate National Football
     League seasons including the sophisticated tie-breaking procedures.
 License: MIT + file LICENSE
-URL: https://nflseedr.com,
-    https://leesharpe.github.io/nflseedR,
+URL: https://nflseedr.com, https://leesharpe.github.io/nflseedR,
     https://github.com/leesharpe/nflseedR
 BugReports: https://github.com/leesharpe/nflseedR/issues
 Depends: 
@@ -30,16 +29,17 @@ Imports:
     magrittr,
     progressr,
     purrr,
+    readr,
     rlang,
     tibble,
     tidyr
 Suggests: 
     knitr,
     rmarkdown,
-    tidyverse,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tidyverse
+Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Config/testthat/edition: 3
