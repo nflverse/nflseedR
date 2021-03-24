@@ -22,7 +22,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Sebastian Carl \email{mrcaseb@gmail.com} [contributor]
+\strong{Maintainer}: Sebastian Carl \email{mrcaseb@gmail.com}
 
 Authors:
 \itemize{
