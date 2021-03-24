@@ -8,7 +8,7 @@ Authors@R:
              role = c("aut", "cph")),
       person(given = "Sebastian",
              family = "Carl",
-             role = c("cre", "ctb"),
+             role = c("cre", "aut"),
              email = "mrcaseb@gmail.com"))
 Description: A set of functions to simulate National Football
     League seasons including the sophisticated tie-breaking procedures.

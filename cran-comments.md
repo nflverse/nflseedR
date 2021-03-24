@@ -12,7 +12,6 @@
 * macOS 10.13.6 High Sierra, R-release, brew 
 * macOS 10.13.6 High Sierra, R-release, CRAN's setup 
 * Oracle Solaris 10, x86, 32 bit, R-release
-* Oracle Solaris 10, x86, 32 bit, R-release, Oracle Developer Studio 12.6
 * Ubuntu Linux 20.04.1 LTS, R-devel, GCC 
 * Ubuntu Linux 20.04.1 LTS, R-release, GCC 
 * Ubuntu Linux 20.04.1 LTS, R-devel with rchk
