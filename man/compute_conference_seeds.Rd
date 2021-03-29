@@ -52,18 +52,19 @@ tie-breaking functions.}
 Compute NFL Playoff Seedings using Game Results and Divisional Rankings
 }
 \examples{
-\donttest{
- options(digits = 3)
- options(tibble.print_min = 64)
- library(dplyr, warn.conflicts = FALSE)
+# Change some options for better output
+old <- options(list(digits = 3, tibble.print_min = 64))
+library(dplyr, warn.conflicts = FALSE)
 
- nflseedR::load_sharpe_games() \%>\%
-   dplyr::filter(season \%in\% 2019:2020) \%>\%
-   dplyr::select(sim = season, game_type, week, away_team, home_team, result) \%>\%
-   nflseedR::compute_division_ranks() \%>\%
-   nflseedR::compute_conference_seeds(h2h = .$h2h) \%>\%
-   purrr::pluck("standings")
-}
+nflseedR::load_sharpe_games() \%>\%
+  dplyr::filter(season \%in\% 2019:2020) \%>\%
+  dplyr::select(sim = season, game_type, week, away_team, home_team, result) \%>\%
+  nflseedR::compute_division_ranks() \%>\%
+  nflseedR::compute_conference_seeds(h2h = .$h2h) \%>\%
+  purrr::pluck("standings")
+
+# Restore old options
+options(old)
 }
 \seealso{
 The examples \href{https://nflseedr.com/articles/articles/nflseedR.html}{on the package website}

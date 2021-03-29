@@ -70,9 +70,8 @@ tie-breaking functions.}
 Compute NFL Division Rankings using Game Results
 }
 \examples{
-\donttest{
-options(digits = 3)
-options(tibble.print_min = 64)
+# Change some options for better output
+old <- options(list(digits = 3, tibble.print_min = 64))
 library(dplyr, warn.conflicts = FALSE)
 
 nflseedR::load_sharpe_games() \%>\%
@@ -80,7 +79,9 @@ nflseedR::load_sharpe_games() \%>\%
   dplyr::select(sim = season, game_type, week, away_team, home_team, result) \%>\%
   nflseedR::compute_division_ranks() \%>\%
   purrr::pluck("standings")
-}
+
+# Restore old options
+options(old)
 }
 \seealso{
 The examples \href{https://nflseedr.com/articles/articles/nflseedR.html}{on the package website}

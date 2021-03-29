@@ -6,13 +6,11 @@
 #' having to remember the correct url.
 #'
 #' @examples
-#' \donttest{
 #' games <- load_sharpe_games()
 #' dplyr::glimpse(games)
 #' \dontshow{
 #' # Close open connections for R CMD Check
 #' future::plan("sequential")
-#' }
 #' }
 #' @returns A data frame containing the following variables for all NFL games
 #' since 1999:
