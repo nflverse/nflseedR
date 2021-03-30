@@ -1,4 +1,12 @@
+## Resubmission
+
+This is a resubmission per request. 
+
+* It was requested that we unwrap the examples from `\donttest{}` if they can be executed in < 5 seconds. Unfortunately the tests on rhub have shown that this causes NOTES (> 5 seconds) on some Linux and MacOS machines. Instead we have added `testthat` tests for all functions as we don't see a chance to speed up the examples significantly. The tests were previously skipped on cran but now they are more robust (by using the new dependency curl in the function `load_sharpe_games()`) and no more skipped
+* Restore user's options in examples
+
 ## Test environments
+
 * local R installation, R 4.0.4
 * Debian Linux, R-devel, clang, ISO-8859-15 locale 
 * Debian Linux, R-devel, GCC 
@@ -7,7 +15,6 @@
 * Debian Linux, R-release, GCC 
 * Fedora Linux, R-devel, clang, gfortran 
 * Fedora Linux, R-devel, GCC 
-* CentOS 8, stock R from EPEL
 * Debian Linux, R-devel, GCC ASAN/UBSAN
 * macOS 10.13.6 High Sierra, R-release, brew 
 * macOS 10.13.6 High Sierra, R-release, CRAN's setup 
