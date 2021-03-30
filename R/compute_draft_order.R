@@ -10,6 +10,7 @@
 #' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflseedR.html)
 #' @export
 #' @examples
+#' \donttest{
 #' # Change some options for better output
 #' old <- options(list(digits = 3, tibble.print_min = 64))
 #' library(dplyr, warn.conflicts = FALSE)
@@ -26,6 +27,7 @@
 #'
 #' # Restore old options
 #' options(old)
+#' }
 compute_draft_order <- function(teams,
                                 games,
                                 h2h = NULL,

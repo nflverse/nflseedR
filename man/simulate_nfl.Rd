@@ -129,6 +129,7 @@ For more information how to work with progress handlers please see \link[progres
 }
 }
 \examples{
+\donttest{
 library(nflseedR)
 
 # Activate progress updates
@@ -137,16 +138,17 @@ library(nflseedR)
 # Parallel processing can be activated via the following line
 # future::plan("multisession")
 
-# Simulate the season 2 times in 1 round
+# Simulate the season 4 times in 2 rounds
 sim <- nflseedR::simulate_nfl(
   nfl_season = 2020,
   fresh_season = TRUE,
-  simulations = 2,
+  simulations = 4,
   sims_per_round = 2
 )
 
 # Overview output
 dplyr::glimpse(sim)
+}
 }
 \seealso{
 The examples \href{https://nflseedr.com/articles/articles/nflsim.html}{on the package website}

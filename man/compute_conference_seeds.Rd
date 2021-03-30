@@ -52,6 +52,7 @@ tie-breaking functions.}
 Compute NFL Playoff Seedings using Game Results and Divisional Rankings
 }
 \examples{
+\donttest{
 # Change some options for better output
 old <- options(list(digits = 3, tibble.print_min = 64))
 library(dplyr, warn.conflicts = FALSE)
@@ -65,6 +66,7 @@ nflseedR::load_sharpe_games() \%>\%
 
 # Restore old options
 options(old)
+}
 }
 \seealso{
 The examples \href{https://nflseedr.com/articles/articles/nflseedR.html}{on the package website}
