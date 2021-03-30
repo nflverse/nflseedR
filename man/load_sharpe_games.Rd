@@ -86,10 +86,12 @@ function is a convenient helper to download the file into memory without
 having to remember the correct url.
 }
 \examples{
+\donttest{
 games <- load_sharpe_games()
 dplyr::glimpse(games)
 \dontshow{
 # Close open connections for R CMD Check
 future::plan("sequential")
+}
 }
 }

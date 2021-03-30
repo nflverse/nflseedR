@@ -6,11 +6,13 @@
 #' having to remember the correct url.
 #'
 #' @examples
+#' \donttest{
 #' games <- load_sharpe_games()
 #' dplyr::glimpse(games)
 #' \dontshow{
 #' # Close open connections for R CMD Check
 #' future::plan("sequential")
+#' }
 #' }
 #' @returns A data frame containing the following variables for all NFL games
 #' since 1999:
@@ -89,8 +91,14 @@
 #' }
 #' @export
 load_sharpe_games <- function(){
-  con <- url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")
-  dat <- readRDS(con)
+  fetched <- curl::curl_fetch_memory("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")
+  if (fetched$status_code != 200) return(tibble::tibble())
+  read_raw_rds(fetched$content)
+}
+
+read_raw_rds <- function(raw) {
+  con <- gzcon(rawConnection(raw))
+  ret <- readRDS(con)
   close(con)
-  dat
+  return(ret)
 }
