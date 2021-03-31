@@ -16,6 +16,8 @@ knitr::opts_chunk$set(
 # **nflseedR** <img src='man/figures/logo.png' align="right" width="25%" min-width="120px"/>
 
 <!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version-last-release/nflseedR)](https://CRAN.R-project.org/package=nflseedR)
+[![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflseedR)](https://CRAN.R-project.org/package=nflseedR)
 [![R-CMD-check](https://github.com/leesharpe/nflseedR/workflows/R-CMD-check/badge.svg)](https://github.com/leesharpe/nflseedR/actions)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Support Server](https://img.shields.io/discord/591914197219016707.svg?color=7289da&label=Discord&logo=discord&style=flat-square)](https://discord.com/invite/5Er2FBnnQa)
@@ -46,13 +48,13 @@ developed by Sebastian Carl ([\@mrcaseb](https://twitter.com/mrcaseb)).
 
 ## Installation
 
-<!-- You can install the released version of nflseedR from [CRAN](https://CRAN.R-project.org) with: -->
+The easiest way to get nflseedR is to install it from [CRAN](https://cran.r-project.org/package=nflseedR) with:
 
-<!-- ``` r -->
-<!-- install.packages("nflseedR") -->
-<!-- ``` -->
+``` r
+install.packages("nflseedR")
+```
 
-You can install nflseedR from [GitHub](https://github.com/) with:
+To get a bug fix or to use a feature from the development version, you can install the development version of nflseedR from [GitHub](https://github.com/leesharpe/nflseedR/) with:
 
 ``` r
 if (!require("remotes")) install.packages("remotes")

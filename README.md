@@ -5,6 +5,10 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version-last-release/nflseedR)](https://CRAN.R-project.org/package=nflseedR)
+[![CRAN
+downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflseedR)](https://CRAN.R-project.org/package=nflseedR)
 [![R-CMD-check](https://github.com/leesharpe/nflseedR/workflows/R-CMD-check/badge.svg)](https://github.com/leesharpe/nflseedR/actions)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -40,12 +44,16 @@ package was developed by Sebastian Carl
 
 ## Installation
 
-<!-- You can install the released version of nflseedR from [CRAN](https://CRAN.R-project.org) with: -->
-<!-- ``` r -->
-<!-- install.packages("nflseedR") -->
-<!-- ``` -->
+The easiest way to get nflseedR is to install it from
+[CRAN](https://cran.r-project.org/package=nflseedR) with:
 
-You can install nflseedR from [GitHub](https://github.com/) with:
+``` r
+install.packages("nflseedR")
+```
+
+To get a bug fix or to use a feature from the development version, you
+can install the development version of nflseedR from
+[GitHub](https://github.com/leesharpe/nflseedR/) with:
 
 ``` r
 if (!require("remotes")) install.packages("remotes")
