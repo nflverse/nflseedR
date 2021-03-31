@@ -9,3 +9,5 @@
 ^pkgdown$
 ^\.github$
 ^man/figures/gh_preview\.png$
+^cran-comments\.md$
+^CRAN-RELEASE$

@@ -145,6 +145,9 @@ sim <- nflseedR::simulate_nfl(
   simulations = 4,
   sims_per_round = 2
 )
+
+# Overview output
+dplyr::glimpse(sim)
 }
 }
 \seealso{

@@ -97,6 +97,9 @@
 #'   simulations = 4,
 #'   sims_per_round = 2
 #' )
+#'
+#' # Overview output
+#' dplyr::glimpse(sim)
 #' }
 simulate_nfl <- function(nfl_season = NULL,
                          process_games = NULL,

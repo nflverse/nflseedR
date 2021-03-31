@@ -11,8 +11,8 @@
 #' @export
 #' @examples
 #' \donttest{
-#' options(digits = 3)
-#' options(tibble.print_min = 64)
+#' # Change some options for better output
+#' old <- options(list(digits = 3, tibble.print_min = 64))
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' games <-
@@ -24,6 +24,9 @@
 #'   nflseedR::compute_division_ranks() %>%
 #'   nflseedR::compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6) %>%
 #'   nflseedR::compute_draft_order(games = games, h2h = .$h2h)
+#'
+#' # Restore old options
+#' options(old)
 #' }
 compute_draft_order <- function(teams,
                                 games,

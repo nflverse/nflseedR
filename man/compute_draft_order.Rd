@@ -57,8 +57,8 @@ Compute NFL Draft Order using Game Results and Divisional Rankings
 }
 \examples{
 \donttest{
-options(digits = 3)
-options(tibble.print_min = 64)
+# Change some options for better output
+old <- options(list(digits = 3, tibble.print_min = 64))
 library(dplyr, warn.conflicts = FALSE)
 
 games <-
@@ -70,6 +70,9 @@ games \%>\%
   nflseedR::compute_division_ranks() \%>\%
   nflseedR::compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6) \%>\%
   nflseedR::compute_draft_order(games = games, h2h = .$h2h)
+
+# Restore old options
+options(old)
 }
 }
 \seealso{

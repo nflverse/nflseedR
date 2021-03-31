@@ -31,7 +31,7 @@
 #' }
 #' \item{week}{The week of the NFL season the game occurs in. This will be 1-17 for the regular season, 18 for wildcard playoff games, 19 for divisional playoff games, 20 for conference championships and 21 for Super Bowls.}
 #' \item{gameday}{The date on which the game occurred.}
-#' \item{weekday}{The day of the week on which the game occured.}
+#' \item{weekday}{The day of the week on which the game occurred.}
 #' \item{gametime}{The kickoff time of the game. This is represented in 24-hour time and the Eastern time zone, regardless of what time zone the game was being played in.}
 #' \item{away_team}{The away team.}
 #' \item{away_score}{The number of points the away team scored. Is `NA` for games which haven't yet been played.}
@@ -91,8 +91,14 @@
 #' }
 #' @export
 load_sharpe_games <- function(){
-  con <- url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")
-  dat <- readRDS(con)
+  fetched <- curl::curl_fetch_memory("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")
+  if (fetched$status_code != 200) return(tibble::tibble())
+  read_raw_rds(fetched$content)
+}
+
+read_raw_rds <- function(raw) {
+  con <- gzcon(rawConnection(raw))
+  ret <- readRDS(con)
   close(con)
-  dat
+  return(ret)
 }

@@ -16,18 +16,17 @@ A set of functions to simulate National Football
 Useful links:
 \itemize{
   \item \url{https://nflseedr.com}
-  \item \url{https://leesharpe.github.io/nflseedR}
   \item \url{https://github.com/leesharpe/nflseedR}
   \item Report bugs at \url{https://github.com/leesharpe/nflseedR/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Sebastian Carl \email{mrcaseb@gmail.com} [contributor]
+\strong{Maintainer}: Sebastian Carl \email{mrcaseb@gmail.com}
 
 Authors:
 \itemize{
-  \item Lee Sharpe
+  \item Lee Sharpe [copyright holder]
 }
 
 }
