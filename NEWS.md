@@ -1,3 +1,7 @@
+# nflseedR (development version)
+
+* Improved error handling of the function `load_sharpe_games()` for CRAN tests
+
 # nflseedR 1.0.1
 
 * Added support for a fake schedule for simulating the upcoming season before the NFL has released the official schedule.
