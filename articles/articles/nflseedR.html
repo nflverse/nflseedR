@@ -1112,24 +1112,24 @@
 <p>Now the games data frame can be used to compute the division ranks (the parameter <code>.debug</code> is set to <code>TRUE</code> to show what the function is doing).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">div_standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../../reference/compute_division_ranks.html">compute_division_ranks</a></span><span class="op">(</span><span class="va">games</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: Calculating team data</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: Calculating head to head</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: Calculating division rank #1</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (2): Head-to-head</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (2): Division Record</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: Calculating division rank #2</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (3): Head-to-head</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (3): Division Record</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (3): Common Record</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (2): Head-to-head</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (2): Division Record</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (2): Common Record</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (2): Conference Record</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: Calculating division rank #3</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (2): Head-to-head</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (2): Division Record</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: DIV (2): Common Record</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:49: Calculating division rank #4</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: Calculating team data</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: Calculating head to head</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: Calculating division rank #1</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (2): Head-to-head</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (2): Division Record</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: Calculating division rank #2</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (3): Head-to-head</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (3): Division Record</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (3): Common Record</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (2): Head-to-head</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (2): Division Record</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (2): Common Record</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (2): Conference Record</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: Calculating division rank #3</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (2): Head-to-head</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (2): Division Record</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:07: DIV (2): Common Record</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:08: Calculating division rank #4</span>
 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">div_standings</span><span class="op">)</span>
 <span class="co">#&gt; List of 2</span>
 <span class="co">#&gt;  $ standings: tibble[,14] [64 × 14] (S3: tbl_df/tbl/data.frame)</span>
@@ -1604,16 +1604,16 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">seeds</span> <span class="op">&lt;-</span> <span class="va">div_standings</span> <span class="op">%&gt;%</span> 
   <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../../reference/compute_conference_seeds.html">compute_conference_seeds</a></span><span class="op">(</span>h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, playoff_seeds <span class="op">=</span> <span class="fl">6</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:50: Calculating seed #1</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:50: CONF (3): Head-to-head Sweep</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:50: Calculating seed #2</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:50: CONF (2): Head-to-head Sweep</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:50: CONF (2): Conference Record</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:50: Calculating seed #3</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:50: Calculating seed #4</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:50: Calculating seed #5</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:50: Calculating seed #6</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:50: CONF (2): Best-in-division reduction</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:08: Calculating seed #1</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:08: CONF (3): Head-to-head Sweep</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:08: Calculating seed #2</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:08: CONF (2): Head-to-head Sweep</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:08: CONF (2): Conference Record</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:08: Calculating seed #3</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:08: Calculating seed #4</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:08: Calculating seed #5</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:08: Calculating seed #6</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:08: CONF (2): Best-in-division reduction</span>
 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">seeds</span><span class="op">)</span>
 <span class="co">#&gt; List of 2</span>
 <span class="co">#&gt;  $ standings: tibble[,15] [64 × 15] (S3: tbl_df/tbl/data.frame)</span>
@@ -2120,42 +2120,42 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">draft</span> <span class="op">&lt;-</span> <span class="va">seeds</span> <span class="op">%&gt;%</span> 
   <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../../reference/compute_draft_order.html">compute_draft_order</a></span><span class="op">(</span>games <span class="op">=</span> <span class="va">games</span>, h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #32</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #31</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #30</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #29</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #28</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #27</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #26</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #25</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #24</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #23</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #22</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #21</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #20</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #19</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #18</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #17</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #16</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #15</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #14</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #13</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #12</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #11</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: Calculating draft order #10</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: DRAFT: Divisional Rank</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: DRAFT: Conference Rank</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: CONF (2): Best-in-division reduction</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:51: CONF (2): Head-to-head Sweep</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:52: Calculating draft order #9</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:52: Calculating draft order #8</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:52: Calculating draft order #7</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:52: Calculating draft order #6</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:52: Calculating draft order #5</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:52: Calculating draft order #4</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:52: Calculating draft order #3</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:52: Calculating draft order #2</span>
-<span class="co">#&gt; ● 2021-04-10 20:06:52: Calculating draft order #1</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #32</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #31</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #30</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #29</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #28</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #27</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #26</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #25</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #24</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #23</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #22</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #21</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #20</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #19</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #18</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #17</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #16</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #15</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #14</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #13</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #12</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #11</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: Calculating draft order #10</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: DRAFT: Divisional Rank</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: DRAFT: Conference Rank</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: CONF (2): Best-in-division reduction</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:09: CONF (2): Head-to-head Sweep</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:10: Calculating draft order #9</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:10: Calculating draft order #8</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:10: Calculating draft order #7</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:10: Calculating draft order #6</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:10: Calculating draft order #5</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:10: Calculating draft order #4</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:10: Calculating draft order #3</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:10: Calculating draft order #2</span>
+<span class="co">#&gt; ● 2021-04-10 20:18:10: Calculating draft order #1</span>
 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">draft</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 64</span>
 <span class="co">#&gt; Columns: 16</span>
