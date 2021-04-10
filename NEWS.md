@@ -1,4 +1,4 @@
-# nflseedR (development version)
+# nflseedR 1.0.2
 
 * Improved error handling of the function `load_sharpe_games()` for CRAN tests
 
