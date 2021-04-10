@@ -91,8 +91,8 @@
 #' }
 #' @export
 load_sharpe_games <- function(){
-  fetched <- curl::curl_fetch_memory("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")
-  if (fetched$status_code != 200) return(tibble::tibble())
+  fetched <- try(curl::curl_fetch_memory("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true"), silent = TRUE)
+  if (inherits(fetched, "try-error") || fetched$status_code != 200) return(tibble::tibble())
   read_raw_rds(fetched$content)
 }
 
