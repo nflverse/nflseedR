@@ -17,7 +17,6 @@ This is a submission per request.
 * Debian Linux, R-devel, GCC ASAN/UBSAN
 * macOS 10.13.6 High Sierra, R-release, brew 
 * macOS 10.13.6 High Sierra, R-release, CRAN's setup 
-* Oracle Solaris 10, x86, 32 bit, R-release
 * Ubuntu Linux 20.04.1 LTS, R-devel, GCC 
 * Ubuntu Linux 20.04.1 LTS, R-release, GCC 
 * Ubuntu Linux 20.04.1 LTS, R-devel with rchk
@@ -29,7 +28,9 @@ This is a submission per request.
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 1 note (on some flavors)
+
+* unable to verify current time
 
 ## revdepcheck results
 
