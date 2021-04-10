@@ -1,9 +1,8 @@
-## Resubmission
+## Release summary
 
-This is a resubmission per request. 
+This is a submission per request. 
 
-* It was requested that we unwrap the examples from `\donttest{}` if they can be executed in < 5 seconds. Unfortunately the tests on rhub have shown that this causes NOTES (> 5 seconds) on some Linux and MacOS machines. Instead we have added `testthat` tests for all functions as we don't see a chance to speed up the examples significantly. The tests were previously skipped on cran but now they are more robust (by using the new dependency curl in the function `load_sharpe_games()`) and no more skipped
-* Restore user's options in examples
+* The function `load_sharpe_games()` broke a test because of a connection to a github server timed out. It is now designed to fail gracefully and not result in a test error.
 
 ## Test environments
 
@@ -18,7 +17,6 @@ This is a resubmission per request.
 * Debian Linux, R-devel, GCC ASAN/UBSAN
 * macOS 10.13.6 High Sierra, R-release, brew 
 * macOS 10.13.6 High Sierra, R-release, CRAN's setup 
-* Oracle Solaris 10, x86, 32 bit, R-release
 * Ubuntu Linux 20.04.1 LTS, R-devel, GCC 
 * Ubuntu Linux 20.04.1 LTS, R-release, GCC 
 * Ubuntu Linux 20.04.1 LTS, R-devel with rchk
@@ -30,6 +28,13 @@ This is a resubmission per request.
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 1 note (on some flavors)
 
-* New submission
+* unable to verify current time
+
+## revdepcheck results
+
+We checked 0 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+
+ * We saw 0 new problems
+ * We failed to check 0 packages
