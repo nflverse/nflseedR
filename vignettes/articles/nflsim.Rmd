@@ -419,7 +419,7 @@ the parameters and how to configure them when you run the `simulate_nfl()` funct
 
 * **nfl_season** - Which NFL season are you simulating? By default, it simulates
 the most recent season for which the regular season schedule is available through
-[Lee Sharpe's NFL game data](https://github.com/leesharpe/nfldata/tree/master/data). The earliest season you can simulate is 2002.
+[Lee Sharpe's NFL game data](https://github.com/nflverse/nfldata/tree/master/data). The earliest season you can simulate is 2002.
  * Note: Before the schedule for a new season is released, nflseedR may support simulating using a fake schedule for the upcoming season. It will notify you if it is doing this. The opponents will be correct, but the weeks in which games occur will not match the actual NFL schedule. The actual schedule will be utilized instead after it is released by the NFL.
 * **process_games** - This is where you supply a function you've written to encompass
 your model used to determine simulated games results, like the examples above. By
