@@ -9,7 +9,7 @@
 status](https://www.r-pkg.org/badges/version-last-release/nflseedR)](https://CRAN.R-project.org/package=nflseedR)
 [![CRAN
 downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflseedR)](https://CRAN.R-project.org/package=nflseedR)
-[![R-CMD-check](https://github.com/nflverse/nflseedRworkflows/R-CMD-check/badge.svg)](https://github.com/nflverse/nflseedRactions)
+[![R-CMD-check](https://github.com/nflverse/nflseedR/workflows/R-CMD-check/badge.svg)](https://github.com/nflverse/nflseedR/actions)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Support
