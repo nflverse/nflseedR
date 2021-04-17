@@ -264,7 +264,7 @@ simulate_nfl <- function(nfl_season = NULL,
 
   if (nrow(schedule) == 0)
   {
-    fn <- glue::glue("https://github.com/leesharpe/nfldata/blob/master/fake_schedule_{nfl_season}.csv?raw=true")
+    fn <- glue::glue("https://github.com/nflverse/nfldata/blob/master/fake_schedule_{nfl_season}.csv?raw=true")
     tryCatch({
       options(readr.num_columns = 0)
       schedule <- readr::read_csv(fn)

@@ -49,7 +49,7 @@ games %>% utils::tail(20) %>% knitr::kable()
 ```
 
 This pulls game information from the games.rds file (equivalent to the games.csv file) from
-[Lee Sharpe's NFL Data Github](https://github.com/leesharpe/nfldata/tree/master/data)
+[Lee Sharpe's NFL Data Github](https://github.com/nflverse/nfldata/tree/master/data)
 
 ## Find Division Ranks
 

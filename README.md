@@ -9,7 +9,7 @@
 status](https://www.r-pkg.org/badges/version-last-release/nflseedR)](https://CRAN.R-project.org/package=nflseedR)
 [![CRAN
 downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflseedR)](https://CRAN.R-project.org/package=nflseedR)
-[![R-CMD-check](https://github.com/leesharpe/nflseedR/workflows/R-CMD-check/badge.svg)](https://github.com/leesharpe/nflseedR/actions)
+[![R-CMD-check](https://github.com/nflverse/nflseedR/workflows/R-CMD-check/badge.svg)](https://github.com/nflverse/nflseedR/actions)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Support
@@ -53,7 +53,7 @@ install.packages("nflseedR")
 
 To get a bug fix or to use a feature from the development version, you
 can install the development version of nflseedR from
-[GitHub](https://github.com/leesharpe/nflseedR/) with:
+[GitHub](https://github.com/nflverse/nflseedR) with:
 
 ``` r
 if (!require("remotes")) install.packages("remotes")

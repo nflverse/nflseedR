@@ -16,8 +16,8 @@ A set of functions to simulate National Football
 Useful links:
 \itemize{
   \item \url{https://nflseedr.com}
-  \item \url{https://github.com/leesharpe/nflseedR}
-  \item Report bugs at \url{https://github.com/leesharpe/nflseedR/issues}
+  \item \url{https://github.com/nflverse/nflseedR}
+  \item Report bugs at \url{https://github.com/nflverse/nflseedR/issues}
 }
 
 }

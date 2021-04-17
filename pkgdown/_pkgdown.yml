@@ -5,7 +5,7 @@ template:
     bootswatch: yeti
   opengraph:
     image:
-      src: https://raw.githubusercontent.com/leesharpe/nflseedR/master/man/figures/gh_preview.png
+      src: https://raw.githubusercontent.com/nflverse/nflseedR/master/man/figures/gh_preview.png
 
 toc:
   depth: 3
