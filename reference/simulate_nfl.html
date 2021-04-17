@@ -55,7 +55,7 @@ appropriate plan.
 Progress updates can be activated by calling handlers
 before the start of the simulations.
 Please see the below given section &quot;Details&quot; for further information." />
-<meta property="og:image" content="https://raw.githubusercontent.com/leesharpe/nflseedR/master/man/figures/gh_preview.png" />
+<meta property="og:image" content="https://raw.githubusercontent.com/nflverse/nflseedR/master/man/figures/gh_preview.png" />
 
 
 
@@ -87,7 +87,7 @@ Please see the below given section &quot;Details&quot; for further information."
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflseedR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2.9000</span>
       </span>
     </div>
 
@@ -114,7 +114,7 @@ Please see the below given section &quot;Details&quot; for further information."
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/leesharpe/nflseedR/">
+  <a href="https://github.com/nflverse/nflseedR/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -133,7 +133,7 @@ Please see the below given section &quot;Details&quot; for further information."
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Simulate an NFL Season</h1>
-    <small class="dont-index">Source: <a href='https://github.com/leesharpe/nflseedR/blob/master/R/simulate_nfl.R'><code>R/simulate_nfl.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/nflverse/nflseedR/blob/master/R/simulate_nfl.R'><code>R/simulate_nfl.R</code></a></small>
     <div class="hidden name"><code>simulate_nfl.Rd</code></div>
     </div>
 
@@ -314,9 +314,9 @@ progress updates globally (for the current session) with</p><pre><span class='fu
   simulations <span class='op'>=</span> <span class='fl'>4</span>,
   sims_per_round <span class='op'>=</span> <span class='fl'>2</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:57: Loading games data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBB00;'>ℹ</span><span> Computation in multiple rounds can be accelerated with parallel processing.</span>
+</div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:39: Loading games data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBB00;'>ℹ</span><span> Computation in multiple rounds can be accelerated with parallel processing.</span>
 #&gt; <span class='message'></span><span style='color: #BBBB00;'>ℹ</span><span> You should consider calling a `future::plan()`. Please see the function documentation for further information.</span>
-#&gt; <span class='message'></span><span style='color: #BBBB00;'>ℹ</span><span> Will go on sequentially...</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:57: Beginning simulation of 4 seasons in 2 rounds</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:29:07: Combining simulation data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:29:07: Aggregating across simulations</span></div><div class='input'>
+#&gt; <span class='message'></span><span style='color: #BBBB00;'>ℹ</span><span> Will go on sequentially...</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:39: Beginning simulation of 4 seasons in 2 rounds</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:55: Combining simulation data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:55: Aggregating across simulations</span></div><div class='input'>
 <span class='co'># Overview output</span>
 <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>sim</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; List of 4

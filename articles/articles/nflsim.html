@@ -19,7 +19,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../../pkgdown.css" rel="stylesheet">
 <script src="../../pkgdown.js"></script><meta property="og:title" content="Simulating NFL seasons using nflseedR">
 <meta property="og:description" content="nflseedR">
-<meta property="og:image" content="https://raw.githubusercontent.com/leesharpe/nflseedR/master/man/figures/gh_preview.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/nflverse/nflseedR/master/man/figures/gh_preview.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">nflseedR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2.9000</span>
       </span>
     </div>
 
@@ -65,7 +65,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/leesharpe/nflseedR/">
+  <a href="https://github.com/nflverse/nflseedR/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -87,7 +87,7 @@
                         <h4 class="author">Lee Sharpe</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/leesharpe/nflseedR/blob/master/vignettes/articles/nflsim.Rmd"><code>vignettes/articles/nflsim.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/nflverse/nflseedR/blob/master/vignettes/articles/nflsim.Rmd"><code>vignettes/articles/nflsim.Rmd</code></a></small>
       <div class="hidden name"><code>nflsim.Rmd</code></div>
 
     </div>
@@ -110,10 +110,10 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   simulations <span class="op">=</span> <span class="fl">100</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-04-11 06:29:16: Loading games data</span>
-<span class="co">#&gt; ● 2021-04-11 06:29:17: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-04-11 06:29:39: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-04-11 06:29:39: Aggregating across simulations</span></code></pre></div>
+<span class="co">#&gt; ● 2021-04-17 18:36:07: Loading games data</span>
+<span class="co">#&gt; ● 2021-04-17 18:36:07: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-04-17 18:36:40: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-04-17 18:36:40: Aggregating across simulations</span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -401,10 +401,10 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   simulations <span class="op">=</span> <span class="fl">100</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-04-11 06:29:39: Loading games data</span>
-<span class="co">#&gt; ● 2021-04-11 06:29:39: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-04-11 06:29:58: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-04-11 06:29:59: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-04-17 18:36:41: Loading games data</span>
+<span class="co">#&gt; ● 2021-04-17 18:36:41: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-04-17 18:37:05: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-04-17 18:37:05: Aggregating across simulations</span>
 
 <span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -654,10 +654,10 @@
   best <span class="op">=</span> <span class="st">"CHI"</span>, 
   worst <span class="op">=</span> <span class="st">"GB"</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-04-11 06:29:59: Loading games data</span>
-<span class="co">#&gt; ● 2021-04-11 06:29:59: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-04-11 06:30:18: Combining simulation data</span>
-<span class="co">#&gt; ● 2021-04-11 06:30:18: Aggregating across simulations</span>
+<span class="co">#&gt; ● 2021-04-17 18:37:06: Loading games data</span>
+<span class="co">#&gt; ● 2021-04-17 18:37:06: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-04-17 18:37:30: Combining simulation data</span>
+<span class="co">#&gt; ● 2021-04-17 18:37:30: Aggregating across simulations</span>
 <span class="va">sims3</span><span class="op">$</span><span class="va">overall</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -871,9 +871,9 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   test_week <span class="op">=</span> <span class="fl">3</span>
 <span class="op">)</span>
-<span class="co">#&gt; ● 2021-04-11 06:30:19: Loading games data</span>
-<span class="co">#&gt; ● 2021-04-11 06:30:19: Beginning simulation of 1000 seasons in 1 round</span>
-<span class="co">#&gt; ● 2021-04-11 06:30:21: Aborting and returning your `process_games` function's results from Week 3</span></code></pre></div>
+<span class="co">#&gt; ● 2021-04-17 18:37:31: Loading games data</span>
+<span class="co">#&gt; ● 2021-04-17 18:37:31: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; ● 2021-04-17 18:37:33: Aborting and returning your `process_games` function's results from Week 3</span></code></pre></div>
 <p>Let’s look at the Bears’ Elo after Week 3 in the top handful of simulations:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op">%&gt;%</span>
@@ -973,7 +973,7 @@
 <p>There is a lot of flexibility in how you choose to run the simulation. These are the parameters and how to configure them when you run the <code><a href="../../reference/simulate_nfl.html">simulate_nfl()</a></code> function.</p>
 <ul>
 <li>
-<strong>nfl_season</strong> - Which NFL season are you simulating? By default, it simulates the most recent season for which the regular season schedule is available through <a href="https://github.com/leesharpe/nfldata/tree/master/data">Lee Sharpe’s NFL game data</a>. The earliest season you can simulate is 2002.</li>
+<strong>nfl_season</strong> - Which NFL season are you simulating? By default, it simulates the most recent season for which the regular season schedule is available through <a href="https://github.com/nflverse/nfldata/tree/master/data">Lee Sharpe’s NFL game data</a>. The earliest season you can simulate is 2002.</li>
 <li>Note: Before the schedule for a new season is released, nflseedR may support simulating using a fake schedule for the upcoming season. It will notify you if it is doing this. The opponents will be correct, but the weeks in which games occur will not match the actual NFL schedule. The actual schedule will be utilized instead after it is released by the NFL.</li>
 <li>
 <strong>process_games</strong> - This is where you supply a function you’ve written to encompass your model used to determine simulated games results, like the examples above. By default, this will generate a random Elo for every team per round of simulations, then use that to determine game data.</li>

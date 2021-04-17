@@ -48,7 +48,7 @@
 
 <meta property="og:title" content="Compute NFL Playoff Seedings using Game Results and Divisional Rankings — compute_conference_seeds" />
 <meta property="og:description" content="Compute NFL Playoff Seedings using Game Results and Divisional Rankings" />
-<meta property="og:image" content="https://raw.githubusercontent.com/leesharpe/nflseedR/master/man/figures/gh_preview.png" />
+<meta property="og:image" content="https://raw.githubusercontent.com/nflverse/nflseedR/master/man/figures/gh_preview.png" />
 
 
 
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflseedR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2.9000</span>
       </span>
     </div>
 
@@ -107,7 +107,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/leesharpe/nflseedR/">
+  <a href="https://github.com/nflverse/nflseedR/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -126,7 +126,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compute NFL Playoff Seedings using Game Results and Divisional Rankings</h1>
-    <small class="dont-index">Source: <a href='https://github.com/leesharpe/nflseedR/blob/master/R/compute_conference_seeds.R'><code>R/compute_conference_seeds.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/nflverse/nflseedR/blob/master/R/compute_conference_seeds.R'><code>R/compute_conference_seeds.R</code></a></small>
     <div class="hidden name"><code>compute_conference_seeds.Rd</code></div>
     </div>
 
@@ -208,7 +208,7 @@ tie-breaking functions.</p></dd>
   <span class='fu'>nflseedR</span><span class='fu'>::</span><span class='fu'><a href='compute_division_ranks.html'>compute_division_ranks</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'>nflseedR</span><span class='fu'>::</span><span class='fu'>compute_conference_seeds</span><span class='op'>(</span>h2h <span class='op'>=</span> <span class='va'>.</span><span class='op'>$</span><span class='va'>h2h</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/pluck.html'>pluck</a></span><span class='op'>(</span><span class='st'>"standings"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:50: Calculating team data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:50: Calculating head to head</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:50: Calculating division rank #1</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:50: Calculating division rank #2</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:50: Calculating division rank #3</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:50: Calculating division rank #4</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:50: Calculating seed #1</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:50: Calculating seed #2</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:50: Calculating seed #3</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:51: Calculating seed #4</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:51: Calculating seed #5</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:51: Calculating seed #6</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-11 06:28:51: Calculating seed #7</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 64 x 15</span><span>
+</div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:28: Calculating team data</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:28: Calculating head to head</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:28: Calculating division rank #1</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:28: Calculating division rank #2</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:29: Calculating division rank #3</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:29: Calculating division rank #4</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:29: Calculating seed #1</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:29: Calculating seed #2</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:29: Calculating seed #3</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:29: Calculating seed #4</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:30: Calculating seed #5</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:30: Calculating seed #6</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>●</span><span> 2021-04-17 18:35:30: Calculating seed #7</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 64 x 15</span><span>
 #&gt;      sim conf  division  team  games  wins true_wins win_pct div_pct conf_pct
 #&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #BCBCBC;'> 1</span><span>  </span><span style='text-decoration: underline;'>2</span><span>019 AFC   AFC East  BUF      16  10          10  0.625    0.5     0.583 
