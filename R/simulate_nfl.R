@@ -400,7 +400,7 @@ simulate_nfl <- function(nfl_season = NULL,
       games_played = away_wins + home_wins + ties,
       away_percentage = (away_wins + 0.5 * ties) / games_played,
       home_percentage = (home_wins + 0.5 * ties) / games_played
-    ) |>
+    ) %>%
     ungroup() %>%
     arrange(week)
 
