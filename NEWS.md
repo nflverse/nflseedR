@@ -1,5 +1,8 @@
 # nflseedR (development version)
 
+* Added the data frame `game_summary` to the output of `simulate_nfl()` which aggregates matchups across all simulated seasons (#24)
+* Updated the description of some variables in `load_sharpe_games()` (#24)
+
 # nflseedR 1.0.2
 
 * Improved error handling of the function `load_sharpe_games()` for CRAN tests
