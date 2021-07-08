@@ -74,7 +74,7 @@
 #' ```
 #'
 #' For more information how to work with progress handlers please see [progressr::progressr].
-#' @returns A list of 4 data frames with the results of all simulated games,
+#' @returns A list of 5 data frames with the results of all simulated games,
 #'   the final standings in each simulated season (incl. playoffs and draft order)
 #'   and summary statistics across all simulated seasons. For a full list,
 #'   please see [the package website](https://nflseedr.com/articles/articles/nflsim.html#simulation-output).
@@ -388,7 +388,23 @@ simulate_nfl <- function(nfl_season = NULL,
     ) %>%
     ungroup()
 
+  game_summary <-
+    all_games %>%
+    group_by(game_type, week, away_team, home_team) %>%
+    summarise(
+      away_wins = sum(result < 0),
+      home_wins = sum(result > 0),
+      ties = sum(result == 0),
+      result = mean(result),
+      # != number of simulations in the postseason
+      games_played = away_wins + home_wins + ties,
+      away_percentage = (away_wins + 0.5 * ties) / games_played,
+      home_percentage = (home_wins + 0.5 * ties) / games_played
+    ) |>
+    ungroup() %>%
+    arrange(week)
+
   if (isTRUE(print_summary)) print(overall)
 
-  list("teams" = all_teams, "games" = all_games, "overall" = overall, "team_wins" = team_wins)
+  list("teams" = all_teams, "games" = all_games, "overall" = overall, "team_wins" = team_wins, "game_summary" = game_summary)
 }
