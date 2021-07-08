@@ -71,7 +71,7 @@ are currently performing.}
 \item{print_summary}{If \code{TRUE}, prints the summary statistics to the console.}
 }
 \value{
-A list of 4 data frames with the results of all simulated games,
+A list of 5 data frames with the results of all simulated games,
 the final standings in each simulated season (incl. playoffs and draft order)
 and summary statistics across all simulated seasons. For a full list,
 please see \href{https://nflseedr.com/articles/articles/nflsim.html#simulation-output}{the package website}.

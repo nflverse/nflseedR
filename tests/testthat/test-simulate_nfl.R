@@ -9,5 +9,5 @@ test_that("season simulator works", {
    )
 
   expect_type(sim, "list")
-  expect_named(sim, c("teams", "games", "overall", "team_wins"))
+  expect_named(sim, c("teams", "games", "overall", "team_wins", "game_summary"))
 })

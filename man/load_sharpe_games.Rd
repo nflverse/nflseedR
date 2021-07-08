@@ -10,7 +10,7 @@ load_sharpe_games()
 A data frame containing the following variables for all NFL games
 since 1999:
 \describe{
-\item{game_id}{The ID of the game as assigned by the NFL. Note that this value matches the \code{game_id} field in nflscrapR if you wish to join the data.}
+\item{game_id}{The ID of the game as assigned by the nflverse. Note that this value matches the \code{game_id} field in nflfastR if you wish to join the data.}
 \item{season}{The year of the NFL season. This represents the whole season, so regular season games that happen in January as well as playoff games will occur in the year after this number.}
 \item{game_type}{What type of game? One of the following values:
 \itemize{
@@ -21,7 +21,7 @@ since 1999:
 \item{\code{SB}}{: a Super Bowl}
 }
 }
-\item{week}{The week of the NFL season the game occurs in. This will be 1-17 for the regular season, 18 for wildcard playoff games, 19 for divisional playoff games, 20 for conference championships and 21 for Super Bowls.}
+\item{week}{The week of the NFL season the game occurs in. Please note that the \code{game_type} will differ for weeks >= 18 because of the season expansion in 2021. Please use \code{game_type} to filter for regular season or postseason.}
 \item{gameday}{The date on which the game occurred.}
 \item{weekday}{The day of the week on which the game occurred.}
 \item{gametime}{The kickoff time of the game. This is represented in 24-hour time and the Eastern time zone, regardless of what time zone the game was being played in.}
