@@ -61,4 +61,9 @@ conf_rank <-
   elo_mult <-
   wp <-
   elo_shift <-
-  problem <- NULL
+  problem <-
+  away_wins <-
+  home_wins <-
+  ties <-
+  games_played <-
+  NULL
