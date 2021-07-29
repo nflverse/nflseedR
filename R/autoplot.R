@@ -45,10 +45,6 @@ autoplot.nflseedR_simulation <- function(object,
 
   loadNamespace("gridtext", versionCheck = list(op = ">", version = "0.1.4"))
 
-  # if (type %in% c("wins", "points") && !requireNamespace("ggridges", quietly = TRUE)) {
-  #   stop("`ggridges` must be installed to use `type = \"wins\"` option.", call. = FALSE)
-  # }
-
   switch(type,
     "wins" = p <- .plot_wins(object, ...)
   )
@@ -57,19 +53,19 @@ autoplot.nflseedR_simulation <- function(object,
 
 #' @keywords internal
 .plot_wins <- function(object, ...) {
-  m <- object$teams |>
-    dplyr::group_by(conf, team) |>
-    dplyr::summarise(average_wins = mean(wins)) |>
-    dplyr::arrange(average_wins, .by_group = TRUE) |>
-    dplyr::ungroup() |>
-    dplyr::left_join(nflfastR::teams_colors_logos, by = c("team" = "team_abbr")) |>
-    dplyr::mutate(logo_html = sprintf('<img src="%s" height = "25">', team_logo_espn)) |>
+  m <- object$teams %>%
+    dplyr::group_by(conf, team) %>%
+    dplyr::summarise(average_wins = mean(wins)) %>%
+    dplyr::arrange(average_wins, .by_group = TRUE) %>%
+    dplyr::ungroup() %>%
+    dplyr::left_join(nflfastR::teams_colors_logos, by = c("team" = "team_abbr")) %>%
+    dplyr::mutate(logo_html = sprintf('<img src="%s" height = "25">', team_logo_espn)) %>%
     dplyr::mutate(conf_html = sprintf('<img src="https://github.com/nflverse/nflseedR/raw/autoplots/man/figures/%s.png" height = "25">', conf))
 
-  object$teams |>
-    dplyr::left_join(nflfastR::teams_colors_logos, by = c("team" = "team_abbr")) |>
-    dplyr::mutate(logo_html = sprintf('<img src="%s" height = "25">', team_logo_espn)) |>
-    dplyr::mutate(conf_html = sprintf('<img src="https://github.com/nflverse/nflseedR/raw/autoplots/man/figures/%s.png" height = "25">', conf)) |>
+  object$teams %>%
+    dplyr::left_join(nflfastR::teams_colors_logos, by = c("team" = "team_abbr")) %>%
+    dplyr::mutate(logo_html = sprintf('<img src="%s" height = "25">', team_logo_espn)) %>%
+    dplyr::mutate(conf_html = sprintf('<img src="https://github.com/nflverse/nflseedR/raw/autoplots/man/figures/%s.png" height = "25">', conf)) %>%
     ggplot2::ggplot(ggplot2::aes(x = wins, y = forcats::fct_reorder(.f = logo_html, .x = wins, .fun = mean))) +
     ggdist::stat_histinterval(ggplot2::aes(fill = team_color), breaks = 0:17, alpha = 0.5, .width = 0, point_colour = NA) +
     ggdist::stat_histinterval(fill = NA, breaks = 0:17) +
