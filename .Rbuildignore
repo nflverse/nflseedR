@@ -11,3 +11,6 @@
 ^man/figures/gh_preview\.png$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
+^man/figures/AFC\.png$
+^man/figures/NFC\.png$
+^man/figures/caption\.png$
