@@ -3,7 +3,7 @@
 #' Creates automatic plots for wins, ranks, or points for an `nflseedR_simulation` object as created by `simulate_nfl()`.
 #'
 #' @param object An `nflseedR_simulation` object as created by `simulate_nfl()`.
-#' @param type one of "wins", "rank", "points"
+#' @param type one of "wins", ...
 #' @param ... unused, required by autoplot generic
 #'
 #' @details This function requires the following optional dependencies:
@@ -30,7 +30,7 @@
 #' @return A ggplot2 object
 #' @export
 autoplot.nflseedR_simulation <- function(object,
-                                         type = c("wins", "rank", "points"),
+                                         type = c("wins"),
                                          ...) {
   type <- match.arg(type)
 
@@ -51,8 +51,6 @@ autoplot.nflseedR_simulation <- function(object,
 
   switch(type,
     "wins" = p <- .plot_wins(object, ...)
-    # "rank" = p <- .ffs_plot_rank(object, ...),
-    # "points" = p <- .ffs_plot_points(object, ...)
   )
   p
 }
@@ -111,7 +109,7 @@ autoplot.nflseedR_simulation <- function(object,
 #' @param x An `nflseedR_simulation` object as created by `simulate_nfl()`.
 #' @param y Ignored, required for compatibility with the `plot()` generic.
 #' @export
-plot.nflseedR_simulation <- function(x, ..., type = c("wins", "rank", "points"), y) {
+plot.nflseedR_simulation <- function(x, ..., type = c("wins"), y) {
   type <- match.arg(type)
   ggplot2::autoplot(x, type = type, ...)
 }
