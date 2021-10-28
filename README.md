@@ -12,8 +12,8 @@ downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflseedR)](https://CRAN.
 [![R-CMD-check](https://github.com/nflverse/nflseedR/workflows/R-CMD-check/badge.svg)](https://github.com/nflverse/nflseedR/actions)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![Support
-Server](https://img.shields.io/discord/591914197219016707.svg?color=7289da&label=Discord&logo=discord&style=flat-square)](https://discord.com/invite/5Er2FBnnQa)
+[![nflverse
+support](https://img.shields.io/discord/789805604076126219?color=7289da&label=nflverse%20support&logo=discord&logoColor=fff&style=flat-square)](https://discord.com/invite/5Er2FBnnQa)
 <!-- badges: end -->
 
 ## Motivation
