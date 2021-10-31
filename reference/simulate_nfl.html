@@ -142,7 +142,7 @@ Please see the below given section &quot;Details&quot; for further information."
 to estimate and simulate game results and computes the outcome of the given
 season including playoffs and draft order.
 It is possible to run the function in parallel processes by calling the
-appropriate <a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a>.
+appropriate <a href='https://future.futureverse.org/reference/plan.html'>plan</a>.
 Progress updates can be activated by calling <a href='https://progressr.futureverse.org/reference/handlers.html'>handlers</a>
 before the start of the simulations.
 Please see the below given section "Details" for further information.</p>
@@ -159,7 +159,7 @@ Please see the below given section "Details" for further information.</p>
   tiebreaker_depth <span class='op'>=</span> <span class='fl'>3</span>,
   test_week <span class='op'>=</span> <span class='cn'>NULL</span>,
   simulations <span class='op'>=</span> <span class='fl'>1000</span>,
-  sims_per_round <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Round.html'>ceiling</a></span><span class='op'>(</span><span class='va'>simulations</span><span class='op'>/</span><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/re-exports.html'>availableCores</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>2</span><span class='op'>)</span>, <span class='fl'>100</span><span class='op'>)</span>,
+  sims_per_round <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Round.html'>ceiling</a></span><span class='op'>(</span><span class='va'>simulations</span><span class='op'>/</span><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://future.futureverse.org/reference/re-exports.html'>availableCores</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>2</span><span class='op'>)</span>, <span class='fl'>100</span><span class='op'>)</span>,
   .debug <span class='op'>=</span> <span class='cn'>FALSE</span>,
   print_summary <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
@@ -271,8 +271,8 @@ this should be the appropriate plan but please make sure it truly is.</p><pre><s
 
 <p>After the session is freshly restarted please check if the above method worked
 by running the next line. If the output is <code>FALSE</code> you successfully set up a
-default non-sequential <code><a href='https://rdrr.io/pkg/future/man/plan.html'>future::plan()</a></code>. If the output is <code>TRUE</code> all functions
-will behave like they were called with <code><a href='https://purrr.tidyverse.org/reference/map.html'>purrr::map()</a></code> and NOT in multisession.</p><pre><span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span><span class='op'>(</span><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"sequential"</span><span class='op'>)</span>
+default non-sequential <code><a href='https://future.futureverse.org/reference/plan.html'>future::plan()</a></code>. If the output is <code>TRUE</code> all functions
+will behave like they were called with <code><a href='https://purrr.tidyverse.org/reference/map.html'>purrr::map()</a></code> and NOT in multisession.</p><pre><span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span><span class='op'>(</span><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://future.futureverse.org/reference/plan.html'>plan</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"sequential"</span><span class='op'>)</span>
 </pre>
 
 <p>For more information on possible plans please see
@@ -287,7 +287,7 @@ called. There are at least two basic ways to do this by either activating
 progress updates globally (for the current session) with</p><pre><span class='fu'>progressr</span><span class='fu'>::</span><span class='fu'><a href='https://progressr.futureverse.org/reference/handlers.html'>handlers</a></span><span class='op'>(</span>global <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </pre>
 
-<p>or by piping the function call into <code><a href='https://progressr.futureverse.org/reference/with_progress.html'>progressr::with_progress()</a></code>:</p><pre><span class='fu'>simulate_nfl</span><span class='op'>(</span><span class='fl'>2020</span>, fresh_season <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+<p>or by piping the function call into <code><a href='https://progressr.futureverse.org/reference/with_progress.html'>progressr::with_progress()</a></code>:</p><pre><span class='fu'>simulate_nfl</span><span class='op'>(</span><span class='fl'>2020</span>, fresh_season <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
   <span class='fu'>progressr</span><span class='fu'>::</span><span class='fu'><a href='https://progressr.futureverse.org/reference/with_progress.html'>with_progress</a></span><span class='op'>(</span><span class='op'>)</span>
 </pre>
 
@@ -298,85 +298,91 @@ progress updates globally (for the current session) with</p><pre><span class='fu
     <div class='dont-index'><p>The examples <a href='https://nflseedr.com/articles/articles/nflsim.html'>on the package website</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://nflseedr.com'>nflseedR</a></span><span class='op'>)</span>
-
-<span class='co'># Activate progress updates</span>
-<span class='co'># progressr::handlers(global = TRUE)</span>
-
-<span class='co'># Parallel processing can be activated via the following line</span>
-<span class='co'># future::plan("multisession")</span>
-
-<span class='co'># Simulate the season 4 times in 2 rounds</span>
-<span class='va'>sim</span> <span class='op'>&lt;-</span> <span class='fu'>nflseedR</span><span class='fu'>::</span><span class='fu'>simulate_nfl</span><span class='op'>(</span>
-  nfl_season <span class='op'>=</span> <span class='fl'>2020</span>,
-  fresh_season <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  simulations <span class='op'>=</span> <span class='fl'>4</span>,
-  sims_per_round <span class='op'>=</span> <span class='fl'>2</span>
-<span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>•</span> 2021-07-08 17:34:58: Loading games data</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #BBBB00;'>ℹ</span> Computation in multiple rounds can be accelerated with parallel processing.</span>
-#&gt; <span class='message'><span style='color: #BBBB00;'>ℹ</span> You should consider calling a `future::plan()`. Please see the function documentation for further information.</span>
-#&gt; <span class='message'><span style='color: #BBBB00;'>ℹ</span> Will go on sequentially...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>•</span> 2021-07-08 17:34:58: Beginning simulation of 4 seasons in 2 rounds</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>•</span> 2021-07-08 17:35:07: Combining simulation data</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>•</span> 2021-07-08 17:35:07: Aggregating across simulations</span></div><div class='input'>
-<span class='co'># Overview output</span>
-<span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>sim</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of 5
-#&gt;  $ teams       : tibble [128 × 16] (S3: tbl_df/tbl/data.frame)
-#&gt;   ..$ sim        : num [1:128] 1 1 1 1 1 1 1 1 1 1 ...
-#&gt;   ..$ team       : chr [1:128] "BUF" "MIA" "NE" "NYJ" ...
-#&gt;   ..$ conf       : chr [1:128] "AFC" "AFC" "AFC" "AFC" ...
-#&gt;   ..$ division   : chr [1:128] "AFC East" "AFC East" "AFC East" "AFC East" ...
-#&gt;   ..$ games      : int [1:128] 16 16 16 16 16 16 16 16 16 16 ...
-#&gt;   ..$ wins       : num [1:128] 8 3 12 4 8 7 12 3 4 1 ...
-#&gt;   ..$ true_wins  : int [1:128] 8 3 12 4 8 7 12 3 4 1 ...
-#&gt;   ..$ win_pct    : num [1:128] 0.5 0.188 0.75 0.25 0.5 ...
-#&gt;   ..$ div_pct    : num [1:128] 0.833 0 0.833 0.333 0.5 ...
-#&gt;   ..$ conf_pct   : num [1:128] 0.583 0.167 0.833 0.25 0.5 ...
-#&gt;   ..$ sov        : num [1:128] 0.305 0.354 0.417 0.156 0.383 ...
-#&gt;   ..$ sos        : num [1:128] 0.516 0.547 0.457 0.523 0.5 ...
-#&gt;   ..$ div_rank   : num [1:128] 2 4 1 3 2 3 1 4 3 4 ...
-#&gt;   ..$ seed       : num [1:128] 7 NA 2 NA NA NA 3 NA NA NA ...
-#&gt;   ..$ exit       : num [1:128] 18 17 19 17 17 17 18 17 17 17 ...
-#&gt;   ..$ draft_order: num [1:128] 19 4 27 7 16 13 23 3 8 1 ...
-#&gt;  $ games       : tibble [1,076 × 9] (S3: tbl_df/tbl/data.frame)
-#&gt;   ..$ sim      : num [1:1076] 1 2 1 2 1 2 1 2 1 2 ...
-#&gt;   ..$ game_type: chr [1:1076] "REG" "REG" "REG" "REG" ...
-#&gt;   ..$ week     : int [1:1076] 1 1 1 1 1 1 1 1 1 1 ...
-#&gt;   ..$ away_team: chr [1:1076] "HOU" "HOU" "SEA" "SEA" ...
-#&gt;   ..$ home_team: chr [1:1076] "KC" "KC" "ATL" "ATL" ...
-#&gt;   ..$ away_rest: num [1:1076] 7 7 7 7 7 7 7 7 7 7 ...
-#&gt;   ..$ home_rest: num [1:1076] 7 7 7 7 7 7 7 7 7 7 ...
-#&gt;   ..$ location : chr [1:1076] "Home" "Home" "Home" "Home" ...
-#&gt;   ..$ result   : int [1:1076] 18 8 18 1 4 -16 17 30 -25 -7 ...
-#&gt;  $ overall     : tibble [32 × 11] (S3: tbl_df/tbl/data.frame)
-#&gt;   ..$ conf    : chr [1:32] "AFC" "AFC" "AFC" "AFC" ...
-#&gt;   ..$ division: chr [1:32] "AFC East" "AFC East" "AFC East" "AFC East" ...
-#&gt;   ..$ team    : chr [1:32] "BUF" "MIA" "NE" "NYJ" ...
-#&gt;   ..$ wins    : num [1:32] 6.75 6 11 3.75 10.25 ...
-#&gt;   ..$ playoff : num [1:32] 0.25 0.5 1 0 0.5 0.75 0.5 0 0.5 0 ...
-#&gt;   ..$ div1    : num [1:32] 0 0.25 0.75 0 0.5 0.25 0.25 0 0.5 0 ...
-#&gt;   ..$ seed1   : num [1:32] 0 0 0 0 0.25 0.25 0 0 0 0 ...
-#&gt;   ..$ won_conf: num [1:32] 0 0 0 0 0 0.25 0 0 0 0 ...
-#&gt;   ..$ won_sb  : num [1:32] 0 0 0 0 0 0.25 0 0 0 0 ...
-#&gt;   ..$ draft1  : num [1:32] 0 0.25 0 0 0 0 0 0 0 0.25 ...
-#&gt;   ..$ draft5  : num [1:32] 0 0.5 0 0.5 0 0 0 0.5 0.25 0.75 ...
-#&gt;  $ team_wins   : tibble [1,056 × 4] (S3: tbl_df/tbl/data.frame)
-#&gt;   ..$ team      : chr [1:1056] "ARI" "ARI" "ARI" "ARI" ...
-#&gt;   ..$ wins      : num [1:1056] 0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 ...
-#&gt;   ..$ over_prob : num [1:1056] 1 1 1 1 1 1 1 1 1 1 ...
-#&gt;   ..$ under_prob: num [1:1056] 0 0 0 0 0 0 0 0 0 0 ...
-#&gt;  $ game_summary: tibble [306 × 11] (S3: tbl_df/tbl/data.frame)
-#&gt;   ..$ game_type      : chr [1:306] "REG" "REG" "REG" "REG" ...
-#&gt;   ..$ week           : int [1:306] 1 1 1 1 1 1 1 1 1 1 ...
-#&gt;   ..$ away_team      : chr [1:306] "ARI" "CHI" "CLE" "DAL" ...
-#&gt;   ..$ home_team      : chr [1:306] "SF" "DET" "BAL" "LA" ...
-#&gt;   ..$ away_wins      : int [1:306] 1 4 1 2 3 1 1 1 2 1 ...
-#&gt;   ..$ home_wins      : int [1:306] 3 0 3 2 1 3 3 3 2 3 ...
-#&gt;   ..$ ties           : int [1:306] 0 0 0 0 0 0 0 0 0 0 ...
-#&gt;   ..$ result         : num [1:306] 9.5 -12.25 7.25 8 -9 ...
-#&gt;   ..$ games_played   : int [1:306] 4 4 4 4 4 4 4 4 4 4 ...
-#&gt;   ..$ away_percentage: num [1:306] 0.25 1 0.25 0.5 0.75 0.25 0.25 0.25 0.5 0.25 ...
-#&gt;   ..$ home_percentage: num [1:306] 0.75 0 0.75 0.5 0.25 0.75 0.75 0.75 0.5 0.75 ...</div><div class='input'><span class='co'># }</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://nflseedr.com'>nflseedR</a></span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Activate progress updates</span></span>
+<span class='r-in'><span class='co'># progressr::handlers(global = TRUE)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Parallel processing can be activated via the following line</span></span>
+<span class='r-in'><span class='co'># future::plan("multisession")</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Simulate the season 4 times in 2 rounds</span></span>
+<span class='r-in'><span class='va'>sim</span> <span class='op'>&lt;-</span> <span class='fu'>nflseedR</span><span class='fu'>::</span><span class='fu'>simulate_nfl</span><span class='op'>(</span></span>
+<span class='r-in'>  nfl_season <span class='op'>=</span> <span class='fl'>2020</span>,</span>
+<span class='r-in'>  fresh_season <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>  simulations <span class='op'>=</span> <span class='fl'>4</span>,</span>
+<span class='r-in'>  sims_per_round <span class='op'>=</span> <span class='fl'>2</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #BB0000;'>•</span> 2021-10-31 13:37:16: Loading games data</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #BBBB00;'>ℹ</span> Computation in multiple rounds can be accelerated with parallel processing.</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #BBBB00;'>ℹ</span> You should consider calling a `future::plan()`. Please see the function documentation for further information.</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #BBBB00;'>ℹ</span> Will go on sequentially...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #BB0000;'>•</span> 2021-10-31 13:37:16: Beginning simulation of 4 seasons in 2 rounds</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #BB0000;'>•</span> 2021-10-31 13:37:26: Combining simulation data</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #BB0000;'>•</span> 2021-10-31 13:37:26: Aggregating across simulations</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Overview output</span></span>
+<span class='r-in'><span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>sim</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> List of 5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ teams       : tibble [128 × 16] (S3: tbl_df/tbl/data.frame)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ sim        : num [1:128] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ team       : chr [1:128] "BUF" "MIA" "NE" "NYJ" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ conf       : chr [1:128] "AFC" "AFC" "AFC" "AFC" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ division   : chr [1:128] "AFC East" "AFC East" "AFC East" "AFC East" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ games      : int [1:128] 16 16 16 16 16 16 16 16 16 16 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ wins       : num [1:128] 8 3 12 4 8 7 12 3 4 1 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ true_wins  : int [1:128] 8 3 12 4 8 7 12 3 4 1 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ win_pct    : num [1:128] 0.5 0.188 0.75 0.25 0.5 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ div_pct    : num [1:128] 0.833 0 0.833 0.333 0.5 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ conf_pct   : num [1:128] 0.583 0.167 0.833 0.25 0.5 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ sov        : num [1:128] 0.305 0.354 0.417 0.156 0.383 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ sos        : num [1:128] 0.516 0.547 0.457 0.523 0.5 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ div_rank   : num [1:128] 2 4 1 3 2 3 1 4 3 4 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ seed       : num [1:128] 7 NA 2 NA NA NA 3 NA NA NA ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ exit       : num [1:128] 18 17 19 17 17 17 18 17 17 17 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ draft_order: num [1:128] 19 4 27 7 16 13 23 3 8 1 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ games       : tibble [1,076 × 9] (S3: tbl_df/tbl/data.frame)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ sim      : num [1:1076] 1 2 1 2 1 2 1 2 1 2 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ game_type: chr [1:1076] "REG" "REG" "REG" "REG" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ week     : int [1:1076] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ away_team: chr [1:1076] "HOU" "HOU" "SEA" "SEA" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ home_team: chr [1:1076] "KC" "KC" "ATL" "ATL" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ away_rest: num [1:1076] 7 7 7 7 7 7 7 7 7 7 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ home_rest: num [1:1076] 7 7 7 7 7 7 7 7 7 7 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ location : chr [1:1076] "Home" "Home" "Home" "Home" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ result   : int [1:1076] 18 8 18 1 4 -16 17 30 -25 -7 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ overall     : tibble [32 × 11] (S3: tbl_df/tbl/data.frame)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ conf    : chr [1:32] "AFC" "AFC" "AFC" "AFC" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ division: chr [1:32] "AFC East" "AFC East" "AFC East" "AFC East" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ team    : chr [1:32] "BUF" "MIA" "NE" "NYJ" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ wins    : num [1:32] 6.75 6 11 3.75 10.25 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ playoff : num [1:32] 0.25 0.5 1 0 0.5 0.75 0.5 0 0.5 0 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ div1    : num [1:32] 0 0.25 0.75 0 0.5 0.25 0.25 0 0.5 0 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ seed1   : num [1:32] 0 0 0 0 0.25 0.25 0 0 0 0 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ won_conf: num [1:32] 0 0 0 0 0 0.25 0 0 0 0 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ won_sb  : num [1:32] 0 0 0 0 0 0.25 0 0 0 0 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ draft1  : num [1:32] 0 0.25 0 0 0 0 0 0 0 0.25 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ draft5  : num [1:32] 0 0.5 0 0.5 0 0 0 0.5 0.25 0.75 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ team_wins   : tibble [1,056 × 4] (S3: tbl_df/tbl/data.frame)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ team      : chr [1:1056] "ARI" "ARI" "ARI" "ARI" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ wins      : num [1:1056] 0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ over_prob : num [1:1056] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ under_prob: num [1:1056] 0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ game_summary: tibble [306 × 11] (S3: tbl_df/tbl/data.frame)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ game_type      : chr [1:306] "REG" "REG" "REG" "REG" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ week           : int [1:306] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ away_team      : chr [1:306] "ARI" "CHI" "CLE" "DAL" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ home_team      : chr [1:306] "SF" "DET" "BAL" "LA" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ away_wins      : int [1:306] 1 4 1 2 3 1 1 1 2 1 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ home_wins      : int [1:306] 3 0 3 2 1 3 3 3 2 3 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ ties           : int [1:306] 0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ result         : num [1:306] 9.5 -12.25 7.25 8 -9 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ games_played   : int [1:306] 4 4 4 4 4 4 4 4 4 4 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ away_percentage: num [1:306] 0.25 1 0.25 0.5 0.75 0.25 0.25 0.25 0.5 0.25 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ home_percentage: num [1:306] 0.75 0 0.75 0.5 0.25 0.75 0.75 0.75 0.5 0.75 ...</span>
+<span class='r-in'><span class='co'># }</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
