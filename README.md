@@ -9,9 +9,11 @@
 status](https://www.r-pkg.org/badges/version-last-release/nflseedR)](https://CRAN.R-project.org/package=nflseedR)
 [![CRAN
 downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflseedR)](https://CRAN.R-project.org/package=nflseedR)
+[![Dev
+status](https://img.shields.io/github/r-package/v/nflverse/nflseedR/master?label=dev%20version&style=flat-square&logo=github)](https://nflseedr.com/)
 [![R-CMD-check](https://github.com/nflverse/nflseedR/workflows/R-CMD-check/badge.svg)](https://github.com/nflverse/nflseedR/actions)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![nflverse
 support](https://img.shields.io/discord/789805604076126219?color=7289da&label=nflverse%20support&logo=discord&logoColor=fff&style=flat-square)](https://discord.com/invite/5Er2FBnnQa)
 <!-- badges: end -->
@@ -52,12 +54,19 @@ install.packages("nflseedR")
 ```
 
 To get a bug fix or to use a feature from the development version, you
-can install the development version of nflseedR from
-[GitHub](https://github.com/nflverse/nflseedR) with:
+can install the development version of nflseedR either from
+[GitHub](https://github.com/nflverse/nflseedR) with
 
 ``` r
 if (!require("remotes")) install.packages("remotes")
 remotes::install_github("leesharpe/nflseedR")
+```
+
+or prebuilt from the [development repo](https://nflverse.r-universe.dev)
+with:
+
+``` r
+install.packages("nflseedR", repos = "https://nflverse.r-universe.dev")
 ```
 
 ## Get Started
