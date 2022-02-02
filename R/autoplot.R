@@ -1,6 +1,7 @@
 #' Automatically Plot nflseedR_simulation Object
 #'
-#' Creates automatic plots for wins, ranks, or points for an `nflseedR_simulation` object as created by `simulate_nfl()`.
+#' Creates automatic plots for wins, ranks, or points for an `nflseedR_simulation`
+#'  object as created by `simulate_nfl()`.
 #'
 #' @param object An `nflseedR_simulation` object as created by `simulate_nfl()`.
 #' @param type one of "wins", ...
@@ -38,12 +39,9 @@ autoplot.nflseedR_simulation <- function(object,
     "forcats",
     "ggplot2",
     "ggdist",
-    "ggtext",
-    "ggthemes",
-    "gridtext"
+    "nflplotR",
+    "ggthemes"
   ))
-
-  loadNamespace("gridtext", versionCheck = list(op = ">", version = "0.1.4"))
 
   switch(type,
     "wins" = p <- .plot_wins(object, ...)
@@ -57,17 +55,20 @@ autoplot.nflseedR_simulation <- function(object,
     dplyr::group_by(conf, team) %>%
     dplyr::summarise(average_wins = mean(wins)) %>%
     dplyr::arrange(average_wins, .by_group = TRUE) %>%
-    dplyr::ungroup() %>%
-    dplyr::left_join(nflfastR::teams_colors_logos, by = c("team" = "team_abbr")) %>%
-    dplyr::mutate(logo_html = sprintf('<img src="%s" height = "25">', team_logo_espn)) %>%
-    dplyr::mutate(conf_html = sprintf('<img src="https://github.com/nflverse/nflseedR/raw/autoplots/man/figures/%s.png" height = "25">', conf))
+    dplyr::ungroup()
 
   object$teams %>%
-    dplyr::left_join(nflfastR::teams_colors_logos, by = c("team" = "team_abbr")) %>%
-    dplyr::mutate(logo_html = sprintf('<img src="%s" height = "25">', team_logo_espn)) %>%
-    dplyr::mutate(conf_html = sprintf('<img src="https://github.com/nflverse/nflseedR/raw/autoplots/man/figures/%s.png" height = "25">', conf)) %>%
-    ggplot2::ggplot(ggplot2::aes(x = wins, y = forcats::fct_reorder(.f = logo_html, .x = wins, .fun = mean))) +
-    ggdist::stat_histinterval(ggplot2::aes(fill = team_color), breaks = 0:17, alpha = 0.5, .width = 0, point_colour = NA) +
+    ggplot2::ggplot(ggplot2::aes(
+      x = wins,
+      y = forcats::fct_reorder(.f = team, .x = wins, .fun = mean)
+    )) +
+    ggdist::stat_histinterval(
+      ggplot2::aes(fill = team),
+      breaks = 0:17,
+      alpha = 0.5,
+      .width = 0,
+      point_colour = NA
+    ) +
     ggdist::stat_histinterval(fill = NA, breaks = 0:17) +
     # ggplot2::geom_label(
     #   data = m,
@@ -79,24 +80,25 @@ autoplot.nflseedR_simulation <- function(object,
     #   hjust = 1
     # ) +
     ggplot2::scale_x_continuous(breaks = seq(0, 16, 2)) +
-    ggplot2::scale_fill_identity() +
+    nflplotR::scale_fill_nfl() +
     ggplot2::labs(
       title = sprintf("Season Win Totals - %s NFL Season", object$sim_params$nfl_season),
       subtitle = sprintf("Prediction Based on %s Simulated Regular Seasons | Sorted by Average Wins", object$sim_params$simulations),
       x = sprintf("%s Regular Season Wins", object$sim_params$nfl_season),
-      caption = '<img src="https://github.com/nflverse/nflseedR/raw/autoplots/man/figures/caption.png" height = 10>'
+      caption = "https://github.com/nflverse/nflseedR/raw/autoplots/man/figures/caption.png"
     ) +
     ggthemes::theme_fivethirtyeight() +
     ggplot2::theme(
-      axis.text.y = ggtext::element_markdown(),
+      # axis.text.y = nflplotR::element_nfl_logo(size = 0.8),
       axis.title.x = ggplot2::element_text(),
       axis.title.y = ggplot2::element_blank(),
-      strip.text = ggtext::element_markdown(),
-      plot.caption = ggtext::element_markdown(),
+      # strip.text = nflplotR::element_nfl_logo(size = 1),
+      # plot.caption = nflplotR::element_path(size = 1),
+      plot.caption = ggplot2::element_blank(),
       plot.title.position = "plot",
       panel.grid.major.y = ggplot2::element_blank()
     ) +
-    ggplot2::facet_wrap(dplyr::vars(conf_html), nrow = 1, scales = "free_y") +
+    ggplot2::facet_wrap(dplyr::vars(conf), nrow = 1, scales = "free_y") +
     NULL
 }
 

@@ -37,10 +37,9 @@ Suggests:
     forcats,
     ggplot2,
     ggdist,
-    ggtext,
     ggthemes,
-    gridtext (> 0.1.4),
     knitr,
+    nflplotR (>= 1.0.0),
     rmarkdown,
     testthat (>= 3.0.0),
     tidyverse
