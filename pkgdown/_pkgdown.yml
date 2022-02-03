@@ -3,12 +3,11 @@ url: https://nflseedr.com
 template:
   bootstrap: 5
   bootswatch: yeti
-  # theme: arrow-light
   bslib:
     font_scale: 1.2
-    # base_font: {google: "IBM Plex Sans"}
-    # heading_font: {google: "Kanit"}
-    # code_font: {google: "Fira Code"}
+    base_font: {google: "IBM Plex Sans"}
+    heading_font: {google: "Kanit"}
+    code_font: {google: "Fira Code"}
   opengraph:
     image:
       src: man/figures/gh_preview.png
