@@ -59,7 +59,7 @@ To get a bug fix or to use a feature from the development version, you can insta
 
 ``` r
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("leesharpe/nflseedR")
+remotes::install_github("nflverse/nflseedR")
 ```
 
 or prebuilt from the [development repo](https://nflverse.r-universe.dev) with:

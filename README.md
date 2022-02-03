@@ -59,7 +59,7 @@ can install the development version of nflseedR either from
 
 ``` r
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("leesharpe/nflseedR")
+remotes::install_github("nflverse/nflseedR")
 ```
 
 or prebuilt from the [development repo](https://nflverse.r-universe.dev)
