@@ -66,4 +66,10 @@ conf_rank <-
   home_wins <-
   ties <-
   games_played <-
+  playoff <-
+  afc_division <-
+  nfc_division <-
+  team_abbr <-
+  team_logo_espn <-
+  nfc_team <-
   NULL

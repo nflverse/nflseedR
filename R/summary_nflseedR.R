@@ -66,7 +66,7 @@ summary.nflseedR_simulation <- function(object, ...){
         gt::ends_with("won_conf"),
         gt::ends_with("won_sb"),
         gt::ends_with("draft1"),
-        gt::ends_with("draft5"),
+        gt::ends_with("draft5")
       ),
       decimals = 0
     ) %>%
@@ -78,7 +78,7 @@ summary.nflseedR_simulation <- function(object, ...){
         gt::ends_with("won_conf"),
         gt::ends_with("won_sb"),
         gt::ends_with("draft1"),
-        gt::ends_with("draft5"),
+        gt::ends_with("draft5")
       ),
       colors = scales::col_numeric(palette = table_colors, domain = c(0, 1))
     ) %>%
