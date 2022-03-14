@@ -35,8 +35,8 @@ summary.nflseedR_simulation <- function(object, ...){
       afc_wins = gt::html("AVG.<br>WINS"),
       nfc_wins = gt::html("AVG.<br>WINS"),
 
-      afc_playoff = gt::html("Make<br>POs"),
-      nfc_playoff = gt::html("Make<br>POs"),
+      afc_playoff = gt::html("Make<br>POST"),
+      nfc_playoff = gt::html("Make<br>POST"),
 
       afc_div1 = gt::html("Win<br>DIV"),
       nfc_div1 = gt::html("Win<br>DIV"),
