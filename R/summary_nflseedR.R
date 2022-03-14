@@ -102,7 +102,7 @@ summary.nflseedR_simulation <- function(object, ...){
       ))
     ) %>%
     gt::tab_spanner(
-      label = html(gt::web_image(
+      label = gt::html(gt::web_image(
         "https://github.com/nflverse/nflfastR-data/raw/master/AFC.png",
         height = 25
       )),
