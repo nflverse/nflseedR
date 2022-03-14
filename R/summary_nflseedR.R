@@ -77,10 +77,15 @@ summary.nflseedR_simulation <- function(object, ...){
         gt::ends_with("seed1"),
         gt::ends_with("won_conf"),
         gt::ends_with("won_sb"),
+      ),
+      colors = scales::col_numeric(palette = table_colors_positive, domain = c(0, 1))
+    ) %>%
+    gt::data_color(
+      columns = c(
         gt::ends_with("draft1"),
         gt::ends_with("draft5")
       ),
-      colors = scales::col_numeric(palette = table_colors, domain = c(0, 1))
+      colors = scales::col_numeric(palette = table_colors_negative, domain = c(0, 1))
     ) %>%
     gt::text_transform(
       locations = gt::cells_body(gt::ends_with("team")),
@@ -196,7 +201,15 @@ table_theme <- function(gt_object,...) {
 }
 
 # output of ggsci::rgb_material("light-blue") + "white"
-table_colors <- c("white",
+table_colors_positive <- c("white",
   "#E0F4FEFF", "#B2E5FCFF", "#80D3F9FF", "#4EC3F7FF", "#28B6F6FF", "#02A9F3FF",
   "#029AE5FF", "#0187D1FF", "#0177BDFF", "#00579AFF"
 )
+
+# output of ggsci::rgb_material("orange") + "white"
+table_colors_negative <- c("white",
+  "#FFF2DFFF", "#FFDFB2FF", "#FFCC7FFF", "#FFB74CFF", "#FFA626FF", "#FF9800FF",
+  "#FA8C00FF", "#F47B00FF", "#EE6C00FF", "#E55100FF"
+)
+
+
