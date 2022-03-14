@@ -2,6 +2,7 @@
 
 * Added the data frame `game_summary` to the output of `simulate_nfl()` which aggregates matchups across all simulated seasons (#24)
 * Updated the description of some variables in `load_sharpe_games()` (#24)
+* The output of `simulate_nfl()` is now of class `nflseedR_simulation` which allows the implementation of a `summary()` method that computes a `gt()` table of the simulation summary data frame.
 
 # nflseedR 1.0.2
 
