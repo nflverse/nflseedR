@@ -249,16 +249,16 @@ progress updates globally (for the current session) with</p><div class="sourceCo
 <span class="r-in">  simulations <span class="op">=</span> <span class="fl">4</span>,</span>
 <span class="r-in">  sims_per_round <span class="op">=</span> <span class="fl">2</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-02-04 11:08:28: Loading games data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-14 18:01:06: Loading games data</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">ℹ</span> Computation in multiple rounds can be accelerated with parallel processing.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">ℹ</span> You should consider calling a `future::plan()`. Please see the function documentation for further information.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">ℹ</span> Will go on sequentially...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-02-04 11:08:28: Beginning simulation of 4 seasons in 2 rounds</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-02-04 11:08:47: Combining simulation data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-02-04 11:08:47: Aggregating across simulations</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-14 18:01:06: Beginning simulation of 4 seasons in 2 rounds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-14 18:01:24: Combining simulation data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-14 18:01:24: Aggregating across simulations</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Overview output</span></span>
-<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ teams       : tibble [128 × 16] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim        : num [1:128] 1 1 1 1 1 1 1 1 1 1 ...</span>
@@ -266,17 +266,17 @@ progress updates globally (for the current session) with</p><div class="sourceCo
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf       : chr [1:128] "AFC" "AFC" "AFC" "AFC" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ division   : chr [1:128] "AFC East" "AFC East" "AFC East" "AFC East" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ games      : int [1:128] 16 16 16 16 16 16 16 16 16 16 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ wins       : num [1:128] 7 6 7 12 8 3 7 12 12 9 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ true_wins  : int [1:128] 7 6 7 12 8 3 7 12 12 9 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ win_pct    : num [1:128] 0.438 0.375 0.438 0.75 0.5 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div_pct    : num [1:128] 0.333 0.167 0.667 0.833 0.667 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf_pct   : num [1:128] 0.417 0.417 0.417 0.75 0.5 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sov        : num [1:128] 0.455 0.385 0.411 0.443 0.414 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sos        : num [1:128] 0.543 0.504 0.535 0.48 0.52 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div_rank   : num [1:128] 3 4 2 1 2 4 3 1 1 3 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ seed       : num [1:128] NA NA NA 2 NA NA NA 3 1 NA ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ exit       : num [1:128] 17 17 17 18 17 17 17 18 19 17 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ draft_order: num [1:128] 15 9 14 23 17 2 16 24 28 18 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ wins       : num [1:128] 14 8 12 8 7 9 5 8 4 10 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ true_wins  : int [1:128] 14 8 12 8 7 9 5 8 4 10 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ win_pct    : num [1:128] 0.875 0.5 0.75 0.5 0.438 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div_pct    : num [1:128] 0.833 0.5 0.5 0.167 0.5 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf_pct   : num [1:128] 0.917 0.5 0.667 0.5 0.333 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sov        : num [1:128] 0.522 0.562 0.469 0.445 0.348 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sos        : num [1:128] 0.531 0.57 0.512 0.559 0.484 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div_rank   : num [1:128] 1 3 2 4 3 1 4 2 4 2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ seed       : num [1:128] 1 NA 5 NA NA 4 NA NA NA 6 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ exit       : num [1:128] 22 17 20 17 17 18 17 17 17 18 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ draft_order: num [1:128] 32 18 29 17 12 20 7 15 6 23 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ games       : tibble [1,076 × 9] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim      : num [1:1076] 1 2 1 2 1 2 1 2 1 2 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ game_type: chr [1:1076] "REG" "REG" "REG" "REG" ...</span>
@@ -286,36 +286,36 @@ progress updates globally (for the current session) with</p><div class="sourceCo
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ away_rest: num [1:1076] 7 7 7 7 7 7 7 7 7 7 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ home_rest: num [1:1076] 7 7 7 7 7 7 7 7 7 7 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ location : chr [1:1076] "Home" "Home" "Home" "Home" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ result   : int [1:1076] -13 -4 3 -24 1 -29 9 28 22 -6 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ result   : int [1:1076] -2 27 -20 -12 18 -8 28 7 -13 23 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ overall     : tibble [32 × 11] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf    : chr [1:32] "AFC" "AFC" "AFC" "AFC" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ division: chr [1:32] "AFC East" "AFC East" "AFC East" "AFC East" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ team    : chr [1:32] "BUF" "MIA" "NE" "NYJ" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ wins    : num [1:32] 6.75 7 8.5 10.25 7.25 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ playoff : num [1:32] 0.25 0.25 0.25 0.75 0.5 0 0.5 0.75 0.25 0.25 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div1    : num [1:32] 0.25 0 0.25 0.5 0 0 0.5 0.5 0.25 0.25 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ seed1   : num [1:32] 0 0 0 0 0 0 0 0 0.25 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ won_conf: num [1:32] 0 0 0.25 0.25 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ won_sb  : num [1:32] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ draft1  : num [1:32] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ draft5  : num [1:32] 0 0 0 0 0.25 0.5 0 0 0.5 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ wins    : num [1:32] 10.5 6.75 9.75 10.5 8 6.75 4 6 7.25 10 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ playoff : num [1:32] 0.5 0.25 0.75 0.75 0.5 0.5 0 0 0.25 0.75 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div1    : num [1:32] 0.5 0 0 0.5 0.5 0.5 0 0 0 0.5 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ seed1   : num [1:32] 0.25 0 0 0.25 0 0 0 0 0 0.25 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ won_conf: num [1:32] 0.25 0.25 0 0 0 0 0 0 0 0.25 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ won_sb  : num [1:32] 0.25 0 0 0 0 0 0 0 0 0.25 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ draft1  : num [1:32] 0 0 0 0 0 0 0.25 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ draft5  : num [1:32] 0 0.25 0 0 0 0.5 0.25 0.25 0 0.25 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ team_wins   : tibble [1,056 × 4] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ team      : chr [1:1056] "ARI" "ARI" "ARI" "ARI" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ wins      : num [1:1056] 0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ over_prob : num [1:1056] 1 1 1 1 0.75 0.75 0.75 0.75 0.75 0.75 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ under_prob: num [1:1056] 0 0 0 0 0 0.25 0.25 0.25 0.25 0.25 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ game_summary: tibble [307 × 11] (S3: tbl_df/tbl/data.frame)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ game_type      : chr [1:307] "REG" "REG" "REG" "REG" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ week           : int [1:307] 1 1 1 1 1 1 1 1 1 1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ away_team      : chr [1:307] "ARI" "CHI" "CLE" "DAL" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ home_team      : chr [1:307] "SF" "DET" "BAL" "LA" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ away_wins      : int [1:307] 2 3 3 0 1 3 2 2 3 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ home_wins      : int [1:307] 2 1 1 4 3 1 2 2 1 4 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ties           : int [1:307] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ result         : num [1:307] 7 -1.75 -12.5 14 5.75 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ games_played   : int [1:307] 4 4 4 4 4 4 4 4 4 4 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ away_percentage: num [1:307] 0.5 0.75 0.75 0 0.25 0.75 0.5 0.5 0.75 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ home_percentage: num [1:307] 0.5 0.25 0.25 1 0.75 0.25 0.5 0.5 0.25 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ over_prob : num [1:1056] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ under_prob: num [1:1056] 0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ game_summary: tibble [305 × 11] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ game_type      : chr [1:305] "REG" "REG" "REG" "REG" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ week           : int [1:305] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ away_team      : chr [1:305] "ARI" "CHI" "CLE" "DAL" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ home_team      : chr [1:305] "SF" "DET" "BAL" "LA" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ away_wins      : int [1:305] 2 2 1 1 1 3 2 2 3 2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ home_wins      : int [1:305] 2 2 3 3 3 1 2 2 1 2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ties           : int [1:305] 0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ result         : num [1:305] 10 -5.25 13 3 12 -1 -5.25 -1.5 -2 6.5 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ games_played   : int [1:305] 4 4 4 4 4 4 4 4 4 4 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ away_percentage: num [1:305] 0.5 0.5 0.25 0.25 0.25 0.75 0.5 0.5 0.75 0.5 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ home_percentage: num [1:305] 0.5 0.5 0.75 0.75 0.75 0.25 0.5 0.5 0.25 0.5 ...</span>
 <span class="r-in"><span class="co"># }</span></span>
 </code></pre></div>
     </div>

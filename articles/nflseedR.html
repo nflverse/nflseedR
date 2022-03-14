@@ -1153,26 +1153,26 @@
 <td align="left">Sunday</td>
 <td align="left">18:30</td>
 <td align="left">LA</td>
-<td align="right">NA</td>
+<td align="right">23</td>
 <td align="left">CIN</td>
-<td align="right">NA</td>
+<td align="right">20</td>
 <td align="left">Neutral</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">-3</td>
+<td align="right">43</td>
+<td align="right">0</td>
 <td align="left">2022021301</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
 <td align="left">202202130cin</td>
-<td align="right">NA</td>
+<td align="right">21536</td>
 <td align="left">401326638</td>
 <td align="right">14</td>
 <td align="right">14</td>
-<td align="right">-195</td>
-<td align="right">165</td>
+<td align="right">-190</td>
+<td align="right">160</td>
 <td align="right">-4.5</td>
-<td align="right">-105</td>
-<td align="right">-115</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
 <td align="right">48.5</td>
 <td align="right">-110</td>
 <td align="right">-110</td>
@@ -1204,7 +1204,7 @@
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2012</span>, <span class="fl">2019</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>sim <span class="op">=</span> <span class="va">season</span>, <span class="va">game_type</span>, <span class="va">week</span>, <span class="va">away_team</span>, <span class="va">home_team</span>, <span class="va">result</span><span class="op">)</span>
 
-<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span>
+<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 534</span>
 <span class="co">#&gt; Columns: 6</span>
 <span class="co">#&gt; $ sim       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, …</span>
@@ -1225,25 +1225,25 @@
 <p>Now the games data frame can be used to compute the division ranks (the parameter <code>.debug</code> is set to <code>TRUE</code> to show what the function is doing).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">div_standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_division_ranks.html">compute_division_ranks</a></span><span class="op">(</span><span class="va">games</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:50: Calculating team data</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:50: Calculating head to head</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:50: Calculating division rank #1</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:50: DIV (2): Head-to-head</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: DIV (2): Division Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: Calculating division rank #2</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: DIV (3): Head-to-head</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: DIV (3): Division Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: DIV (3): Common Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: DIV (2): Head-to-head</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: DIV (2): Division Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: DIV (2): Common Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: DIV (2): Conference Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: Calculating division rank #3</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: DIV (2): Head-to-head</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: DIV (2): Division Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:51: DIV (2): Common Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:52: Calculating division rank #4</span>
-<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">div_standings</span><span class="op">)</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:28: Calculating team data</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:28: Calculating head to head</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:28: Calculating division rank #1</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:28: DIV (2): Head-to-head</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:28: DIV (2): Division Record</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:28: Calculating division rank #2</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:28: DIV (3): Head-to-head</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:28: DIV (3): Division Record</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:28: DIV (3): Common Record</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:29: DIV (2): Head-to-head</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:29: DIV (2): Division Record</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:29: DIV (2): Common Record</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:29: DIV (2): Conference Record</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:29: Calculating division rank #3</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:29: DIV (2): Head-to-head</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:29: DIV (2): Division Record</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:29: DIV (2): Common Record</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:29: Calculating division rank #4</span>
+<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">div_standings</span><span class="op">)</span>
 <span class="co">#&gt; List of 2</span>
 <span class="co">#&gt;  $ standings: tibble [64 × 14] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;   ..$ sim         : int [1:64] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span>
@@ -1717,17 +1717,17 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">seeds</span> <span class="op">&lt;-</span> <span class="va">div_standings</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_conference_seeds.html">compute_conference_seeds</a></span><span class="op">(</span>h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, playoff_seeds <span class="op">=</span> <span class="fl">6</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:52: Calculating seed #1</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:52: CONF (3): Head-to-head Sweep</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:52: Calculating seed #2</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:52: CONF (2): Head-to-head Sweep</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:52: CONF (2): Conference Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:52: Calculating seed #3</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:52: Calculating seed #4</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:52: Calculating seed #5</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:52: Calculating seed #6</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:52: CONF (2): Best-in-division reduction</span>
-<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">seeds</span><span class="op">)</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:30: Calculating seed #1</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:30: CONF (3): Head-to-head Sweep</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:30: Calculating seed #2</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:30: CONF (2): Head-to-head Sweep</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:30: CONF (2): Conference Record</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:30: Calculating seed #3</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:30: Calculating seed #4</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:30: Calculating seed #5</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:30: Calculating seed #6</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:30: CONF (2): Best-in-division reduction</span>
+<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">seeds</span><span class="op">)</span>
 <span class="co">#&gt; List of 2</span>
 <span class="co">#&gt;  $ standings: tibble [64 × 15] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;   ..$ sim      : int [1:64] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span>
@@ -2233,43 +2233,43 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">draft</span> <span class="op">&lt;-</span> <span class="va">seeds</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_draft_order.html">compute_draft_order</a></span><span class="op">(</span>games <span class="op">=</span> <span class="va">games</span>, h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:53: Calculating draft order #32</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:53: Calculating draft order #31</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #30</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #29</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #28</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #27</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #26</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #25</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #24</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #23</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #22</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #21</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #20</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #19</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #18</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #17</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #16</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #15</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #14</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #13</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:54: Calculating draft order #12</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: Calculating draft order #11</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: Calculating draft order #10</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: DRAFT: Divisional Rank</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: DRAFT: Conference Rank</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: CONF (2): Best-in-division reduction</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: CONF (2): Head-to-head Sweep</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: Calculating draft order #9</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: Calculating draft order #8</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: Calculating draft order #7</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: Calculating draft order #6</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: Calculating draft order #5</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: Calculating draft order #4</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: Calculating draft order #3</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: Calculating draft order #2</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-02-04 11:08:55: Calculating draft order #1</span>
-<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">draft</span><span class="op">)</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:31: Calculating draft order #32</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:31: Calculating draft order #31</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:31: Calculating draft order #30</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #29</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #28</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #27</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #26</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #25</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #24</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #23</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #22</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #21</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #20</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #19</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #18</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #17</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #16</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #15</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #14</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:32: Calculating draft order #13</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: Calculating draft order #12</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: Calculating draft order #11</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: Calculating draft order #10</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: DRAFT: Divisional Rank</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: DRAFT: Conference Rank</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: CONF (2): Best-in-division reduction</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: CONF (2): Head-to-head Sweep</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: Calculating draft order #9</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: Calculating draft order #8</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: Calculating draft order #7</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: Calculating draft order #6</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: Calculating draft order #5</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:33: Calculating draft order #4</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:34: Calculating draft order #3</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:34: Calculating draft order #2</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-14 18:01:34: Calculating draft order #1</span>
+<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">draft</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 64</span>
 <span class="co">#&gt; Columns: 16</span>
 <span class="co">#&gt; $ sim         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012…</span>
