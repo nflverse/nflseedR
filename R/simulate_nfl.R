@@ -74,9 +74,10 @@
 #' ```
 #'
 #' For more information how to work with progress handlers please see [progressr::progressr].
-#' @returns A list of 5 data frames with the results of all simulated games,
-#'   the final standings in each simulated season (incl. playoffs and draft order)
-#'   and summary statistics across all simulated seasons. For a full list,
+#' @returns An `nflseedR_simulation` object containing a list of 6 data frames
+#'   data frames with the results of all simulated games,
+#'   the final standings in each simulated season (incl. playoffs and draft order),
+#'   summary statistics across all simulated seasons, and the siumulation parameters. For a full list,
 #'   please see [the package website](https://nflseedr.com/articles/articles/nflsim.html#simulation-output).
 #' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflsim.html)
 #' @export
@@ -406,5 +407,29 @@ simulate_nfl <- function(nfl_season = NULL,
 
   if (isTRUE(print_summary)) print(overall)
 
-  list("teams" = all_teams, "games" = all_games, "overall" = overall, "team_wins" = team_wins, "game_summary" = game_summary)
+  out <- structure(
+    list(
+      "teams" = all_teams,
+      "games" = all_games,
+      "overall" = overall,
+      "team_wins" = team_wins,
+      "game_summary" = game_summary,
+      "sim_params" = list(
+        "nfl_season" = nfl_season,
+        "playoff_seeds" = playoff_seeds,
+        "if_ended_today" = if_ended_today,
+        "fresh_season" = fresh_season,
+        "fresh_playoffs" = fresh_playoffs,
+        "tiebreaker_depth" = tiebreaker_depth,
+        "test_week" = test_week,
+        "simulations" = simulations,
+        "sims_per_round" = sims_per_round,
+        ".debug" = .debug,
+        "print_summary" = print_summary
+      )
+    ),
+    class = "nflseedR_simulation"
+  )
+
+  out
 }
