@@ -36,6 +36,7 @@ summary.nflseedR_simulation <- function(object, ...){
   tbl %>%
     group_by(afc_division) %>%
     gt::gt() %>%
+    # see below
     table_theme() %>%
     gt::cols_label(
       afc_team = "",
@@ -219,20 +220,12 @@ table_theme <- function(gt_object,...) {
       stub.border.color = "white",
       stub.border.width = gt::px(0),
       data_row.padding = gt::px(3),
-      source_notes.font.size = 12,
       source_notes.border.lr.style = "none",
+      source_notes.background.color = "gray30",
       table.font.size = 16,
       heading.align = "center",
-      heading.background.color = "#F0F0F0",
-      heading.title.font.weight = "700",
+      heading.background.color = "gray30",
       ...
-    ) %>%
-    gt::opt_css(
-      "tbody tr:last-child {
-    border-bottom: 2px solid #ffffff00;
-      }
-    ",
-    add = TRUE
     )
 }
 
