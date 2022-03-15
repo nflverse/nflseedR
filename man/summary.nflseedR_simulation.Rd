@@ -15,25 +15,27 @@
 Uses the R package gt to create a pretty html table of the
 nflseedR simulation summary data frame.
 }
+\section{Output of below example}{
+
+\if{html}{\figure{summary_tbl.png}{options: width=75\%}}
+}
+
 \examples{
 \donttest{
 library(nflseedR)
+# set seed for recreation
+set.seed(20220315)
 
-# Activate progress updates
-# progressr::handlers(global = TRUE)
-
-# Parallel processing can be activated via the following line
-# future::plan("multisession")
-
-# Simulate the season 4 times in 2 rounds
+# Simulate the season 20 times in 1 round
 sim <- nflseedR::simulate_nfl(
-  nfl_season = 2020,
+  nfl_season = 2021,
   fresh_season = TRUE,
-  simulations = 4,
-  sims_per_round = 2
+  simulations = 20
 )
 
 # Create Summary Tables
-summary(sim)
+tbl <- summary(sim)
+
+# The output of tbl is given in the above image.
 }
 }
