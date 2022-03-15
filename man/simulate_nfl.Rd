@@ -153,4 +153,6 @@ dplyr::glimpse(sim)
 }
 \seealso{
 The examples \href{https://nflseedr.com/articles/articles/nflsim.html}{on the package website}
+
+The method \code{\link[=summary.nflseedR_simulation]{summary.nflseedR_simulation()}} that creates a pretty html summary table.
 }
