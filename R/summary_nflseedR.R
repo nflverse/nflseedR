@@ -1,3 +1,30 @@
+#' Compute Pretty Simulations Summary Table
+#'
+#' @description Uses the R package gt to create a pretty html table of the
+#'   nflseedR simulation summary data frame.
+#' @param object an object for which a summary is desired.
+#' @param ... additional arguments passed on to the methods (currently not used).
+#' @examples
+#' \donttest{
+#' library(nflseedR)
+#'
+#' # Activate progress updates
+#' # progressr::handlers(global = TRUE)
+#'
+#' # Parallel processing can be activated via the following line
+#' # future::plan("multisession")
+#'
+#' # Simulate the season 4 times in 2 rounds
+#' sim <- nflseedR::simulate_nfl(
+#'   nfl_season = 2020,
+#'   fresh_season = TRUE,
+#'   simulations = 4,
+#'   sims_per_round = 2
+#' )
+#'
+#' # Create Summary Tables
+#' summary(sim)
+#' }
 #' @export
 summary.nflseedR_simulation <- function(object, ...){
   rlang::check_installed(c("gt", "scales"), "to compute a summary table.")
@@ -86,7 +113,7 @@ summary.nflseedR_simulation <- function(object, ...){
         gt::ends_with("div1"),
         gt::ends_with("seed1"),
         gt::ends_with("won_conf"),
-        gt::ends_with("won_sb"),
+        gt::ends_with("won_sb")
       ),
       colors = scales::col_numeric(palette = table_colors_positive, domain = c(0, 1))
     ) %>%
