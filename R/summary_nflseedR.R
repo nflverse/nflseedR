@@ -6,7 +6,16 @@ summary.nflseedR_simulation <- function(object, ...){
   subtitle <- paste("summary of", object$sim_params$simulations, "simulations using nflseedR")
 
   data <- object$overall %>%
-    mutate(division = gsub("AFC |NFC ", "", division))
+    mutate(
+      division = gsub("AFC |NFC ", "", division),
+      division = case_when(
+        division == "East" ~ "E A S T",
+        division == "North" ~ "N O R T H",
+        division == "South" ~ "S O U T H",
+        division == "West" ~ "W E S T",
+        TRUE ~ NA_character_
+      )
+    )
 
   afc <- data %>%
     filter(conf == "AFC") %>%
