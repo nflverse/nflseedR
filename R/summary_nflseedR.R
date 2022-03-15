@@ -134,7 +134,39 @@ summary.nflseedR_simulation <- function(object, ...){
     ) %>%
     gt::tab_style(
       locations = gt::cells_source_notes(),
-      style = gt::cell_text(align = "right")
+      style = gt::cell_text(
+        align = "right",
+        size = "large",
+        font = list(
+          gt::google_font("Audiowide"),
+          gt::default_fonts()
+        )
+      )
+    ) %>%
+    gt::tab_style(
+      locations = gt::cells_title(groups = "title"),
+      style = gt::cell_text(
+        weight = "bold",
+        font = list(
+          gt::google_font("Prosto One"),
+          gt::default_fonts()
+        ))
+    ) %>%
+    gt::tab_style(
+      locations = gt::cells_title(groups = "subtitle"),
+      style = gt::cell_text(
+        weight = "normal",
+        font = list(
+          gt::google_font("Prosto One"),
+          gt::default_fonts()
+        ))
+    ) %>%
+    gt::tab_style(
+      locations = gt::cells_row_groups(),
+      style = list(
+        gt::cell_text(align = "center", weight = "bold"),
+        gt::cell_fill(color = "#F0F0F0")
+      )
     ) %>%
     gt::tab_header(
       tools::toTitleCase(title),
