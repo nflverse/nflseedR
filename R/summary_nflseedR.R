@@ -109,12 +109,7 @@ summary.nflseedR_simulation <- function(object, ...){
           pull(team_logo_espn)
         gt::web_image(url = url, height = 30)
       }) %>%
-    gt::tab_source_note(
-      gt::html(gt::web_image(
-        "https://github.com/nflverse/nflseedR/raw/master/man/figures/caption.png",
-        height = 15
-      ))
-    ) %>%
+    gt::tab_source_note("nflseedR") %>%
     gt::tab_spanner(
       label = gt::html(gt::web_image(
         "https://github.com/nflverse/nflfastR-data/raw/master/AFC.png",
