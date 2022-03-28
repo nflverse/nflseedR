@@ -1,6 +1,6 @@
 ---
 title: "Simulating NFL seasons using nflseedR"
-author: "Lee Sharpe"
+author: "Lee Sharpe & Sebastian Carl"
 ---
 
 ```{r, include = FALSE}
@@ -204,8 +204,12 @@ sims3 <- simulate_nfl(
   best = "CHI", 
   worst = "GB"
 )
-sims3$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
-sims3$overall %>% dplyr::filter(team == "GB") %>% knitr::kable()
+```
+
+Now let nflseedR summarize the simulation for you by using `summary()` with the nflseedR simulation object. This will print a gt table.
+
+```{r}
+summary(sims3)
 ```
 
 And this shows exactly what we expect. By defining the Bears as the best team,
@@ -213,14 +217,14 @@ they always go 16-0, win the division, and win the Super Bowl. Interestingly,
 they do not always get the #1 seed. This makes sense, however, as in games 
 without the Bears or the Packers, the alphabetically earlier teams still wins 
 90% of the time. The Cardinals would therefore be expected to go 16-0 in some
-of the simulations, and in some of those have thee tiebreakers over the Bears
+of the simulations, and in some of those have thee tiebreakers over the Bears.
 However, even in these simulations, they'll still lose to Bears in the end
 when they meet in the playoffs.
 
 Similarly, the Packers always go 0-16, and never make the playoffs. While in
 these simulated seasons they got the #1 draft pick every time, they aren't 
 guaranteed to do so. Using the same logic as above, sometimes the Washington
-Football Team will go 0-16 too, and may beat the Packers out for the #1 pick
+Commanders will go 0-16 too, and may beat the Packers out for the #1 pick
 through tiebreakers.
 
 ## Passing Data in from One Week to the Next
@@ -465,7 +469,7 @@ running this simulation, it is recommended that you lower this number.
 ## Simulation Output
 
 The output of `simulate_nfl()`, assuming you don't put in a `test_week` to debug
-your function, is a list of four data frames. Here are the contents of each:
+your function, is a list of class `"nflseedR_simulation"` that holds four data frames with simulation results as well as a list of parameters used in the simulation. Here are the contents of each:
 
 * **teams** - One row per team per simulation.
   * **sim** - The ID number of the simulation. All rows with the same value of `sim` in both `teams` and `games` refer to the same simulated season.
@@ -539,3 +543,16 @@ your function, is a list of four data frames. Here are the contents of each:
   * **games_played** - The number of times the game was played. For `game_type == "REG"` this will equal the number of simulations. The number of playoff matchups will differ.
   * **away_percentage** - The rate the away team won the game counting ties as half a win
   * **home_percentage** - The rate the home team won the game counting ties as half a win
+
+* **sim_params** - a list of parameters used in the simulation. The list contains the following parameters which are described in `?simulate_nfl()`:
+  * `nfl_season`
+  * `playoff_seeds`
+  * `if_ended_today`
+  * `fresh_season`
+  * `fresh_playoffs`
+  * `tiebreaker_depth`
+  * `test_week`
+  * `simulations`
+  * `sims_per_round`
+  * `.debug`
+  * `print_summary`
