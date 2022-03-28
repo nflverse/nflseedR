@@ -15,9 +15,9 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="../deps/_IBM%20Plex%20Sans-0.4.0/font.css" rel="stylesheet">
-<link href="../deps/_Fira%20Code-0.4.0/font.css" rel="stylesheet">
-<link href="../deps/_Kanit-0.4.0/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="../deps/_IBM%20Plex%20Sans-0.4.1/font.css" rel="stylesheet">
+<link href="../deps/_Fira%20Code-0.4.1/font.css" rel="stylesheet">
+<link href="../deps/_Kanit-0.4.1/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -110,7 +110,7 @@
 <script src="nflsim_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Simulating NFL seasons using nflseedR</h1>
-                        <h4 data-toc-skip class="author">Lee Sharpe</h4>
+                        <h4 data-toc-skip class="author">Lee Sharpe &amp; Sebastian Carl</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/nflverse/nflseedR/blob/HEAD/vignettes/articles/nflsim.Rmd" class="external-link"><code>vignettes/articles/nflsim.Rmd</code></a></small>
@@ -135,10 +135,10 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   simulations <span class="op">=</span> <span class="fl">100</span>
 <span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:39:56: Loading games data</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:39:56: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:40:19: Combining simulation data</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:40:19: Aggregating across simulations</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:29: Loading games data</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:30: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:54: Combining simulation data</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:54: Aggregating across simulations</span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -426,10 +426,10 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   simulations <span class="op">=</span> <span class="fl">100</span>
 <span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:40:19: Loading games data</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:40:20: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:40:39: Combining simulation data</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:40:39: Aggregating across simulations</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:54: Loading games data</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:54: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:59:15: Combining simulation data</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:59:15: Aggregating across simulations</span>
 
 <span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -679,71 +679,800 @@
   best <span class="op">=</span> <span class="st">"CHI"</span>, 
   worst <span class="op">=</span> <span class="st">"GB"</span>
 <span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:40:39: Loading games data</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:40:39: Beginning simulation of 100 seasons in 1 round</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:40:59: Combining simulation data</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:40:59: Aggregating across simulations</span>
-<span class="va">sims3</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">conf</th>
-<th align="left">division</th>
-<th align="left">team</th>
-<th align="right">wins</th>
-<th align="right">playoff</th>
-<th align="right">div1</th>
-<th align="right">seed1</th>
-<th align="right">won_conf</th>
-<th align="right">won_sb</th>
-<th align="right">draft1</th>
-<th align="right">draft5</th>
-</tr></thead>
-<tbody><tr class="odd">
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="left">CHI</td>
-<td align="right">16</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0.99</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr></tbody>
-</table>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:59:16: Loading games data</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:59:16: Beginning simulation of 100 seasons in 1 round</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:59:38: Combining simulation data</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:59:38: Aggregating across simulations</span></code></pre></div>
+<p>Now let nflseedR summarize the simulation for you by using <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> with the nflseedR simulation object. This will print a gt table.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sims3</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"GB"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">conf</th>
-<th align="left">division</th>
-<th align="left">team</th>
-<th align="right">wins</th>
-<th align="right">playoff</th>
-<th align="right">div1</th>
-<th align="right">seed1</th>
-<th align="right">won_conf</th>
-<th align="right">won_sb</th>
-<th align="right">draft1</th>
-<th align="right">draft5</th>
-</tr></thead>
-<tbody><tr class="odd">
-<td align="left">NFC</td>
-<td align="left">NFC North</td>
-<td align="left">GB</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-</tr></tbody>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sims3</span><span class="op">)</span></code></pre></div>
+<div id="svuzsxfbxa" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=Prosto+One:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Prosto+One:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Audiowide:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+html {
+  font-family: Chivo, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#svuzsxfbxa .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: 300;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: none;
+  border-top-width: 3px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#svuzsxfbxa .gt_heading {
+  background-color: #4D4D4D;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#svuzsxfbxa .gt_title {
+  color: #FFFFFF;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#svuzsxfbxa .gt_subtitle {
+  color: #FFFFFF;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#svuzsxfbxa .gt_bottom_border {
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#svuzsxfbxa .gt_col_headings {
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#svuzsxfbxa .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: normal;
+  text-transform: uppercase;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#svuzsxfbxa .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: normal;
+  text-transform: uppercase;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#svuzsxfbxa .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#svuzsxfbxa .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#svuzsxfbxa .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#svuzsxfbxa .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#svuzsxfbxa .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  vertical-align: middle;
+}
+
+#svuzsxfbxa .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#svuzsxfbxa .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#svuzsxfbxa .gt_row {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#svuzsxfbxa .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-right-style: solid;
+  border-right-width: 0px;
+  border-right-color: #FFFFFF;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#svuzsxfbxa .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#svuzsxfbxa .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#svuzsxfbxa .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#svuzsxfbxa .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#svuzsxfbxa .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#svuzsxfbxa .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#svuzsxfbxa .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#svuzsxfbxa .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#svuzsxfbxa .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#svuzsxfbxa .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#svuzsxfbxa .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#svuzsxfbxa .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#svuzsxfbxa .gt_sourcenotes {
+  color: #FFFFFF;
+  background-color: #4D4D4D;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#svuzsxfbxa .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#svuzsxfbxa .gt_left {
+  text-align: left;
+}
+
+#svuzsxfbxa .gt_center {
+  text-align: center;
+}
+
+#svuzsxfbxa .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#svuzsxfbxa .gt_font_normal {
+  font-weight: normal;
+}
+
+#svuzsxfbxa .gt_font_bold {
+  font-weight: bold;
+}
+
+#svuzsxfbxa .gt_font_italic {
+  font-style: italic;
+}
+
+#svuzsxfbxa .gt_super {
+  font-size: 65%;
+}
+
+#svuzsxfbxa .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#svuzsxfbxa .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#svuzsxfbxa .gt_slash_mark {
+  font-size: 0.7em;
+  line-height: 0.7em;
+  vertical-align: 0.15em;
+}
+
+#svuzsxfbxa .gt_fraction_numerator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: 0.45em;
+}
+
+#svuzsxfbxa .gt_fraction_denominator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: -0.05em;
+}
+</style>
+<table class="table gt_table">
+<thead class="gt_header">
+<tr>
+<th colspan="18" class="gt_heading gt_title gt_font_normal" style="font-family: 'Prosto One', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif; font-weight: bold;">Simulating the 2020 NFL Season</th>
+    </tr>
+<tr>
+<th colspan="18" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="font-family: 'Prosto One', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif; font-weight: normal;">Summary of 100 Simulations using nflseedR</th>
+    </tr>
+</thead>
+<thead class="gt_col_headings">
+<tr>
+<th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="9">
+        <span class="gt_column_spanner"><img src="https://github.com/nflverse/nflfastR-data/raw/master/AFC.png" style="height:25px;"></span>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="9">
+        <span class="gt_column_spanner"><img src="https://github.com/nflverse/nflfastR-data/raw/master/NFC.png" style="height:25px;"></span>
+      </th>
+    </tr>
+<tr>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;"></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">AVG.<br>WINS</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Make<br>POST</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>DIV</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">No.1<br>Seed</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>Conf</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>SB</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">No.1<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Top-5<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">AVG.<br>WINS</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Make<br>POST</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>DIV</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">No.1<br>Seed</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>Conf</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>SB</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">No.1<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Top-5<br>Pick</th>
+    </tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="gt_group_heading_row">
+<td colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;">E A S T</td>
+    </tr>
+<tr class="gt_row_group_first">
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/buf.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">13.4</td>
+<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td class="gt_row gt_right" style="background-color: #A9E1FB; color: #000000;">22%</td>
+<td class="gt_row gt_right" style="background-color: #A9E1FB; color: #000000;">22%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/dal.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">10.5</td>
+<td class="gt_row gt_right" style="background-color: #0167AB; color: #FFFFFF;">95%</td>
+<td class="gt_row gt_right" style="background-color: #016AAF; color: #FFFFFF;">94%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/mia.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">6.5</td>
+<td class="gt_row gt_right" style="background-color: #F6FCFF; color: #000000;">3%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFEFC; color: #000000;">1%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">7.9</td>
+<td class="gt_row gt_right" style="background-color: #CAEDFD; color: #000000;">15%</td>
+<td class="gt_row gt_right" style="background-color: #F3FBFF; color: #000000;">4%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">4.8</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFF3E2; color: #000000;">9%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/phi.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">6.7</td>
+<td class="gt_row gt_right" style="background-color: #F3FBFF; color: #000000;">4%</td>
+<td class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFEFC; color: #000000;">1%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">3.4</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFAD37; color: #000000;">46%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">1.5</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #F07200; color: #000000;">86%</td>
+</tr>
+<tr class="gt_group_heading_row">
+<td colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;">N O R T H</td>
+    </tr>
+<tr class="gt_row_group_first">
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/bal.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">14.3</td>
+<td class="gt_row gt_right" style="background-color: #005A9D; color: #FFFFFF;">99%</td>
+<td class="gt_row gt_right" style="background-color: #0182CB; color: #FFFFFF;">83%</td>
+<td class="gt_row gt_right" style="background-color: #02A4EF; color: #000000;">63%</td>
+<td class="gt_row gt_right" style="background-color: #0292DD; color: #FFFFFF;">74%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/chi.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">16.0</td>
+<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td class="gt_row gt_right" style="background-color: #005A9D; color: #FFFFFF;">99%</td>
+<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/cin.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">12.6</td>
+<td class="gt_row gt_right" style="background-color: #005A9D; color: #FFFFFF;">99%</td>
+<td class="gt_row gt_right" style="background-color: #CAEDFD; color: #000000;">15%</td>
+<td class="gt_row gt_right" style="background-color: #EDF8FE; color: #000000;">6%</td>
+<td class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/det.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">10.4</td>
+<td class="gt_row gt_right" style="background-color: #0167AB; color: #FFFFFF;">95%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/cle.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">11.1</td>
+<td class="gt_row gt_right" style="background-color: #016AAF; color: #FFFFFF;">94%</td>
+<td class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
+<td class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
+<td class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/min.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">6.5</td>
+<td class="gt_row gt_right" style="background-color: #F3FBFF; color: #000000;">4%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/pit.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">3.3</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFC670; color: #000000;">33%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/gb.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">0.0</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #E55100; color: #FFFFFF;">100%</td>
+<td class="gt_row gt_right" style="background-color: #E55100; color: #FFFFFF;">100%</td>
+</tr>
+<tr class="gt_group_heading_row">
+<td colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;">S O U T H</td>
+    </tr>
+<tr class="gt_row_group_first">
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/hou.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">10.5</td>
+<td class="gt_row gt_right" style="background-color: #016DB2; color: #FFFFFF;">93%</td>
+<td class="gt_row gt_right" style="background-color: #017DC5; color: #FFFFFF;">86%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/atl.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">13.6</td>
+<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td class="gt_row gt_right" style="background-color: #016AAF; color: #FFFFFF;">94%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ind.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">8.7</td>
+<td class="gt_row gt_right" style="background-color: #4EC3F7; color: #000000;">40%</td>
+<td class="gt_row gt_right" style="background-color: #DCF3FE; color: #000000;">11%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500-dark/car.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">11.1</td>
+<td class="gt_row gt_right" style="background-color: #0164A8; color: #FFFFFF;">96%</td>
+<td class="gt_row gt_right" style="background-color: #EDF8FE; color: #000000;">6%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/jax.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">7.2</td>
+<td class="gt_row gt_right" style="background-color: #EDF8FE; color: #000000;">6%</td>
+<td class="gt_row gt_right" style="background-color: #F6FCFF; color: #000000;">3%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/no.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">5.6</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFCF9; color: #000000;">2%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ten.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">2.4</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FE9400; color: #000000;">63%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/tb.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">2.5</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FC9100; color: #000000;">66%</td>
+</tr>
+<tr class="gt_group_heading_row">
+<td colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;">W E S T</td>
+    </tr>
+<tr class="gt_row_group_first">
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/den.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">11.9</td>
+<td class="gt_row gt_right" style="background-color: #0160A4; color: #FFFFFF;">97%</td>
+<td class="gt_row gt_right" style="background-color: #0170B6; color: #FFFFFF;">92%</td>
+<td class="gt_row gt_right" style="background-color: #E6F6FE; color: #000000;">8%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ari.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">14.6</td>
+<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td class="gt_row gt_right" style="background-color: #015DA1; color: #FFFFFF;">98%</td>
+<td class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">8.9</td>
+<td class="gt_row gt_right" style="background-color: #02A9F3; color: #000000;">60%</td>
+<td class="gt_row gt_right" style="background-color: #E9F7FE; color: #000000;">7%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/lar.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">10.1</td>
+<td class="gt_row gt_right" style="background-color: #0174B9; color: #FFFFFF;">91%</td>
+<td class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/lac.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">7.2</td>
+<td class="gt_row gt_right" style="background-color: #E6F6FE; color: #000000;">8%</td>
+<td class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">3.8</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFC166; color: #000000;">35%</td>
+</tr>
+<tr>
+<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/lv.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">5.6</td>
+<td class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFEFC; color: #000000;">1%</td>
+<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/sf.png" style="height:30px;"></td>
+<td class="gt_row gt_right" style="font-weight: bold;">3.4</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td class="gt_row gt_right" style="background-color: #FF9C10; color: #000000;">57%</td>
+</tr>
+</tbody>
+<tfoot class="gt_sourcenotes"><tr>
+<td class="gt_sourcenote" style="font-family: Audiowide, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif; font-size: large; text-align: right;" colspan="18">nflseedR</td>
+    </tr></tfoot>
 </table>
-<p>And this shows exactly what we expect. By defining the Bears as the best team, they always go 16-0, win the division, and win the Super Bowl. Interestingly, they do not always get the #1 seed. This makes sense, however, as in games without the Bears or the Packers, the alphabetically earlier teams still wins 90% of the time. The Cardinals would therefore be expected to go 16-0 in some of the simulations, and in some of those have thee tiebreakers over the Bears However, even in these simulations, they’ll still lose to Bears in the end when they meet in the playoffs.</p>
-<p>Similarly, the Packers always go 0-16, and never make the playoffs. While in these simulated seasons they got the #1 draft pick every time, they aren’t guaranteed to do so. Using the same logic as above, sometimes the Washington Football Team will go 0-16 too, and may beat the Packers out for the #1 pick through tiebreakers.</p>
+</div>
+<p>And this shows exactly what we expect. By defining the Bears as the best team, they always go 16-0, win the division, and win the Super Bowl. Interestingly, they do not always get the #1 seed. This makes sense, however, as in games without the Bears or the Packers, the alphabetically earlier teams still wins 90% of the time. The Cardinals would therefore be expected to go 16-0 in some of the simulations, and in some of those have thee tiebreakers over the Bears. However, even in these simulations, they’ll still lose to Bears in the end when they meet in the playoffs.</p>
+<p>Similarly, the Packers always go 0-16, and never make the playoffs. While in these simulated seasons they got the #1 draft pick every time, they aren’t guaranteed to do so. Using the same logic as above, sometimes the Washington Commanders will go 0-16 too, and may beat the Packers out for the #1 pick through tiebreakers.</p>
 </div>
 <div class="section level3">
 <h3 id="passing-data-in-from-one-week-to-the-next">Passing Data in from One Week to the Next<a class="anchor" aria-label="anchor" href="#passing-data-in-from-one-week-to-the-next"></a>
@@ -896,9 +1625,9 @@
   fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,
   test_week <span class="op">=</span> <span class="fl">3</span>
 <span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:41:00: Loading games data</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:41:00: Beginning simulation of 1000 seasons in 1 round</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-15 12:41:02: Aborting and returning your `process_games` function's results from Week 3</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:59:41: Loading games data</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:59:41: Beginning simulation of 1000 seasons in 1 round</span>
+<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:59:43: Aborting and returning your `process_games` function's results from Week 3</span></code></pre></div>
 <p>Let’s look at the Bears’ Elo after Week 3 in the top handful of simulations:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
@@ -921,7 +1650,7 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1786</td>
+<td align="right">1517</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
@@ -929,7 +1658,7 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1686</td>
+<td align="right">1466</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
@@ -937,7 +1666,7 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1769</td>
+<td align="right">1413</td>
 </tr>
 <tr class="even">
 <td align="right">4</td>
@@ -945,7 +1674,7 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1776</td>
+<td align="right">1511</td>
 </tr>
 <tr class="odd">
 <td align="right">5</td>
@@ -953,7 +1682,7 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1839</td>
+<td align="right">1482</td>
 </tr>
 <tr class="even">
 <td align="right">6</td>
@@ -961,7 +1690,7 @@
 <td align="left">NFC</td>
 <td align="left">NFC North</td>
 <td align="left">NFCN</td>
-<td align="right">1749</td>
+<td align="right">1468</td>
 </tr>
 </tbody>
 </table>
@@ -974,9 +1703,9 @@
 <span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 9</span></span>
 <span class="co">#&gt;      sim game_type  week away_team home_team away_rest home_rest location result</span>
 <span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 REG           1 CHI       DET               7         7 Home          7</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 REG           2 NYG       CHI               6         7 Home         15</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     1 REG           3 CHI       ATL               7         7 Home         -<span style="color: #BB0000;">7</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 REG           1 CHI       DET               7         7 Home        -<span style="color: #BB0000;">13</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 REG           2 NYG       CHI               6         7 Home         20</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     1 REG           3 CHI       ATL               7         7 Home         20</span>
 <span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     1 REG           4 IND       CHI               7         7 Home         <span style="color: #BB0000;">NA</span></span>
 <span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     1 REG           5 TB        CHI               4         4 Home         <span style="color: #BB0000;">NA</span></span>
 <span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     1 REG           6 CHI       CAR              10         7 Home         <span style="color: #BB0000;">NA</span></span>
@@ -1032,7 +1761,7 @@
 <div class="section level3">
 <h3 id="simulation-output">Simulation Output<a class="anchor" aria-label="anchor" href="#simulation-output"></a>
 </h3>
-<p>The output of <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code>, assuming you don’t put in a <code>test_week</code> to debug your function, is a list of four data frames. Here are the contents of each:</p>
+<p>The output of <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code>, assuming you don’t put in a <code>test_week</code> to debug your function, is a list of class <code>"nflseedR_simulation"</code> that holds four data frames with simulation results as well as a list of parameters used in the simulation. Here are the contents of each:</p>
 <ul>
 <li>
 <strong>teams</strong> - One row per team per simulation.
@@ -1189,6 +1918,22 @@
 <strong>away_percentage</strong> - The rate the away team won the game counting ties as half a win</li>
 <li>
 <strong>home_percentage</strong> - The rate the home team won the game counting ties as half a win</li>
+</ul>
+</li>
+<li>
+<strong>sim_params</strong> - a list of parameters used in the simulation. The list contains the following parameters which are described in <code>?simulate_nfl()</code>:
+<ul>
+<li><code>nfl_season</code></li>
+<li><code>playoff_seeds</code></li>
+<li><code>if_ended_today</code></li>
+<li><code>fresh_season</code></li>
+<li><code>fresh_playoffs</code></li>
+<li><code>tiebreaker_depth</code></li>
+<li><code>test_week</code></li>
+<li><code>simulations</code></li>
+<li><code>sims_per_round</code></li>
+<li><code>.debug</code></li>
+<li><code>print_summary</code></li>
 </ul>
 </li>
 </ul>
