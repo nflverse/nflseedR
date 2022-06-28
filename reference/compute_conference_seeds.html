@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,13 +81,13 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">compute_conference_seeds</span><span class="op">(</span>
-  <span class="va">teams</span>,
-  h2h <span class="op">=</span> <span class="cn">NULL</span>,
-  tiebreaker_depth <span class="op">=</span> <span class="fl">3</span>,
-  .debug <span class="op">=</span> <span class="cn">FALSE</span>,
-  playoff_seeds <span class="op">=</span> <span class="fl">7</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_conference_seeds</span><span class="op">(</span></span>
+<span>  <span class="va">teams</span>,</span>
+<span>  h2h <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tiebreaker_depth <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  .debug <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  playoff_seeds <span class="op">=</span> <span class="fl">7</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -95,10 +95,14 @@
     <dl><dt>teams</dt>
 <dd><p>The division standings data frame as computed by
 <code><a href="compute_division_ranks.html">compute_division_ranks</a></code></p></dd>
+
+
 <dt>h2h</dt>
 <dd><p>A data frame that is used for head-to-head tiebreakers across the
 tie-breaking functions. It is computed by the function
 <code><a href="compute_division_ranks.html">compute_division_ranks</a></code>.</p></dd>
+
+
 <dt>tiebreaker_depth</dt>
 <dd><p>A single value equal to 1, 2, or 3. The default is 3. The
 value controls the depth of tiebreakers that shall be applied. The deepest
@@ -114,19 +118,28 @@ values are valid:</p><dl><dt>tiebreaker_depth = 1</dt>
 
 
 </dl></dd>
+
+
 <dt>.debug</dt>
 <dd><p>Either <code>TRUE</code> or <code>FALSE</code>. Controls whether additional
 messages are printed to the console showing what the tie-breaking algorithms
 are currently performing.</p></dd>
+
+
 <dt>playoff_seeds</dt>
 <dd><p>Number of playoff teams per conference (increased
 in 2020 from 6 to 7).</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame of division standings including playoff seeds and the
-week in which the season ended for the respective team (<code>exit</code>).
-A list of two data frames:</p><dl><dt>standings</dt>
+    
+
+<p>A data frame of division standings including playoff seeds and the
+week in which the season ended for the respective team (<code>exit</code>).</p>
+
+
+<p>A list of two data frames:</p><dl><dt>standings</dt>
 <dd><p>Division standings including playoff seeds.</p></dd>
 
 <dt>h2h</dt>
@@ -142,103 +155,103 @@ tie-breaking functions.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="co"># Change some options for better output</span></span>
-<span class="r-in"><span class="va">old</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span>, tibble.print_min <span class="op">=</span> <span class="fl">64</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="load_sharpe_games.html">load_sharpe_games</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2019</span><span class="op">:</span><span class="fl">2020</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>sim <span class="op">=</span> <span class="va">season</span>, <span class="va">game_type</span>, <span class="va">week</span>, <span class="va">away_team</span>, <span class="va">home_team</span>, <span class="va">result</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="compute_division_ranks.html">compute_division_ranks</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu">compute_conference_seeds</span><span class="op">(</span>h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"standings"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:40: Calculating team data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:40: Calculating head to head</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:41: Calculating division rank #1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:41: Calculating division rank #2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:41: Calculating division rank #3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:41: Calculating division rank #4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:41: Calculating seed #1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:41: Calculating seed #2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:42: Calculating seed #3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:42: Calculating seed #4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:42: Calculating seed #5</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:42: Calculating seed #6</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-03-28 11:57:42: Calculating seed #7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 64 × 15</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      sim conf  division  team  games  wins true_wins win_pct div_pct conf_pct</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC East  BUF      16  10          10  0.625    0.5     0.583 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC East  MIA      16   5           5  0.312    0.333   0.333 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC East  NE       16  12          12  0.75     0.833   0.667 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC East  NYJ      16   7           7  0.438    0.333   0.333 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC North BAL      16  14          14  0.875    0.833   0.833 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC North CIN      16   2           2  0.125    0.167   0.167 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC North CLE      16   6           6  0.375    0.5     0.5   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC North PIT      16   8           8  0.5      0.5     0.5   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC South HOU      16  10          10  0.625    0.667   0.667 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC South IND      16   7           7  0.438    0.5     0.417 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC South JAX      16   6           6  0.375    0.333   0.5   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC South TEN      16   9           9  0.562    0.5     0.583 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC West  DEN      16   7           7  0.438    0.5     0.5   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC West  KC       16  12          12  0.75     1       0.75  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC West  LAC      16   5           5  0.312    0       0.25  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC West  OAK      16   7           7  0.438    0.5     0.417 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC East  DAL      16   8           8  0.5      0.833   0.583 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC East  NYG      16   4           4  0.25     0.333   0.25  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC East  PHI      16   9           9  0.562    0.833   0.583 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC East  WAS      16   3           3  0.188    0       0.167 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">21</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC North CHI      16   8           8  0.5      0.667   0.583 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">22</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC North DET      16   3.5         3  0.219    0       0.208 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">23</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC North GB       16  13          13  0.812    1       0.833 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">24</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC North MIN      16  10          10  0.625    0.333   0.583 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">25</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC South ATL      16   7           7  0.438    0.667   0.5   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">26</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC South CAR      16   5           5  0.312    0.167   0.167 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">27</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC South NO       16  13          13  0.812    0.833   0.75  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">28</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC South TB       16   7           7  0.438    0.333   0.417 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">29</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC West  ARI      16   5.5         5  0.344    0.167   0.292 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">30</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC West  LA       16   9           9  0.562    0.5     0.583 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">31</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC West  SEA      16  11          11  0.688    0.5     0.667 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">32</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC West  SF       16  13          13  0.812    0.833   0.833 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">33</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC East  BUF      16  13          13  0.812    1       0.833 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">34</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC East  MIA      16  10          10  0.625    0.5     0.583 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">35</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC East  NE       16   7           7  0.438    0.5     0.5   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">36</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC East  NYJ      16   2           2  0.125    0       0.083<span style="text-decoration: underline;">3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">37</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC North BAL      16  11          11  0.688    0.667   0.583 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">38</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC North CIN      16   4.5         4  0.281    0.167   0.333 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">39</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC North CLE      16  11          11  0.688    0.5     0.583 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">40</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC North PIT      16  12          12  0.75     0.667   0.75  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">41</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC South HOU      16   4           4  0.25     0.333   0.25  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">42</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC South IND      16  11          11  0.688    0.667   0.583 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">43</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC South JAX      16   1           1  0.062<span style="text-decoration: underline;">5</span>   0.167   0.083<span style="text-decoration: underline;">3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">44</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC South TEN      16  11          11  0.688    0.833   0.667 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">45</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC West  DEN      16   5           5  0.312    0.167   0.333 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">46</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC West  KC       16  14          14  0.875    0.667   0.833 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">47</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC West  LAC      16   7           7  0.438    0.5     0.5   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">48</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC West  LV       16   8           8  0.5      0.667   0.5   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">49</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC East  DAL      16   6           6  0.375    0.333   0.417 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">50</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC East  NYG      16   6           6  0.375    0.667   0.417 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">51</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC East  PHI      16   4.5         4  0.281    0.333   0.333 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">52</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC East  WAS      16   7           7  0.438    0.667   0.417 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">53</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC North CHI      16   8           8  0.5      0.333   0.5   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">54</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC North DET      16   5           5  0.312    0.167   0.333 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">55</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC North GB       16  13          13  0.812    0.833   0.833 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">56</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC North MIN      16   7           7  0.438    0.667   0.417 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">57</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC South ATL      16   4           4  0.25     0.167   0.167 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">58</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC South CAR      16   5           5  0.312    0.167   0.333 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">59</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC South NO       16  12          12  0.75     1       0.833 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">60</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC South TB       16  11          11  0.688    0.667   0.667 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">61</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC West  ARI      16   8           8  0.5      0.333   0.5   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">62</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC West  LA       16  10          10  0.625    0.5     0.75  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">63</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC West  SEA      16  12          12  0.75     0.667   0.75  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">64</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC West  SF       16   6           6  0.375    0.5     0.333 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 5 more variables: sov &lt;dbl&gt;, sos &lt;dbl&gt;, div_rank &lt;dbl&gt;, seed &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   exit &lt;dbl&gt;</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Restore old options</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="va">old</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Change some options for better output</span></span></span>
+<span class="r-in"><span><span class="va">old</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span>, tibble.print_min <span class="op">=</span> <span class="fl">64</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="load_sharpe_games.html">load_sharpe_games</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2019</span><span class="op">:</span><span class="fl">2020</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>sim <span class="op">=</span> <span class="va">season</span>, <span class="va">game_type</span>, <span class="va">week</span>, <span class="va">away_team</span>, <span class="va">home_team</span>, <span class="va">result</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="compute_division_ranks.html">compute_division_ranks</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu">compute_conference_seeds</span><span class="op">(</span>h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"standings"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:13: Calculating team data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:13: Calculating head to head</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:13: Calculating division rank #1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:13: Calculating division rank #2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:14: Calculating division rank #3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:14: Calculating division rank #4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:14: Calculating seed #1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:14: Calculating seed #2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:14: Calculating seed #3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:14: Calculating seed #4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:14: Calculating seed #5</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:15: Calculating seed #6</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> 2022-06-28 14:33:15: Calculating seed #7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 64 × 17</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      sim conf  division team  games  wins true_wins losses  ties win_pct div_pct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC East BUF      16  10          10      6     0  0.625    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC East MIA      16   5           5     11     0  0.312    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC East NE       16  12          12      4     0  0.75     0.833</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC East NYJ      16   7           7      9     0  0.438    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC Nor… BAL      16  14          14      2     0  0.875    0.833</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC Nor… CIN      16   2           2     14     0  0.125    0.167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC Nor… CLE      16   6           6     10     0  0.375    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC Nor… PIT      16   8           8      8     0  0.5      0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC Sou… HOU      16  10          10      6     0  0.625    0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC Sou… IND      16   7           7      9     0  0.438    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC Sou… JAX      16   6           6     10     0  0.375    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC Sou… TEN      16   9           9      7     0  0.562    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC West DEN      16   7           7      9     0  0.438    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC West KC       16  12          12      4     0  0.75     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC West LAC      16   5           5     11     0  0.312    0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>  <span style="text-decoration: underline;">2</span>019 AFC   AFC West OAK      16   7           7      9     0  0.438    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC East DAL      16   8           8      8     0  0.5      0.833</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC East NYG      16   4           4     12     0  0.25     0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC East PHI      16   9           9      7     0  0.562    0.833</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC East WAS      16   3           3     13     0  0.188    0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">21</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC Nor… CHI      16   8           8      8     0  0.5      0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">22</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC Nor… DET      16   3.5         3     12     1  0.219    0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">23</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC Nor… GB       16  13          13      3     0  0.812    1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">24</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC Nor… MIN      16  10          10      6     0  0.625    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">25</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC Sou… ATL      16   7           7      9     0  0.438    0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">26</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC Sou… CAR      16   5           5     11     0  0.312    0.167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">27</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC Sou… NO       16  13          13      3     0  0.812    0.833</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">28</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC Sou… TB       16   7           7      9     0  0.438    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">29</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC West ARI      16   5.5         5     10     1  0.344    0.167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">30</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC West LA       16   9           9      7     0  0.562    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">31</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC West SEA      16  11          11      5     0  0.688    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">32</span>  <span style="text-decoration: underline;">2</span>019 NFC   NFC West SF       16  13          13      3     0  0.812    0.833</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">33</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC East BUF      16  13          13      3     0  0.812    1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">34</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC East MIA      16  10          10      6     0  0.625    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">35</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC East NE       16   7           7      9     0  0.438    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">36</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC East NYJ      16   2           2     14     0  0.125    0    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">37</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC Nor… BAL      16  11          11      5     0  0.688    0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">38</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC Nor… CIN      16   4.5         4     11     1  0.281    0.167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">39</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC Nor… CLE      16  11          11      5     0  0.688    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">40</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC Nor… PIT      16  12          12      4     0  0.75     0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">41</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC Sou… HOU      16   4           4     12     0  0.25     0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">42</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC Sou… IND      16  11          11      5     0  0.688    0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">43</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC Sou… JAX      16   1           1     15     0  0.062<span style="text-decoration: underline;">5</span>   0.167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">44</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC Sou… TEN      16  11          11      5     0  0.688    0.833</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">45</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC West DEN      16   5           5     11     0  0.312    0.167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">46</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC West KC       16  14          14      2     0  0.875    0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">47</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC West LAC      16   7           7      9     0  0.438    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">48</span>  <span style="text-decoration: underline;">2</span>020 AFC   AFC West LV       16   8           8      8     0  0.5      0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">49</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC East DAL      16   6           6     10     0  0.375    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">50</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC East NYG      16   6           6     10     0  0.375    0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">51</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC East PHI      16   4.5         4     11     1  0.281    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">52</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC East WAS      16   7           7      9     0  0.438    0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">53</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC Nor… CHI      16   8           8      8     0  0.5      0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">54</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC Nor… DET      16   5           5     11     0  0.312    0.167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">55</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC Nor… GB       16  13          13      3     0  0.812    0.833</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">56</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC Nor… MIN      16   7           7      9     0  0.438    0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">57</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC Sou… ATL      16   4           4     12     0  0.25     0.167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">58</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC Sou… CAR      16   5           5     11     0  0.312    0.167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">59</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC Sou… NO       16  12          12      4     0  0.75     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">60</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC Sou… TB       16  11          11      5     0  0.688    0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">61</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC West ARI      16   8           8      8     0  0.5      0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">62</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC West LA       16  10          10      6     0  0.625    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">63</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC West SEA      16  12          12      4     0  0.75     0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">64</span>  <span style="text-decoration: underline;">2</span>020 NFC   NFC West SF       16   6           6     10     0  0.375    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 6 more variables: conf_pct &lt;dbl&gt;, sov &lt;dbl&gt;, sos &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   div_rank &lt;dbl&gt;, seed &lt;dbl&gt;, exit &lt;dbl&gt;</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Restore old options</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="va">old</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -250,7 +263,7 @@ tie-breaking functions.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

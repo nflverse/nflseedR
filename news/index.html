@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,11 +79,11 @@
 <ul><li>Added the data frame <code>game_summary</code> to the output of <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> which aggregates matchups across all simulated seasons (<a href="https://github.com/nflverse/nflseedR/issues/24" class="external-link">#24</a>)</li>
 <li>Updated the description of some variables in <code><a href="../reference/load_sharpe_games.html">load_sharpe_games()</a></code> (<a href="https://github.com/nflverse/nflseedR/issues/24" class="external-link">#24</a>)</li>
 <li>The output of <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> is now of class <code>nflseedR_simulation</code> which allows the implementation of a <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> method that computes a <code>gt()</code> table of the simulation summary data frame. (<a href="https://github.com/nflverse/nflseedR/issues/26" class="external-link">#26</a>)</li>
+<li>The standings data frame calculated by <code><a href="../reference/compute_division_ranks.html">compute_division_ranks()</a></code> now outputs losses and ties as well. (<a href="https://github.com/nflverse/nflseedR/issues/27" class="external-link">#27</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.2" id="nflseedr-102">nflseedR 1.0.2<a class="anchor" aria-label="anchor" href="#nflseedr-102"></a></h2><p class="text-muted">CRAN release: 2021-04-10</p>
-<ul><li>Improved error handling of the function <code><a href="../reference/load_sharpe_games.html">load_sharpe_games()</a></code> for CRAN tests</li>
-</ul></div>
+<ul><li>Improved error handling of the function <code><a href="../reference/load_sharpe_games.html">load_sharpe_games()</a></code> for CRAN tests</li></ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.1" id="nflseedr-101">nflseedR 1.0.1<a class="anchor" aria-label="anchor" href="#nflseedr-101"></a></h2><p class="text-muted">CRAN release: 2021-03-31</p>
 <ul><li><p>Added support for a fake schedule for simulating the upcoming season before the NFL has released the official schedule.</p></li>
@@ -91,8 +91,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.0" id="nflseedr-100">nflseedR 1.0.0<a class="anchor" aria-label="anchor" href="#nflseedr-100"></a></h2>
-<ul><li>Initial release.</li>
-</ul></div>
+<ul><li>Initial release.</li></ul></div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
@@ -102,7 +101,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

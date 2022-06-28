@@ -41,7 +41,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,8 +107,9 @@
 
 
 
-<script src="nflseedR_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
-  <main id="main"><div class="page-header">
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Get started with nflseedR</h1>
                         <h4 data-toc-skip class="author">Sebastian Carl and Lee Sharpe</h4>
             
@@ -145,63 +146,63 @@
 <p>The following sections will demonstrate how to use them and what input is required.</p>
 <p>Loading the package is obligatory, so it is done first (along with <code>dplyr</code> for data wrangling and the <code>pipe</code>):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nflseedr.com">nflseedR</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>warn <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nflseedr.com">nflseedR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>warn <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="load-sharpe-games">Load Sharpe Games<a class="anchor" aria-label="anchor" href="#load-sharpe-games"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_sharpe_games.html">load_sharpe_games</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_sharpe_games.html">load_sharpe_games</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>
 <col width="3%">
 <col width="1%">
-<col width="1%">
-<col width="0%">
-<col width="2%">
-<col width="1%">
-<col width="1%">
-<col width="1%">
 <col width="2%">
 <col width="1%">
 <col width="2%">
 <col width="1%">
 <col width="1%">
-<col width="1%">
-<col width="1%">
 <col width="2%">
-<col width="1%">
-<col width="6%">
+<col width="2%">
+<col width="2%">
 <col width="2%">
 <col width="1%">
 <col width="1%">
 <col width="1%">
 <col width="1%">
 <col width="2%">
-<col width="2%">
-<col width="2%">
-<col width="3%">
-<col width="3%">
-<col width="2%">
-<col width="2%">
 <col width="1%">
-<col width="1%">
-<col width="1%">
+<col width="2%">
 <col width="2%">
 <col width="0%">
-<col width="0%">
+<col width="1%">
 <col width="2%">
 <col width="2%">
 <col width="3%">
 <col width="3%">
+<col width="2%">
+<col width="3%">
+<col width="3%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="1%">
+<col width="1%">
+<col width="2%">
+<col width="1%">
+<col width="1%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
 <col width="3%">
 <col width="3%">
 <col width="1%">
 <col width="2%">
-<col width="6%">
+<col width="5%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">game_id</th>
@@ -252,944 +253,944 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">2021_18_SEA_ARI</td>
-<td align="right">2021</td>
+<td align="left">2022_17_NYJ_SEA</td>
+<td align="right">2022</td>
 <td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2022-01-09</td>
+<td align="right">17</td>
+<td align="left">2023-01-01</td>
 <td align="left">Sunday</td>
-<td align="left">16:25</td>
+<td align="left">16:05</td>
+<td align="left">NYJ</td>
+<td align="right">NA</td>
 <td align="left">SEA</td>
-<td align="right">38</td>
-<td align="left">ARI</td>
-<td align="right">30</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">-8</td>
-<td align="right">68</td>
-<td align="right">0</td>
-<td align="left">2022010912</td>
-<td align="right">58771</td>
-<td align="left">10160000-0587-7113-a978-455fec3cda14</td>
-<td align="left">202201090crd</td>
-<td align="right">19876</td>
-<td align="left">401326597</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">190</td>
-<td align="right">-235</td>
-<td align="right">5.5</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">48.0</td>
-<td align="right">100</td>
-<td align="right">-120</td>
-<td align="right">1</td>
-<td align="left">closed</td>
-<td align="left">grass</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0029263</td>
-<td align="left">00-0035228</td>
-<td align="left">Russell Wilson</td>
-<td align="left">Kyler Murray</td>
-<td align="left">Pete Carroll</td>
-<td align="left">Kliff Kingsbury</td>
+<td align="right">NA</td>
+<td align="left">2023010111</td>
+<td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">PHO00</td>
-<td align="left">State Farm Stadium</td>
-</tr>
-<tr class="even">
-<td align="left">2021_18_NO_ATL</td>
-<td align="right">2021</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2022-01-09</td>
-<td align="left">Sunday</td>
-<td align="left">16:25</td>
-<td align="left">NO</td>
-<td align="right">30</td>
-<td align="left">ATL</td>
-<td align="right">20</td>
-<td align="left">Home</td>
-<td align="right">-10</td>
-<td align="right">50</td>
+<td align="left">202301010sea</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">10</td>
+<td align="right">8</td>
+<td align="right">110</td>
+<td align="right">-130</td>
+<td align="right">1.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 <td align="right">0</td>
-<td align="left">2022010900</td>
-<td align="right">58759</td>
-<td align="left">10160000-0587-592f-94b1-30be78f17918</td>
-<td align="left">202201090atl</td>
-<td align="right">19864</td>
-<td align="left">401326585</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">-213</td>
-<td align="right">186</td>
-<td align="right">-4.5</td>
-<td align="right">-111</td>
-<td align="right">-100</td>
-<td align="right">40.0</td>
-<td align="right">102</td>
-<td align="right">-113</td>
-<td align="right">1</td>
-<td align="left">NA</td>
+<td align="left">outdoors</td>
 <td align="left">fieldturf</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0033357</td>
-<td align="left">00-0026143</td>
-<td align="left">Taysom Hill</td>
-<td align="left">Matt Ryan</td>
-<td align="left">Sean Payton</td>
-<td align="left">Arthur Smith</td>
 <td align="left">NA</td>
-<td align="left">ATL97</td>
-<td align="left">Mercedes-Benz Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2021_18_NYJ_BUF</td>
-<td align="right">2021</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2022-01-09</td>
-<td align="left">Sunday</td>
-<td align="left">16:25</td>
-<td align="left">NYJ</td>
-<td align="right">10</td>
-<td align="left">BUF</td>
-<td align="right">27</td>
-<td align="left">Home</td>
-<td align="right">17</td>
-<td align="right">37</td>
-<td align="right">0</td>
-<td align="left">2022010902</td>
-<td align="right">58761</td>
-<td align="left">10160000-0587-6129-08e1-f057261766a8</td>
-<td align="left">202201090buf</td>
-<td align="right">19866</td>
-<td align="left">401326587</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">750</td>
-<td align="right">-1250</td>
-<td align="right">16.0</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">43.0</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">astroturf</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0037013</td>
-<td align="left">00-0034857</td>
-<td align="left">Zach Wilson</td>
-<td align="left">Josh Allen</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
 <td align="left">Robert Saleh</td>
-<td align="left">Sean McDermott</td>
+<td align="left">Pete Carroll</td>
 <td align="left">NA</td>
-<td align="left">BUF00</td>
-<td align="left">New Era Field</td>
+<td align="left">SEA00</td>
+<td align="left">Lumen Field</td>
 </tr>
 <tr class="even">
-<td align="left">2021_18_SF_LA</td>
-<td align="right">2021</td>
+<td align="left">2022_17_MIN_GB</td>
+<td align="right">2022</td>
 <td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2022-01-09</td>
+<td align="right">17</td>
+<td align="left">2023-01-01</td>
 <td align="left">Sunday</td>
 <td align="left">16:25</td>
-<td align="left">SF</td>
-<td align="right">27</td>
-<td align="left">LA</td>
-<td align="right">24</td>
+<td align="left">MIN</td>
+<td align="right">NA</td>
+<td align="left">GB</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">-3</td>
-<td align="right">51</td>
-<td align="right">1</td>
-<td align="left">2022010914</td>
-<td align="right">58773</td>
-<td align="left">10160000-0587-738e-2b05-95daf03cb563</td>
-<td align="left">202201090ram</td>
-<td align="right">19879</td>
-<td align="left">401326599</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010112</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">202301010gnb</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">8</td>
 <td align="right">7</td>
-<td align="right">7</td>
-<td align="right">150</td>
-<td align="right">-170</td>
-<td align="right">3.0</td>
-<td align="right">-105</td>
-<td align="right">-115</td>
-<td align="right">46.5</td>
-<td align="right">-115</td>
-<td align="right">-105</td>
+<td align="right">205</td>
+<td align="right">-245</td>
+<td align="right">5.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 <td align="right">1</td>
+<td align="left">outdoors</td>
+<td align="left">grass</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Kevin O’Connell</td>
+<td align="left">Matt LaFleur</td>
+<td align="left">NA</td>
+<td align="left">GNB00</td>
+<td align="left">Lambeau Field</td>
+</tr>
+<tr class="odd">
+<td align="left">2022_17_LA_LAC</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">17</td>
+<td align="left">2023-01-01</td>
+<td align="left">Sunday</td>
+<td align="left">20:20</td>
+<td align="left">LA</td>
+<td align="right">NA</td>
+<td align="left">LAC</td>
+<td align="right">NA</td>
+<td align="left">Home</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010113</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">202301010sdg</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">7</td>
+<td align="right">6</td>
+<td align="right">110</td>
+<td align="right">-130</td>
+<td align="right">1.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
 <td align="left">dome</td>
 <td align="left">matrixturf</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0031345</td>
-<td align="left">00-0026498</td>
-<td align="left">Jimmy Garoppolo</td>
-<td align="left">Matthew Stafford</td>
-<td align="left">Kyle Shanahan</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
 <td align="left">Sean McVay</td>
+<td align="left">Brandon Staley</td>
 <td align="left">NA</td>
 <td align="left">LAX01</td>
 <td align="left">SoFi Stadium</td>
 </tr>
-<tr class="odd">
-<td align="left">2021_18_NE_MIA</td>
-<td align="right">2021</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2022-01-09</td>
-<td align="left">Sunday</td>
-<td align="left">16:25</td>
-<td align="left">NE</td>
-<td align="right">24</td>
-<td align="left">MIA</td>
-<td align="right">33</td>
-<td align="left">Home</td>
-<td align="right">9</td>
-<td align="right">57</td>
-<td align="right">0</td>
-<td align="left">2022010907</td>
-<td align="right">58766</td>
-<td align="left">10160000-0587-66a3-2df9-03ed8161cc2e</td>
-<td align="left">202201090mia</td>
-<td align="right">19871</td>
-<td align="left">401326592</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">-250</td>
-<td align="right">200</td>
-<td align="right">-6.0</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">41.0</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0036972</td>
-<td align="left">00-0036212</td>
-<td align="left">Mac Jones</td>
-<td align="left">Tua Tagovailoa</td>
-<td align="left">Bill Belichick</td>
-<td align="left">Brian Flores</td>
-<td align="left">NA</td>
-<td align="left">MIA00</td>
-<td align="left">Hard Rock Stadium</td>
-</tr>
 <tr class="even">
-<td align="left">2021_18_CAR_TB</td>
-<td align="right">2021</td>
+<td align="left">2022_17_BUF_CIN</td>
+<td align="right">2022</td>
 <td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2022-01-09</td>
-<td align="left">Sunday</td>
-<td align="left">16:25</td>
-<td align="left">CAR</td>
 <td align="right">17</td>
-<td align="left">TB</td>
-<td align="right">41</td>
-<td align="left">Home</td>
-<td align="right">24</td>
-<td align="right">58</td>
-<td align="right">0</td>
-<td align="left">2022010911</td>
-<td align="right">58770</td>
-<td align="left">10160000-0587-704e-6295-0c29cd0a1891</td>
-<td align="left">202201090tam</td>
-<td align="right">19874</td>
-<td align="left">401326596</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">375</td>
-<td align="right">-510</td>
-<td align="right">11.0</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">43.0</td>
-<td align="right">-105</td>
-<td align="right">-115</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
+<td align="left">2023-01-02</td>
+<td align="left">Monday</td>
+<td align="left">20:30</td>
+<td align="left">BUF</td>
 <td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0034869</td>
-<td align="left">00-0019596</td>
-<td align="left">Sam Darnold</td>
-<td align="left">Tom Brady</td>
-<td align="left">Matt Rhule</td>
-<td align="left">Bruce Arians</td>
-<td align="left">NA</td>
-<td align="left">TAM00</td>
-<td align="left">Raymond James Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2021_18_LAC_LV</td>
-<td align="right">2021</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2022-01-09</td>
-<td align="left">Sunday</td>
-<td align="left">20:20</td>
-<td align="left">LAC</td>
-<td align="right">32</td>
-<td align="left">LV</td>
-<td align="right">35</td>
-<td align="left">Home</td>
-<td align="right">3</td>
-<td align="right">67</td>
-<td align="right">1</td>
-<td align="left">2022010915</td>
-<td align="right">58774</td>
-<td align="left">10160000-0587-7450-0923-b0f39c686c28</td>
-<td align="left">202201090rai</td>
-<td align="right">19878</td>
-<td align="left">401326600</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">-180</td>
-<td align="right">155</td>
-<td align="right">-3.5</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">48.0</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">1</td>
-<td align="left">dome</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0036355</td>
-<td align="left">00-0031280</td>
-<td align="left">Justin Herbert</td>
-<td align="left">Derek Carr</td>
-<td align="left">Brandon Staley</td>
-<td align="left">Rich Bisaccia</td>
-<td align="left">NA</td>
-<td align="left">VEG00</td>
-<td align="left">Allegiant Stadium</td>
-</tr>
-<tr class="even">
-<td align="left">2021_19_LV_CIN</td>
-<td align="right">2021</td>
-<td align="left">WC</td>
-<td align="right">19</td>
-<td align="left">2022-01-15</td>
-<td align="left">Saturday</td>
-<td align="left">16:30</td>
-<td align="left">LV</td>
-<td align="right">19</td>
 <td align="left">CIN</td>
-<td align="right">26</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">7</td>
-<td align="right">45</td>
-<td align="right">0</td>
-<td align="left">2022011501</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010200</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202201150cin</td>
-<td align="right">21523</td>
-<td align="left">401326627</td>
-<td align="right">6</td>
-<td align="right">6</td>
-<td align="right">214</td>
-<td align="right">-248</td>
-<td align="right">6.0</td>
-<td align="right">-103</td>
-<td align="right">-109</td>
-<td align="right">48.5</td>
-<td align="right">-106</td>
-<td align="right">-105</td>
+<td align="left">202301020cin</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">0.0</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 <td align="right">0</td>
 <td align="left">outdoors</td>
 <td align="left">grass</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0031280</td>
-<td align="left">00-0036442</td>
-<td align="left">Derek Carr</td>
-<td align="left">Joe Burrow</td>
-<td align="left">Rich Bisaccia</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Sean McDermott</td>
 <td align="left">Zac Taylor</td>
 <td align="left">NA</td>
 <td align="left">CIN00</td>
 <td align="left">Paul Brown Stadium</td>
 </tr>
 <tr class="odd">
-<td align="left">2021_19_NE_BUF</td>
-<td align="right">2021</td>
-<td align="left">WC</td>
-<td align="right">19</td>
-<td align="left">2022-01-15</td>
-<td align="left">Saturday</td>
-<td align="left">20:15</td>
-<td align="left">NE</td>
-<td align="right">17</td>
-<td align="left">BUF</td>
-<td align="right">47</td>
+<td align="left">2022_18_TB_ATL</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
+<td align="left">Sunday</td>
+<td align="left">13:00</td>
+<td align="left">TB</td>
+<td align="right">NA</td>
+<td align="left">ATL</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">30</td>
-<td align="right">64</td>
-<td align="right">0</td>
-<td align="left">2022011502</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010800</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202201150buf</td>
-<td align="right">21524</td>
-<td align="left">401326626</td>
+<td align="left">202301080atl</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">-350</td>
+<td align="right">290</td>
+<td align="right">-7.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="left">NA</td>
+<td align="left">fieldturf</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Todd Bowles</td>
+<td align="left">Arthur Smith</td>
+<td align="left">NA</td>
+<td align="left">ATL97</td>
+<td align="left">Mercedes-Benz Stadium</td>
+</tr>
+<tr class="even">
+<td align="left">2022_18_NE_BUF</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
+<td align="left">Sunday</td>
+<td align="left">13:00</td>
+<td align="left">NE</td>
+<td align="right">NA</td>
+<td align="left">BUF</td>
+<td align="right">NA</td>
+<td align="left">Home</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010801</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">202301080buf</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">7</td>
 <td align="right">6</td>
-<td align="right">6</td>
-<td align="right">181</td>
-<td align="right">-207</td>
-<td align="right">4.5</td>
-<td align="right">-111</td>
-<td align="right">-100</td>
-<td align="right">43.0</td>
-<td align="right">-111</td>
-<td align="right">-101</td>
+<td align="right">255</td>
+<td align="right">-305</td>
+<td align="right">7.0</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 <td align="right">1</td>
 <td align="left">outdoors</td>
 <td align="left">astroturf</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0036972</td>
-<td align="left">00-0034857</td>
-<td align="left">Mac Jones</td>
-<td align="left">Josh Allen</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
 <td align="left">Bill Belichick</td>
 <td align="left">Sean McDermott</td>
 <td align="left">NA</td>
 <td align="left">BUF00</td>
 <td align="left">New Era Field</td>
 </tr>
-<tr class="even">
-<td align="left">2021_19_PHI_TB</td>
-<td align="right">2021</td>
-<td align="left">WC</td>
-<td align="right">19</td>
-<td align="left">2022-01-16</td>
+<tr class="odd">
+<td align="left">2022_18_MIN_CHI</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
 <td align="left">Sunday</td>
 <td align="left">13:00</td>
-<td align="left">PHI</td>
-<td align="right">15</td>
-<td align="left">TB</td>
-<td align="right">31</td>
+<td align="left">MIN</td>
+<td align="right">NA</td>
+<td align="left">CHI</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">16</td>
-<td align="right">46</td>
-<td align="right">0</td>
-<td align="left">2022011601</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010802</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202201160tam</td>
-<td align="right">21525</td>
-<td align="left">401326630</td>
-<td align="right">8</td>
+<td align="left">202301080chi</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
 <td align="right">7</td>
-<td align="right">293</td>
-<td align="right">-352</td>
-<td align="right">7.5</td>
-<td align="right">-107</td>
-<td align="right">-104</td>
-<td align="right">45.5</td>
-<td align="right">100</td>
-<td align="right">-112</td>
-<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">-130</td>
+<td align="right">110</td>
+<td align="right">-1.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
 <td align="left">outdoors</td>
 <td align="left">grass</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0036389</td>
-<td align="left">00-0019596</td>
-<td align="left">Jalen Hurts</td>
-<td align="left">Tom Brady</td>
-<td align="left">Nick Sirianni</td>
-<td align="left">Bruce Arians</td>
 <td align="left">NA</td>
-<td align="left">TAM00</td>
-<td align="left">Raymond James Stadium</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Kevin O’Connell</td>
+<td align="left">Matt Eberflus</td>
+<td align="left">NA</td>
+<td align="left">CHI98</td>
+<td align="left">Soldier Field</td>
 </tr>
-<tr class="odd">
-<td align="left">2021_19_SF_DAL</td>
-<td align="right">2021</td>
-<td align="left">WC</td>
-<td align="right">19</td>
-<td align="left">2022-01-16</td>
+<tr class="even">
+<td align="left">2022_18_BAL_CIN</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
 <td align="left">Sunday</td>
-<td align="left">16:30</td>
-<td align="left">SF</td>
-<td align="right">23</td>
-<td align="left">DAL</td>
-<td align="right">17</td>
+<td align="left">13:00</td>
+<td align="left">BAL</td>
+<td align="right">NA</td>
+<td align="left">CIN</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">-6</td>
-<td align="right">40</td>
-<td align="right">0</td>
-<td align="left">2022011602</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010803</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202201160dal</td>
-<td align="right">21526</td>
-<td align="left">401326629</td>
+<td align="left">202301080cin</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
 <td align="right">7</td>
-<td align="right">8</td>
-<td align="right">144</td>
-<td align="right">-162</td>
+<td align="right">6</td>
+<td align="right">140</td>
+<td align="right">-165</td>
 <td align="right">3.0</td>
 <td align="right">100</td>
-<td align="right">-112</td>
-<td align="right">51.0</td>
-<td align="right">-111</td>
-<td align="right">100</td>
-<td align="right">0</td>
-<td align="left">closed</td>
-<td align="left">fieldturf</td>
+<td align="right">-120</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0031345</td>
-<td align="left">00-0033077</td>
-<td align="left">Jimmy Garoppolo</td>
-<td align="left">Dak Prescott</td>
-<td align="left">Kyle Shanahan</td>
-<td align="left">Mike McCarthy</td>
-<td align="left">NA</td>
-<td align="left">DAL00</td>
-<td align="left">AT&amp;T Stadium</td>
-</tr>
-<tr class="even">
-<td align="left">2021_19_PIT_KC</td>
-<td align="right">2021</td>
-<td align="left">WC</td>
-<td align="right">19</td>
-<td align="left">2022-01-16</td>
-<td align="left">Sunday</td>
-<td align="left">20:15</td>
-<td align="left">PIT</td>
-<td align="right">21</td>
-<td align="left">KC</td>
-<td align="right">42</td>
-<td align="left">Home</td>
-<td align="right">21</td>
-<td align="right">63</td>
-<td align="right">0</td>
-<td align="left">2022011603</td>
 <td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">202201160kan</td>
-<td align="right">21527</td>
-<td align="left">401326628</td>
-<td align="right">7</td>
-<td align="right">8</td>
-<td align="right">522</td>
-<td align="right">-697</td>
-<td align="right">13.0</td>
-<td align="right">-124</td>
-<td align="right">111</td>
-<td align="right">46.0</td>
-<td align="right">-107</td>
-<td align="right">-104</td>
-<td align="right">0</td>
-<td align="left">outdoors</td>
-<td align="left">astroturf</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0022924</td>
-<td align="left">00-0033873</td>
-<td align="left">Ben Roethlisberger</td>
-<td align="left">Patrick Mahomes</td>
-<td align="left">Mike Tomlin</td>
-<td align="left">Andy Reid</td>
-<td align="left">NA</td>
-<td align="left">KAN00</td>
-<td align="left">GEHA Field at Arrowhead Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2021_19_ARI_LA</td>
-<td align="right">2021</td>
-<td align="left">WC</td>
-<td align="right">19</td>
-<td align="left">2022-01-17</td>
-<td align="left">Monday</td>
-<td align="left">20:15</td>
-<td align="left">ARI</td>
-<td align="right">11</td>
-<td align="left">LA</td>
-<td align="right">34</td>
-<td align="left">Home</td>
-<td align="right">23</td>
-<td align="right">45</td>
-<td align="right">0</td>
-<td align="left">2022011701</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">202201170ram</td>
-<td align="right">21528</td>
-<td align="left">401326625</td>
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">158</td>
-<td align="right">-179</td>
-<td align="right">4.0</td>
-<td align="right">-117</td>
-<td align="right">105</td>
-<td align="right">49.5</td>
-<td align="right">-103</td>
-<td align="right">-109</td>
 <td align="right">1</td>
-<td align="left">dome</td>
-<td align="left">matrixturf</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0035228</td>
-<td align="left">00-0026498</td>
-<td align="left">Kyler Murray</td>
-<td align="left">Matthew Stafford</td>
-<td align="left">Kliff Kingsbury</td>
-<td align="left">Sean McVay</td>
-<td align="left">NA</td>
-<td align="left">LAX01</td>
-<td align="left">SoFi Stadium</td>
-</tr>
-<tr class="even">
-<td align="left">2021_20_CIN_TEN</td>
-<td align="right">2021</td>
-<td align="left">DIV</td>
-<td align="right">20</td>
-<td align="left">2022-01-22</td>
-<td align="left">Saturday</td>
-<td align="left">16:30</td>
-<td align="left">CIN</td>
-<td align="right">19</td>
-<td align="left">TEN</td>
-<td align="right">16</td>
-<td align="left">Home</td>
-<td align="right">-3</td>
-<td align="right">35</td>
-<td align="right">0</td>
-<td align="left">2022012201</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">202201220oti</td>
-<td align="right">21529</td>
-<td align="left">401326632</td>
-<td align="right">7</td>
-<td align="right">13</td>
-<td align="right">170</td>
-<td align="right">-191</td>
-<td align="right">4.0</td>
-<td align="right">-109</td>
-<td align="right">-102</td>
-<td align="right">48.5</td>
-<td align="right">-102</td>
-<td align="right">-110</td>
-<td align="right">0</td>
 <td align="left">outdoors</td>
 <td align="left">grass</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0036442</td>
-<td align="left">00-0029701</td>
-<td align="left">Joe Burrow</td>
-<td align="left">Ryan Tannehill</td>
-<td align="left">Zac Taylor</td>
-<td align="left">Mike Vrabel</td>
 <td align="left">NA</td>
-<td align="left">NAS00</td>
-<td align="left">Nissan Stadium</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">John Harbaugh</td>
+<td align="left">Zac Taylor</td>
+<td align="left">NA</td>
+<td align="left">CIN00</td>
+<td align="left">Paul Brown Stadium</td>
 </tr>
 <tr class="odd">
-<td align="left">2021_20_SF_GB</td>
-<td align="right">2021</td>
-<td align="left">DIV</td>
-<td align="right">20</td>
-<td align="left">2022-01-22</td>
-<td align="left">Saturday</td>
-<td align="left">20:15</td>
-<td align="left">SF</td>
-<td align="right">13</td>
-<td align="left">GB</td>
-<td align="right">10</td>
+<td align="left">2022_18_LAC_DEN</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
+<td align="left">Sunday</td>
+<td align="left">13:00</td>
+<td align="left">LAC</td>
+<td align="right">NA</td>
+<td align="left">DEN</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">-3</td>
-<td align="right">23</td>
-<td align="right">0</td>
-<td align="left">2022012202</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010812</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202201220gnb</td>
-<td align="right">21530</td>
-<td align="left">401326631</td>
-<td align="right">6</td>
-<td align="right">13</td>
-<td align="right">228</td>
-<td align="right">-261</td>
-<td align="right">5.5</td>
-<td align="right">102</td>
-<td align="right">-114</td>
-<td align="right">47.0</td>
-<td align="right">-104</td>
-<td align="right">-107</td>
-<td align="right">0</td>
+<td align="left">202301080den</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">0.0</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
 <td align="left">outdoors</td>
 <td align="left">grass</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0031345</td>
-<td align="left">00-0023459</td>
-<td align="left">Jimmy Garoppolo</td>
-<td align="left">Aaron Rodgers</td>
-<td align="left">Kyle Shanahan</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Brandon Staley</td>
+<td align="left">Nathaniel Hackett</td>
+<td align="left">NA</td>
+<td align="left">DEN00</td>
+<td align="left">Empower Field at Mile High</td>
+</tr>
+<tr class="even">
+<td align="left">2022_18_DET_GB</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
+<td align="left">Sunday</td>
+<td align="left">13:00</td>
+<td align="left">DET</td>
+<td align="right">NA</td>
+<td align="left">GB</td>
+<td align="right">NA</td>
+<td align="left">Home</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010804</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">202301080gnb</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">330</td>
+<td align="right">-410</td>
+<td align="right">8.0</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="left">outdoors</td>
+<td align="left">grass</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Dan Campbell</td>
 <td align="left">Matt LaFleur</td>
 <td align="left">NA</td>
 <td align="left">GNB00</td>
 <td align="left">Lambeau Field</td>
 </tr>
-<tr class="even">
-<td align="left">2021_20_LA_TB</td>
-<td align="right">2021</td>
-<td align="left">DIV</td>
-<td align="right">20</td>
-<td align="left">2022-01-23</td>
+<tr class="odd">
+<td align="left">2022_18_HOU_IND</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
 <td align="left">Sunday</td>
-<td align="left">15:00</td>
-<td align="left">LA</td>
-<td align="right">30</td>
-<td align="left">TB</td>
-<td align="right">27</td>
+<td align="left">13:00</td>
+<td align="left">HOU</td>
+<td align="right">NA</td>
+<td align="left">IND</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">-3</td>
-<td align="right">57</td>
-<td align="right">0</td>
-<td align="left">2022012301</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010805</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202201230tam</td>
-<td align="right">21531</td>
-<td align="left">401326634</td>
-<td align="right">6</td>
+<td align="left">202301080clt</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
 <td align="right">7</td>
-<td align="right">131</td>
-<td align="right">-145</td>
-<td align="right">2.5</td>
-<td align="right">108</td>
-<td align="right">-121</td>
-<td align="right">48.0</td>
-<td align="right">-102</td>
-<td align="right">-109</td>
-<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">420</td>
+<td align="right">-540</td>
+<td align="right">10.0</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="left">NA</td>
+<td align="left">fieldturf</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Lovie Smith</td>
+<td align="left">Frank Reich</td>
+<td align="left">NA</td>
+<td align="left">IND00</td>
+<td align="left">Lucas Oil Stadium</td>
+</tr>
+<tr class="even">
+<td align="left">2022_18_TEN_JAX</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
+<td align="left">Sunday</td>
+<td align="left">13:00</td>
+<td align="left">TEN</td>
+<td align="right">NA</td>
+<td align="left">JAX</td>
+<td align="right">NA</td>
+<td align="left">Home</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010806</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">202301080jax</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">10</td>
+<td align="right">7</td>
+<td align="right">-150</td>
+<td align="right">130</td>
+<td align="right">-3.0</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
 <td align="left">outdoors</td>
 <td align="left">grass</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0026498</td>
-<td align="left">00-0019596</td>
-<td align="left">Matthew Stafford</td>
-<td align="left">Tom Brady</td>
-<td align="left">Sean McVay</td>
-<td align="left">Bruce Arians</td>
 <td align="left">NA</td>
-<td align="left">TAM00</td>
-<td align="left">Raymond James Stadium</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Mike Vrabel</td>
+<td align="left">Doug Pederson</td>
+<td align="left">NA</td>
+<td align="left">JAX00</td>
+<td align="left">TIAA Bank Stadium</td>
 </tr>
 <tr class="odd">
-<td align="left">2021_20_BUF_KC</td>
-<td align="right">2021</td>
-<td align="left">DIV</td>
-<td align="right">20</td>
-<td align="left">2022-01-23</td>
+<td align="left">2022_18_KC_LV</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
 <td align="left">Sunday</td>
-<td align="left">18:30</td>
-<td align="left">BUF</td>
-<td align="right">36</td>
+<td align="left">13:00</td>
 <td align="left">KC</td>
-<td align="right">42</td>
+<td align="right">NA</td>
+<td align="left">LV</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">6</td>
-<td align="right">78</td>
-<td align="right">1</td>
-<td align="left">2022012302</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010813</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202201230kan</td>
-<td align="right">21532</td>
-<td align="left">401326633</td>
-<td align="right">8</td>
+<td align="left">202301080rai</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
 <td align="right">7</td>
-<td align="right">124</td>
-<td align="right">-138</td>
-<td align="right">2.5</td>
-<td align="right">-101</td>
+<td align="right">7</td>
+<td align="right">-130</td>
+<td align="right">110</td>
+<td align="right">-2.0</td>
 <td align="right">-110</td>
-<td align="right">54.0</td>
-<td align="right">-105</td>
-<td align="right">-106</td>
-<td align="right">0</td>
-<td align="left">outdoors</td>
-<td align="left">astroturf</td>
+<td align="right">-110</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0034857</td>
-<td align="left">00-0033873</td>
-<td align="left">Josh Allen</td>
-<td align="left">Patrick Mahomes</td>
-<td align="left">Sean McDermott</td>
-<td align="left">Andy Reid</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="left">dome</td>
+<td align="left">grass</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">KAN00</td>
-<td align="left">GEHA Field at Arrowhead Stadium</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Andy Reid</td>
+<td align="left">Josh McDaniels</td>
+<td align="left">NA</td>
+<td align="left">VEG00</td>
+<td align="left">Allegiant Stadium</td>
 </tr>
 <tr class="even">
-<td align="left">2021_21_CIN_KC</td>
-<td align="right">2021</td>
-<td align="left">CON</td>
-<td align="right">21</td>
-<td align="left">2022-01-30</td>
+<td align="left">2022_18_NYJ_MIA</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
 <td align="left">Sunday</td>
-<td align="left">15:00</td>
-<td align="left">CIN</td>
-<td align="right">27</td>
-<td align="left">KC</td>
-<td align="right">24</td>
+<td align="left">13:00</td>
+<td align="left">NYJ</td>
+<td align="right">NA</td>
+<td align="left">MIA</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">-3</td>
-<td align="right">51</td>
-<td align="right">1</td>
-<td align="left">2022013001</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010807</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202201300kan</td>
-<td align="right">21534</td>
-<td align="left">401326635</td>
-<td align="right">8</td>
+<td align="left">202301080mia</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
 <td align="right">7</td>
-<td align="right">250</td>
-<td align="right">-320</td>
-<td align="right">7.0</td>
-<td align="right">-105</td>
-<td align="right">-115</td>
-<td align="right">54.5</td>
+<td align="right">7</td>
+<td align="right">205</td>
+<td align="right">-245</td>
+<td align="right">5.5</td>
 <td align="right">-110</td>
 <td align="right">-110</td>
-<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
 <td align="left">outdoors</td>
+<td align="left">grass</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Robert Saleh</td>
+<td align="left">Mike McDaniel</td>
+<td align="left">NA</td>
+<td align="left">MIA00</td>
+<td align="left">Hard Rock Stadium</td>
+</tr>
+<tr class="odd">
+<td align="left">2022_18_CAR_NO</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
+<td align="left">Sunday</td>
+<td align="left">13:00</td>
+<td align="left">CAR</td>
+<td align="right">NA</td>
+<td align="left">NO</td>
+<td align="right">NA</td>
+<td align="left">Home</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010808</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">202301080nor</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">165</td>
+<td align="right">-195</td>
+<td align="right">4.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="left">dome</td>
 <td align="left">astroturf</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0036442</td>
-<td align="left">00-0033873</td>
-<td align="left">Joe Burrow</td>
-<td align="left">Patrick Mahomes</td>
-<td align="left">Zac Taylor</td>
-<td align="left">Andy Reid</td>
 <td align="left">NA</td>
-<td align="left">KAN00</td>
-<td align="left">GEHA Field at Arrowhead Stadium</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Matt Rhule</td>
+<td align="left">Dennis Allen</td>
+<td align="left">NA</td>
+<td align="left">NOR00</td>
+<td align="left">Mercedes-Benz Superdome</td>
+</tr>
+<tr class="even">
+<td align="left">2022_18_NYG_PHI</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
+<td align="left">Sunday</td>
+<td align="left">13:00</td>
+<td align="left">NYG</td>
+<td align="right">NA</td>
+<td align="left">PHI</td>
+<td align="right">NA</td>
+<td align="left">Home</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010809</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">202301080phi</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">190</td>
+<td align="right">-225</td>
+<td align="right">5.0</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="left">outdoors</td>
+<td align="left">grass</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Brian Daboll</td>
+<td align="left">Nick Sirianni</td>
+<td align="left">NA</td>
+<td align="left">PHI00</td>
+<td align="left">Lincoln Financial Field</td>
 </tr>
 <tr class="odd">
-<td align="left">2021_21_SF_LA</td>
-<td align="right">2021</td>
-<td align="left">CON</td>
-<td align="right">21</td>
-<td align="left">2022-01-30</td>
+<td align="left">2022_18_CLE_PIT</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
 <td align="left">Sunday</td>
-<td align="left">18:30</td>
+<td align="left">13:00</td>
+<td align="left">CLE</td>
+<td align="right">NA</td>
+<td align="left">PIT</td>
+<td align="right">NA</td>
+<td align="left">Home</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010810</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">202301080pit</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="left">outdoors</td>
+<td align="left">grass</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Kevin Stefanski</td>
+<td align="left">Mike Tomlin</td>
+<td align="left">NA</td>
+<td align="left">PIT00</td>
+<td align="left">Heinz Field</td>
+</tr>
+<tr class="even">
+<td align="left">2022_18_LA_SEA</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
+<td align="left">Sunday</td>
+<td align="left">13:00</td>
+<td align="left">LA</td>
+<td align="right">NA</td>
+<td align="left">SEA</td>
+<td align="right">NA</td>
+<td align="left">Home</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010814</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">202301080sea</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">-245</td>
+<td align="right">205</td>
+<td align="right">-5.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="left">outdoors</td>
+<td align="left">fieldturf</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Sean McVay</td>
+<td align="left">Pete Carroll</td>
+<td align="left">NA</td>
+<td align="left">SEA00</td>
+<td align="left">Lumen Field</td>
+</tr>
+<tr class="odd">
+<td align="left">2022_18_ARI_SF</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
+<td align="left">Sunday</td>
+<td align="left">13:00</td>
+<td align="left">ARI</td>
+<td align="right">NA</td>
 <td align="left">SF</td>
-<td align="right">17</td>
-<td align="left">LA</td>
-<td align="right">20</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">3</td>
-<td align="right">37</td>
-<td align="right">0</td>
-<td align="left">2022013002</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010815</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202201300ram</td>
-<td align="right">21535</td>
-<td align="left">401326636</td>
-<td align="right">8</td>
+<td align="left">202301080sfo</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
 <td align="right">7</td>
-<td align="right">155</td>
-<td align="right">-180</td>
-<td align="right">3.5</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">45.5</td>
-<td align="right">-105</td>
-<td align="right">-115</td>
+<td align="right">7</td>
+<td align="right">135</td>
+<td align="right">-155</td>
+<td align="right">3.0</td>
+<td align="right">100</td>
+<td align="right">-120</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 <td align="right">1</td>
-<td align="left">dome</td>
-<td align="left">matrixturf</td>
+<td align="left">outdoors</td>
+<td align="left">grass</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="left">00-0031345</td>
-<td align="left">00-0026498</td>
-<td align="left">Jimmy Garoppolo</td>
-<td align="left">Matthew Stafford</td>
-<td align="left">Kyle Shanahan</td>
-<td align="left">Sean McVay</td>
 <td align="left">NA</td>
-<td align="left">LAX01</td>
-<td align="left">SoFi Stadium</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Kliff Kingsbury</td>
+<td align="left">Kyle Shanahan</td>
+<td align="left">NA</td>
+<td align="left">SFO01</td>
+<td align="left">Levi’s Stadium</td>
 </tr>
 <tr class="even">
-<td align="left">2021_22_LA_CIN</td>
-<td align="right">2021</td>
-<td align="left">SB</td>
-<td align="right">22</td>
-<td align="left">2022-02-13</td>
+<td align="left">2022_18_DAL_WAS</td>
+<td align="right">2022</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2023-01-08</td>
 <td align="left">Sunday</td>
-<td align="left">18:30</td>
-<td align="left">LA</td>
-<td align="right">23</td>
-<td align="left">CIN</td>
-<td align="right">20</td>
-<td align="left">Neutral</td>
-<td align="right">-3</td>
-<td align="right">43</td>
-<td align="right">0</td>
-<td align="left">2022021301</td>
+<td align="left">13:00</td>
+<td align="left">DAL</td>
+<td align="right">NA</td>
+<td align="left">WAS</td>
+<td align="right">NA</td>
+<td align="left">Home</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2023010811</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202202130cin</td>
-<td align="right">21536</td>
-<td align="left">401326638</td>
-<td align="right">14</td>
-<td align="right">14</td>
-<td align="right">-190</td>
-<td align="right">160</td>
-<td align="right">-4.5</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">48.5</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">0</td>
-<td align="left">dome</td>
-<td align="left">matrixturf</td>
+<td align="left">202301080was</td>
 <td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0026498</td>
-<td align="left">00-0036442</td>
-<td align="left">Matthew Stafford</td>
-<td align="left">Joe Burrow</td>
-<td align="left">Sean McVay</td>
-<td align="left">Zac Taylor</td>
 <td align="left">NA</td>
-<td align="left">LAX01</td>
-<td align="left">SoFi Stadium</td>
+<td align="right">10</td>
+<td align="right">7</td>
+<td align="right">-120</td>
+<td align="right">100</td>
+<td align="right">-1.0</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="left">outdoors</td>
+<td align="left">grass</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Mike McCarthy</td>
+<td align="left">Ron Rivera</td>
+<td align="left">NA</td>
+<td align="left">WAS00</td>
+<td align="left">FedExField</td>
 </tr>
 </tbody>
 </table>
@@ -1200,19 +1201,19 @@
 </h3>
 <p>This functions computes division ranks based on a data frame containing game results of one or more NFL seasons. So let’s load some game data first (this example uses the game data of the 2012 and 2019 seasons):</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_sharpe_games.html">load_sharpe_games</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2012</span>, <span class="fl">2019</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>sim <span class="op">=</span> <span class="va">season</span>, <span class="va">game_type</span>, <span class="va">week</span>, <span class="va">away_team</span>, <span class="va">home_team</span>, <span class="va">result</span><span class="op">)</span>
-
-<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span>
-<span class="co">#&gt; Rows: 534</span>
-<span class="co">#&gt; Columns: 6</span>
-<span class="co">#&gt; $ sim       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, …</span>
-<span class="co">#&gt; $ game_type <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "REG", "REG", "REG", "REG", "REG", "REG", "REG", "REG", "REG…</span>
-<span class="co">#&gt; $ week      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, …</span>
-<span class="co">#&gt; $ away_team <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "DAL", "IND", "PHI", "STL", "MIA", "ATL", "JAX", "WAS", "BUF…</span>
-<span class="co">#&gt; $ home_team <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "NYG", "CHI", "CLE", "DET", "HOU", "KC", "MIN", "NO", "NYJ",…</span>
-<span class="co">#&gt; $ result    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> -7, 20, -1, 4, 20, -16, 3, -8, 20, -21, 4, -8, 6, 12, 31, -8…</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_sharpe_games.html">load_sharpe_games</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2012</span>, <span class="fl">2019</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>sim <span class="op">=</span> <span class="va">season</span>, <span class="va">game_type</span>, <span class="va">week</span>, <span class="va">away_team</span>, <span class="va">home_team</span>, <span class="va">result</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 534</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ sim       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, …</span></span>
+<span><span class="co">#&gt; $ game_type <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "REG", "REG", "REG", "REG", "REG", "REG", "REG", "REG", "REG…</span></span>
+<span><span class="co">#&gt; $ week      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, …</span></span>
+<span><span class="co">#&gt; $ away_team <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "DAL", "IND", "PHI", "STL", "MIA", "ATL", "JAX", "WAS", "BUF…</span></span>
+<span><span class="co">#&gt; $ home_team <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "NYG", "CHI", "CLE", "DET", "HOU", "KC", "MIN", "NO", "NYJ",…</span></span>
+<span><span class="co">#&gt; $ result    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> -7, 20, -1, 4, 20, -16, 3, -8, 20, -21, 4, -8, 6, 12, 31, -8…</span></span></code></pre></div>
 <p>Please note the required column names:</p>
 <ul>
 <li><p><code>sim</code> : A simulation ID. Normally 1 - n simulated seasons or (like in this case) just the year.</p></li>
@@ -1224,64 +1225,83 @@
 </ul>
 <p>Now the games data frame can be used to compute the division ranks (the parameter <code>.debug</code> is set to <code>TRUE</code> to show what the function is doing).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">div_standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_division_ranks.html">compute_division_ranks</a></span><span class="op">(</span><span class="va">games</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:22: Calculating team data</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:22: Calculating head to head</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:22: Calculating division rank #1</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:22: DIV (2): Head-to-head</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:22: DIV (2): Division Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:22: Calculating division rank #2</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:22: DIV (3): Head-to-head</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: DIV (3): Division Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: DIV (3): Common Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: DIV (2): Head-to-head</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: DIV (2): Division Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: DIV (2): Common Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: DIV (2): Conference Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: Calculating division rank #3</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: DIV (2): Head-to-head</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: DIV (2): Division Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: DIV (2): Common Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: Calculating division rank #4</span>
-<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">div_standings</span><span class="op">)</span>
-<span class="co">#&gt; List of 2</span>
-<span class="co">#&gt;  $ standings: tibble [64 × 14] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   ..$ sim         : int [1:64] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span>
-<span class="co">#&gt;   ..$ conf        : chr [1:64] "AFC" "AFC" "AFC" "AFC" ...</span>
-<span class="co">#&gt;   ..$ division    : chr [1:64] "AFC East" "AFC East" "AFC East" "AFC East" ...</span>
-<span class="co">#&gt;   ..$ team        : chr [1:64] "BUF" "MIA" "NE" "NYJ" ...</span>
-<span class="co">#&gt;   ..$ games       : int [1:64] 16 16 16 16 16 16 16 16 16 16 ...</span>
-<span class="co">#&gt;   ..$ wins        : num [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span>
-<span class="co">#&gt;   ..$ true_wins   : int [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span>
-<span class="co">#&gt;   ..$ win_pct     : num [1:64] 0.375 0.438 0.75 0.375 0.625 ...</span>
-<span class="co">#&gt;   ..$ div_pct     : num [1:64] 0.333 0.333 1 0.333 0.667 ...</span>
-<span class="co">#&gt;   ..$ conf_pct    : num [1:64] 0.417 0.417 0.917 0.333 0.667 ...</span>
-<span class="co">#&gt;   ..$ sov         : num [1:64] 0.281 0.415 0.466 0.401 0.438 ...</span>
-<span class="co">#&gt;   ..$ sos         : num [1:64] 0.48 0.5 0.496 0.512 0.496 ...</span>
-<span class="co">#&gt;   ..$ div_rank    : num [1:64] 4 2 1 3 1 2 4 3 1 2 ...</span>
-<span class="co">#&gt;   ..$ max_reg_week: int [1:64] 17 17 17 17 17 17 17 17 17 17 ...</span>
-<span class="co">#&gt;  $ h2h      : tibble [2,048 × 6] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   ..$ sim       : int [1:2048] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span>
-<span class="co">#&gt;   ..$ team      : chr [1:2048] "ARI" "ARI" "ARI" "ARI" ...</span>
-<span class="co">#&gt;   ..$ opp       : chr [1:2048] "ARI" "ATL" "BAL" "BUF" ...</span>
-<span class="co">#&gt;   ..$ h2h_games : int [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span>
-<span class="co">#&gt;   ..$ h2h_wins  : num [1:2048] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;   ..$ h2h_played: num [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">div_standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_division_ranks.html">compute_division_ranks</a></span><span class="op">(</span><span class="va">games</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: Calculating team data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: Calculating head to head</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: Calculating division rank #1</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: DIV (2): Head-to-head</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: DIV (2): Division Record</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: Calculating division rank #2</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: DIV (3): Head-to-head</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: DIV (3): Division Record</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: DIV (3): Common Record</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: DIV (2): Head-to-head</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: DIV (2): Division Record</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:08: DIV (2): Common Record</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:09: DIV (2): Conference Record</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:09: Calculating division rank #3</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:09: DIV (2): Head-to-head</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:09: DIV (2): Division Record</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:09: DIV (2): Common Record</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:09: Calculating division rank #4</span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">div_standings</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 2</span></span>
+<span><span class="co">#&gt;  $ standings: tibble [64 × 16] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;   ..$ sim         : int [1:64] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span></span>
+<span><span class="co">#&gt;   ..$ conf        : chr [1:64] "AFC" "AFC" "AFC" "AFC" ...</span></span>
+<span><span class="co">#&gt;   ..$ division    : chr [1:64] "AFC East" "AFC East" "AFC East" "AFC East" ...</span></span>
+<span><span class="co">#&gt;   ..$ team        : chr [1:64] "BUF" "MIA" "NE" "NYJ" ...</span></span>
+<span><span class="co">#&gt;   ..$ games       : int [1:64] 16 16 16 16 16 16 16 16 16 16 ...</span></span>
+<span><span class="co">#&gt;   ..$ wins        : num [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span></span>
+<span><span class="co">#&gt;   ..$ true_wins   : int [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span></span>
+<span><span class="co">#&gt;   ..$ losses      : int [1:64] 10 9 4 10 6 6 11 8 4 5 ...</span></span>
+<span><span class="co">#&gt;   ..$ ties        : int [1:64] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ win_pct     : num [1:64] 0.375 0.438 0.75 0.375 0.625 ...</span></span>
+<span><span class="co">#&gt;   ..$ div_pct     : num [1:64] 0.333 0.333 1 0.333 0.667 ...</span></span>
+<span><span class="co">#&gt;   ..$ conf_pct    : num [1:64] 0.417 0.417 0.917 0.333 0.667 ...</span></span>
+<span><span class="co">#&gt;   ..$ sov         : num [1:64] 0.281 0.415 0.466 0.401 0.438 ...</span></span>
+<span><span class="co">#&gt;   ..$ sos         : num [1:64] 0.48 0.5 0.496 0.512 0.496 ...</span></span>
+<span><span class="co">#&gt;   ..$ div_rank    : num [1:64] 4 2 1 3 1 2 4 3 1 2 ...</span></span>
+<span><span class="co">#&gt;   ..$ max_reg_week: int [1:64] 17 17 17 17 17 17 17 17 17 17 ...</span></span>
+<span><span class="co">#&gt;  $ h2h      : tibble [2,048 × 6] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;   ..$ sim       : int [1:2048] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span></span>
+<span><span class="co">#&gt;   ..$ team      : chr [1:2048] "ARI" "ARI" "ARI" "ARI" ...</span></span>
+<span><span class="co">#&gt;   ..$ opp       : chr [1:2048] "ARI" "ATL" "BAL" "BUF" ...</span></span>
+<span><span class="co">#&gt;   ..$ h2h_games : int [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ h2h_wins  : num [1:2048] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ h2h_played: num [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></span></code></pre></div>
 <p>Please note that the function outputs a list of data frames, the actual division standings as well as a data frame named <code>h2h</code>. The latter is an important input in the other functions (as it is used to break head-to-head ties) and can only be computed with <code><a href="../reference/compute_division_ranks.html">compute_division_ranks()</a></code>.</p>
 <p>So here is the resulting division standings data frame for the 2012 season</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">div_standings</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"standings"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">division</span><span class="op">:</span><span class="va">div_rank</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<table class="table">
+<code class="sourceCode R"><span><span class="va">div_standings</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"standings"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">division</span><span class="op">:</span><span class="va">div_rank</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="10%">
+<col width="5%">
+<col width="6%">
+<col width="5%">
+<col width="10%">
+<col width="7%">
+<col width="5%">
+<col width="8%">
+<col width="8%">
+<col width="9%">
+<col width="6%">
+<col width="6%">
+<col width="9%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">division</th>
 <th align="left">team</th>
 <th align="right">games</th>
 <th align="right">wins</th>
 <th align="right">true_wins</th>
+<th align="right">losses</th>
+<th align="right">ties</th>
 <th align="right">win_pct</th>
 <th align="right">div_pct</th>
 <th align="right">conf_pct</th>
@@ -1296,6 +1316,8 @@
 <td align="right">16</td>
 <td align="right">6.0</td>
 <td align="right">6</td>
+<td align="right">10</td>
+<td align="right">0</td>
 <td align="right">0.375</td>
 <td align="right">0.333</td>
 <td align="right">0.417</td>
@@ -1309,6 +1331,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.333</td>
 <td align="right">0.417</td>
@@ -1322,6 +1346,8 @@
 <td align="right">16</td>
 <td align="right">12.0</td>
 <td align="right">12</td>
+<td align="right">4</td>
+<td align="right">0</td>
 <td align="right">0.750</td>
 <td align="right">1.000</td>
 <td align="right">0.917</td>
@@ -1335,6 +1361,8 @@
 <td align="right">16</td>
 <td align="right">6.0</td>
 <td align="right">6</td>
+<td align="right">10</td>
+<td align="right">0</td>
 <td align="right">0.375</td>
 <td align="right">0.333</td>
 <td align="right">0.333</td>
@@ -1348,6 +1376,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.667</td>
 <td align="right">0.667</td>
@@ -1361,6 +1391,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.500</td>
 <td align="right">0.583</td>
@@ -1374,6 +1406,8 @@
 <td align="right">16</td>
 <td align="right">5.0</td>
 <td align="right">5</td>
+<td align="right">11</td>
+<td align="right">0</td>
 <td align="right">0.312</td>
 <td align="right">0.333</td>
 <td align="right">0.417</td>
@@ -1387,6 +1421,8 @@
 <td align="right">16</td>
 <td align="right">8.0</td>
 <td align="right">8</td>
+<td align="right">8</td>
+<td align="right">0</td>
 <td align="right">0.500</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -1400,6 +1436,8 @@
 <td align="right">16</td>
 <td align="right">12.0</td>
 <td align="right">12</td>
+<td align="right">4</td>
+<td align="right">0</td>
 <td align="right">0.750</td>
 <td align="right">0.833</td>
 <td align="right">0.833</td>
@@ -1413,6 +1451,8 @@
 <td align="right">16</td>
 <td align="right">11.0</td>
 <td align="right">11</td>
+<td align="right">5</td>
+<td align="right">0</td>
 <td align="right">0.688</td>
 <td align="right">0.667</td>
 <td align="right">0.667</td>
@@ -1426,6 +1466,8 @@
 <td align="right">16</td>
 <td align="right">2.0</td>
 <td align="right">2</td>
+<td align="right">14</td>
+<td align="right">0</td>
 <td align="right">0.125</td>
 <td align="right">0.333</td>
 <td align="right">0.167</td>
@@ -1439,6 +1481,8 @@
 <td align="right">16</td>
 <td align="right">6.0</td>
 <td align="right">6</td>
+<td align="right">10</td>
+<td align="right">0</td>
 <td align="right">0.375</td>
 <td align="right">0.167</td>
 <td align="right">0.417</td>
@@ -1452,6 +1496,8 @@
 <td align="right">16</td>
 <td align="right">13.0</td>
 <td align="right">13</td>
+<td align="right">3</td>
+<td align="right">0</td>
 <td align="right">0.812</td>
 <td align="right">1.000</td>
 <td align="right">0.833</td>
@@ -1465,6 +1511,8 @@
 <td align="right">16</td>
 <td align="right">2.0</td>
 <td align="right">2</td>
+<td align="right">14</td>
+<td align="right">0</td>
 <td align="right">0.125</td>
 <td align="right">0.000</td>
 <td align="right">0.000</td>
@@ -1478,6 +1526,8 @@
 <td align="right">16</td>
 <td align="right">4.0</td>
 <td align="right">4</td>
+<td align="right">12</td>
+<td align="right">0</td>
 <td align="right">0.250</td>
 <td align="right">0.333</td>
 <td align="right">0.333</td>
@@ -1491,6 +1541,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.667</td>
 <td align="right">0.583</td>
@@ -1504,6 +1556,8 @@
 <td align="right">16</td>
 <td align="right">8.0</td>
 <td align="right">8</td>
+<td align="right">8</td>
+<td align="right">0</td>
 <td align="right">0.500</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -1517,6 +1571,8 @@
 <td align="right">16</td>
 <td align="right">9.0</td>
 <td align="right">9</td>
+<td align="right">7</td>
+<td align="right">0</td>
 <td align="right">0.562</td>
 <td align="right">0.500</td>
 <td align="right">0.667</td>
@@ -1530,6 +1586,8 @@
 <td align="right">16</td>
 <td align="right">4.0</td>
 <td align="right">4</td>
+<td align="right">12</td>
+<td align="right">0</td>
 <td align="right">0.250</td>
 <td align="right">0.167</td>
 <td align="right">0.167</td>
@@ -1543,6 +1601,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.833</td>
 <td align="right">0.667</td>
@@ -1556,6 +1616,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.500</td>
 <td align="right">0.583</td>
@@ -1569,6 +1631,8 @@
 <td align="right">16</td>
 <td align="right">4.0</td>
 <td align="right">4</td>
+<td align="right">12</td>
+<td align="right">0</td>
 <td align="right">0.250</td>
 <td align="right">0.000</td>
 <td align="right">0.250</td>
@@ -1582,6 +1646,8 @@
 <td align="right">16</td>
 <td align="right">11.0</td>
 <td align="right">11</td>
+<td align="right">5</td>
+<td align="right">0</td>
 <td align="right">0.688</td>
 <td align="right">0.833</td>
 <td align="right">0.667</td>
@@ -1595,6 +1661,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.667</td>
 <td align="right">0.583</td>
@@ -1608,6 +1676,8 @@
 <td align="right">16</td>
 <td align="right">13.0</td>
 <td align="right">13</td>
+<td align="right">3</td>
+<td align="right">0</td>
 <td align="right">0.812</td>
 <td align="right">0.500</td>
 <td align="right">0.750</td>
@@ -1621,6 +1691,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -1634,6 +1706,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -1647,6 +1721,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.500</td>
 <td align="right">0.333</td>
@@ -1660,6 +1736,8 @@
 <td align="right">16</td>
 <td align="right">5.0</td>
 <td align="right">5</td>
+<td align="right">11</td>
+<td align="right">0</td>
 <td align="right">0.312</td>
 <td align="right">0.167</td>
 <td align="right">0.250</td>
@@ -1673,6 +1751,8 @@
 <td align="right">16</td>
 <td align="right">11.0</td>
 <td align="right">11</td>
+<td align="right">5</td>
+<td align="right">0</td>
 <td align="right">0.688</td>
 <td align="right">0.500</td>
 <td align="right">0.667</td>
@@ -1686,6 +1766,8 @@
 <td align="right">16</td>
 <td align="right">11.5</td>
 <td align="right">11</td>
+<td align="right">4</td>
+<td align="right">1</td>
 <td align="right">0.719</td>
 <td align="right">0.583</td>
 <td align="right">0.625</td>
@@ -1699,6 +1781,8 @@
 <td align="right">16</td>
 <td align="right">7.5</td>
 <td align="right">7</td>
+<td align="right">8</td>
+<td align="right">1</td>
 <td align="right">0.469</td>
 <td align="right">0.750</td>
 <td align="right">0.542</td>
@@ -1715,57 +1799,77 @@
 </h3>
 <p>This functions computes conference seedings based on the above computed division standings data frame. For efficiency reasons the above computed <code>h2h</code> data frame has to be passed to the function. The easiest way is to pass the list of data frames that is computed in the first step so we can do this (please note the number of playoff seeds):</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">seeds</span> <span class="op">&lt;-</span> <span class="va">div_standings</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_conference_seeds.html">compute_conference_seeds</a></span><span class="op">(</span>h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, playoff_seeds <span class="op">=</span> <span class="fl">6</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: Calculating seed #1</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:23: CONF (3): Head-to-head Sweep</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:24: Calculating seed #2</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:24: CONF (2): Head-to-head Sweep</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:24: CONF (2): Conference Record</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:24: Calculating seed #3</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:24: Calculating seed #4</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:24: Calculating seed #5</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:24: Calculating seed #6</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:24: CONF (2): Best-in-division reduction</span>
-<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">seeds</span><span class="op">)</span>
-<span class="co">#&gt; List of 2</span>
-<span class="co">#&gt;  $ standings: tibble [64 × 15] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   ..$ sim      : int [1:64] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span>
-<span class="co">#&gt;   ..$ conf     : chr [1:64] "AFC" "AFC" "AFC" "AFC" ...</span>
-<span class="co">#&gt;   ..$ division : chr [1:64] "AFC East" "AFC East" "AFC East" "AFC East" ...</span>
-<span class="co">#&gt;   ..$ team     : chr [1:64] "BUF" "MIA" "NE" "NYJ" ...</span>
-<span class="co">#&gt;   ..$ games    : int [1:64] 16 16 16 16 16 16 16 16 16 16 ...</span>
-<span class="co">#&gt;   ..$ wins     : num [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span>
-<span class="co">#&gt;   ..$ true_wins: int [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span>
-<span class="co">#&gt;   ..$ win_pct  : num [1:64] 0.375 0.438 0.75 0.375 0.625 ...</span>
-<span class="co">#&gt;   ..$ div_pct  : num [1:64] 0.333 0.333 1 0.333 0.667 ...</span>
-<span class="co">#&gt;   ..$ conf_pct : num [1:64] 0.417 0.417 0.917 0.333 0.667 ...</span>
-<span class="co">#&gt;   ..$ sov      : num [1:64] 0.281 0.415 0.466 0.401 0.438 ...</span>
-<span class="co">#&gt;   ..$ sos      : num [1:64] 0.48 0.5 0.496 0.512 0.496 ...</span>
-<span class="co">#&gt;   ..$ div_rank : num [1:64] 4 2 1 3 1 2 4 3 1 2 ...</span>
-<span class="co">#&gt;   ..$ seed     : num [1:64] NA NA 2 NA 4 6 NA NA 3 5 ...</span>
-<span class="co">#&gt;   ..$ exit     : num [1:64] 17 17 NA 17 NA NA 17 17 NA NA ...</span>
-<span class="co">#&gt;  $ h2h      : tibble [2,048 × 6] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   ..$ sim       : int [1:2048] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span>
-<span class="co">#&gt;   ..$ team      : chr [1:2048] "ARI" "ARI" "ARI" "ARI" ...</span>
-<span class="co">#&gt;   ..$ opp       : chr [1:2048] "ARI" "ATL" "BAL" "BUF" ...</span>
-<span class="co">#&gt;   ..$ h2h_games : int [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span>
-<span class="co">#&gt;   ..$ h2h_wins  : num [1:2048] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;   ..$ h2h_played: num [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">seeds</span> <span class="op">&lt;-</span> <span class="va">div_standings</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_conference_seeds.html">compute_conference_seeds</a></span><span class="op">(</span>h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, playoff_seeds <span class="op">=</span> <span class="fl">6</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:09: Calculating seed #1</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:09: CONF (3): Head-to-head Sweep</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:09: Calculating seed #2</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:10: CONF (2): Head-to-head Sweep</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:10: CONF (2): Conference Record</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:10: Calculating seed #3</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:10: Calculating seed #4</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:10: Calculating seed #5</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:10: Calculating seed #6</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:10: CONF (2): Best-in-division reduction</span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">seeds</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 2</span></span>
+<span><span class="co">#&gt;  $ standings: tibble [64 × 17] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;   ..$ sim      : int [1:64] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span></span>
+<span><span class="co">#&gt;   ..$ conf     : chr [1:64] "AFC" "AFC" "AFC" "AFC" ...</span></span>
+<span><span class="co">#&gt;   ..$ division : chr [1:64] "AFC East" "AFC East" "AFC East" "AFC East" ...</span></span>
+<span><span class="co">#&gt;   ..$ team     : chr [1:64] "BUF" "MIA" "NE" "NYJ" ...</span></span>
+<span><span class="co">#&gt;   ..$ games    : int [1:64] 16 16 16 16 16 16 16 16 16 16 ...</span></span>
+<span><span class="co">#&gt;   ..$ wins     : num [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span></span>
+<span><span class="co">#&gt;   ..$ true_wins: int [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span></span>
+<span><span class="co">#&gt;   ..$ losses   : int [1:64] 10 9 4 10 6 6 11 8 4 5 ...</span></span>
+<span><span class="co">#&gt;   ..$ ties     : int [1:64] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ win_pct  : num [1:64] 0.375 0.438 0.75 0.375 0.625 ...</span></span>
+<span><span class="co">#&gt;   ..$ div_pct  : num [1:64] 0.333 0.333 1 0.333 0.667 ...</span></span>
+<span><span class="co">#&gt;   ..$ conf_pct : num [1:64] 0.417 0.417 0.917 0.333 0.667 ...</span></span>
+<span><span class="co">#&gt;   ..$ sov      : num [1:64] 0.281 0.415 0.466 0.401 0.438 ...</span></span>
+<span><span class="co">#&gt;   ..$ sos      : num [1:64] 0.48 0.5 0.496 0.512 0.496 ...</span></span>
+<span><span class="co">#&gt;   ..$ div_rank : num [1:64] 4 2 1 3 1 2 4 3 1 2 ...</span></span>
+<span><span class="co">#&gt;   ..$ seed     : num [1:64] NA NA 2 NA 4 6 NA NA 3 5 ...</span></span>
+<span><span class="co">#&gt;   ..$ exit     : num [1:64] 17 17 NA 17 NA NA 17 17 NA NA ...</span></span>
+<span><span class="co">#&gt;  $ h2h      : tibble [2,048 × 6] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;   ..$ sim       : int [1:2048] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span></span>
+<span><span class="co">#&gt;   ..$ team      : chr [1:2048] "ARI" "ARI" "ARI" "ARI" ...</span></span>
+<span><span class="co">#&gt;   ..$ opp       : chr [1:2048] "ARI" "ATL" "BAL" "BUF" ...</span></span>
+<span><span class="co">#&gt;   ..$ h2h_games : int [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ h2h_wins  : num [1:2048] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ h2h_played: num [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></span></code></pre></div>
 <p>Just like <code><a href="../reference/compute_division_ranks.html">compute_division_ranks()</a></code>, this function returns a list of two data frames so we can use it within a pipe. The resulting seeds for the 2012 season are given below.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">seeds</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"standings"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">division</span><span class="op">:</span><span class="va">seed</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">seeds</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"standings"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">division</span><span class="op">:</span><span class="va">seed</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="10%">
+<col width="5%">
+<col width="6%">
+<col width="5%">
+<col width="10%">
+<col width="7%">
+<col width="5%">
+<col width="8%">
+<col width="8%">
+<col width="9%">
+<col width="6%">
+<col width="6%">
+<col width="9%">
+<col width="5%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">division</th>
 <th align="left">team</th>
 <th align="right">games</th>
 <th align="right">wins</th>
 <th align="right">true_wins</th>
+<th align="right">losses</th>
+<th align="right">ties</th>
 <th align="right">win_pct</th>
 <th align="right">div_pct</th>
 <th align="right">conf_pct</th>
@@ -1781,6 +1885,8 @@
 <td align="right">16</td>
 <td align="right">6.0</td>
 <td align="right">6</td>
+<td align="right">10</td>
+<td align="right">0</td>
 <td align="right">0.375</td>
 <td align="right">0.333</td>
 <td align="right">0.417</td>
@@ -1795,6 +1901,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.333</td>
 <td align="right">0.417</td>
@@ -1809,6 +1917,8 @@
 <td align="right">16</td>
 <td align="right">12.0</td>
 <td align="right">12</td>
+<td align="right">4</td>
+<td align="right">0</td>
 <td align="right">0.750</td>
 <td align="right">1.000</td>
 <td align="right">0.917</td>
@@ -1823,6 +1933,8 @@
 <td align="right">16</td>
 <td align="right">6.0</td>
 <td align="right">6</td>
+<td align="right">10</td>
+<td align="right">0</td>
 <td align="right">0.375</td>
 <td align="right">0.333</td>
 <td align="right">0.333</td>
@@ -1837,6 +1949,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.667</td>
 <td align="right">0.667</td>
@@ -1851,6 +1965,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.500</td>
 <td align="right">0.583</td>
@@ -1865,6 +1981,8 @@
 <td align="right">16</td>
 <td align="right">5.0</td>
 <td align="right">5</td>
+<td align="right">11</td>
+<td align="right">0</td>
 <td align="right">0.312</td>
 <td align="right">0.333</td>
 <td align="right">0.417</td>
@@ -1879,6 +1997,8 @@
 <td align="right">16</td>
 <td align="right">8.0</td>
 <td align="right">8</td>
+<td align="right">8</td>
+<td align="right">0</td>
 <td align="right">0.500</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -1893,6 +2013,8 @@
 <td align="right">16</td>
 <td align="right">12.0</td>
 <td align="right">12</td>
+<td align="right">4</td>
+<td align="right">0</td>
 <td align="right">0.750</td>
 <td align="right">0.833</td>
 <td align="right">0.833</td>
@@ -1907,6 +2029,8 @@
 <td align="right">16</td>
 <td align="right">11.0</td>
 <td align="right">11</td>
+<td align="right">5</td>
+<td align="right">0</td>
 <td align="right">0.688</td>
 <td align="right">0.667</td>
 <td align="right">0.667</td>
@@ -1921,6 +2045,8 @@
 <td align="right">16</td>
 <td align="right">2.0</td>
 <td align="right">2</td>
+<td align="right">14</td>
+<td align="right">0</td>
 <td align="right">0.125</td>
 <td align="right">0.333</td>
 <td align="right">0.167</td>
@@ -1935,6 +2061,8 @@
 <td align="right">16</td>
 <td align="right">6.0</td>
 <td align="right">6</td>
+<td align="right">10</td>
+<td align="right">0</td>
 <td align="right">0.375</td>
 <td align="right">0.167</td>
 <td align="right">0.417</td>
@@ -1949,6 +2077,8 @@
 <td align="right">16</td>
 <td align="right">13.0</td>
 <td align="right">13</td>
+<td align="right">3</td>
+<td align="right">0</td>
 <td align="right">0.812</td>
 <td align="right">1.000</td>
 <td align="right">0.833</td>
@@ -1963,6 +2093,8 @@
 <td align="right">16</td>
 <td align="right">2.0</td>
 <td align="right">2</td>
+<td align="right">14</td>
+<td align="right">0</td>
 <td align="right">0.125</td>
 <td align="right">0.000</td>
 <td align="right">0.000</td>
@@ -1977,6 +2109,8 @@
 <td align="right">16</td>
 <td align="right">4.0</td>
 <td align="right">4</td>
+<td align="right">12</td>
+<td align="right">0</td>
 <td align="right">0.250</td>
 <td align="right">0.333</td>
 <td align="right">0.333</td>
@@ -1991,6 +2125,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.667</td>
 <td align="right">0.583</td>
@@ -2005,6 +2141,8 @@
 <td align="right">16</td>
 <td align="right">8.0</td>
 <td align="right">8</td>
+<td align="right">8</td>
+<td align="right">0</td>
 <td align="right">0.500</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -2019,6 +2157,8 @@
 <td align="right">16</td>
 <td align="right">9.0</td>
 <td align="right">9</td>
+<td align="right">7</td>
+<td align="right">0</td>
 <td align="right">0.562</td>
 <td align="right">0.500</td>
 <td align="right">0.667</td>
@@ -2033,6 +2173,8 @@
 <td align="right">16</td>
 <td align="right">4.0</td>
 <td align="right">4</td>
+<td align="right">12</td>
+<td align="right">0</td>
 <td align="right">0.250</td>
 <td align="right">0.167</td>
 <td align="right">0.167</td>
@@ -2047,6 +2189,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.833</td>
 <td align="right">0.667</td>
@@ -2061,6 +2205,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.500</td>
 <td align="right">0.583</td>
@@ -2075,6 +2221,8 @@
 <td align="right">16</td>
 <td align="right">4.0</td>
 <td align="right">4</td>
+<td align="right">12</td>
+<td align="right">0</td>
 <td align="right">0.250</td>
 <td align="right">0.000</td>
 <td align="right">0.250</td>
@@ -2089,6 +2237,8 @@
 <td align="right">16</td>
 <td align="right">11.0</td>
 <td align="right">11</td>
+<td align="right">5</td>
+<td align="right">0</td>
 <td align="right">0.688</td>
 <td align="right">0.833</td>
 <td align="right">0.667</td>
@@ -2103,6 +2253,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.667</td>
 <td align="right">0.583</td>
@@ -2117,6 +2269,8 @@
 <td align="right">16</td>
 <td align="right">13.0</td>
 <td align="right">13</td>
+<td align="right">3</td>
+<td align="right">0</td>
 <td align="right">0.812</td>
 <td align="right">0.500</td>
 <td align="right">0.750</td>
@@ -2131,6 +2285,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -2145,6 +2301,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -2159,6 +2317,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.500</td>
 <td align="right">0.333</td>
@@ -2173,6 +2333,8 @@
 <td align="right">16</td>
 <td align="right">5.0</td>
 <td align="right">5</td>
+<td align="right">11</td>
+<td align="right">0</td>
 <td align="right">0.312</td>
 <td align="right">0.167</td>
 <td align="right">0.250</td>
@@ -2187,6 +2349,8 @@
 <td align="right">16</td>
 <td align="right">11.0</td>
 <td align="right">11</td>
+<td align="right">5</td>
+<td align="right">0</td>
 <td align="right">0.688</td>
 <td align="right">0.500</td>
 <td align="right">0.667</td>
@@ -2201,6 +2365,8 @@
 <td align="right">16</td>
 <td align="right">11.5</td>
 <td align="right">11</td>
+<td align="right">4</td>
+<td align="right">1</td>
 <td align="right">0.719</td>
 <td align="right">0.583</td>
 <td align="right">0.625</td>
@@ -2215,6 +2381,8 @@
 <td align="right">16</td>
 <td align="right">7.5</td>
 <td align="right">7</td>
+<td align="right">8</td>
+<td align="right">1</td>
 <td align="right">0.469</td>
 <td align="right">0.750</td>
 <td align="right">0.542</td>
@@ -2231,90 +2399,96 @@
 </h3>
 <p>This function computes the draft order based on the playoff outcome and the regular season games. It requires all playoff results in the <code>games</code> data frame and the <code>game_type</code> of the Super Bowl has to be <code>"SB"</code>. For efficiency reasons the above computed <code>h2h</code> data frame has to be passed to the function as well. The easiest way is to pass the list of data frames that is computed in the above steps:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">draft</span> <span class="op">&lt;-</span> <span class="va">seeds</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_draft_order.html">compute_draft_order</a></span><span class="op">(</span>games <span class="op">=</span> <span class="va">games</span>, h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #32</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #31</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #30</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #29</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #28</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #27</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #26</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #25</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #24</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #23</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #22</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #21</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #20</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #19</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #18</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #17</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #16</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #15</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #14</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #13</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #12</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:25: Calculating draft order #11</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: Calculating draft order #10</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: DRAFT: Divisional Rank</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: DRAFT: Conference Rank</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: CONF (2): Best-in-division reduction</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: CONF (2): Head-to-head Sweep</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: Calculating draft order #9</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: Calculating draft order #8</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: Calculating draft order #7</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: Calculating draft order #6</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: Calculating draft order #5</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: Calculating draft order #4</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: Calculating draft order #3</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: Calculating draft order #2</span>
-<span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-03-28 11:58:26: Calculating draft order #1</span>
-<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">draft</span><span class="op">)</span>
-<span class="co">#&gt; Rows: 64</span>
-<span class="co">#&gt; Columns: 16</span>
-<span class="co">#&gt; $ sim         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012…</span>
-<span class="co">#&gt; $ team        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "BUF", "MIA", "NE", "NYJ", "BAL", "CIN", "CLE", "PIT", "HO…</span>
-<span class="co">#&gt; $ conf        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "A…</span>
-<span class="co">#&gt; $ division    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "AFC East", "AFC East", "AFC East", "AFC East", "AFC North…</span>
-<span class="co">#&gt; $ games       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16…</span>
-<span class="co">#&gt; $ wins        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 6, 7, 12, 6, 10, 10, 5, 8, 12, 11, 2, 6, 13, 2, 4, 7, 8, 9…</span>
-<span class="co">#&gt; $ true_wins   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 6, 7, 12, 6, 10, 10, 5, 8, 12, 11, 2, 6, 13, 2, 4, 7, 8, 9…</span>
-<span class="co">#&gt; $ win_pct     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.375, 0.438, 0.750, 0.375, 0.625, 0.625, 0.312, 0.500, 0.…</span>
-<span class="co">#&gt; $ div_pct     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.333, 0.333, 1.000, 0.333, 0.667, 0.500, 0.333, 0.500, 0.…</span>
-<span class="co">#&gt; $ conf_pct    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.417, 0.417, 0.917, 0.333, 0.667, 0.583, 0.417, 0.417, 0.…</span>
-<span class="co">#&gt; $ sov         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.281, 0.415, 0.466, 0.401, 0.438, 0.381, 0.388, 0.438, 0.…</span>
-<span class="co">#&gt; $ sos         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.480, 0.500, 0.496, 0.512, 0.496, 0.438, 0.508, 0.465, 0.…</span>
-<span class="co">#&gt; $ div_rank    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 4, 2, 1, 3, 1, 2, 4, 3, 1, 2, 4, 3, 1, 4, 3, 2, 3, 2, 4, 1…</span>
-<span class="co">#&gt; $ seed        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, NA, 2, NA, 4, 6, NA, NA, 3, 5, NA, NA, 1, NA, NA, NA, …</span>
-<span class="co">#&gt; $ exit        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 17, 17, 20, 17, 22, 18, 17, 17, 19, 18, 17, 17, 19, 17, 17…</span>
-<span class="co">#&gt; $ draft_order <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 8, 12, 29, 9, 32, 21, 6, 17, 27, 24, 2, 10, 28, 1, 3, 11, …</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">draft</span> <span class="op">&lt;-</span> <span class="va">seeds</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_draft_order.html">compute_draft_order</a></span><span class="op">(</span>games <span class="op">=</span> <span class="va">games</span>, h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:11: Calculating draft order #32</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:11: Calculating draft order #31</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:11: Calculating draft order #30</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:11: Calculating draft order #29</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:11: Calculating draft order #28</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:11: Calculating draft order #27</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:11: Calculating draft order #26</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:11: Calculating draft order #25</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:11: Calculating draft order #24</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #23</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #22</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #21</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #20</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #19</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #18</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #17</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #16</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #15</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #14</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #13</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #12</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #11</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: Calculating draft order #10</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: DRAFT: Divisional Rank</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: DRAFT: Conference Rank</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:12: CONF (2): Best-in-division reduction</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:13: CONF (2): Head-to-head Sweep</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:13: Calculating draft order #9</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:13: Calculating draft order #8</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:13: Calculating draft order #7</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:13: Calculating draft order #6</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:13: Calculating draft order #5</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:13: Calculating draft order #4</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:13: Calculating draft order #3</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:13: Calculating draft order #2</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:13: Calculating draft order #1</span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">draft</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 64</span></span>
+<span><span class="co">#&gt; Columns: 18</span></span>
+<span><span class="co">#&gt; $ sim         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012…</span></span>
+<span><span class="co">#&gt; $ team        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "BUF", "MIA", "NE", "NYJ", "BAL", "CIN", "CLE", "PIT", "HO…</span></span>
+<span><span class="co">#&gt; $ conf        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "A…</span></span>
+<span><span class="co">#&gt; $ division    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "AFC East", "AFC East", "AFC East", "AFC East", "AFC North…</span></span>
+<span><span class="co">#&gt; $ games       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16…</span></span>
+<span><span class="co">#&gt; $ wins        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 6, 7, 12, 6, 10, 10, 5, 8, 12, 11, 2, 6, 13, 2, 4, 7, 8, 9…</span></span>
+<span><span class="co">#&gt; $ true_wins   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 6, 7, 12, 6, 10, 10, 5, 8, 12, 11, 2, 6, 13, 2, 4, 7, 8, 9…</span></span>
+<span><span class="co">#&gt; $ losses      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 10, 9, 4, 10, 6, 6, 11, 8, 4, 5, 14, 10, 3, 14, 12, 9, 8, …</span></span>
+<span><span class="co">#&gt; $ ties        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</span></span>
+<span><span class="co">#&gt; $ win_pct     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.375, 0.438, 0.750, 0.375, 0.625, 0.625, 0.312, 0.500, 0.…</span></span>
+<span><span class="co">#&gt; $ div_pct     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.333, 0.333, 1.000, 0.333, 0.667, 0.500, 0.333, 0.500, 0.…</span></span>
+<span><span class="co">#&gt; $ conf_pct    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.417, 0.417, 0.917, 0.333, 0.667, 0.583, 0.417, 0.417, 0.…</span></span>
+<span><span class="co">#&gt; $ sov         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.281, 0.415, 0.466, 0.401, 0.438, 0.381, 0.388, 0.438, 0.…</span></span>
+<span><span class="co">#&gt; $ sos         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.480, 0.500, 0.496, 0.512, 0.496, 0.438, 0.508, 0.465, 0.…</span></span>
+<span><span class="co">#&gt; $ div_rank    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 4, 2, 1, 3, 1, 2, 4, 3, 1, 2, 4, 3, 1, 4, 3, 2, 3, 2, 4, 1…</span></span>
+<span><span class="co">#&gt; $ seed        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, NA, 2, NA, 4, 6, NA, NA, 3, 5, NA, NA, 1, NA, NA, NA, …</span></span>
+<span><span class="co">#&gt; $ exit        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 17, 17, 20, 17, 22, 18, 17, 17, 19, 18, 17, 17, 19, 17, 17…</span></span>
+<span><span class="co">#&gt; $ draft_order <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 8, 12, 29, 9, 32, 21, 6, 17, 27, 24, 2, 10, 28, 1, 3, 11, …</span></span></code></pre></div>
 <p>As this is the final step, the function <code>compute_draft_order</code> does not output <code>h2h</code> again. Instead it directly outputs the final standings including the draft order and the variable <code>exit</code> which indicates the week number of each team’s final game (the Super Bowl Winner’s <code>exit</code> equals 22):</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">draft</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">division</span><span class="op">:</span><span class="va">draft_order</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">draft</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">division</span><span class="op">:</span><span class="va">draft_order</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="10%">
-<col width="6%">
-<col width="5%">
-<col width="10%">
-<col width="8%">
-<col width="8%">
-<col width="9%">
-<col width="6%">
-<col width="6%">
 <col width="9%">
 <col width="5%">
+<col width="4%">
+<col width="9%">
+<col width="6%">
+<col width="4%">
+<col width="7%">
+<col width="7%">
+<col width="8%">
 <col width="5%">
-<col width="12%">
+<col width="5%">
+<col width="8%">
+<col width="4%">
+<col width="4%">
+<col width="10%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">division</th>
 <th align="right">games</th>
 <th align="right">wins</th>
 <th align="right">true_wins</th>
+<th align="right">losses</th>
+<th align="right">ties</th>
 <th align="right">win_pct</th>
 <th align="right">div_pct</th>
 <th align="right">conf_pct</th>
@@ -2331,6 +2505,8 @@
 <td align="right">16</td>
 <td align="right">6.0</td>
 <td align="right">6</td>
+<td align="right">10</td>
+<td align="right">0</td>
 <td align="right">0.375</td>
 <td align="right">0.333</td>
 <td align="right">0.417</td>
@@ -2346,6 +2522,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.333</td>
 <td align="right">0.417</td>
@@ -2361,6 +2539,8 @@
 <td align="right">16</td>
 <td align="right">12.0</td>
 <td align="right">12</td>
+<td align="right">4</td>
+<td align="right">0</td>
 <td align="right">0.750</td>
 <td align="right">1.000</td>
 <td align="right">0.917</td>
@@ -2376,6 +2556,8 @@
 <td align="right">16</td>
 <td align="right">6.0</td>
 <td align="right">6</td>
+<td align="right">10</td>
+<td align="right">0</td>
 <td align="right">0.375</td>
 <td align="right">0.333</td>
 <td align="right">0.333</td>
@@ -2391,6 +2573,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.667</td>
 <td align="right">0.667</td>
@@ -2406,6 +2590,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.500</td>
 <td align="right">0.583</td>
@@ -2421,6 +2607,8 @@
 <td align="right">16</td>
 <td align="right">5.0</td>
 <td align="right">5</td>
+<td align="right">11</td>
+<td align="right">0</td>
 <td align="right">0.312</td>
 <td align="right">0.333</td>
 <td align="right">0.417</td>
@@ -2436,6 +2624,8 @@
 <td align="right">16</td>
 <td align="right">8.0</td>
 <td align="right">8</td>
+<td align="right">8</td>
+<td align="right">0</td>
 <td align="right">0.500</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -2451,6 +2641,8 @@
 <td align="right">16</td>
 <td align="right">12.0</td>
 <td align="right">12</td>
+<td align="right">4</td>
+<td align="right">0</td>
 <td align="right">0.750</td>
 <td align="right">0.833</td>
 <td align="right">0.833</td>
@@ -2466,6 +2658,8 @@
 <td align="right">16</td>
 <td align="right">11.0</td>
 <td align="right">11</td>
+<td align="right">5</td>
+<td align="right">0</td>
 <td align="right">0.688</td>
 <td align="right">0.667</td>
 <td align="right">0.667</td>
@@ -2481,6 +2675,8 @@
 <td align="right">16</td>
 <td align="right">2.0</td>
 <td align="right">2</td>
+<td align="right">14</td>
+<td align="right">0</td>
 <td align="right">0.125</td>
 <td align="right">0.333</td>
 <td align="right">0.167</td>
@@ -2496,6 +2692,8 @@
 <td align="right">16</td>
 <td align="right">6.0</td>
 <td align="right">6</td>
+<td align="right">10</td>
+<td align="right">0</td>
 <td align="right">0.375</td>
 <td align="right">0.167</td>
 <td align="right">0.417</td>
@@ -2511,6 +2709,8 @@
 <td align="right">16</td>
 <td align="right">13.0</td>
 <td align="right">13</td>
+<td align="right">3</td>
+<td align="right">0</td>
 <td align="right">0.812</td>
 <td align="right">1.000</td>
 <td align="right">0.833</td>
@@ -2526,6 +2726,8 @@
 <td align="right">16</td>
 <td align="right">2.0</td>
 <td align="right">2</td>
+<td align="right">14</td>
+<td align="right">0</td>
 <td align="right">0.125</td>
 <td align="right">0.000</td>
 <td align="right">0.000</td>
@@ -2541,6 +2743,8 @@
 <td align="right">16</td>
 <td align="right">4.0</td>
 <td align="right">4</td>
+<td align="right">12</td>
+<td align="right">0</td>
 <td align="right">0.250</td>
 <td align="right">0.333</td>
 <td align="right">0.333</td>
@@ -2556,6 +2760,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.667</td>
 <td align="right">0.583</td>
@@ -2571,6 +2777,8 @@
 <td align="right">16</td>
 <td align="right">8.0</td>
 <td align="right">8</td>
+<td align="right">8</td>
+<td align="right">0</td>
 <td align="right">0.500</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -2586,6 +2794,8 @@
 <td align="right">16</td>
 <td align="right">9.0</td>
 <td align="right">9</td>
+<td align="right">7</td>
+<td align="right">0</td>
 <td align="right">0.562</td>
 <td align="right">0.500</td>
 <td align="right">0.667</td>
@@ -2601,6 +2811,8 @@
 <td align="right">16</td>
 <td align="right">4.0</td>
 <td align="right">4</td>
+<td align="right">12</td>
+<td align="right">0</td>
 <td align="right">0.250</td>
 <td align="right">0.167</td>
 <td align="right">0.167</td>
@@ -2616,6 +2828,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.833</td>
 <td align="right">0.667</td>
@@ -2631,6 +2845,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.500</td>
 <td align="right">0.583</td>
@@ -2646,6 +2862,8 @@
 <td align="right">16</td>
 <td align="right">4.0</td>
 <td align="right">4</td>
+<td align="right">12</td>
+<td align="right">0</td>
 <td align="right">0.250</td>
 <td align="right">0.000</td>
 <td align="right">0.250</td>
@@ -2661,6 +2879,8 @@
 <td align="right">16</td>
 <td align="right">11.0</td>
 <td align="right">11</td>
+<td align="right">5</td>
+<td align="right">0</td>
 <td align="right">0.688</td>
 <td align="right">0.833</td>
 <td align="right">0.667</td>
@@ -2676,6 +2896,8 @@
 <td align="right">16</td>
 <td align="right">10.0</td>
 <td align="right">10</td>
+<td align="right">6</td>
+<td align="right">0</td>
 <td align="right">0.625</td>
 <td align="right">0.667</td>
 <td align="right">0.583</td>
@@ -2691,6 +2913,8 @@
 <td align="right">16</td>
 <td align="right">13.0</td>
 <td align="right">13</td>
+<td align="right">3</td>
+<td align="right">0</td>
 <td align="right">0.812</td>
 <td align="right">0.500</td>
 <td align="right">0.750</td>
@@ -2706,6 +2930,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -2721,6 +2947,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.500</td>
 <td align="right">0.417</td>
@@ -2736,6 +2964,8 @@
 <td align="right">16</td>
 <td align="right">7.0</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">0</td>
 <td align="right">0.438</td>
 <td align="right">0.500</td>
 <td align="right">0.333</td>
@@ -2751,6 +2981,8 @@
 <td align="right">16</td>
 <td align="right">5.0</td>
 <td align="right">5</td>
+<td align="right">11</td>
+<td align="right">0</td>
 <td align="right">0.312</td>
 <td align="right">0.167</td>
 <td align="right">0.250</td>
@@ -2766,6 +2998,8 @@
 <td align="right">16</td>
 <td align="right">11.0</td>
 <td align="right">11</td>
+<td align="right">5</td>
+<td align="right">0</td>
 <td align="right">0.688</td>
 <td align="right">0.500</td>
 <td align="right">0.667</td>
@@ -2781,6 +3015,8 @@
 <td align="right">16</td>
 <td align="right">11.5</td>
 <td align="right">11</td>
+<td align="right">4</td>
+<td align="right">1</td>
 <td align="right">0.719</td>
 <td align="right">0.583</td>
 <td align="right">0.625</td>
@@ -2796,6 +3032,8 @@
 <td align="right">16</td>
 <td align="right">7.5</td>
 <td align="right">7</td>
+<td align="right">8</td>
+<td align="right">1</td>
 <td align="right">0.469</td>
 <td align="right">0.750</td>
 <td align="right">0.542</td>
@@ -2823,7 +3061,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer>
