@@ -96,19 +96,25 @@ will be resolved with the chosen method by default.
 This can be done by following the below given steps.
 
 First, run the following line and the user profile should be opened automatically.
-If you haven't saved any environment variables yet, this will be an empty file.\preformatted{usethis::edit_r_environ()
-}
+If you haven't saved any environment variables yet, this will be an empty file.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{usethis::edit_r_environ()
+}\if{html}{\out{</div>}}
 
 In the opened file add the next line, then save the file and restart your R session.
 Please note that this example sets "multisession" as default. For most users
-this should be the appropriate plan but please make sure it truly is.\preformatted{R_FUTURE_PLAN="multisession"
-}
+this should be the appropriate plan but please make sure it truly is.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{R_FUTURE_PLAN="multisession"
+}\if{html}{\out{</div>}}
 
 After the session is freshly restarted please check if the above method worked
 by running the next line. If the output is \code{FALSE} you successfully set up a
 default non-sequential \code{\link[future:plan]{future::plan()}}. If the output is \code{TRUE} all functions
-will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and NOT in multisession.\preformatted{inherits(future::plan(), "sequential")
-}
+will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and NOT in multisession.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{inherits(future::plan(), "sequential")
+}\if{html}{\out{</div>}}
 
 For more information on possible plans please see
 \href{https://github.com/HenrikBengtsson/future/blob/develop/README.md}{the future package Readme}.
@@ -119,12 +125,16 @@ For more information on possible plans please see
 Most nflfastR functions are able to show progress updates
 using \code{\link[progressr:progressor]{progressr::progressor()}} if they are turned on before the function is
 called. There are at least two basic ways to do this by either activating
-progress updates globally (for the current session) with\preformatted{progressr::handlers(global = TRUE)
-}
+progress updates globally (for the current session) with
 
-or by piping the function call into \code{\link[progressr:with_progress]{progressr::with_progress()}}:\preformatted{simulate_nfl(2020, fresh_season = TRUE) \%>\%
+\if{html}{\out{<div class="sourceCode">}}\preformatted{progressr::handlers(global = TRUE)
+}\if{html}{\out{</div>}}
+
+or by piping the function call into \code{\link[progressr:with_progress]{progressr::with_progress()}}:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{simulate_nfl(2020, fresh_season = TRUE) \%>\%
   progressr::with_progress()
-}
+}\if{html}{\out{</div>}}
 
 For more information how to work with progress handlers please see \link[progressr:progressr]{progressr::progressr}.
 }

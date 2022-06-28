@@ -72,4 +72,5 @@ conf_rank <-
   team_abbr <-
   team_logo_espn <-
   nfc_team <-
+  losses <-
   NULL
