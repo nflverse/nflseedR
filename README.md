@@ -58,8 +58,8 @@ can install the development version of nflseedR either from
 [GitHub](https://github.com/nflverse/nflseedR) with
 
 ``` r
-if (!require("remotes")) install.packages("remotes")
-remotes::install_github("nflverse/nflseedR")
+if (!require("pak")) install.packages("pak")
+pak::pak("nflverse/nflseedR")
 ```
 
 or prebuilt from the [development repo](https://nflverse.r-universe.dev)
