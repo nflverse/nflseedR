@@ -41,7 +41,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -136,10 +136,10 @@
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:17: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:17: Beginning simulation of 100 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:50: Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:51: Aggregating across simulations</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:46:03: Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:46:04: Beginning simulation of 100 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:46:38: Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:46:38: Aggregating across simulations</span></span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -427,10 +427,10 @@
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:51: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:34:51: Beginning simulation of 100 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:35:19: Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:35:19: Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:46:39: Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:46:39: Beginning simulation of 100 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:47:09: Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:47:09: Aggregating across simulations</span></span>
 <span></span>
 <span><span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -680,10 +680,10 @@
 <span>  best <span class="op">=</span> <span class="st">"CHI"</span>, </span>
 <span>  worst <span class="op">=</span> <span class="st">"GB"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:35:20: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:35:20: Beginning simulation of 100 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:35:49: Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:35:49: Aggregating across simulations</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:47:09: Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:47:09: Beginning simulation of 100 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:47:40: Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:47:40: Aggregating across simulations</span></span></code></pre></div>
 <p>Now let nflseedR summarize the simulation for you by using <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> with the nflseedR simulation object. This will print a gt table.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sims3</span><span class="op">)</span></span></code></pre></div>
@@ -1635,9 +1635,9 @@ html {
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  test_week <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:35:53: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:35:53: Beginning simulation of 1000 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-06-28 14:35:56: Aborting and returning your `process_games` function's results from Week 3</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:47:44: Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:47:44: Beginning simulation of 1000 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-07 09:47:47: Aborting and returning your `process_games` function's results from Week 3</span></span></code></pre></div>
 <p>Let’s look at the Bears’ Elo after Week 3 in the top handful of simulations:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
