@@ -1,4 +1,4 @@
-# nflseedR (development version)
+# nflseedR 1.1.0
 
 * Added the data frame `game_summary` to the output of `simulate_nfl()` which aggregates matchups across all simulated seasons (#24)
 * Updated the description of some variables in `load_sharpe_games()` (#24)
