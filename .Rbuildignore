@@ -13,3 +13,4 @@
 ^CRAN-RELEASE$
 ^man/figures/caption\.png$
 ^CRAN-SUBMISSION$
+^revdep$
