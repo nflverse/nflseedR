@@ -14,10 +14,10 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="../deps/_IBM%20Plex%20Sans-0.4.1/font.css" rel="stylesheet">
-<link href="../deps/_Fira%20Code-0.4.1/font.css" rel="stylesheet">
-<link href="../deps/_Kanit-0.4.1/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="../deps/IBM_Plex_Sans-0.4.2/font.css" rel="stylesheet">
+<link href="../deps/Fira_Code-0.4.2/font.css" rel="stylesheet">
+<link href="../deps/Kanit-0.4.2/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -136,10 +136,10 @@
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:47:10: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:47:10: Beginning simulation of 100 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:47:35: Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:47:35: Aggregating across simulations</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:18: Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:18: Beginning simulation of 100 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:41: Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:41: Aggregating across simulations</span></span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -427,10 +427,10 @@
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:47:35: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:47:35: Beginning simulation of 100 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:47:57: Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:47:57: Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:41: Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:41: Beginning simulation of 100 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:01: Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:01: Aggregating across simulations</span></span>
 <span></span>
 <span><span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -680,10 +680,10 @@
 <span>  best <span class="op">=</span> <span class="st">"CHI"</span>, </span>
 <span>  worst <span class="op">=</span> <span class="st">"GB"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:47:57: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:47:57: Beginning simulation of 100 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:48:19: Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:48:19: Aggregating across simulations</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:01: Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:02: Beginning simulation of 100 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:22: Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:22: Aggregating across simulations</span></span></code></pre></div>
 <p>Now let nflseedR summarize the simulation for you by using <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> with the nflseedR simulation object. This will print a gt table.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sims3</span><span class="op">)</span></span></code></pre></div>
@@ -1064,15 +1064,6 @@ html {
   font-size: 65%;
 }
 
-#svuzsxfbxa .gt_two_val_uncert {
-  display: inline-block;
-  line-height: 1em;
-  text-align: right;
-  font-size: 60%;
-  vertical-align: -0.25em;
-  margin-left: 0.1em;
-}
-
 #svuzsxfbxa .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
@@ -1085,61 +1076,63 @@ html {
   vertical-align: 0;
 }
 
-#svuzsxfbxa .gt_slash_mark {
-  font-size: 0.7em;
-  line-height: 0.7em;
-  vertical-align: 0.15em;
+#svuzsxfbxa .gt_indent_1 {
+  text-indent: 5px;
 }
 
-#svuzsxfbxa .gt_fraction_numerator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: 0.45em;
+#svuzsxfbxa .gt_indent_2 {
+  text-indent: 10px;
 }
 
-#svuzsxfbxa .gt_fraction_denominator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: -0.05em;
+#svuzsxfbxa .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#svuzsxfbxa .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#svuzsxfbxa .gt_indent_5 {
+  text-indent: 25px;
 }
 </style>
 <table class="table gt_table">
 <thead class="gt_header">
 <tr>
-<th colspan="18" class="gt_heading gt_title gt_font_normal" style="font-family: 'Prosto One', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif; font-weight: bold;">Simulating the 2020 NFL Season</th>
+<td colspan="18" class="gt_heading gt_title gt_font_normal" style="font-family: 'Prosto One', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif; font-weight: bold;">Simulating the 2020 NFL Season</td>
     </tr>
 <tr>
-<th colspan="18" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="font-family: 'Prosto One', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif; font-weight: normal;">Summary of 100 Simulations using nflseedR</th>
+<td colspan="18" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="font-family: 'Prosto One', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif; font-weight: normal;">Summary of 100 Simulations using nflseedR</td>
     </tr>
 </thead>
 <thead class="gt_col_headings">
 <tr>
-<th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="9">
+<th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="9" scope="colgroup">
         <span class="gt_column_spanner"><img src="https://github.com/nflverse/nflfastR-data/raw/master/AFC.png" style="height:25px;"></span>
       </th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="9">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="9" scope="colgroup">
         <span class="gt_column_spanner"><img src="https://github.com/nflverse/nflfastR-data/raw/master/NFC.png" style="height:25px;"></span>
       </th>
     </tr>
 <tr>
-<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;"></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">AVG.<br>WINS</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Make<br>POST</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>DIV</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">No.1<br>Seed</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>Conf</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>SB</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">No.1<br>Pick</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Top-5<br>Pick</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">AVG.<br>WINS</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Make<br>POST</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>DIV</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">No.1<br>Seed</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>Conf</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Win<br>SB</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">No.1<br>Pick</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">Top-5<br>Pick</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col"></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">AVG.<br>WINS</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Make<br>POST</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>DIV</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">No.1<br>Seed</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>Conf</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>SB</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">No.1<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Top-5<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; border-left-width: 2px; border-left-style: solid; border-left-color: #000000;" scope="col"></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">AVG.<br>WINS</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Make<br>POST</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>DIV</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">No.1<br>Seed</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>Conf</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>SB</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">No.1<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Top-5<br>Pick</th>
     </tr>
 </thead>
 <tbody class="gt_table_body">
@@ -1635,9 +1628,9 @@ html {
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  test_week <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:48:21: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:48:22: Beginning simulation of 1000 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-07-17 13:48:24: Aborting and returning your `process_games` function's results from Week 3</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:24: Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:24: Beginning simulation of 1000 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:26: Aborting and returning your `process_games` function's results from Week 3</span></span></code></pre></div>
 <p>Let’s look at the Bears’ Elo after Week 3 in the top handful of simulations:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -1962,7 +1955,7 @@ html {
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
     </footer>
