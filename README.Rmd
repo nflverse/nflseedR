@@ -7,6 +7,7 @@ output: github_document
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  eval = FALSE,
   comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "100%"
@@ -64,8 +65,8 @@ pak::pak("nflverse/nflseedR")
 
 or prebuilt from the [development repo](https://nflverse.r-universe.dev) with:
 
-```{r eval = FALSE}
-install.packages("nflseedR", repos = "https://nflverse.r-universe.dev")
+```{r eval=FALSE}
+install.packages("nflseedR", repos = c("https://nflverse.r-universe.dev", getOption("repos")))
 ```
 
 ## Get Started
