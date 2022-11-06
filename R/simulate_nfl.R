@@ -145,7 +145,7 @@ simulate_nfl <- function(nfl_season = NULL,
         if ("elo" %in% names(args)) {
           # pull from custom arguments
           teams <- teams %>%
-            dplyr::inner_join(args$elo %>% select(team, elo), by = c("team" = "team"))
+            dplyr::inner_join(args$elo %>% select(team, elo), by = c("team" = "team"), multiple = "all")
         } else {
           # start everyone at a random default elo
           ratings <- tibble(
@@ -153,7 +153,7 @@ simulate_nfl <- function(nfl_season = NULL,
             elo = rnorm(length(unique(team)), 1500, 150)
           )
           teams <- teams %>%
-            dplyr::inner_join(ratings, by = "team")
+            dplyr::inner_join(ratings, by = "team", multiple = "all")
         }
       }
 
@@ -162,9 +162,9 @@ simulate_nfl <- function(nfl_season = NULL,
 
       # mark estimate, wp, and result for games
       games <- games %>%
-        dplyr::inner_join(ratings, by = c("sim" = "sim", "away_team" = "team")) %>%
+        dplyr::inner_join(ratings, by = c("sim" = "sim", "away_team" = "team"), multiple = "all") %>%
         dplyr::rename(away_elo = elo) %>%
-        dplyr::inner_join(ratings, by = c("sim" = "sim", "home_team" = "team")) %>%
+        dplyr::inner_join(ratings, by = c("sim" = "sim", "home_team" = "team"), multiple = "all") %>%
         dplyr::rename(home_elo = elo) %>%
         dplyr::mutate(
           elo_diff = home_elo - away_elo,
@@ -203,14 +203,14 @@ simulate_nfl <- function(nfl_season = NULL,
         dplyr::left_join(games %>%
           filter(week == week_num) %>%
           select(sim, away_team, elo_shift),
-        by = c("sim" = "sim", "team" = "away_team")
+        by = c("sim" = "sim", "team" = "away_team"), multiple = "all"
         ) %>%
         dplyr::mutate(elo = elo - ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
         dplyr::select(-elo_shift) %>%
         dplyr::left_join(games %>%
           filter(week == week_num) %>%
           select(sim, home_team, elo_shift),
-        by = c("sim" = "sim", "team" = "home_team")
+        by = c("sim" = "sim", "team" = "home_team"), multiple = "all"
         ) %>%
         dplyr::mutate(elo = elo + ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
         dplyr::select(-elo_shift)
@@ -381,7 +381,7 @@ simulate_nfl <- function(nfl_season = NULL,
     ) %>%
     inner_join(
       all_teams %>% select(team, true_wins),
-      by = c("team")
+      by = c("team"), multiple = "all"
     ) %>%
     group_by(team, wins) %>%
     summarize(

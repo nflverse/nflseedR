@@ -120,7 +120,7 @@ compute_draft_order <- function(teams,
         double_games() %>%
         filter(outcome == 0) %>%
         select(sim, team, outcome) %>%
-        right_join(teams, by = c("sim", "team")) %>%
+        right_join(teams, by = c("sim", "team"), multiple = "all") %>%
         mutate(exit = ifelse(!is.na(outcome), week_num, exit)) %>%
         select(-outcome)
 
@@ -132,7 +132,7 @@ compute_draft_order <- function(teams,
           double_games() %>%
           filter(outcome == 1) %>%
           select(sim, team, outcome) %>%
-          right_join(teams, by = c("sim", "team")) %>%
+          right_join(teams, by = c("sim", "team"), multiple = "all") %>%
           mutate(exit = ifelse(!is.na(outcome), week_num + 1, exit)) %>%
           select(-outcome)
       }
@@ -141,7 +141,7 @@ compute_draft_order <- function(teams,
       playoff_teams <- games %>%
         filter(week == week_num) %>%
         double_games() %>%
-        right_join(playoff_teams, by = c("sim", "team")) %>%
+        right_join(playoff_teams, by = c("sim", "team"), multiple = "all") %>%
         filter(is.na(result) | result > 0) %>%
         select(sim, conf, seed, team) %>%
         arrange(sim, conf, seed)
@@ -188,7 +188,7 @@ compute_draft_order <- function(teams,
 
     # store updates
     teams <- teams %>%
-      left_join(update, by = c("sim", "team")) %>%
+      left_join(update, by = c("sim", "team"), multiple = "all") %>%
       mutate(draft_order = ifelse(!is.na(new_do), new_do, draft_order)) %>%
       select(-new_do)
   } # end draft order loop

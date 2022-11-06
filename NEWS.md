@@ -1,3 +1,7 @@
+# nflseedR (development version)
+
+* Internal code updates to prevent annoying warnings in upcoming dplyr release. The code changes are downwards compatible with older dplyr releases. No need to update dplyr.
+
 # nflseedR 1.1.0
 
 * Added the data frame `game_summary` to the output of `simulate_nfl()` which aggregates matchups across all simulated seasons (#24)

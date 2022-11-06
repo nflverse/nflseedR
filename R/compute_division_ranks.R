@@ -106,7 +106,7 @@ compute_division_ranks <- function(games,
     ) %>%
       distinct() %>%
       left_join(nflseedR::divisions %>% select(-"sdiv"), by = "team") %>%
-      left_join(pivot_games, by = "team") %>%
+      left_join(pivot_games, by = "team", multiple = "all") %>%
       select(sim, everything()) %>%
       distinct() %>%
       arrange(division, team, sim)
@@ -118,7 +118,7 @@ compute_division_ranks <- function(games,
   # record of each team
   report("Calculating team data")
   teams <- teams %>%
-    inner_join(games_doubled, by = c("sim", "team")) %>%
+    inner_join(games_doubled, by = c("sim", "team"), multiple = "all") %>%
     filter(game_type == "REG") %>%
     group_by(sim, conf, division, team) %>%
     summarize(
@@ -132,11 +132,11 @@ compute_division_ranks <- function(games,
 
   # add in tiebreaker info
   teams <- teams %>%
-    inner_join(games_doubled, by = c("sim", "team")) %>%
+    inner_join(games_doubled, by = c("sim", "team"), multiple = "all") %>%
     filter(game_type == "REG") %>%
     inner_join(teams,
       by = c("sim" = "sim", "opp" = "team"),
-      suffix = c("", "_opp")
+      suffix = c("", "_opp"), multiple = "all"
     ) %>%
     mutate(
       win_pct = wins / games,
@@ -165,12 +165,12 @@ compute_division_ranks <- function(games,
     h2h <- teams %>%
       select(sim, team) %>%
       inner_join(teams %>% select(sim, team),
-        by = "sim", suffix = c("", "_opp")
+        by = "sim", suffix = c("", "_opp"), multiple = "all"
       ) %>%
       rename(opp = team_opp) %>%
       arrange(sim, team, opp) %>%
       left_join(games_doubled %>% filter(game_type == "REG"),
-        by = c("sim", "team", "opp")
+        by = c("sim", "team", "opp"), multiple = "all"
       ) %>%
       group_by(sim, team, opp) %>%
       summarize(
@@ -205,7 +205,7 @@ compute_division_ranks <- function(games,
 
     # store updates
     teams <- teams %>%
-      left_join(update, by = c("sim", "team")) %>%
+      left_join(update, by = c("sim", "team"), multiple = "all") %>%
       mutate(div_rank = ifelse(!is.na(new_rank), new_rank, div_rank)) %>%
       select(-new_rank)
   }

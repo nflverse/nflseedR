@@ -85,7 +85,7 @@ compute_conference_seeds <- function(teams,
 
     # store updates
     teams <- teams %>%
-      left_join(update, by = c("sim", "team")) %>%
+      left_join(update, by = c("sim", "team"), multiple = "all") %>%
       mutate(conf_rank = ifelse(!is.na(new_rank), new_rank, conf_rank)) %>%
       select(-new_rank)
   } # end conference rank loop

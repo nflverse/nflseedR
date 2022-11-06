@@ -131,7 +131,7 @@ summary.nflseedR_simulation <- function(object, ...){
             nflreadr::load_teams() %>%
               filter(!team_abbr %in% c("LAR", "OAK", "SD", "STL")) %>%
               select(team_abbr, team_logo_espn),
-            by = "team_abbr"
+            by = "team_abbr", multiple = "all"
           ) %>%
           pull(team_logo_espn)
         gt::web_image(url = url, height = 30)

@@ -43,11 +43,11 @@ break_conference_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       list[u, tied] <- tied %>%
         inner_join(tied %>% select(sim, conf, team, div_winner, div_best_left, win_pct),
           by = c("sim", "conf", "div_winner", "div_best_left", "win_pct"),
-          suffix = c("", "_opp")
+          suffix = c("", "_opp"), multiple = "all"
         ) %>%
         rename(opp = team_opp) %>%
         filter(team != opp) %>%
-        inner_join(h2h, by = c("sim", "team", "opp")) %>%
+        inner_join(h2h, by = c("sim", "team", "opp"), multiple = "all") %>%
         group_by(
           sim, conf, division, div_winner, div_best_left, team,
           conf_pct, sov, sos, tied_teams
@@ -81,7 +81,7 @@ break_conference_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       # common games
       if (isTRUE(.debug)) report(glue("CONF ({min_tied}): Common Record"))
       list[u, tied] <- tied %>%
-        inner_join(h2h, by = c("sim", "team")) %>%
+        inner_join(h2h, by = c("sim", "team"), multiple = "all") %>%
         filter(h2h_played == 1) %>%
         group_by(sim, conf, opp) %>%
         mutate(common = (tied_teams == n())) %>%
@@ -155,7 +155,7 @@ process_conf_ties <- function(t, u, r = seed_num) {
     ungroup()
   u <- u %>%
     left_join(t %>% select(sim, team, new_rank),
-      by = c("sim", "team")
+      by = c("sim", "team"), multiple = "all"
     ) %>%
     mutate(conf_rank = ifelse(!is.na(new_rank), new_rank, conf_rank)) %>%
     filter(is.na(new_rank) | new_rank != 0) %>%

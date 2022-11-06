@@ -44,7 +44,7 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
         mutate(div_best_left = (div_rank == min(div_rank))) %>%
         ungroup() %>%
         break_conference_ties(r, h2h = h2h, tb_depth = tb_depth, .debug = .debug) %>%
-        right_join(tied, by = c("sim", "team")) %>%
+        right_join(tied, by = c("sim", "team"), multiple = "all") %>%
         group_by(sim) %>%
         mutate(value = case_when(
           min(conf) != max(conf) ~ NA_real_,
@@ -61,10 +61,10 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       # head-to-head sweep
       if (isTRUE(.debug)) report(glue("DRAFT: Head-to-head Sweep"))
       list[u, tied] <- tied %>%
-        inner_join(tied %>% select(sim, team), by = c("sim"), suffix = c("", "_opp")) %>%
+        inner_join(tied %>% select(sim, team), by = c("sim"), suffix = c("", "_opp"), multiple = "all") %>%
         rename(opp = team_opp) %>%
         filter(team != opp) %>%
-        inner_join(h2h, by = c("sim", "team", "opp")) %>%
+        inner_join(h2h, by = c("sim", "team", "opp"), multiple = "all") %>%
         group_by(sim, team, sov, tied_teams) %>%
         summarize(value = case_when(
           sum(h2h_games) < (max(tied_teams) - 1) ~ 0, # didn't play vs. each other tied team
@@ -82,7 +82,7 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       # common games
       if (isTRUE(.debug)) report(glue("DRAFT: Common Record"))
       list[u, tied] <- tied %>%
-        inner_join(h2h, by = c("sim", "team")) %>%
+        inner_join(h2h, by = c("sim", "team"), multiple = "all") %>%
         filter(h2h_played == 1) %>%
         group_by(sim, opp) %>%
         mutate(common = (tied_teams == n())) %>%
@@ -144,7 +144,7 @@ process_draft_ties <- function(t, u, d) {
     ungroup()
   u <- u %>%
     left_join(t %>% select(sim, team, new_do),
-      by = c("sim", "team")
+      by = c("sim", "team"), multiple = "all"
     ) %>%
     mutate(draft_order = ifelse(!is.na(new_do), new_do, draft_order)) %>%
     filter(is.na(new_do) | new_do != 0) %>%

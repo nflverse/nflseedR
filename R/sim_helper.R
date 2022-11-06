@@ -121,7 +121,7 @@ simulate_round <- function(sim_round,
 
     # identify improper results values
     problems <- old_games %>%
-      inner_join(games, by = intersect(colnames(old_games), colnames(games))) %>%
+      inner_join(games, by = intersect(colnames(old_games), colnames(games)), multiple = "all") %>%
       mutate(problem = case_when(
         week == week_num & is.na(result) ~
         "a result from the current week is missing",
@@ -181,7 +181,7 @@ simulate_round <- function(sim_round,
 
   teams <- teams %>%
     inner_join(standings_and_h2h$standings,
-      by = intersect(colnames(teams), colnames(standings_and_h2h$standings))
+      by = intersect(colnames(teams), colnames(standings_and_h2h$standings)), multiple = "all"
     )
   h2h_df <- standings_and_h2h$h2h
 
@@ -232,7 +232,7 @@ simulate_round <- function(sim_round,
 
       # games to seed_numeate
       add_games <- add_teams %>%
-        inner_join(add_teams, by = c("sim", "conf")) %>%
+        inner_join(add_teams, by = c("sim", "conf"), multiple = "all") %>%
         filter(round_rank.x > round_rank.y) %>%
         filter(round_rank.x + round_rank.y == max(round_rank.x) + 1) %>%
         rename(away_team = team.x, home_team = team.y) %>%
@@ -277,7 +277,7 @@ simulate_round <- function(sim_round,
       double_games() %>%
       filter(outcome == 0) %>%
       select(sim, team, outcome) %>%
-      right_join(teams, by = c("sim", "team")) %>%
+      right_join(teams, by = c("sim", "team"), multiple = "all") %>%
       mutate(exit = ifelse(!is.na(outcome), week_num, exit)) %>%
       select(-outcome)
 
@@ -289,7 +289,7 @@ simulate_round <- function(sim_round,
         double_games() %>%
         filter(outcome == 1) %>%
         select(sim, team, outcome) %>%
-        right_join(teams, by = c("sim", "team")) %>%
+        right_join(teams, by = c("sim", "team"), multiple = "all") %>%
         mutate(exit = ifelse(!is.na(outcome), week_num + 1, exit)) %>%
         select(-outcome)
     }
@@ -298,7 +298,7 @@ simulate_round <- function(sim_round,
     playoff_teams <- games %>%
       filter(week == week_num) %>%
       double_games() %>%
-      right_join(playoff_teams, by = c("sim", "team")) %>%
+      right_join(playoff_teams, by = c("sim", "team"), multiple = "all") %>%
       filter(is.na(result) | result > 0) %>%
       select(sim, conf, seed, team) %>%
       arrange(sim, conf, seed)
