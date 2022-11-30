@@ -334,7 +334,7 @@ simulate_round <- function(sim_round,
     teams$draft_order <- NA_real_
     teams <- teams %>%
       dplyr::select(
-        tidyselect::any_of(c(
+        dplyr::any_of(c(
           "sim", "team", "conf", "division", "games",
           "wins", "true_wins", "losses", "ties", "win_pct", "div_pct",
           "conf_pct", "sov", "sos", "div_rank", "seed", "exit", "draft_order"
