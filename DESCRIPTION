@@ -1,7 +1,7 @@
 Package: nflseedR
 Title: Functions to Efficiently Simulate and Evaluate NFL
     Seasons
-Version: 1.1.0
+Version: 1.1.0.9000
 Authors@R: 
     c(person(given = "Lee",
              family = "Sharpe",
