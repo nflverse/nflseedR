@@ -110,8 +110,7 @@ summary.nflseedR_simulation <- function(object, ...){
       afc_draft5 = gt::html("Top-5<br>Pick"),
       nfc_draft5 = gt::html("Top-5<br>Pick"),
     ) %>%
-    gt::cols_hide(nfc_division) %>%
-    gt::cols_hide(gt::contains(hide_me)) %>%
+    gt::cols_hide(c(nfc_division, gt::contains(hide_me))) %>%
     gt::fmt_number(gt::ends_with("wins"), decimals = 1) %>%
     gt::fmt_percent(
       columns = c(
