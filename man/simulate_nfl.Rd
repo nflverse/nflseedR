@@ -17,7 +17,8 @@ simulate_nfl(
   simulations = 1000,
   sims_per_round = max(ceiling(simulations/future::availableCores() * 2), 100),
   .debug = FALSE,
-  print_summary = FALSE
+  print_summary = FALSE,
+  sim_include = c("DRAFT", "REG", "POST")
 )
 }
 \arguments{
@@ -69,6 +70,14 @@ messages are printed to the console showing what the tie-breaking algorithms
 are currently performing.}
 
 \item{print_summary}{If \code{TRUE}, prints the summary statistics to the console.}
+
+\item{sim_include}{One of \code{"REG"}, \code{"POST"}, \code{"DRAFT"} (the default).
+Simulation will behave as follows:
+\describe{
+\item{REG}{Simulate the regular season and compute standings, division ranks, and playoff seeds}
+\item{POST}{Do REG + simulate the postseason}
+\item{DRAFT}{Do POST + compute draft order}
+}}
 }
 \value{
 An \code{nflseedR_simulation} object containing a list of 6 data frames
