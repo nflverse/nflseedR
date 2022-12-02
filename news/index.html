@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9001</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,6 +78,7 @@
 <h2 class="pkg-version" data-toc-text="development version" id="nflseedr-development-version">nflseedR (development version)<a class="anchor" aria-label="anchor" href="#nflseedr-development-version"></a></h2>
 <ul><li>
 <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> gained the new argument <code>sim_include</code> to allow more access to what is actually being simulated. This makes it possible skip playoff simulation or the (possibly heavy) computation of draft order.</li>
+<li>The <code>summary</code> method <code><a href="../reference/summary.nflseedR_simulation.html">summary.nflseedR_simulation()</a></code> now hides columns where all values are <code>NA</code>. This is useful if <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> skips the postseason or draftorder. The method also reformats the number of simulations in the subtitle, e.g. from “10000” to “10k” (this requires scales &gt;= 1.2.0, but it is a good idea to update scales anyways).</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="nflseedr-110">nflseedR 1.1.0<a class="anchor" aria-label="anchor" href="#nflseedr-110"></a></h2><p class="text-muted">CRAN release: 2022-07-07</p>
