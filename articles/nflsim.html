@@ -15,9 +15,9 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="../deps/IBM_Plex_Sans-0.4.2/font.css" rel="stylesheet">
-<link href="../deps/Fira_Code-0.4.2/font.css" rel="stylesheet">
-<link href="../deps/Kanit-0.4.2/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="../deps/IBM_Plex_Sans-0.4.4/font.css" rel="stylesheet">
+<link href="../deps/Fira_Code-0.4.4/font.css" rel="stylesheet">
+<link href="../deps/Kanit-0.4.4/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -41,7 +41,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -111,7 +111,8 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Simulating NFL seasons using nflseedR</h1>
-                        <h4 data-toc-skip class="author">Lee Sharpe &amp; Sebastian Carl</h4>
+                        <h4 data-toc-skip class="author">Lee Sharpe
+&amp; Sebastian Carl</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/nflverse/nflseedR/blob/HEAD/vignettes/articles/nflsim.Rmd" class="external-link"><code>vignettes/articles/nflsim.Rmd</code></a></small>
@@ -123,12 +124,19 @@
 <div class="section level2">
 <h2 id="running-a-simulation">Running a Simulation<a class="anchor" aria-label="anchor" href="#running-a-simulation"></a>
 </h2>
-<p>Loading the package is obligatory, so it is done first (along with <code>dplyr</code> for data wrangling and the <code>pipe</code>):</p>
+<p>Loading the package is obligatory, so it is done first (along with
+<code>dplyr</code> for data wrangling and the <code>pipe</code>):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nflseedr.com">nflseedR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><em>Note: For this guide, we’ll set an initial random seed of <code>4</code> at the beginning and <code>simulations = 100</code> for the purposes of this document so you can follow along by entering the same code and get the same results shown here. We’ll also set <code>fresh_season = TRUE</code> to blank out the existing results from the 2020 season, but normally when simulating an incomplete season, you wouldn’t do these things.</em></p>
+<p><em>Note: For this guide, we’ll set an initial random seed of
+<code>4</code> at the beginning and <code>simulations = 100</code> for
+the purposes of this document so you can follow along by entering the
+same code and get the same results shown here. We’ll also set
+<code>fresh_season = TRUE</code> to blank out the existing results from
+the 2020 season, but normally when simulating an incomplete season, you
+wouldn’t do these things.</em></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">sims</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span></span>
@@ -136,14 +144,29 @@
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:18: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:18: Beginning simulation of 100 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:41: Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:41: Aggregating across simulations</span></span></code></pre></div>
-<p>The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let’s look at the overall results for the Bears:</p>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:16:05 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:16:05 | Beginning simulation of 100 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:16:37 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:16:37 | Aggregating across simulations</span></span></code></pre></div>
+<p>The output contains a lot of pre-aggregated information, as well as
+the individual results from each game of each simulation. For example,
+let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="6%">
+<col width="13%">
+<col width="6%">
+<col width="6%">
+<col width="10%">
+<col width="6%">
+<col width="8%">
+<col width="12%">
+<col width="9%">
+<col width="9%">
+<col width="9%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">conf</th>
 <th align="left">division</th>
@@ -171,7 +194,11 @@
 <td align="right">0.01</td>
 </tr></tbody>
 </table>
-<p>We can see the Bears got 10.8 wins on average. They made the playoffs 87% of simulations, won the division in 39%, won the Super Bowl in 4%, and only in 1% did they receive a top five draft pick. The <code>teams</code> section of the output will show how a team did in each simulated season.</p>
+<p>We can see the Bears got 10.8 wins on average. They made the playoffs
+87% of simulations, won the division in 39%, won the Super Bowl in 4%,
+and only in 1% did they receive a top five draft pick. The
+<code>teams</code> section of the output will show how a team did in
+each simulated season.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sims</span><span class="op">$</span><span class="va">teams</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -231,10 +258,22 @@
 </tr>
 </tbody>
 </table>
-<p>Let’s check out the playoff games from the first simulation, where the Bears went 10-6 and got the 6th seed.</p>
+<p>Let’s check out the playoff games from the first simulation, where
+the Bears went 10-6 and got the 6th seed.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sims</span><span class="op">$</span><span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">game_type</span> <span class="op">!=</span> <span class="st">"REG"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="5%">
+<col width="13%">
+<col width="6%">
+<col width="13%">
+<col width="13%">
+<col width="13%">
+<col width="13%">
+<col width="12%">
+<col width="9%">
+</colgroup>
 <thead><tr class="header">
 <th align="right">sim</th>
 <th align="left">game_type</th>
@@ -392,12 +431,24 @@
 </tr>
 </tbody>
 </table>
-<p>In this simulation, the Bears beat the Rams in a wildcard game by 26 points, then beat the Cowboys in the divisional round by 11 points, took the Eagles by a field goal in the NFC Championship Game, and finally defeated the Patriots by 6 in the Super Bowl.</p>
-<p>As you may have gathered at this point, the default simulation code picks a random Elo for every team, and uses those as the starting Elo ratings for all 32 teams. However, the default code Elo will adjust independently within each simulation as each week is simulated. (The Elo model used is loosely based off of that of <a href="https://fivethirtyeight.com/methodology/how-our-nfl-predictions-work/" class="external-link">FiveThirtyEight</a>.)</p>
+<p>In this simulation, the Bears beat the Rams in a wildcard game by 26
+points, then beat the Cowboys in the divisional round by 11 points, took
+the Eagles by a field goal in the NFC Championship Game, and finally
+defeated the Patriots by 6 in the Super Bowl.</p>
+<p>As you may have gathered at this point, the default simulation code
+picks a random Elo for every team, and uses those as the starting Elo
+ratings for all 32 teams. However, the default code Elo will adjust
+independently within each simulation as each week is simulated. (The Elo
+model used is loosely based off of that of <a href="https://fivethirtyeight.com/methodology/how-our-nfl-predictions-work/" class="external-link">FiveThirtyEight</a>.)</p>
 <div class="section level3">
 <h3 id="use-your-own-model">Use Your Own Model<a class="anchor" aria-label="anchor" href="#use-your-own-model"></a>
 </h3>
-<p>But of course the real value of nflseedR is putting in your own model into the simulator. To accomplish this, you can write your own function which will determine the output of games instead. As an example, here’s a very stupid model that makes the team earlier alphabetically win by 3 points 90% of the time, and lose by 3 points the other 10% of the time.</p>
+<p>But of course the real value of nflseedR is putting in your own model
+into the simulator. To accomplish this, you can write your own function
+which will determine the output of games instead. As an example, here’s
+a very stupid model that makes the team earlier alphabetically win by 3
+points 90% of the time, and lose by 3 points the other 10% of the
+time.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stupid_games_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">teams</span>, <span class="va">games</span>, <span class="va">week_num</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># make the earlier alphabetical team win 90% of the time</span></span>
@@ -414,12 +465,29 @@
 <span>  <span class="co"># return values</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>teams <span class="op">=</span> <span class="va">teams</span>, games <span class="op">=</span> <span class="va">games</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>When you create this function, the first two inputs are data on the teams (one row per team per sim), and data on the games (one row per game per sim). The third argument is the week number currently being simulated, as only one week is processed at a time.</p>
-<p>Your function’s job - by whatever means you choose - is to update the <code>result</code> column for that week’s games in each of the sims with the number of points the home team won by (or lost by if negative, or 0 if the game ended in a tie).</p>
-<p>It returns both the <code>teams</code> and the <code>games</code> data. It does both because this way you can store information in new columns by team or by game to use in the next call. Make sure your code both accepts and returns the appropriate information, or the simulator will break!</p>
-<p>For example, the default function updates a team’s Elo after the game, and stores it in the <code>teams</code> data. When the simulator processes the next week, it uses the updated Elo rating to inform the team’s next game.</p>
-<p>!! Also, make sure you aren’t overriding completed games or games that aren’t in the current week of <code>w</code>. The simulator will <strong>not</strong> stop you from setting past, present, or future game results in your function, whether you meant to do so or not. !!</p>
-<p>Let’s run a simulation with <code>stupid_games_model</code> and see what happens:</p>
+<p>When you create this function, the first two inputs are data on the
+teams (one row per team per sim), and data on the games (one row per
+game per sim). The third argument is the week number currently being
+simulated, as only one week is processed at a time.</p>
+<p>Your function’s job - by whatever means you choose - is to update the
+<code>result</code> column for that week’s games in each of the sims
+with the number of points the home team won by (or lost by if negative,
+or 0 if the game ended in a tie).</p>
+<p>It returns both the <code>teams</code> and the <code>games</code>
+data. It does both because this way you can store information in new
+columns by team or by game to use in the next call. Make sure your code
+both accepts and returns the appropriate information, or the simulator
+will break!</p>
+<p>For example, the default function updates a team’s Elo after the
+game, and stores it in the <code>teams</code> data. When the simulator
+processes the next week, it uses the updated Elo rating to inform the
+team’s next game.</p>
+<p>!! Also, make sure you aren’t overriding completed games or games
+that aren’t in the current week of <code>w</code>. The simulator will
+<strong>not</strong> stop you from setting past, present, or future game
+results in your function, whether you meant to do so or not. !!</p>
+<p>Let’s run a simulation with <code>stupid_games_model</code> and see
+what happens:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sims2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span></span>
 <span>  nfl_season <span class="op">=</span> <span class="fl">2020</span>,</span>
@@ -427,13 +495,26 @@
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:41: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:24:41: Beginning simulation of 100 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:01: Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:01: Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:16:38 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:16:38 | Beginning simulation of 100 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:17:06 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:17:06 | Aggregating across simulations</span></span>
 <span></span>
 <span><span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="6%">
+<col width="13%">
+<col width="6%">
+<col width="6%">
+<col width="10%">
+<col width="6%">
+<col width="8%">
+<col width="12%">
+<col width="9%">
+<col width="9%">
+<col width="9%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">conf</th>
 <th align="left">division</th>
@@ -531,6 +612,19 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="6%">
+<col width="13%">
+<col width="6%">
+<col width="6%">
+<col width="10%">
+<col width="6%">
+<col width="8%">
+<col width="12%">
+<col width="9%">
+<col width="9%">
+<col width="9%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">conf</th>
 <th align="left">division</th>
@@ -625,14 +719,25 @@
 </tr>
 </tbody>
 </table>
-<p>As you might expect, the earliest alphabetical teams win a lot. The Cardinals won the Super Bowl in 59% of seasons! Meanwhile, the teams at the bottom alphabetically are virtually certain to be at the top of the draft order.</p>
+<p>As you might expect, the earliest alphabetical teams win a lot. The
+Cardinals won the Super Bowl in 59% of seasons! Meanwhile, the teams at
+the bottom alphabetically are virtually certain to be at the top of the
+draft order.</p>
 </div>
 <div class="section level3">
 <h3 id="adding-in-your-own-data">Adding In Your Own Data<a class="anchor" aria-label="anchor" href="#adding-in-your-own-data"></a>
 </h3>
-<p>This is all well and good, you might be thinking, but your model works off of other data not in the simulator! How can that work? This is where we utilize R’s ability to have generic arguments.</p>
-<p>The <code>...</code> at the end of the function definition means that the function can be called with any number of additional arguments. You can name these whatever you want, as long as they’re not already the name of other defined arguments.</p>
-<p>When you call the <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> function, it too uses the <code>...</code> syntax, which allows you to pass in any number of additional arguments to the function. The simulator will in turn pass these on to <em>your</em> function that processes games.</p>
+<p>This is all well and good, you might be thinking, but your model
+works off of other data not in the simulator! How can that work? This is
+where we utilize R’s ability to have generic arguments.</p>
+<p>The <code>...</code> at the end of the function definition means that
+the function can be called with any number of additional arguments. You
+can name these whatever you want, as long as they’re not already the
+name of other defined arguments.</p>
+<p>When you call the <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> function, it too uses
+the <code>...</code> syntax, which allows you to pass in any number of
+additional arguments to the function. The simulator will in turn pass
+these on to <em>your</em> function that processes games.</p>
 <p>For example, let’s slightly modify our last example:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">biased_games_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">teams</span>, <span class="va">games</span>, <span class="va">week_num</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
@@ -669,7 +774,12 @@
 <span>  <span class="co"># return values</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>teams <span class="op">=</span> <span class="va">teams</span>, games <span class="op">=</span> <span class="va">games</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>This allows us to define <code>best</code> and <code>worst</code>, and use that information to determine a result (in this case, have the best team always win and the worst team always lose). While <code>best</code> and <code>worst</code> are in this example single-length character vectors, they can be data frames or any other R data type.</p>
+<p>This allows us to define <code>best</code> and <code>worst</code>,
+and use that information to determine a result (in this case, have the
+best team always win and the worst team always lose). While
+<code>best</code> and <code>worst</code> are in this example
+single-length character vectors, they can be data frames or any other R
+data type.</p>
 <p>Let’s simulate using this:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sims3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span></span>
@@ -680,14 +790,16 @@
 <span>  best <span class="op">=</span> <span class="st">"CHI"</span>, </span>
 <span>  worst <span class="op">=</span> <span class="st">"GB"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:01: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:02: Beginning simulation of 100 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:22: Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:22: Aggregating across simulations</span></span></code></pre></div>
-<p>Now let nflseedR summarize the simulation for you by using <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> with the nflseedR simulation object. This will print a gt table.</p>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:17:07 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:17:07 | Beginning simulation of 100 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:17:35 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:17:35 | Aggregating across simulations</span></span></code></pre></div>
+<p>Now let nflseedR summarize the simulation for you by using
+<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> with the nflseedR simulation object. This will
+print a gt table.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sims3</span><span class="op">)</span></span></code></pre></div>
-<div id="svuzsxfbxa" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="svuzsxfbxa" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Prosto+One:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Prosto+One:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Audiowide:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
@@ -731,6 +843,11 @@ html {
   border-right-style: none;
   border-right-width: 1px;
   border-right-color: #D3D3D3;
+}
+
+#svuzsxfbxa .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 #svuzsxfbxa .gt_title {
@@ -853,6 +970,7 @@ html {
   border-right-width: 1px;
   border-right-color: #D3D3D3;
   vertical-align: middle;
+  text-align: left;
 }
 
 #svuzsxfbxa .gt_empty_group_heading {
@@ -1107,366 +1225,366 @@ html {
 </thead>
 <thead class="gt_col_headings">
 <tr>
-<th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="9" scope="colgroup">
+<th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="9" scope="colgroup" id='&lt;img src="https://github.com/nflverse/nflfastR-data/raw/master/AFC.png" style="height:25px;"&gt;'>
         <span class="gt_column_spanner"><img src="https://github.com/nflverse/nflfastR-data/raw/master/AFC.png" style="height:25px;"></span>
       </th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="9" scope="colgroup">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="9" scope="colgroup" id='&lt;img src="https://github.com/nflverse/nflfastR-data/raw/master/NFC.png" style="height:25px;"&gt;'>
         <span class="gt_column_spanner"><img src="https://github.com/nflverse/nflfastR-data/raw/master/NFC.png" style="height:25px;"></span>
       </th>
     </tr>
 <tr>
-<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col"></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">AVG.<br>WINS</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Make<br>POST</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>DIV</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">No.1<br>Seed</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>Conf</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>SB</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">No.1<br>Pick</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Top-5<br>Pick</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; border-left-width: 2px; border-left-style: solid; border-left-color: #000000;" scope="col"></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">AVG.<br>WINS</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Make<br>POST</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>DIV</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">No.1<br>Seed</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>Conf</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Win<br>SB</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">No.1<br>Pick</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col">Top-5<br>Pick</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id=""></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="AVG.&lt;br&gt;WINS">AVG.<br>WINS</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Make&lt;br&gt;POST">Make<br>POST</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;DIV">Win<br>DIV</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="No.1&lt;br&gt;Seed">No.1<br>Seed</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;Conf">Win<br>Conf</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;SB">Win<br>SB</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="No.1&lt;br&gt;Pick">No.1<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Top-5&lt;br&gt;Pick">Top-5<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; border-left-width: 2px; border-left-style: solid; border-left-color: #000000;" scope="col" id=""></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="AVG.&lt;br&gt;WINS">AVG.<br>WINS</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Make&lt;br&gt;POST">Make<br>POST</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;DIV">Win<br>DIV</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="No.1&lt;br&gt;Seed">No.1<br>Seed</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;Conf">Win<br>Conf</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;SB">Win<br>SB</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="No.1&lt;br&gt;Pick">No.1<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Top-5&lt;br&gt;Pick">Top-5<br>Pick</th>
     </tr>
 </thead>
 <tbody class="gt_table_body">
 <tr class="gt_group_heading_row">
-<td colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;">E A S T</td>
+<th colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="E A S T">E A S T</th>
     </tr>
 <tr class="gt_row_group_first">
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/buf.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">13.4</td>
-<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
-<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
-<td class="gt_row gt_right" style="background-color: #A9E1FB; color: #000000;">22%</td>
-<td class="gt_row gt_right" style="background-color: #A9E1FB; color: #000000;">22%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/dal.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">10.5</td>
-<td class="gt_row gt_right" style="background-color: #0167AB; color: #FFFFFF;">95%</td>
-<td class="gt_row gt_right" style="background-color: #016AAF; color: #FFFFFF;">94%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/buf.png" style="height:30px;"></td>
+<td headers="E A S T  afc_wins" class="gt_row gt_right" style="font-weight: bold;">13.4</td>
+<td headers="E A S T  afc_playoff" class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td headers="E A S T  afc_div1" class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td headers="E A S T  afc_seed1" class="gt_row gt_right" style="background-color: #A9E1FB; color: #000000;">22%</td>
+<td headers="E A S T  afc_won_conf" class="gt_row gt_right" style="background-color: #A9E1FB; color: #000000;">22%</td>
+<td headers="E A S T  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/dal.png" style="height:30px;"></td>
+<td headers="E A S T  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">10.5</td>
+<td headers="E A S T  nfc_playoff" class="gt_row gt_right" style="background-color: #0167AB; color: #FFFFFF;">95%</td>
+<td headers="E A S T  nfc_div1" class="gt_row gt_right" style="background-color: #016AAF; color: #FFFFFF;">94%</td>
+<td headers="E A S T  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/mia.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">6.5</td>
-<td class="gt_row gt_right" style="background-color: #F6FCFF; color: #000000;">3%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFEFC; color: #000000;">1%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">7.9</td>
-<td class="gt_row gt_right" style="background-color: #CAEDFD; color: #000000;">15%</td>
-<td class="gt_row gt_right" style="background-color: #F3FBFF; color: #000000;">4%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/mia.png" style="height:30px;"></td>
+<td headers="E A S T  afc_wins" class="gt_row gt_right" style="font-weight: bold;">6.5</td>
+<td headers="E A S T  afc_playoff" class="gt_row gt_right" style="background-color: #F6FCFF; color: #000000;">3%</td>
+<td headers="E A S T  afc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_draft5" class="gt_row gt_right" style="background-color: #FFFEFC; color: #000000;">1%</td>
+<td headers="E A S T  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png" style="height:30px;"></td>
+<td headers="E A S T  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">7.9</td>
+<td headers="E A S T  nfc_playoff" class="gt_row gt_right" style="background-color: #CAEDFD; color: #000000;">15%</td>
+<td headers="E A S T  nfc_div1" class="gt_row gt_right" style="background-color: #F3FBFF; color: #000000;">4%</td>
+<td headers="E A S T  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">4.8</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFF3E2; color: #000000;">9%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/phi.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">6.7</td>
-<td class="gt_row gt_right" style="background-color: #F3FBFF; color: #000000;">4%</td>
-<td class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFEFC; color: #000000;">1%</td>
+<td headers="E A S T  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" style="height:30px;"></td>
+<td headers="E A S T  afc_wins" class="gt_row gt_right" style="font-weight: bold;">4.8</td>
+<td headers="E A S T  afc_playoff" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_draft5" class="gt_row gt_right" style="background-color: #FFF3E2; color: #000000;">9%</td>
+<td headers="E A S T  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/phi.png" style="height:30px;"></td>
+<td headers="E A S T  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">6.7</td>
+<td headers="E A S T  nfc_playoff" class="gt_row gt_right" style="background-color: #F3FBFF; color: #000000;">4%</td>
+<td headers="E A S T  nfc_div1" class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
+<td headers="E A S T  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_draft5" class="gt_row gt_right" style="background-color: #FFFEFC; color: #000000;">1%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">3.4</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFAD37; color: #000000;">46%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">1.5</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #F07200; color: #000000;">86%</td>
+<td headers="E A S T  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png" style="height:30px;"></td>
+<td headers="E A S T  afc_wins" class="gt_row gt_right" style="font-weight: bold;">3.4</td>
+<td headers="E A S T  afc_playoff" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  afc_draft5" class="gt_row gt_right" style="background-color: #FFAD37; color: #000000;">46%</td>
+<td headers="E A S T  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png" style="height:30px;"></td>
+<td headers="E A S T  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">1.5</td>
+<td headers="E A S T  nfc_playoff" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="E A S T  nfc_draft5" class="gt_row gt_right" style="background-color: #F07200; color: #FFFFFF;">86%</td>
 </tr>
 <tr class="gt_group_heading_row">
-<td colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;">N O R T H</td>
+<th colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="N O R T H">N O R T H</th>
     </tr>
 <tr class="gt_row_group_first">
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/bal.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">14.3</td>
-<td class="gt_row gt_right" style="background-color: #005A9D; color: #FFFFFF;">99%</td>
-<td class="gt_row gt_right" style="background-color: #0182CB; color: #FFFFFF;">83%</td>
-<td class="gt_row gt_right" style="background-color: #02A4EF; color: #000000;">63%</td>
-<td class="gt_row gt_right" style="background-color: #0292DD; color: #FFFFFF;">74%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/chi.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">16.0</td>
-<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
-<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
-<td class="gt_row gt_right" style="background-color: #005A9D; color: #FFFFFF;">99%</td>
-<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
-<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/bal.png" style="height:30px;"></td>
+<td headers="N O R T H  afc_wins" class="gt_row gt_right" style="font-weight: bold;">14.3</td>
+<td headers="N O R T H  afc_playoff" class="gt_row gt_right" style="background-color: #005A9D; color: #FFFFFF;">99%</td>
+<td headers="N O R T H  afc_div1" class="gt_row gt_right" style="background-color: #0182CB; color: #FFFFFF;">83%</td>
+<td headers="N O R T H  afc_seed1" class="gt_row gt_right" style="background-color: #02A4EF; color: #FFFFFF;">63%</td>
+<td headers="N O R T H  afc_won_conf" class="gt_row gt_right" style="background-color: #0292DD; color: #FFFFFF;">74%</td>
+<td headers="N O R T H  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/chi.png" style="height:30px;"></td>
+<td headers="N O R T H  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">16.0</td>
+<td headers="N O R T H  nfc_playoff" class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td headers="N O R T H  nfc_div1" class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td headers="N O R T H  nfc_seed1" class="gt_row gt_right" style="background-color: #005A9D; color: #FFFFFF;">99%</td>
+<td headers="N O R T H  nfc_won_conf" class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td headers="N O R T H  nfc_won_sb" class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td headers="N O R T H  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/cin.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">12.6</td>
-<td class="gt_row gt_right" style="background-color: #005A9D; color: #FFFFFF;">99%</td>
-<td class="gt_row gt_right" style="background-color: #CAEDFD; color: #000000;">15%</td>
-<td class="gt_row gt_right" style="background-color: #EDF8FE; color: #000000;">6%</td>
-<td class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/det.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">10.4</td>
-<td class="gt_row gt_right" style="background-color: #0167AB; color: #FFFFFF;">95%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/cin.png" style="height:30px;"></td>
+<td headers="N O R T H  afc_wins" class="gt_row gt_right" style="font-weight: bold;">12.6</td>
+<td headers="N O R T H  afc_playoff" class="gt_row gt_right" style="background-color: #005A9D; color: #FFFFFF;">99%</td>
+<td headers="N O R T H  afc_div1" class="gt_row gt_right" style="background-color: #CAEDFD; color: #000000;">15%</td>
+<td headers="N O R T H  afc_seed1" class="gt_row gt_right" style="background-color: #EDF8FE; color: #000000;">6%</td>
+<td headers="N O R T H  afc_won_conf" class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
+<td headers="N O R T H  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/det.png" style="height:30px;"></td>
+<td headers="N O R T H  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">10.4</td>
+<td headers="N O R T H  nfc_playoff" class="gt_row gt_right" style="background-color: #0167AB; color: #FFFFFF;">95%</td>
+<td headers="N O R T H  nfc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/cle.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">11.1</td>
-<td class="gt_row gt_right" style="background-color: #016AAF; color: #FFFFFF;">94%</td>
-<td class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
-<td class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
-<td class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/min.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">6.5</td>
-<td class="gt_row gt_right" style="background-color: #F3FBFF; color: #000000;">4%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/cle.png" style="height:30px;"></td>
+<td headers="N O R T H  afc_wins" class="gt_row gt_right" style="font-weight: bold;">11.1</td>
+<td headers="N O R T H  afc_playoff" class="gt_row gt_right" style="background-color: #016AAF; color: #FFFFFF;">94%</td>
+<td headers="N O R T H  afc_div1" class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
+<td headers="N O R T H  afc_seed1" class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
+<td headers="N O R T H  afc_won_conf" class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
+<td headers="N O R T H  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/min.png" style="height:30px;"></td>
+<td headers="N O R T H  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">6.5</td>
+<td headers="N O R T H  nfc_playoff" class="gt_row gt_right" style="background-color: #F3FBFF; color: #000000;">4%</td>
+<td headers="N O R T H  nfc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/pit.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">3.3</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFC670; color: #000000;">33%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/gb.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">0.0</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #E55100; color: #FFFFFF;">100%</td>
-<td class="gt_row gt_right" style="background-color: #E55100; color: #FFFFFF;">100%</td>
+<td headers="N O R T H  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/pit.png" style="height:30px;"></td>
+<td headers="N O R T H  afc_wins" class="gt_row gt_right" style="font-weight: bold;">3.3</td>
+<td headers="N O R T H  afc_playoff" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  afc_draft5" class="gt_row gt_right" style="background-color: #FFC670; color: #000000;">33%</td>
+<td headers="N O R T H  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/gb.png" style="height:30px;"></td>
+<td headers="N O R T H  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">0.0</td>
+<td headers="N O R T H  nfc_playoff" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="N O R T H  nfc_draft1" class="gt_row gt_right" style="background-color: #E55100; color: #FFFFFF;">100%</td>
+<td headers="N O R T H  nfc_draft5" class="gt_row gt_right" style="background-color: #E55100; color: #FFFFFF;">100%</td>
 </tr>
 <tr class="gt_group_heading_row">
-<td colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;">S O U T H</td>
+<th colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="S O U T H">S O U T H</th>
     </tr>
 <tr class="gt_row_group_first">
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/hou.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">10.5</td>
-<td class="gt_row gt_right" style="background-color: #016DB2; color: #FFFFFF;">93%</td>
-<td class="gt_row gt_right" style="background-color: #017DC5; color: #FFFFFF;">86%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/atl.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">13.6</td>
-<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
-<td class="gt_row gt_right" style="background-color: #016AAF; color: #FFFFFF;">94%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/hou.png" style="height:30px;"></td>
+<td headers="S O U T H  afc_wins" class="gt_row gt_right" style="font-weight: bold;">10.5</td>
+<td headers="S O U T H  afc_playoff" class="gt_row gt_right" style="background-color: #016DB2; color: #FFFFFF;">93%</td>
+<td headers="S O U T H  afc_div1" class="gt_row gt_right" style="background-color: #017DC5; color: #FFFFFF;">86%</td>
+<td headers="S O U T H  afc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/atl.png" style="height:30px;"></td>
+<td headers="S O U T H  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">13.6</td>
+<td headers="S O U T H  nfc_playoff" class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td headers="S O U T H  nfc_div1" class="gt_row gt_right" style="background-color: #016AAF; color: #FFFFFF;">94%</td>
+<td headers="S O U T H  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ind.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">8.7</td>
-<td class="gt_row gt_right" style="background-color: #4EC3F7; color: #000000;">40%</td>
-<td class="gt_row gt_right" style="background-color: #DCF3FE; color: #000000;">11%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500-dark/car.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">11.1</td>
-<td class="gt_row gt_right" style="background-color: #0164A8; color: #FFFFFF;">96%</td>
-<td class="gt_row gt_right" style="background-color: #EDF8FE; color: #000000;">6%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ind.png" style="height:30px;"></td>
+<td headers="S O U T H  afc_wins" class="gt_row gt_right" style="font-weight: bold;">8.7</td>
+<td headers="S O U T H  afc_playoff" class="gt_row gt_right" style="background-color: #4EC3F7; color: #000000;">40%</td>
+<td headers="S O U T H  afc_div1" class="gt_row gt_right" style="background-color: #DCF3FE; color: #000000;">11%</td>
+<td headers="S O U T H  afc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500-dark/car.png" style="height:30px;"></td>
+<td headers="S O U T H  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">11.1</td>
+<td headers="S O U T H  nfc_playoff" class="gt_row gt_right" style="background-color: #0164A8; color: #FFFFFF;">96%</td>
+<td headers="S O U T H  nfc_div1" class="gt_row gt_right" style="background-color: #EDF8FE; color: #000000;">6%</td>
+<td headers="S O U T H  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/jax.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">7.2</td>
-<td class="gt_row gt_right" style="background-color: #EDF8FE; color: #000000;">6%</td>
-<td class="gt_row gt_right" style="background-color: #F6FCFF; color: #000000;">3%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/no.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">5.6</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFCF9; color: #000000;">2%</td>
+<td headers="S O U T H  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/jax.png" style="height:30px;"></td>
+<td headers="S O U T H  afc_wins" class="gt_row gt_right" style="font-weight: bold;">7.2</td>
+<td headers="S O U T H  afc_playoff" class="gt_row gt_right" style="background-color: #EDF8FE; color: #000000;">6%</td>
+<td headers="S O U T H  afc_div1" class="gt_row gt_right" style="background-color: #F6FCFF; color: #000000;">3%</td>
+<td headers="S O U T H  afc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/no.png" style="height:30px;"></td>
+<td headers="S O U T H  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">5.6</td>
+<td headers="S O U T H  nfc_playoff" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_draft5" class="gt_row gt_right" style="background-color: #FFFCF9; color: #000000;">2%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ten.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">2.4</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FE9400; color: #000000;">63%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/tb.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">2.5</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FC9100; color: #000000;">66%</td>
+<td headers="S O U T H  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ten.png" style="height:30px;"></td>
+<td headers="S O U T H  afc_wins" class="gt_row gt_right" style="font-weight: bold;">2.4</td>
+<td headers="S O U T H  afc_playoff" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  afc_draft5" class="gt_row gt_right" style="background-color: #FE9400; color: #000000;">63%</td>
+<td headers="S O U T H  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/tb.png" style="height:30px;"></td>
+<td headers="S O U T H  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">2.5</td>
+<td headers="S O U T H  nfc_playoff" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="S O U T H  nfc_draft5" class="gt_row gt_right" style="background-color: #FC9100; color: #000000;">66%</td>
 </tr>
 <tr class="gt_group_heading_row">
-<td colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;">W E S T</td>
+<th colspan="18" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="W E S T">W E S T</th>
     </tr>
 <tr class="gt_row_group_first">
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/den.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">11.9</td>
-<td class="gt_row gt_right" style="background-color: #0160A4; color: #FFFFFF;">97%</td>
-<td class="gt_row gt_right" style="background-color: #0170B6; color: #FFFFFF;">92%</td>
-<td class="gt_row gt_right" style="background-color: #E6F6FE; color: #000000;">8%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ari.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">14.6</td>
-<td class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
-<td class="gt_row gt_right" style="background-color: #015DA1; color: #FFFFFF;">98%</td>
-<td class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/den.png" style="height:30px;"></td>
+<td headers="W E S T  afc_wins" class="gt_row gt_right" style="font-weight: bold;">11.9</td>
+<td headers="W E S T  afc_playoff" class="gt_row gt_right" style="background-color: #0160A4; color: #FFFFFF;">97%</td>
+<td headers="W E S T  afc_div1" class="gt_row gt_right" style="background-color: #0170B6; color: #FFFFFF;">92%</td>
+<td headers="W E S T  afc_seed1" class="gt_row gt_right" style="background-color: #E6F6FE; color: #000000;">8%</td>
+<td headers="W E S T  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ari.png" style="height:30px;"></td>
+<td headers="W E S T  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">14.6</td>
+<td headers="W E S T  nfc_playoff" class="gt_row gt_right" style="background-color: #00579A; color: #FFFFFF;">100%</td>
+<td headers="W E S T  nfc_div1" class="gt_row gt_right" style="background-color: #015DA1; color: #FFFFFF;">98%</td>
+<td headers="W E S T  nfc_seed1" class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
+<td headers="W E S T  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">8.9</td>
-<td class="gt_row gt_right" style="background-color: #02A9F3; color: #000000;">60%</td>
-<td class="gt_row gt_right" style="background-color: #E9F7FE; color: #000000;">7%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/lar.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">10.1</td>
-<td class="gt_row gt_right" style="background-color: #0174B9; color: #FFFFFF;">91%</td>
-<td class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" style="height:30px;"></td>
+<td headers="W E S T  afc_wins" class="gt_row gt_right" style="font-weight: bold;">8.9</td>
+<td headers="W E S T  afc_playoff" class="gt_row gt_right" style="background-color: #02A9F3; color: #FFFFFF;">60%</td>
+<td headers="W E S T  afc_div1" class="gt_row gt_right" style="background-color: #E9F7FE; color: #000000;">7%</td>
+<td headers="W E S T  afc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/lar.png" style="height:30px;"></td>
+<td headers="W E S T  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">10.1</td>
+<td headers="W E S T  nfc_playoff" class="gt_row gt_right" style="background-color: #0174B9; color: #FFFFFF;">91%</td>
+<td headers="W E S T  nfc_div1" class="gt_row gt_right" style="background-color: #F9FDFF; color: #000000;">2%</td>
+<td headers="W E S T  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/lac.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">7.2</td>
-<td class="gt_row gt_right" style="background-color: #E6F6FE; color: #000000;">8%</td>
-<td class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">3.8</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFC166; color: #000000;">35%</td>
+<td headers="W E S T  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/lac.png" style="height:30px;"></td>
+<td headers="W E S T  afc_wins" class="gt_row gt_right" style="font-weight: bold;">7.2</td>
+<td headers="W E S T  afc_playoff" class="gt_row gt_right" style="background-color: #E6F6FE; color: #000000;">8%</td>
+<td headers="W E S T  afc_div1" class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
+<td headers="W E S T  afc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_draft5" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" style="height:30px;"></td>
+<td headers="W E S T  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">3.8</td>
+<td headers="W E S T  nfc_playoff" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_draft5" class="gt_row gt_right" style="background-color: #FFC166; color: #000000;">35%</td>
 </tr>
 <tr>
-<td class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/lv.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">5.6</td>
-<td class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFEFC; color: #000000;">1%</td>
-<td class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/sf.png" style="height:30px;"></td>
-<td class="gt_row gt_right" style="font-weight: bold;">3.4</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
-<td class="gt_row gt_right" style="background-color: #FF9C10; color: #000000;">57%</td>
+<td headers="W E S T  afc_team" class="gt_row gt_left"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/lv.png" style="height:30px;"></td>
+<td headers="W E S T  afc_wins" class="gt_row gt_right" style="font-weight: bold;">5.6</td>
+<td headers="W E S T  afc_playoff" class="gt_row gt_right" style="background-color: #FCFEFF; color: #000000;">1%</td>
+<td headers="W E S T  afc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  afc_draft5" class="gt_row gt_right" style="background-color: #FFFEFC; color: #000000;">1%</td>
+<td headers="W E S T  nfc_team" class="gt_row gt_left" style="border-left-width: 2px; border-left-style: solid; border-left-color: #000000;"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/sf.png" style="height:30px;"></td>
+<td headers="W E S T  nfc_wins" class="gt_row gt_right" style="font-weight: bold;">3.4</td>
+<td headers="W E S T  nfc_playoff" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_div1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_seed1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_won_conf" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_won_sb" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_draft1" class="gt_row gt_right" style="background-color: #FFFFFF; color: #000000;">0%</td>
+<td headers="W E S T  nfc_draft5" class="gt_row gt_right" style="background-color: #FF9C10; color: #000000;">57%</td>
 </tr>
 </tbody>
 <tfoot class="gt_sourcenotes"><tr>
@@ -1474,20 +1592,47 @@ html {
     </tr></tfoot>
 </table>
 </div>
-<p>And this shows exactly what we expect. By defining the Bears as the best team, they always go 16-0, win the division, and win the Super Bowl. Interestingly, they do not always get the #1 seed. This makes sense, however, as in games without the Bears or the Packers, the alphabetically earlier teams still wins 90% of the time. The Cardinals would therefore be expected to go 16-0 in some of the simulations, and in some of those have thee tiebreakers over the Bears. However, even in these simulations, they’ll still lose to Bears in the end when they meet in the playoffs.</p>
-<p>Similarly, the Packers always go 0-16, and never make the playoffs. While in these simulated seasons they got the #1 draft pick every time, they aren’t guaranteed to do so. Using the same logic as above, sometimes the Washington Commanders will go 0-16 too, and may beat the Packers out for the #1 pick through tiebreakers.</p>
+<p>And this shows exactly what we expect. By defining the Bears as the
+best team, they always go 16-0, win the division, and win the Super
+Bowl. Interestingly, they do not always get the #1 seed. This makes
+sense, however, as in games without the Bears or the Packers, the
+alphabetically earlier teams still wins 90% of the time. The Cardinals
+would therefore be expected to go 16-0 in some of the simulations, and
+in some of those have thee tiebreakers over the Bears. However, even in
+these simulations, they’ll still lose to Bears in the end when they meet
+in the playoffs.</p>
+<p>Similarly, the Packers always go 0-16, and never make the playoffs.
+While in these simulated seasons they got the #1 draft pick every time,
+they aren’t guaranteed to do so. Using the same logic as above,
+sometimes the Washington Commanders will go 0-16 too, and may beat the
+Packers out for the #1 pick through tiebreakers.</p>
 </div>
 <div class="section level3">
 <h3 id="passing-data-in-from-one-week-to-the-next">Passing Data in from One Week to the Next<a class="anchor" aria-label="anchor" href="#passing-data-in-from-one-week-to-the-next"></a>
 </h3>
-<p>Sometimes though you want your data to keep updating as the simulation progresses. For example, an Elo-based model that updates each team’s Elo after each game. You can pass in the starting Elo values per team, and as games are simulated, update the Elo values for each team and store them in the <code>teams</code> data. This column will be part of the <code>teams</code> data passed into your function when the following week is simulated and your function is called.</p>
-<p>Read the comments in the code below for specific tips on doing this but here are good ones:</p>
+<p>Sometimes though you want your data to keep updating as the
+simulation progresses. For example, an Elo-based model that updates each
+team’s Elo after each game. You can pass in the starting Elo values per
+team, and as games are simulated, update the Elo values for each team
+and store them in the <code>teams</code> data. This column will be part
+of the <code>teams</code> data passed into your function when the
+following week is simulated and your function is called.</p>
+<p>Read the comments in the code below for specific tips on doing this
+but here are good ones:</p>
 <ul>
-<li>You can add columns to <code>teams</code> and/or <code>games</code> if you want.</li>
-<li>When doing joins to do the above, do left joins to make sure no rows are removed.</li>
-<li>Remove any “helper” columns you generate along the way you don’t actually need before returning.</li>
-<li>Make sure any column doesn’t get blindly joined on so it has <code>.x</code> and <code>.y</code> versions in Week 2 and R throws an error because an expected column name doesn’t exist.</li>
-<li>Make sure you only update games with <code>is.na(result) &amp; week == week_num</code>! You don’t want to override completed games, or games from a week other than the current week being simulated.</li>
+<li>You can add columns to <code>teams</code> and/or <code>games</code>
+if you want.</li>
+<li>When doing joins to do the above, do left joins to make sure no rows
+are removed.</li>
+<li>Remove any “helper” columns you generate along the way you don’t
+actually need before returning.</li>
+<li>Make sure any column doesn’t get blindly joined on so it has
+<code>.x</code> and <code>.y</code> versions in Week 2 and R throws an
+error because an expected column name doesn’t exist.</li>
+<li>Make sure you only update games with
+<code>is.na(result) &amp; week == week_num</code>! You don’t want to
+override completed games, or games from a week other than the current
+week being simulated.</li>
 </ul>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">elo_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">teams</span>, <span class="va">games</span>, <span class="va">week_num</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
@@ -1615,7 +1760,11 @@ html {
 <span>  <span class="co"># ... but after that will differ per sim depending on that sim's results</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>teams <span class="op">=</span> <span class="va">teams</span>, games <span class="op">=</span> <span class="va">games</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Let’s generate initial random Elo values for each team. To see how this works, we’ll supply an <code>test_week = 3</code> as an argument into <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> which will abort after simulating Week 3, and instead return the result of our <code>elo_model()</code> function.</p>
+<p>Let’s generate initial random Elo values for each team. To see how
+this works, we’ll supply an <code>test_week = 3</code> as an argument
+into <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> which will abort after simulating Week
+3, and instead return the result of our <code>elo_model()</code>
+function.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">initial_elo</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
 <span>  team <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu">nflseedR</span><span class="fu">::</span><span class="va"><a href="../reference/divisions.html">divisions</a></span><span class="op">$</span><span class="va">team</span><span class="op">)</span>,</span>
@@ -1628,10 +1777,11 @@ html {
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  test_week <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:24: Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:24: Beginning simulation of 1000 seasons in 1 round</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">•</span> 2022-09-29 02:25:26: Aborting and returning your `process_games` function's results from Week 3</span></span></code></pre></div>
-<p>Let’s look at the Bears’ Elo after Week 3 in the top handful of simulations:</p>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:17:37 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:17:38 | Beginning simulation of 1000 seasons in 1 round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 08:17:40 | Aborting and returning your `process_games` function's results from Week 3</span></span></code></pre></div>
+<p>Let’s look at the Bears’ Elo after Week 3 in the top handful of
+simulations:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -1697,7 +1847,9 @@ html {
 </tr>
 </tbody>
 </table>
-<p>You can see that different simulations have different Elo results for the Bears, as the simulated seasons had different results for the games, and the Elos were adjusted accordingly.</p>
+<p>You can see that different simulations have different Elo results for
+the Bears, as the simulated seasons had different results for the games,
+and the Elos were adjusted accordingly.</p>
 <p>Let’s examine the Bears’ games in that first simulation:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test</span><span class="op">$</span><span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -1722,99 +1874,180 @@ html {
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span>     1 REG          15 CHI       MIN               7         7 Home         <span style="color: #BB0000;">NA</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span>     1 REG          16 CHI       JAX               7         7 Home         <span style="color: #BB0000;">NA</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span>     1 REG          17 GB        CHI               7         7 Home         <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
-<p>Note that only the first three weeks have the result filled in, while the others are <code>NA</code>, indicating that game hasn’t yet occurred or been simulated. This is because the <code>test_week = 3</code> input aborted the simulation after Week 3, which was useful for seeing the Elo above.</p>
+<p>Note that only the first three weeks have the result filled in, while
+the others are <code>NA</code>, indicating that game hasn’t yet occurred
+or been simulated. This is because the <code>test_week = 3</code> input
+aborted the simulation after Week 3, which was useful for seeing the Elo
+above.</p>
 </div>
 <div class="section level3">
 <h3 id="simulation-configuration">Simulation Configuration<a class="anchor" aria-label="anchor" href="#simulation-configuration"></a>
 </h3>
-<p>There is a lot of flexibility in how you choose to run the simulation. These are the parameters and how to configure them when you run the <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> function.</p>
+<p>There is a lot of flexibility in how you choose to run the
+simulation. These are the parameters and how to configure them when you
+run the <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> function.</p>
 <ul>
 <li>
-<strong>nfl_season</strong> - Which NFL season are you simulating? By default, it simulates the most recent season for which the regular season schedule is available through <a href="https://github.com/nflverse/nfldata/tree/master/data" class="external-link">Lee Sharpe’s NFL game data</a>. The earliest season you can simulate is 2002.</li>
-<li>Note: Before the schedule for a new season is released, nflseedR may support simulating using a fake schedule for the upcoming season. It will notify you if it is doing this. The opponents will be correct, but the weeks in which games occur will not match the actual NFL schedule. The actual schedule will be utilized instead after it is released by the NFL.</li>
+<strong>nfl_season</strong> - Which NFL season are you simulating?
+By default, it simulates the most recent season for which the regular
+season schedule is available through <a href="https://github.com/nflverse/nfldata/tree/master/data" class="external-link">Lee Sharpe’s
+NFL game data</a>. The earliest season you can simulate is 2002.</li>
+<li>Note: Before the schedule for a new season is released, nflseedR may
+support simulating using a fake schedule for the upcoming season. It
+will notify you if it is doing this. The opponents will be correct, but
+the weeks in which games occur will not match the actual NFL schedule.
+The actual schedule will be utilized instead after it is released by the
+NFL.</li>
 <li>
-<strong>process_games</strong> - This is where you supply a function you’ve written to encompass your model used to determine simulated games results, like the examples above. By default, this will generate a random Elo for every team per round of simulations, then use that to determine game data.</li>
+<strong>process_games</strong> - This is where you supply a function
+you’ve written to encompass your model used to determine simulated games
+results, like the examples above. By default, this will generate a
+random Elo for every team per round of simulations, then use that to
+determine game data.</li>
 <li>
-<strong>playoff_seeds</strong> - How many playoff seeds per conference are used? By default, this is 7 for seasons 2020 and later, and 6 for earlier seasons.</li>
+<strong>playoff_seeds</strong> - How many playoff seeds per
+conference are used? By default, this is 7 for seasons 2020 and later,
+and 6 for earlier seasons.</li>
 <li>
-<strong>if_ended_today</strong> - This should only be used when running in the middle of the regular season. It will take all completed games as done, but remove the rest of the regular season games from the schedule, and begin the playoffs as if everything was locked in based on the regular season data that exists so far.</li>
+<strong>if_ended_today</strong> - This should only be used when
+running in the middle of the regular season. It will take all completed
+games as done, but remove the rest of the regular season games from the
+schedule, and begin the playoffs as if everything was locked in based on
+the regular season data that exists so far.</li>
 <li>
-<strong>fresh_season</strong> - You’ll see this was set to <code>TRUE</code> in all of our examples above. This setting deletes any playoff games and clears out the results for all regular season games, so everything is generated fresh. The default is <code>FALSE</code> where all games that have been completed in real life are treated as locked in, and instead remaining games are simulated.</li>
+<strong>fresh_season</strong> - You’ll see this was set to
+<code>TRUE</code> in all of our examples above. This setting deletes any
+playoff games and clears out the results for all regular season games,
+so everything is generated fresh. The default is <code>FALSE</code>
+where all games that have been completed in real life are treated as
+locked in, and instead remaining games are simulated.</li>
 <li>
-<strong>fresh_playoffs</strong> - Similar to <code>fresh_season</code>, except instead when set to <code>TRUE</code>, regular season results remain and only playoff games are deleted and then simulated. The default is <code>FALSE</code> in which case playoff games that are completed are accepted as they occurred,</li>
+<strong>fresh_playoffs</strong> - Similar to
+<code>fresh_season</code>, except instead when set to <code>TRUE</code>,
+regular season results remain and only playoff games are deleted and
+then simulated. The default is <code>FALSE</code> in which case playoff
+games that are completed are accepted as they occurred,</li>
 <li>
-<strong>tiebreaker_depth</strong> - How far do you want tiebreakers to be utilized? Usually leaving it at the default below (<code>3</code>) is fine, but before the season starts, you may wish to have less tie-breaking in order to
+<strong>tiebreaker_depth</strong> - How far do you want tiebreakers
+to be utilized? Usually leaving it at the default below (<code>3</code>)
+is fine, but before the season starts, you may wish to have less
+tie-breaking in order to
 <ul>
 <li>
-<code>1</code>: All teams with the same record have any ties broken randomly.</li>
+<code>1</code>: All teams with the same record have any ties broken
+randomly.</li>
 <li>
-<code>2</code>: Instead of evaluating common games if that step is reached, break any ties randomly. But all earlier tiebreakers are handled correctly.</li>
+<code>2</code>: Instead of evaluating common games if that step is
+reached, break any ties randomly. But all earlier tiebreakers are
+handled correctly.</li>
 <li>
-<code>3</code>: The default. All tiebreakers are handled through strength of schedule are processed (or through strength of victory for draft pick order). In the unlikely event of a further tie, it will be broken randomly.</li>
+<code>3</code>: The default. All tiebreakers are handled through
+strength of schedule are processed (or through strength of victory for
+draft pick order). In the unlikely event of a further tie, it will be
+broken randomly.</li>
 </ul>
 </li>
 <li>
-<strong>test_week</strong> - This will abort after simulating this week number in the simulator. <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> instead will return the output of your <code>process_games()</code> function. This is a useful input for debugging your code, but should be left as <code>NULL</code> (the default) for actual simulations. This also means only the first round will be simulated.</li>
+<strong>test_week</strong> - This will abort after simulating this
+week number in the simulator. <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> instead will
+return the output of your <code>process_games()</code> function. This is
+a useful input for debugging your code, but should be left as
+<code>NULL</code> (the default) for actual simulations. This also means
+only the first round will be simulated.</li>
 <li>
-<strong>simulations</strong> - How many simulations should be run? Defaults to 1000.</li>
+<strong>simulations</strong> - How many simulations should be run?
+Defaults to 1000.</li>
 <li>
-<strong>sims_per_round</strong> - The simulator can break things up into chunks of simulated seasons, process each chunk on its own (called a round), and then aggregate everything together at the end. The default value determines the number of locally available cores and calculates the number of simulations per round to be equal to half of the available cores (various benchmarks showed this results in optimal performance in parallel processes). If your computer is hanging and forces a restart while running this simulation, it is recommended that you lower this number.</li>
+<strong>sims_per_round</strong> - The simulator can break things up
+into chunks of simulated seasons, process each chunk on its own (called
+a round), and then aggregate everything together at the end. The default
+value determines the number of locally available cores and calculates
+the number of simulations per round to be equal to half of the available
+cores (various benchmarks showed this results in optimal performance in
+parallel processes). If your computer is hanging and forces a restart
+while running this simulation, it is recommended that you lower this
+number.</li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="simulation-output">Simulation Output<a class="anchor" aria-label="anchor" href="#simulation-output"></a>
 </h3>
-<p>The output of <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code>, assuming you don’t put in a <code>test_week</code> to debug your function, is a list of class <code>"nflseedR_simulation"</code> that holds four data frames with simulation results as well as a list of parameters used in the simulation. Here are the contents of each:</p>
+<p>The output of <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code>, assuming you don’t put in
+a <code>test_week</code> to debug your function, is a list of class
+<code>"nflseedR_simulation"</code> that holds four data frames with
+simulation results as well as a list of parameters used in the
+simulation. Here are the contents of each:</p>
 <ul>
 <li>
 <strong>teams</strong> - One row per team per simulation.
 <ul>
 <li>
-<strong>sim</strong> - The ID number of the simulation. All rows with the same value of <code>sim</code> in both <code>teams</code> and <code>games</code> refer to the same simulated season.</li>
+<strong>sim</strong> - The ID number of the simulation. All rows
+with the same value of <code>sim</code> in both <code>teams</code> and
+<code>games</code> refer to the same simulated season.</li>
 <li>
 <strong>team</strong> - The abbreviation representing the team</li>
 <li>
-<strong>conf</strong> - The conference the team is in (such as <code>AFC</code>)</li>
+<strong>conf</strong> - The conference the team is in (such as
+<code>AFC</code>)</li>
 <li>
-<strong>division</strong> - The division the team is in (such as <code>NFC West</code>)</li>
+<strong>division</strong> - The division the team is in (such as
+<code>NFC West</code>)</li>
 <li>
-<strong>games</strong> - How many regular season games the team has played</li>
+<strong>games</strong> - How many regular season games the team has
+played</li>
 <li>
-<strong>wins</strong> - The number of games the team has won, counting ties as 0.5 wins</li>
+<strong>wins</strong> - The number of games the team has won,
+counting ties as 0.5 wins</li>
 <li>
-<strong>true_wins</strong> - The number of games the team has won, ignoring ties.</li>
+<strong>true_wins</strong> - The number of games the team has won,
+ignoring ties.</li>
 <li>
-<strong>win_pct</strong> - The win rate of the team. Equal to <code>wins / games</code>.</li>
+<strong>win_pct</strong> - The win rate of the team. Equal to
+<code>wins / games</code>.</li>
 <li>
-<strong>div_pct</strong> - The win rate of the teams in games played against teams in the same division.</li>
+<strong>div_pct</strong> - The win rate of the teams in games played
+against teams in the same division.</li>
 <li>
-<strong>conf_pct</strong> - The win rate of the teams in games played against teams in the same conference.</li>
+<strong>conf_pct</strong> - The win rate of the teams in games
+played against teams in the same conference.</li>
 <li>
-<strong>sov</strong> - Strength of Victory. The combined win rate of teams this team has beaten.</li>
+<strong>sov</strong> - Strength of Victory. The combined win rate of
+teams this team has beaten.</li>
 <li>
-<strong>sos</strong> - Strength of Schedule. The combined win rate of teams this team has played.</li>
+<strong>sos</strong> - Strength of Schedule. The combined win rate
+of teams this team has played.</li>
 <li>
-<strong>div_rank</strong> - What place the team finished in its division.</li>
+<strong>div_rank</strong> - What place the team finished in its
+division.</li>
 <li>
-<strong>seed</strong> - What playoff seed number the team earned. <code>NA</code> if the team did not make the playoffs.</li>
+<strong>seed</strong> - What playoff seed number the team earned.
+<code>NA</code> if the team did not make the playoffs.</li>
 <li>
-<strong>exit</strong> - The week of the team’s last game. The Super Bowl winner’s value will be one higher than the week of the Super Bowl.</li>
+<strong>exit</strong> - The week of the team’s last game. The Super
+Bowl winner’s value will be one higher than the week of the Super
+Bowl.</li>
 <li>
-<strong>draft_order</strong> - Which pick the team earned in the following NFL Draft. Note that this value is before any trades, forfeits, or other modifications to draft picks.</li>
+<strong>draft_order</strong> - Which pick the team earned in the
+following NFL Draft. Note that this value is before any trades,
+forfeits, or other modifications to draft picks.</li>
 </ul>
 </li>
 <li>
 <strong>games</strong> - One row per game per simulation.
 <ul>
 <li>
-<strong>sim</strong> - The ID number of the simulation. All rows with the same value of <code>sim</code> in both <code>teams</code> and <code>games</code> refer to the same simulated season.</li>
+<strong>sim</strong> - The ID number of the simulation. All rows
+with the same value of <code>sim</code> in both <code>teams</code> and
+<code>games</code> refer to the same simulated season.</li>
 <li>
 <strong>game_type</strong> - What type of game this is
 <ul>
 <li>
 <code>REG</code> - A regular season game</li>
 <li>
-<code>POST</code> - A playoff rounds earlier than a wildcard game (only used if simulating with lots of playoff teams)</li>
+<code>POST</code> - A playoff rounds earlier than a wildcard game
+(only used if simulating with lots of playoff teams)</li>
 <li>
 <code>WC</code> - A wildcard playoff game</li>
 <li>
@@ -1826,63 +2059,102 @@ html {
 </ul>
 </li>
 <li>
-<strong>week</strong> - The numerical week the game takes place in. Continues incrementing after the regular season to each playoff round.</li>
+<strong>week</strong> - The numerical week the game takes place in.
+Continues incrementing after the regular season to each playoff
+round.</li>
 <li>
-<strong>away_team</strong> - The abbreviation of the away team in the game</li>
+<strong>away_team</strong> - The abbreviation of the away team in
+the game</li>
 <li>
-<strong>home_team</strong> - The abbreviation of the home team in the game</li>
+<strong>home_team</strong> - The abbreviation of the home team in
+the game</li>
 <li>
-<strong>away_rest</strong> - The number of days since the away team’s last game. Is <code>7</code> for the team’s first game of the season.</li>
+<strong>away_rest</strong> - The number of days since the away
+team’s last game. Is <code>7</code> for the team’s first game of the
+season.</li>
 <li>
-<strong>home_rest</strong> - The number of days since the home team’s last game. Is <code>7</code> for the team’s first game of the season.</li>
+<strong>home_rest</strong> - The number of days since the home
+team’s last game. Is <code>7</code> for the team’s first game of the
+season.</li>
 <li>
-<strong>location</strong> - Either <code>Home</code> if played at the home team’s stadium, or <code>Neutral</code> for a game played elsewhere</li>
+<strong>location</strong> - Either <code>Home</code> if played at
+the home team’s stadium, or <code>Neutral</code> for a game played
+elsewhere</li>
 <li>
-<strong>result</strong> - The amount of points the home team won by (or lost by if negative). Is <code>0</code> for tied games. It is <code>NA</code> for games which aren’t yet complete or simulated, which should only ever be returned if you used <code>test_week</code>.</li>
+<strong>result</strong> - The amount of points the home team won by
+(or lost by if negative). Is <code>0</code> for tied games. It is
+<code>NA</code> for games which aren’t yet complete or simulated, which
+should only ever be returned if you used <code>test_week</code>.</li>
 </ul>
 </li>
 <li>
-<strong>overall</strong> - One row per team, aggregated across all simulations. Sorted by <code>conf</code> then <code>division</code> then <code>team</code>. This is a good reference for looking at futures bets, since this should represents your model’s chances of various things happening for each team.
+<strong>overall</strong> - One row per team, aggregated across all
+simulations. Sorted by <code>conf</code> then <code>division</code> then
+<code>team</code>. This is a good reference for looking at futures bets,
+since this should represents your model’s chances of various things
+happening for each team.
 <ul>
 <li>
-<strong>conf</strong> - The conference the team is in (such as <code>AFC</code>)</li>
+<strong>conf</strong> - The conference the team is in (such as
+<code>AFC</code>)</li>
 <li>
-<strong>division</strong> - The division the team is in (such as <code>NFC West</code>)</li>
+<strong>division</strong> - The division the team is in (such as
+<code>NFC West</code>)</li>
 <li>
 <strong>team</strong> - The abbreviation representing the team</li>
 <li>
-<strong>wins</strong> - The mean (average) number of games won across the simulations, counting ties as 0.5 wins</li>
+<strong>wins</strong> - The mean (average) number of games won
+across the simulations, counting ties as 0.5 wins</li>
 <li>
-<strong>playoff</strong> - The rate this team made the playoffs across simulations</li>
+<strong>playoff</strong> - The rate this team made the playoffs
+across simulations</li>
 <li>
-<strong>div1</strong> - The rate this team won the division across simulations</li>
+<strong>div1</strong> - The rate this team won the division across
+simulations</li>
 <li>
-<strong>seed1</strong> - The rate this team had the first playoff seed across simulations</li>
+<strong>seed1</strong> - The rate this team had the first playoff
+seed across simulations</li>
 <li>
-<strong>won_conf</strong> - The rate this team won its conference across simulations</li>
+<strong>won_conf</strong> - The rate this team won its conference
+across simulations</li>
 <li>
-<strong>won_sb</strong> - The rate this team won the Super Bowl across simulations</li>
+<strong>won_sb</strong> - The rate this team won the Super Bowl
+across simulations</li>
 <li>
-<strong>draft1</strong> - The rate this team received the first pick in the next draft across simulations</li>
+<strong>draft1</strong> - The rate this team received the first pick
+in the next draft across simulations</li>
 <li>
-<strong>draft5</strong> - The rate this team received a top five pick in the next draft across simulations</li>
+<strong>draft5</strong> - The rate this team received a top five
+pick in the next draft across simulations</li>
 </ul>
 </li>
 <li>
-<strong>team_wins</strong> - Each team has a row for 0 wins, 0.5 wins, 1 win, 1.5 wins, … , 15.5 wins, 16 wins. These are aggregated across all simulations and are intending to represent your model’s probability for teams being below or above a certain win total, making them an excellent reference for using your model to make win total bets.
+<strong>team_wins</strong> - Each team has a row for 0 wins, 0.5
+wins, 1 win, 1.5 wins, … , 15.5 wins, 16 wins. These are aggregated
+across all simulations and are intending to represent your model’s
+probability for teams being below or above a certain win total, making
+them an excellent reference for using your model to make win total bets.
 <ul>
 <li>
 <strong>team</strong> - The abbreviation representing the team</li>
 <li>
-<strong>wins</strong> - A number of wins (either an integer halfway between two integers)</li>
+<strong>wins</strong> - A number of wins (either an integer halfway
+between two integers)</li>
 <li>
-<strong>over_prob</strong> - The rate this team had more wins than this number aggregated across simulations. Ties are ignored.</li>
+<strong>over_prob</strong> - The rate this team had more wins than
+this number aggregated across simulations. Ties are ignored.</li>
 <li>
-<strong>under_prob</strong> - The rate this team had fewer wins than this number aggregated across simulations. Ties are ignored. Note that if <code>wins</code> is an integer, <code>1-over_prob-under_prob</code> represents the rate at which the team finished at exactly that many wins.</li>
+<strong>under_prob</strong> - The rate this team had fewer wins than
+this number aggregated across simulations. Ties are ignored. Note that
+if <code>wins</code> is an integer, <code>1-over_prob-under_prob</code>
+represents the rate at which the team finished at exactly that many
+wins.</li>
 </ul>
 </li>
 <li>
-<strong>game_summary</strong> - One row per game, aggregated across all simulations. Sorted by <code>game_type</code> then <code>week</code> then <code>away_team</code> then <code>home_team</code>.
+<strong>game_summary</strong> - One row per game, aggregated across
+all simulations. Sorted by <code>game_type</code> then <code>week</code>
+then <code>away_team</code> then <code>home_team</code>.
 <ul>
 <li>
 <strong>game_type</strong> - What type of game this is
@@ -1890,7 +2162,8 @@ html {
 <li>
 <code>REG</code> - A regular season game</li>
 <li>
-<code>POST</code> - A playoff rounds earlier than a wildcard game (only used if simulating with lots of playoff teams)</li>
+<code>POST</code> - A playoff rounds earlier than a wildcard game
+(only used if simulating with lots of playoff teams)</li>
 <li>
 <code>WC</code> - A wildcard playoff game</li>
 <li>
@@ -1902,29 +2175,43 @@ html {
 </ul>
 </li>
 <li>
-<strong>week</strong> - The numerical week the game takes place in. Continues incrementing after the regular season to each playoff round.</li>
+<strong>week</strong> - The numerical week the game takes place in.
+Continues incrementing after the regular season to each playoff
+round.</li>
 <li>
-<strong>away_team</strong> - The abbreviation of the away team in the game</li>
+<strong>away_team</strong> - The abbreviation of the away team in
+the game</li>
 <li>
-<strong>home_team</strong> - The abbreviation of the home team in the game</li>
+<strong>home_team</strong> - The abbreviation of the home team in
+the game</li>
 <li>
-<strong>away_wins</strong> - The number of times the away team has won the game</li>
+<strong>away_wins</strong> - The number of times the away team has
+won the game</li>
 <li>
-<strong>home_wins</strong> - The number of times the home team has won the game</li>
+<strong>home_wins</strong> - The number of times the home team has
+won the game</li>
 <li>
-<strong>ties</strong> - The number of times the game ended in a tie</li>
+<strong>ties</strong> - The number of times the game ended in a
+tie</li>
 <li>
-<strong>result</strong> - The amount of points the home team won by (or lost by if negative) on average across all simulations</li>
+<strong>result</strong> - The amount of points the home team won by
+(or lost by if negative) on average across all simulations</li>
 <li>
-<strong>games_played</strong> - The number of times the game was played. For <code>game_type == "REG"</code> this will equal the number of simulations. The number of playoff matchups will differ.</li>
+<strong>games_played</strong> - The number of times the game was
+played. For <code>game_type == "REG"</code> this will equal the number
+of simulations. The number of playoff matchups will differ.</li>
 <li>
-<strong>away_percentage</strong> - The rate the away team won the game counting ties as half a win</li>
+<strong>away_percentage</strong> - The rate the away team won the
+game counting ties as half a win</li>
 <li>
-<strong>home_percentage</strong> - The rate the home team won the game counting ties as half a win</li>
+<strong>home_percentage</strong> - The rate the home team won the
+game counting ties as half a win</li>
 </ul>
 </li>
 <li>
-<strong>sim_params</strong> - a list of parameters used in the simulation. The list contains the following parameters which are described in <code>?simulate_nfl()</code>:
+<strong>sim_params</strong> - a list of parameters used in the
+simulation. The list contains the following parameters which are
+described in <code>?simulate_nfl()</code>:
 <ul>
 <li><code>nfl_season</code></li>
 <li><code>playoff_seeds</code></li>
