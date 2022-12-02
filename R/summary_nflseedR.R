@@ -26,10 +26,21 @@
 #' }
 #' @export
 summary.nflseedR_simulation <- function(object, ...){
-  rlang::check_installed(c("gt", "scales"), "to compute a summary table.")
+  rlang::check_installed(c("gt", "scales (>= 1.2.0)"), "to compute a summary table.")
 
-  title <- paste("simulating the", object$sim_params$nfl_season, "NFL season")
-  subtitle <- paste("summary of", object$sim_params$simulations, "simulations using nflseedR")
+  title <- paste(
+    "simulating the",
+    object$sim_params$nfl_season,
+    "NFL season"
+  )
+  subtitle <- paste(
+    "summary of",
+    scales::number(
+      object$sim_params$simulations,
+      scale_cut = scales::cut_short_scale()
+    ),
+    "simulations using nflseedR"
+  )
 
   data <- object$overall %>%
     mutate(
@@ -42,6 +53,13 @@ summary.nflseedR_simulation <- function(object, ...){
         TRUE ~ NA_character_
       )
     )
+
+  # This returns a named vector. Names are column names in `data` and values will
+  # be FALSE if any value in the corresponding column is not NA, TRUE otherwise
+  column_is_empty <- colSums(!is.na(data)) > 0
+
+  # Get character vector of columns that hold only NA and hide them
+  hide_me <- names(column_is_empty[column_is_empty == FALSE])
 
   afc <- data %>%
     filter(conf == "AFC") %>%
@@ -92,7 +110,7 @@ summary.nflseedR_simulation <- function(object, ...){
       afc_draft5 = gt::html("Top-5<br>Pick"),
       nfc_draft5 = gt::html("Top-5<br>Pick"),
     ) %>%
-    gt::cols_hide(nfc_division) %>%
+    gt::cols_hide(c(nfc_division, gt::contains(hide_me))) %>%
     gt::fmt_number(gt::ends_with("wins"), decimals = 1) %>%
     gt::fmt_percent(
       columns = c(
