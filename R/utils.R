@@ -1,15 +1,7 @@
 
 # progress report using rlang to avoid usethis dependency
-report <- function(msg) {
-  rlang::inform(
-    paste0(
-      crayon::red(cli::symbol$bullet),
-      " ",
-      Sys.time(),
-      ": ",
-      msg
-    )
-  )
+report <- function(msg, .cli_fct = cli::cli_alert_info) {
+  .cli_fct(c(format(Sys.time(), '%H:%M:%S'), " | ", msg))
 }
 
 sim_info <- function(msg) {

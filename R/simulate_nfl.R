@@ -23,6 +23,13 @@
 #'   to be equal to half of the available cores (various benchmarks showed this
 #'   results in optimal performance).
 #' @param print_summary If \code{TRUE}, prints the summary statistics to the console.
+#' @param sim_include One of `"REG"`, `"POST"`, `"DRAFT"` (the default).
+#'   Simulation will behave as follows:
+#'   \describe{
+#'     \item{REG}{Simulate the regular season and compute standings, division ranks, and playoff seeds}
+#'     \item{POST}{Do REG + simulate the postseason}
+#'     \item{DRAFT}{Do POST + compute draft order}
+#'   }
 #' @description This function simulates a given NFL season multiple times using custom functions
 #'   to estimate and simulate game results and computes the outcome of the given
 #'   season including playoffs and draft order.
@@ -115,7 +122,10 @@ simulate_nfl <- function(nfl_season = NULL,
                          simulations = 1000,
                          sims_per_round = max(ceiling(simulations / future::availableCores() * 2), 100),
                          .debug = FALSE,
-                         print_summary = FALSE) {
+                         print_summary = FALSE,
+                         sim_include = c("DRAFT", "REG", "POST")) {
+
+  sim_include <- rlang::arg_match0(sim_include, c("REG", "POST", "DRAFT"))
 
   # Define simple estimate and simulate functions
 
@@ -340,6 +350,7 @@ simulate_nfl <- function(nfl_season = NULL,
       .debug = .debug,
       playoff_seeds = playoff_seeds,
       p = p,
+      sim_include = sim_include,
       .options = furrr::furrr_options(seed = TRUE)
     )
   })
@@ -360,6 +371,16 @@ simulate_nfl <- function(nfl_season = NULL,
 
   report("Aggregating across simulations")
 
+  # we need the exit number of the sb winner to compute sb and conf percentages
+  # with "exit" because draft_order might not be available depending on the
+  # value of `sim_include`. Need to remove NAs here because Exit will be NA
+  # for postseason teams
+  sb_exit <- max(all_teams$exit, na.rm = TRUE)
+  # If we simulate regular season only this will be < 20. We don't really simulate
+  # postseason then and set sb_exit to NA which result in NA percentages of sb
+  # and conf columns
+  if(sb_exit < 20) sb_exit <- NA_real_
+
   overall <- all_teams %>%
     group_by(conf, division, team) %>%
     summarize(
@@ -367,8 +388,8 @@ simulate_nfl <- function(nfl_season = NULL,
       playoff = mean(!is.na(seed)),
       div1 = mean(div_rank == 1),
       seed1 = mean(!is.na(seed) & seed == 1),
-      won_conf = mean(draft_order >= (length(unique(all_teams$team)) - 1)),
-      won_sb = mean(draft_order == length(unique(all_teams$team))),
+      won_conf = mean(exit >= sb_exit - 1),
+      won_sb = mean(exit == sb_exit),
       draft1 = mean(draft_order == 1),
       draft5 = mean(draft_order <= 5)
     ) %>%
@@ -426,7 +447,8 @@ simulate_nfl <- function(nfl_season = NULL,
         "simulations" = simulations,
         "sims_per_round" = sims_per_round,
         ".debug" = .debug,
-        "print_summary" = print_summary
+        "print_summary" = print_summary,
+        "sim_include" = sim_include
       )
     ),
     class = "nflseedR_simulation"

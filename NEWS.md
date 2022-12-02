@@ -1,3 +1,7 @@
+# nflseedR (development version)
+
+* `simulate_nfl()` gained the new argument `sim_include` to allow more access to what is actually being simulated. This makes it possible skip playoff simulation or the (possibly heavy) computation of draft order.
+
 # nflseedR 1.1.0
 
 * Added the data frame `game_summary` to the output of `simulate_nfl()` which aggregates matchups across all simulated seasons (#24)
