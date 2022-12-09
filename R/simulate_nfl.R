@@ -358,16 +358,24 @@ simulate_nfl <- function(nfl_season = NULL,
   if (isTRUE(.debug)) eval(run) else suppressMessages(eval(run))
 
   if (!is.null(test_week)) {
-    report(glue(
-      "Aborting and returning your `process_games` function's results from Week {test_week}"
-    ))
+    report(
+      "Aborting and returning your {.code process_games} function's \\
+      results from Week {test_week}"
+      , wrap = TRUE
+    )
     return(all[[1]])
   }
 
   report("Combining simulation data")
 
-  all_teams <- furrr::future_map_dfr(all, ~ .x$teams)
-  all_games <- furrr::future_map_dfr(all, ~ .x$games)
+  # `all` is a list of rounds where every round is containing the dataframes
+  # "teams" and "games". We loop over the list with purrr (that's not really bad
+  # because the length of the loop only is the number of rounds) but don't
+  # convert to a dataframe/tibble because dplyr::bind_rows() is too slow.
+  # Instead, we bind with data.table afterwards, it's a reverse dependency
+  # through nflreadr anyways.
+  all_teams <- data.table::rbindlist(purrr::map(all, ~ .x$teams))
+  all_games <- data.table::rbindlist(purrr::map(all, ~ .x$games))
 
   report("Aggregating across simulations")
 
