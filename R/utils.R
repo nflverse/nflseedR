@@ -1,7 +1,7 @@
 
 # progress report using rlang to avoid usethis dependency
-report <- function(msg, .cli_fct = cli::cli_alert_info) {
-  .cli_fct(c(format(Sys.time(), '%H:%M:%S'), " | ", msg))
+report <- function(msg, ..., .cli_fct = cli::cli_alert_info, .envir = parent.frame()) {
+  .cli_fct(c(format(Sys.time(), '%H:%M:%S'), " | ", msg), ..., .envir = .envir)
 }
 
 sim_info <- function(msg) {
