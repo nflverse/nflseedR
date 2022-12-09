@@ -2,7 +2,6 @@
 imports <- c(
   "magrittr",
   "rlang",
-  "crayon",
   "cli",
   "dplyr",
   "gsubfn",

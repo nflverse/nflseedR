@@ -7,7 +7,6 @@
 #' @import dplyr
 #' @import gsubfn
 #' @importFrom cli symbol
-#' @importFrom crayon red
 #' @importFrom data.table rbindlist fread
 #' @importFrom furrr future_map furrr_options
 #' @importFrom future plan
