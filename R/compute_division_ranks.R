@@ -70,9 +70,9 @@ compute_division_ranks <- function(games,
                                    h2h = NULL) {
   # catch invalid input
   if (!isTRUE(tiebreaker_depth %in% 1:3)) {
-    stop(
-      "The argument `tiebreaker_depth` has to be",
-      "a single value in the range of 1-3!"
+    cli::cli_abort(
+      "The argument {.arg tiebreaker_depth} has to be \\
+      a single value in the range of 1-3!"
     )
   }
 
@@ -190,7 +190,7 @@ compute_division_ranks <- function(games,
   while (any(is.na(teams$div_rank))) {
     # increment division rank
     dr <- dr + 1
-    report(paste0("Calculating division rank #", dr))
+    report("Calculating division rank #{dr}")
 
     # update teams with this rank
     update <- teams %>%
@@ -213,5 +213,8 @@ compute_division_ranks <- function(games,
   teams <- teams %>%
     mutate(max_reg_week = max_reg_week)
 
-  return(list(standings = teams, h2h = h2h))
+  list(
+    "standings" = tibble::as_tibble(teams),
+    "h2h" = tibble::as_tibble(h2h)
+  )
 }
