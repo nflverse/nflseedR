@@ -278,11 +278,10 @@ simulate_nfl <- function(nfl_season = NULL,
   {
     fn <- glue::glue("https://github.com/nflverse/nfldata/blob/master/fake_schedule_{nfl_season}.csv?raw=true")
     tryCatch({
-      options(readr.num_columns = 0)
-      schedule <- readr::read_csv(fn)
-      sim_info(glue::glue("No actual schedule exists for {nfl_season}, using fake schedule with correct opponents"))
+      schedule <- data.table::fread(fn)
+      cli::cli_alert_info("No actual schedule exists for {.val {nfl_season}}, using fake schedule with correct opponents.")
     }, error = function(cond) {
-      stop("Unable to locate a schedule for ", nfl_season)
+      cli::cli_abort("Unable to locate a schedule for {.val {nfl_season}}")
     })
   }
 
