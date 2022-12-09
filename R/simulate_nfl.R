@@ -448,7 +448,9 @@ simulate_nfl <- function(nfl_season = NULL,
         "sims_per_round" = sims_per_round,
         ".debug" = .debug,
         "print_summary" = print_summary,
-        "sim_include" = sim_include
+        "sim_include" = sim_include,
+        "nflseedR_version" = utils::packageVersion("nflseedR"),
+        "finished_at" = Sys.time()
       )
     ),
     class = "nflseedR_simulation"
