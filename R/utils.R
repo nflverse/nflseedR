@@ -34,7 +34,7 @@ is_sequential <- function() inherits(future::plan(), "sequential")
 # strip nflverse attributes from games dataframe as they are misleading
 # .internal.selfref is a data.table attribute that is not necessary in this case
 strip_nflverse_attributes <- function(df){
-  input_attrs <- attributes(df) |> names()
+  input_attrs <- names(attributes(df))
   input_remove <- input_attrs[grepl("nflverse|.internal.selfref", input_attrs)]
   attributes(df)[input_remove] <- NULL
   df
