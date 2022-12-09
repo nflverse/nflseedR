@@ -242,18 +242,19 @@ simulate_nfl <- function(nfl_season = NULL,
     is_single_digit_numeric(simulations),
     is_single_digit_numeric(sims_per_round)
   )) {
-    stop(
-      "One or more of the parameters `nfl_season`, `tiebreaker_depth`, `test_week`, ",
-      "`simulations` and `sims_per_round` are not single digit numeric values!"
+    cli::cli_abort(
+      "One or more of the parameters {.arg nfl_season}, {.arg tiebreaker_depth}, \\
+      {.arg test_week}, {.arg simulations} and {.arg sims_per_round} are not \\
+      single digit numeric values!"
     )
   }
 
   if (!is.function(process_games)) {
-    stop("The parameter `process_games` has to be a function!")
+    cli::cli_abort("The parameter {.arg process_games} has to be a function!")
   }
 
   if (nfl_season < 2002) {
-    stop("The earliest season that can be simulated is 2002.")
+    cli::cli_abort("The earliest season that can be simulated is 2002.")
   }
 
   #### LOAD DATA ####
