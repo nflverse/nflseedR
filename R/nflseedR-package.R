@@ -11,7 +11,6 @@
 #' @importFrom data.table rbindlist fread
 #' @importFrom furrr future_map furrr_options
 #' @importFrom future plan
-#' @importFrom glue glue glue_collapse
 #' @importFrom magrittr %>%
 #' @importFrom progressr progressor
 #' @importFrom purrr pluck

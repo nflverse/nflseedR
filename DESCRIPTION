@@ -1,17 +1,12 @@
 Package: nflseedR
-Title: Functions to Efficiently Simulate and Evaluate NFL
-    Seasons
+Title: Functions to Efficiently Simulate and Evaluate NFL Seasons
 Version: 1.1.0.9002
-Authors@R: 
-    c(person(given = "Lee",
-             family = "Sharpe",
-             role = c("aut", "cph")),
-      person(given = "Sebastian",
-             family = "Carl",
-             role = c("cre", "aut"),
-             email = "mrcaseb@gmail.com"))
-Description: A set of functions to simulate National Football
-    League seasons including the sophisticated tie-breaking procedures.
+Authors@R: c(
+    person("Lee", "Sharpe", role = c("aut", "cph")),
+    person("Sebastian", "Carl", , "mrcaseb@gmail.com", role = c("cre", "aut"))
+  )
+Description: A set of functions to simulate National Football League
+    seasons including the sophisticated tie-breaking procedures.
 License: MIT + file LICENSE
 URL: https://nflseedr.com, https://github.com/nflverse/nflseedR
 BugReports: https://github.com/nflverse/nflseedR/issues
@@ -25,7 +20,6 @@ Imports:
     dplyr,
     furrr,
     future,
-    glue,
     gsubfn,
     magrittr,
     nflreadr (>= 1.1.3),

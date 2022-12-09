@@ -23,7 +23,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # head-to-head
-      if (isTRUE(.debug)) report(glue("DIV ({min_tied}): Head-to-head"))
+      if (isTRUE(.debug)) report("DIV ({min_tied}): Head-to-head")
       list[u, tied] <- tied %>%
         inner_join(tied %>% select(sim, division, team, win_pct),
                    by = c("sim", "division", "win_pct"),
@@ -45,7 +45,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # division record
-      if (isTRUE(.debug)) report(glue("DIV ({min_tied}): Division Record"))
+      if (isTRUE(.debug)) report("DIV ({min_tied}): Division Record")
       list[u, tied] <- tied %>%
         mutate(value = case_when(
           tied_teams < min_tied ~ NA_real_,
@@ -58,7 +58,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # common games
-      if (isTRUE(.debug)) report(glue("DIV ({min_tied}): Common Record"))
+      if (isTRUE(.debug)) report("DIV ({min_tied}): Common Record")
       list[u, tied] <- tied %>%
         inner_join(h2h, by = c("sim", "team")) %>%
         filter(h2h_played == 1) %>%
@@ -78,7 +78,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # conference record
-      if (isTRUE(.debug)) report(glue("DIV ({min_tied}): Conference Record"))
+      if (isTRUE(.debug)) report("DIV ({min_tied}): Conference Record")
       list[u, tied] <- tied %>%
         mutate(value = case_when(
           tied_teams < min_tied ~ NA_real_,
@@ -90,7 +90,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # strength of victory
-      if (isTRUE(.debug)) report(glue("DIV ({min_tied}): Strength of Victory"))
+      if (isTRUE(.debug)) report("DIV ({min_tied}): Strength of Victory")
       list[u, tied] <- tied %>%
         mutate(value = case_when(
           tied_teams < min_tied ~ NA_real_,
@@ -102,7 +102,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # strength of schedule
-      if (isTRUE(.debug)) report(glue("DIV ({min_tied}): Strength of Schedule"))
+      if (isTRUE(.debug)) report("DIV ({min_tied}): Strength of Schedule")
       list[u, tied] <- tied %>%
         mutate(value = case_when(
           tied_teams < min_tied ~ NA_real_,
