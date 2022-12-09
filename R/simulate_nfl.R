@@ -322,14 +322,20 @@ simulate_nfl <- function(nfl_season = NULL,
   }
 
   if (sim_rounds > 1 && is_sequential()) {
-    sim_info(c(
-      "Computation in multiple rounds can be accelerated with parallel processing.",
-      "You should consider calling a `future::plan()`. Please see the function documentation for further information.",
-      "Will go on sequentially..."
-    ))
+    cli::cli_inform(c(
+      "i" = "Computation in multiple rounds can be accelerated
+            with parallel processing.",
+      "i" = "You should consider calling a {.code future::plan()}.
+            Please see the function documentation for further information.",
+      "i" = "Will go on sequentially..."
+    ), wrap = TRUE
+    )
   }
 
-  report(glue("Beginning simulation of {simulations} seasons in {sim_rounds} {ifelse(sim_rounds == 1, 'round', 'rounds')}"))
+  report(
+    "Beginning simulation of {.val {simulations}} season{?s} \\
+    in {.val {sim_rounds}} round{?s}"
+  )
 
   p <- progressr::progressor(along = seq_len(sim_rounds))
 
@@ -433,6 +439,8 @@ simulate_nfl <- function(nfl_season = NULL,
     ) %>%
     ungroup() %>%
     arrange(week)
+
+  report("DONE!")
 
   if (isTRUE(print_summary)) print(overall)
 
