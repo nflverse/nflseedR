@@ -53,11 +53,9 @@ compute_draft_order <- function(teams,
   )
 
   if (!sum(names(games) %in% required_vars, na.rm = TRUE) >= 6 | !is.data.frame(games)) {
-    stop(
-      "The argument `games` has to be a data frame including ",
-      "all of the following variables: ",
-      glue_collapse(required_vars, sep = ", ", last = " and "),
-      "!"
+    cli::cli_abort(
+      "The argument {.arg games} has to be a data frame including \\
+      all of the following variables: {.val {required_vars}}!"
     )
   }
 
