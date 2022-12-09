@@ -7,17 +7,6 @@ report <- function(msg,
   .cli_fct(c(format(Sys.time(), '%H:%M:%S'), " | ", msg), ..., .envir = .envir)
 }
 
-sim_info <- function(msg) {
-  rlang::inform(
-    paste0(
-      crayon::yellow(cli::symbol$info),
-      " ",
-      msg,
-      collapse = "\n"
-    )
-  )
-}
-
 # this makes it so there's two rows per game (one/team)
 double_games <- function(g) {
   g1 <- g %>%

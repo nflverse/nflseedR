@@ -14,10 +14,9 @@ test_that("is_sequential works", {
   expect_false(is_sequential())
 })
 
-test_that("sim_info and report works", {
+test_that("report works", {
   skip_on_cran()
 
-  expect_message(sim_info("this is a message"))
   expect_message(report("this is a message"))
 })
 
