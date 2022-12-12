@@ -62,7 +62,7 @@ summary.nflseedR_simulation <- function(object, ...){
     dplyr::mutate_at(cols_to_transform, fmt_pct_special) %>%
     dplyr::bind_cols(
       data %>%
-        dplyr::select(tidyselect::any_of(cols_to_transform)) %>%
+        dplyr::select(dplyr::any_of(cols_to_transform)) %>%
         rlang::set_names(paste(names(.), "actual_val", sep = "_"))
     )
 
