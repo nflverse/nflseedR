@@ -125,6 +125,15 @@ summary.nflseedR_simulation <- function(object, ...){
     gt::cols_hide(c(nfc_division, gt::contains(hide_me))) %>%
     gt::cols_hide(gt::ends_with("actual_val")) %>%
     gt::fmt_number(gt::ends_with("wins"), decimals = 1) %>%
+    gt::cols_width(
+      gt::ends_with("playoff") ~  gt::px(60),
+      gt::ends_with("div1") ~     gt::px(60),
+      gt::ends_with("seed1") ~    gt::px(60),
+      gt::ends_with("won_conf") ~ gt::px(60),
+      gt::ends_with("won_sb") ~   gt::px(60),
+      gt::ends_with("draft1") ~   gt::px(60),
+      gt::ends_with("draft5") ~   gt::px(60)
+    ) %>%
     gt::cols_align(
       align = "right",
       columns = c(
@@ -234,6 +243,10 @@ summary.nflseedR_simulation <- function(object, ...){
         gt::cell_text(align = "center", weight = "bold"),
         gt::cell_fill(color = "#F0F0F0")
       )
+    ) %>%
+    gt::tab_style(
+      locations = gt::cells_column_labels(),
+      style = gt::cell_text(align = "center", weight = "bold")
     ) %>%
     gt::tab_header(
       tools::toTitleCase(title),
