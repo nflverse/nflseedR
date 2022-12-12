@@ -2,6 +2,8 @@
 
 * `simulate_nfl()` gained the new argument `sim_include` to allow more access to what is actually being simulated. This makes it possible skip playoff simulation or the (possibly heavy) computation of draft order.
 * The `summary` method `summary.nflseedR_simulation()` now hides columns where all values are `NA`. This is useful if `simulate_nfl()` skips the postseason or draftorder. The method also reformats the number of simulations in the subtitle, e.g. from "10000" to "10k" (this requires scales >= 1.2.0, but it is a good idea to update scales anyways).
+* Added the new function `fmt_pct_special()`, a function that formats numerical vectors to percentage strings with special specifications. 
+* The `summary` method `summary.nflseedR_simulation()` now uses `fmt_pct_special()` to format probability strings to avoid the impression of overconfidence by rounding to integer percentages.
 
 # nflseedR 1.1.0
 
