@@ -59,3 +59,16 @@ fmt_pct_special <- function(x){
     suffix = "%"
   )
 }
+
+gt_fmt_pct_special <- function(gt, columns, ...){
+  gt::text_transform(
+    gt,
+    locations = gt::cells_body(columns = {{ columns }}),
+    fn = function(x){
+      # avoid "NAs introduced by coercion" warning
+      x[x == "NA"] <- NA_character_
+      x <- as.double(x)
+      fmt_pct_special(x)
+    }
+  )
+}

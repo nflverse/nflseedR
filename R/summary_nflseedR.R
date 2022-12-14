@@ -42,10 +42,6 @@ summary.nflseedR_simulation <- function(object, ...){
     "simulations using nflseedR"
   )
 
-  cols_to_transform <- c(
-    "playoff", "div1", "seed1", "won_conf", "won_sb", "draft1", "draft5"
-  )
-
   data <- object$overall %>%
     mutate(
       division = gsub("AFC |NFC ", "", division),
@@ -56,14 +52,6 @@ summary.nflseedR_simulation <- function(object, ...){
         division == "West" ~ "W E S T",
         TRUE ~ NA_character_
       )
-    )
-
-  data <- data %>%
-    dplyr::mutate_at(cols_to_transform, fmt_pct_special) %>%
-    dplyr::bind_cols(
-      data %>%
-        dplyr::select(dplyr::any_of(cols_to_transform)) %>%
-        rlang::set_names(paste(names(.), "actual_val", sep = "_"))
     )
 
   # This returns a named vector. Names are column names in `data` and values will
@@ -123,8 +111,18 @@ summary.nflseedR_simulation <- function(object, ...){
       nfc_draft5 = gt::html("Top-5<br>Pick"),
     ) %>%
     gt::cols_hide(c(nfc_division, gt::contains(hide_me))) %>%
-    gt::cols_hide(gt::ends_with("actual_val")) %>%
     gt::fmt_number(gt::ends_with("wins"), decimals = 1) %>%
+    gt_fmt_pct_special(
+      columns = c(
+        gt::ends_with("playoff"),
+        gt::ends_with("div1"),
+        gt::ends_with("seed1"),
+        gt::ends_with("won_conf"),
+        gt::ends_with("won_sb"),
+        gt::ends_with("draft1"),
+        gt::ends_with("draft5")
+      )
+    ) %>%
     gt::cols_width(
       gt::ends_with("playoff") ~  gt::px(60),
       gt::ends_with("div1") ~     gt::px(60),
@@ -146,13 +144,6 @@ summary.nflseedR_simulation <- function(object, ...){
     ) %>%
     gt::data_color(
       columns = c(
-        gt::ends_with("playoff_actual_val"),
-        gt::ends_with("div1_actual_val"),
-        gt::ends_with("seed1_actual_val"),
-        gt::ends_with("won_conf_actual_val"),
-        gt::ends_with("won_sb_actual_val")
-      ),
-      target_columns = c(
         gt::ends_with("playoff"),
         gt::ends_with("div1"),
         gt::ends_with("seed1"),
@@ -163,10 +154,6 @@ summary.nflseedR_simulation <- function(object, ...){
     ) %>%
     gt::data_color(
       columns = c(
-        gt::ends_with("draft1_actual_val"),
-        gt::ends_with("draft5_actual_val")
-      ),
-      target_columns = c(
         gt::ends_with("draft1"),
         gt::ends_with("draft5")
       ),
