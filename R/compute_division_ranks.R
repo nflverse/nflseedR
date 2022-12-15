@@ -81,104 +81,85 @@ compute_division_ranks <- function(games,
     )
   }
 
-  if (is.null(teams)) { # compute teams df from games df
-    pivot_games <- games %>%
-      select(sim, home_team, away_team) %>%
-      pivot_longer(cols = c("home_team", "away_team"), values_to = "team") %>%
-      select(sim, team)
-
-    teams <- bind_rows(
-      data.frame(team = unique(games$away_team)),
-      data.frame(team = unique(games$home_team))
-    ) %>%
-      distinct() %>%
-      left_join(nflseedR::divisions %>% select(-"sdiv"), by = "team") %>%
-      left_join(pivot_games, by = "team") %>%
-      select(sim, everything()) %>%
-      distinct() %>%
-      arrange(division, team, sim)
+  if (lifecycle::is_present(teams)) {
+    lifecycle::deprecate_warn(
+      when = "2.0.0",
+      what = "compute_division_ranks(teams)",# = 'is computed internally')"
+      details = "The function computes the corresponding data internally."
+    )
   }
 
   # double games
   games_doubled <- double_games(games)
 
-  # record of each team
   report("Calculating team data")
-  teams <- teams %>%
-    inner_join(games_doubled, by = c("sim", "team")) %>%
-    filter(game_type == "REG") %>%
-    group_by(sim, conf, division, team) %>%
-    summarize(
-      games = n(),
-      wins = sum(outcome),
-      true_wins = sum(outcome == 1),
-      losses = sum(outcome == 0),
-      ties = sum(outcome == 0.5)
-    ) %>%
-    ungroup()
+  # record of each team
+  setDT(games_doubled)
+  team_records <-
+    merge(
+      games_doubled["REG", on = "game_type"],
+      data.table(nflseedR::divisions)[,sdiv:=NULL],
+      by = "team",
+      sort = FALSE
+    )[,
+      list(
+        games = .N,
+        wins = sum(outcome),
+        true_wins = sum(outcome == 1),
+        losses = sum(outcome == 0),
+        ties = sum(outcome == 0.5),
+        win_pct = sum(outcome) / .N
+      ), by = c("sim", "conf", "division", "team")]
 
   # add in tiebreaker info
-  teams <- teams %>%
-    inner_join(games_doubled, by = c("sim", "team")) %>%
-    filter(game_type == "REG") %>%
-    inner_join(teams,
-      by = c("sim" = "sim", "opp" = "team"),
-      suffix = c("", "_opp")
+  teams <- team_records %>%
+    merge(
+      games_doubled["REG", on = "game_type"],
+      by = c("sim", "team"),
+      sort = FALSE
     ) %>%
-    mutate(
-      win_pct = wins / games,
-      div_game = ifelse(division == division_opp, 1, 0),
-      conf_game = ifelse(conf == conf_opp, 1, 0)
-    ) %>%
-    group_by(sim, conf, division, team, games, wins, true_wins, losses, ties, win_pct) %>%
-    summarize(
-      div_pct = ifelse(sum(div_game) == 0, 0.5,
-        sum(div_game * outcome) / sum(div_game)
-      ),
-      conf_pct = ifelse(sum(conf_game) == 0, 0.5,
-        sum(conf_game * outcome) / sum(conf_game)
-      ),
-      sov = ifelse(sum(outcome == 1) == 0, 0,
-        sum(wins_opp * (outcome == 1)) /
-          sum(games_opp * (outcome == 1))
-      ),
-      sos = sum(wins_opp) / sum(games_opp)
-    ) %>%
-    ungroup()
+    merge(
+      team_records,
+      by.x = c("sim", "opp"),
+      by.y = c("sim", "team"),
+      suffixes = c("", "_opp"),
+      sort = FALSE
+    )
+  teams[, div_game := fifelse(division == division_opp, 1, 0)]
+  teams[, conf_game := fifelse(conf == conf_opp, 1, 0)]
+  teams <- teams[, list(
+    div_pct = fifelse(sum(div_game) == 0, 0.5,
+                      sum(div_game * outcome) / sum(div_game)
+    ),
+    conf_pct = fifelse(sum(conf_game) == 0, 0.5,
+                      sum(conf_game * outcome) / sum(conf_game)
+    ),
+    sov = fifelse(sum(outcome == 1) == 0, 0,
+                 sum(wins_opp * (outcome == 1)) /
+                   sum(games_opp * (outcome == 1))
+    ),
+    sos = sum(wins_opp) / sum(games_opp)
+  ), by = c("sim", "conf", "division", "team", "games", "wins",
+            "true_wins", "losses", "ties", "win_pct")][order(sim, conf, division, team)]
 
   # below only if there are tiebreakers
   if (is.null(h2h) & tiebreaker_depth > TIEBREAKERS_NONE) {
-    report("Calculating head to head")
-    h2h <- teams %>%
-      select(sim, team) %>%
-      inner_join(teams %>% select(sim, team),
-        by = "sim", suffix = c("", "_opp")
-      ) %>%
-      rename(opp = team_opp) %>%
-      arrange(sim, team, opp) %>%
-      left_join(games_doubled %>% filter(game_type == "REG"),
-        by = c("sim", "team", "opp")
-      ) %>%
-      group_by(sim, team, opp) %>%
-      summarize(
-        h2h_games = sum(!is.na(outcome)),
-        h2h_wins = sum(outcome, na.rm = TRUE),
-        h2h_played = ifelse(h2h_games > 0, 1, 0)
-      ) %>%
-      ungroup()
+    h2h <- compute_h2h(games_doubled)
   }
 
   #### FIND DIVISION RANKS ####
 
   # initialize division rank
-  teams <- teams %>%
-    mutate(div_rank = NA_real_)
+  teams$div_rank <- NA_real_
 
   # determine division ranks
   dr <- 0
   while (any(is.na(teams$div_rank))) {
     # increment division rank
     dr <- dr + 1
+    if(dr > 4){
+      cli::cli_abort("Aborting because division rank computation entered infinite loop!")
+    }
     report("Calculating division rank #{dr}")
 
     # update teams with this rank
@@ -197,10 +178,7 @@ compute_division_ranks <- function(games,
       select(-new_rank)
   }
 
-  max_reg_week <- max(games$week[games$game_type == "REG"], na.rm = TRUE)
-
-  teams <- teams %>%
-    mutate(max_reg_week = max_reg_week)
+  teams$max_reg_week <- max(games$week[games$game_type == "REG"], na.rm = TRUE)
 
   list(
     "standings" = tibble::as_tibble(teams),
