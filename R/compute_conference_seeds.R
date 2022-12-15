@@ -45,7 +45,15 @@ compute_conference_seeds <- function(teams,
     )
   }
 
-  if (!is_tibble(teams)) teams <- teams$standings
+  h2h_flag <- FALSE
+
+  if (!is_tibble(teams)){
+    if(is.null(h2h) & any(names(teams) == "h2h")){
+      h2h <- teams$h2h
+      h2h_flag <- TRUE
+    }
+    teams <- teams$standings
+  }
 
   if (!any((names(teams) %in% "div_rank")) | !is.data.frame(teams)) {
     cli::cli_abort(
@@ -55,15 +63,15 @@ compute_conference_seeds <- function(teams,
   }
 
   if(is.null(h2h) & tiebreaker_depth > TIEBREAKERS_NONE){
-    cli::cli_abort(
-      "You asked for tiebreakers but the argument {.arg h2h} is {.val NULL}. \\
-       Did you forget to pass the {.val h2h} data frame? It is computed with \\
-       the function {.fn compute_division_ranks}."
-    )
+    # cli::cli_abort(
+    #   "You asked for tiebreakers but the argument {.arg h2h} is {.val NULL}. \\
+    #    Did you forget to pass the {.val h2h} data frame? It is computed with \\
+    #    the function {.fn compute_division_ranks}."
+    # )
   }
+  if(isFALSE(h2h_flag)) h2h <- compute_h2h(NULL, update = FALSE)
 
-  teams <- teams %>%
-    mutate(conf_rank = NA_real_)
+  teams$conf_rank <- NA_real_
 
   # seed loop
   for (seed_num in seq_len(playoff_seeds))
