@@ -266,16 +266,24 @@ simulate_round <- function(sim_round,
 
       # process any new games
       return_value <-
-        simulate_week(teams, games, week_num, test_week, ...)
+        simulate_week(teams = teams,
+                      games = games,
+                      week_num = week_num,
+                      process_games = process_games,
+                      test_week = test_week,
+                      .debug = .debug,
+                      ...)
       if (!is.null(test_week) && week_num == test_week) {
         return(return_value)
       }
       list[teams, games] <- return_value
 
-      # record losers
-      teams <- games %>%
+      week_games_doubled <- games %>%
         filter(week == week_num) %>%
-        double_games() %>%
+        double_games()
+
+      # record losers
+      teams <- week_games_doubled %>%
         filter(outcome == 0) %>%
         select(sim, team, outcome) %>%
         right_join(teams, by = c("sim", "team")) %>%
@@ -285,9 +293,7 @@ simulate_round <- function(sim_round,
       # if super bowl, record winner
       if (any(playoff_teams$conf == "SB")) {
         # super bowl winner exit is +1 to SB week
-        teams <- games %>%
-          filter(week == week_num) %>%
-          double_games() %>%
+        teams <- week_games_doubled %>%
           filter(outcome == 1) %>%
           select(sim, team, outcome) %>%
           right_join(teams, by = c("sim", "team")) %>%
@@ -296,9 +302,7 @@ simulate_round <- function(sim_round,
       }
 
       # filter to winners or byes
-      playoff_teams <- games %>%
-        filter(week == week_num) %>%
-        double_games() %>%
+      playoff_teams <- week_games_doubled %>%
         right_join(playoff_teams, by = c("sim", "team")) %>%
         filter(is.na(result) | result > 0) %>%
         select(sim, conf, seed, team) %>%
