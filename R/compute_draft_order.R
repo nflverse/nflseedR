@@ -114,10 +114,12 @@ compute_draft_order <- function(teams,
     # playoff weeks
     for (week_num in first_playoff_week:week_max) {
 
-      # record losers
-      teams <- games %>%
+      week_games_doubled <- games %>%
         filter(week == week_num) %>%
-        double_games() %>%
+        double_games()
+
+      # record losers
+      teams <- week_games_doubled %>%
         filter(outcome == 0) %>%
         select(sim, team, outcome) %>%
         right_join(teams, by = c("sim", "team")) %>%
@@ -127,9 +129,7 @@ compute_draft_order <- function(teams,
       # if super bowl, record winner
       if (any(playoff_teams$conf == "SB")) {
         # super bowl winner exit is +1 to SB week
-        teams <- games %>%
-          filter(week == week_num) %>%
-          double_games() %>%
+        teams <- week_games_doubled %>%
           filter(outcome == 1) %>%
           select(sim, team, outcome) %>%
           right_join(teams, by = c("sim", "team")) %>%
@@ -138,9 +138,7 @@ compute_draft_order <- function(teams,
       }
 
       # filter to winners or byes
-      playoff_teams <- games %>%
-        filter(week == week_num) %>%
-        double_games() %>%
+      playoff_teams <- week_games_doubled %>%
         right_join(playoff_teams, by = c("sim", "team")) %>%
         filter(is.na(result) | result > 0) %>%
         select(sim, conf, seed, team) %>%
