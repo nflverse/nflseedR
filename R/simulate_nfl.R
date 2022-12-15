@@ -297,51 +297,68 @@ simulate_nfl <- function(nfl_season = NULL,
   # and conf columns
   if(sb_exit < 20) sb_exit <- NA_real_
 
-  overall <- all_teams %>%
-    group_by(conf, division, team) %>%
-    summarize(
-      wins = mean(wins),
-      playoff = mean(!is.na(seed)),
-      div1 = mean(div_rank == 1),
-      seed1 = mean(!is.na(seed) & seed == 1),
-      won_conf = mean(exit >= sb_exit - 1),
-      won_sb = mean(exit == sb_exit),
-      draft1 = mean(draft_order == 1),
-      draft5 = mean(draft_order <= 5)
-    ) %>%
-    ungroup()
+  overall <- all_teams[, list(
+    wins = mean(wins),
+    playoff = mean(!is.na(seed)),
+    div1 = mean(div_rank == 1),
+    seed1 = mean(!is.na(seed) & seed == 1),
+    won_conf = mean(exit >= sb_exit - 1),
+    won_sb = mean(exit == sb_exit),
+    draft1 = mean(draft_order == 1),
+    draft5 = mean(draft_order <= 5)
+  ), keyby = c("conf", "division", "team")]
 
-  team_wins <-
-    tibble(
-      team = rep(sort(unique(all_teams$team)), each = max(all_teams$games) * 2 + 1),
-      wins = rep(seq(0, max(all_teams$games), 0.5), length(unique(all_teams$team)))
-    ) %>%
-    inner_join(
-      all_teams %>% select(team, true_wins),
-      by = c("team")
-    ) %>%
-    group_by(team, wins) %>%
-    summarize(
-      over_prob = mean(true_wins > wins),
-      under_prob = mean(true_wins < wins)
-    ) %>%
-    ungroup()
+  # take all teams and repeat them for each half win and repeat this for each
+  # simulation. The length of the half win sequence equals 2 * games + 1
+  team_vec <- rep(
+    sort(unique(all_teams$team)),
+    each = (max(all_teams$games) * 2 + 1) * length(unique(all_teams$sim))
+  )
 
-  game_summary <-
-    all_games %>%
-    group_by(game_type, week, away_team, home_team) %>%
-    summarise(
-      away_wins = sum(result < 0),
-      home_wins = sum(result > 0),
-      ties = sum(result == 0),
-      result = mean(result),
-      # != number of simulations in the postseason
-      games_played = away_wins + home_wins + ties,
-      away_percentage = (away_wins + 0.5 * ties) / games_played,
-      home_percentage = (home_wins + 0.5 * ties) / games_played
-    ) %>%
-    ungroup() %>%
-    arrange(week)
+  # Create the win sequence vector and repeat every win for every sim
+  # Take this and repeat it for every team
+  wins_vec <- rep(
+    seq(0, max(all_teams$games), 0.5),
+    each = length(unique(all_teams$sim))
+  ) %>%
+    rep(length(unique(all_teams$team)))
+
+  # create sequence of sims and repeat it for every half win and for every team
+  sims_vec <- rep(
+    sort(unique(all_teams$sim)),
+    (max(all_teams$games) * 2 + 1) * length(unique(all_teams$team))
+  )
+
+  team_wins <- data.table(
+    sim = sims_vec,
+    team = team_vec,
+    wins = wins_vec,
+    key = c("team", "wins")
+  ) %>%
+    merge(
+      all_teams[,list(sim, team, true_wins)],
+      by = c("sim", "team"),
+      sort = FALSE
+    )
+
+  team_wins <- team_wins[,list(
+    over_prob = mean(true_wins > wins),
+    under_prob = mean(true_wins < wins)
+  ), keyby = c("team", "wins")]
+
+
+  ## Game Summary
+  game_summary <- all_games[,list(
+    away_wins = sum(result < 0),
+    home_wins = sum(result > 0),
+    ties = sum(result == 0),
+    result = mean(result)
+  ), keyby = c("game_type", "week", "away_team", "home_team")]
+  game_summary[, games_played := away_wins + home_wins + ties]
+  game_summary[,`:=`(
+    away_percentage = (away_wins + 0.5 * ties) / games_played,
+    home_percentage = (home_wins + 0.5 * ties) / games_played
+  )]
 
   report("DONE!")
 
@@ -349,11 +366,11 @@ simulate_nfl <- function(nfl_season = NULL,
 
   out <- structure(
     list(
-      "teams" = all_teams,
-      "games" = all_games,
-      "overall" = overall,
-      "team_wins" = team_wins,
-      "game_summary" = game_summary,
+      "teams" = tibble::as_tibble(all_teams),
+      "games" = tibble::as_tibble(all_games),
+      "overall" = tibble::as_tibble(overall),
+      "team_wins" = tibble::as_tibble(team_wins),
+      "game_summary" = tibble::as_tibble(game_summary),
       "sim_params" = list(
         "nfl_season" = nfl_season,
         "playoff_seeds" = playoff_seeds,
@@ -589,3 +606,4 @@ default_process_games_dt <- function(teams, games, week_num, ...) {
   games[, elo_shift := NULL]
 
   list("teams" = teams, "games" = games)
+}
