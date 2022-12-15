@@ -243,3 +243,123 @@ simulate_round <- function(sim_round,
 
   list("teams" = teams, "games" = games)
 }
+
+# function to simulate a week
+simulate_week <- function(teams,
+                          games,
+                          week_num,
+                          process_games,
+                          test_week = NULL,
+                          .debug = FALSE,
+                          ...) {
+  # estimate and simulate games
+  return_value <- process_games(teams, games, week_num, ...)
+
+  # testing?
+  if (!is.null(test_week) && week_num == test_week) {
+    return(return_value)
+  }
+
+  if(isTRUE(.debug) && FALSE){
+    # recall old data for comparison
+    old_teams <- teams
+    old_games <- games %>%
+      rename(.old_result = result)
+    # did we get the right data back?
+    # currently, we will catch a maximum of 9 problems. Allocate the vector
+    problems <- vector("character", length = 9L)
+    i <- 0
+    if (typeof(return_value) != "list") {
+      problems[i + 1] <- "the returned value was not a list"
+    } else {
+      if (!("teams" %in% names(return_value))) {
+        problems[i + 2] <- "`teams` was not in the returned list"
+      } else {
+        teams <- return_value$teams
+        if (!is_tibble(teams)) {
+          problems[i + 3] <- "`teams` was not a tibble"
+        } else {
+          if (nrow(teams) != nrow(old_teams)) {
+            problems[i + 4] <- paste(
+              "`teams` changed from", nrow(old_teams), "to",
+              nrow(teams), "rows",
+              collapse = " "
+            )
+          }
+          for (cname in colnames(old_teams)) {
+            if (!(cname %in% colnames(teams))) {
+              problems[i + 5] <- paste(
+                "`teams` column `", cname, "` was removed"
+              )
+            }
+          }
+        }
+      }
+      if (!("games" %in% names(return_value))) {
+        problems[i + 6] <- "`games` was not in the returned list"
+      } else {
+        games <- return_value$games
+        if (!is_tibble(games)) {
+          problems[i + 7] <- "`games` was not a tibble"
+        } else {
+          if (nrow(games) != nrow(old_games)) {
+            problems[i + 8] <- paste(
+              "`games` changed from", nrow(old_games), "to",
+              nrow(games), "rows",
+              collapse = " "
+            )
+          }
+          for (cname in colnames(old_games)) {
+            if (!(cname %in% colnames(games)) && cname != ".old_result") {
+              problems[i + 9] <- paste(
+                "`teams` column `", cname, "` was removed"
+              )
+            }
+          }
+        }
+      }
+    }
+
+    # report data structure problems
+    problems <- problems[problems != ""]
+    if (length(problems)) {
+      cli::cli_abort(
+        "During Week {week_num}, your {.code process_games} function had the \\
+        following issues: {problems}."
+      )
+    }
+
+    # identify improper results values
+    problems <- old_games %>%
+      inner_join(games, by = intersect(colnames(old_games), colnames(games))) %>%
+      mutate(problem = case_when(
+        week == week_num & is.na(result) ~
+          "a result from the current week is missing",
+        week != week_num & !is.na(.old_result) & is.na(result) ~
+          "a known result outside the current week was blanked out",
+        week != week_num & is.na(.old_result) & !is.na(result) ~
+          "a result outside the current week was entered",
+        week != week_num & .old_result != result ~
+          "a known result outside the current week was updated",
+        !is.na(.old_result) & is.na(result) ~
+          "a known result was blanked out",
+        !is.na(result) & result == 0 & game_type != "REG" ~
+          "a playoff game resulted in a tie (had result == 0)",
+        TRUE ~ NA_character_
+      )) %>%
+      filter(!is.na(problem)) %>%
+      pull(problem) %>%
+      unique()
+
+    # report result value problems
+    if (problems != "") {
+      cli::cli_abort(
+        "During Week {week_num}, your {.code process_games} function had the \\
+        following issues: {problems}. Make sure you only change results \\
+        when {.code week == week_num} & {.code is.na(result)}"
+      )
+    }
+  }
+
+  list("teams" = return_value$teams, "games" = return_value$games)
+}
