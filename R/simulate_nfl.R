@@ -129,109 +129,7 @@ simulate_nfl <- function(nfl_season = NULL,
 
   # Define simple estimate and simulate functions
 
-  if (is.null(process_games)) {
-    process_games <- function(teams, games, week_num, ...) {
-      # teams = teams data
-      # games = games data
-      #
-      # this example estimates at PK/0 and 50%
-      # estimate = is the median spread expected (positive = home team favored)
-      # wp = is the probability of the team winning the game
-      #
-      # only simulate games through week week_num
-      # only simulate games with is.na(result)
-      # result = how many points home team won by
-
-      # round out (away from zero)
-      round_out <- function(x) {
-        x[!is.na(x) & x < 0] <- floor(x[!is.na(x) & x < 0])
-        x[!is.na(x) & x > 0] <- ceiling(x[!is.na(x) & x > 0])
-        return(x)
-      }
-
-      # get elo if not in teams data already
-      if (!("elo" %in% colnames(teams))) {
-        args <- list(...)
-        if ("elo" %in% names(args)) {
-          # pull from custom arguments
-          teams <- teams %>%
-            dplyr::inner_join(args$elo %>% select(team, elo), by = c("team" = "team"))
-        } else {
-          # start everyone at a random default elo
-          ratings <- tibble(
-            team = unique(teams$team),
-            elo = rnorm(length(unique(team)), 1500, 150)
-          )
-          teams <- teams %>%
-            dplyr::inner_join(ratings, by = "team")
-        }
-      }
-
-      # pull ratings from teams data
-      ratings <- teams %>% select(sim, team, elo)
-
-      # mark estimate, wp, and result for games
-      games <- games %>%
-        dplyr::inner_join(ratings, by = c("sim" = "sim", "away_team" = "team")) %>%
-        dplyr::rename(away_elo = elo) %>%
-        dplyr::inner_join(ratings, by = c("sim" = "sim", "home_team" = "team")) %>%
-        dplyr::rename(home_elo = elo) %>%
-        dplyr::mutate(
-          elo_diff = home_elo - away_elo,
-          elo_diff = elo_diff + ifelse(location == "Home", 20, 0),
-          elo_diff = elo_diff + (home_rest - away_rest) / 7 * 25,
-          elo_diff = elo_diff * ifelse(game_type == "REG", 1, 1.2),
-          wp = 1 / (10^(-elo_diff / 400) + 1),
-          estimate = elo_diff / 25,
-          result = case_when(
-            is.na(result) & week == week_num ~
-            as.integer(round_out(rnorm(n(), estimate, 13))),
-            TRUE ~ as.integer(result)
-          ),
-          outcome = case_when(
-            is.na(result) ~ NA_real_,
-            result > 0 ~ 1,
-            result < 0 ~ 0,
-            TRUE ~ 0.5
-          ),
-          elo_input = case_when(
-            is.na(result) ~ NA_real_,
-            result > 0 ~ elo_diff * 0.001 + 2.2,
-            result < 0 ~ -elo_diff * 0.001 + 2.2,
-            TRUE ~ 1.0,
-          ),
-          elo_mult = log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input,
-          elo_shift = 20 * elo_mult * (outcome - wp)
-        ) %>%
-        dplyr::select(
-          -away_elo, -home_elo, -elo_diff, -wp, -estimate,
-          -outcome, -elo_input, -elo_mult
-        )
-
-      # apply elo shifts
-      teams <- teams %>%
-        dplyr::left_join(games %>%
-          filter(week == week_num) %>%
-          select(sim, away_team, elo_shift),
-        by = c("sim" = "sim", "team" = "away_team")
-        ) %>%
-        dplyr::mutate(elo = elo - ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
-        dplyr::select(-elo_shift) %>%
-        dplyr::left_join(games %>%
-          filter(week == week_num) %>%
-          select(sim, home_team, elo_shift),
-        by = c("sim" = "sim", "team" = "home_team")
-        ) %>%
-        dplyr::mutate(elo = elo + ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
-        dplyr::select(-elo_shift)
-
-      # remove elo shift
-      games <- games %>%
-        dplyr::select(-elo_shift)
-
-      return(list(teams = teams, games = games))
-    }
-  }
+  if (is.null(process_games)) process_games <- default_process_games
 
   # Catch invalid input
 
@@ -478,3 +376,216 @@ simulate_nfl <- function(nfl_season = NULL,
 
   out
 }
+
+
+default_process_games <- function(teams, games, week_num, ...) {
+  # teams = teams data
+  # games = games data
+  #
+  # this example estimates at PK/0 and 50%
+  # estimate = is the median spread expected (positive = home team favored)
+  # wp = is the probability of the team winning the game
+  #
+  # only simulate games through week week_num
+  # only simulate games with is.na(result)
+  # result = how many points home team won by
+
+  # round out (away from zero)
+  round_out <- function(x) {
+    x[!is.na(x) & x < 0] <- floor(x[!is.na(x) & x < 0])
+    x[!is.na(x) & x > 0] <- ceiling(x[!is.na(x) & x > 0])
+    return(x)
+  }
+
+  # get elo if not in teams data already
+  if (!("elo" %in% colnames(teams))) {
+    args <- list(...)
+    if ("elo" %in% names(args)) {
+      # pull from custom arguments
+      teams <- teams %>%
+        dplyr::inner_join(args$elo %>% select(team, elo), by = c("team" = "team"))
+    } else {
+      # start everyone at a random default elo
+      ratings <- tibble(
+        team = unique(teams$team),
+        elo = rnorm(length(unique(team)), 1500, 150)
+      )
+      teams <- teams %>%
+        dplyr::inner_join(ratings, by = "team")
+    }
+  }
+
+  # pull ratings from teams data
+  ratings <- teams %>% select(sim, team, elo)
+
+  # mark estimate, wp, and result for games
+  games <- games %>%
+    dplyr::inner_join(ratings, by = c("sim" = "sim", "away_team" = "team")) %>%
+    dplyr::rename(away_elo = elo) %>%
+    dplyr::inner_join(ratings, by = c("sim" = "sim", "home_team" = "team")) %>%
+    dplyr::rename(home_elo = elo) %>%
+    dplyr::mutate(
+      elo_diff = home_elo - away_elo,
+      elo_diff = elo_diff + ifelse(location == "Home", 20, 0),
+      elo_diff = elo_diff + (home_rest - away_rest) / 7 * 25,
+      elo_diff = elo_diff * ifelse(game_type == "REG", 1, 1.2),
+      wp = 1 / (10^(-elo_diff / 400) + 1),
+      estimate = elo_diff / 25,
+      result = case_when(
+        is.na(result) & week == week_num ~
+          as.integer(round_out(rnorm(n(), estimate, 13))),
+        TRUE ~ as.integer(result)
+      ),
+      outcome = case_when(
+        is.na(result) ~ NA_real_,
+        result > 0 ~ 1,
+        result < 0 ~ 0,
+        TRUE ~ 0.5
+      ),
+      elo_input = case_when(
+        is.na(result) ~ NA_real_,
+        result > 0 ~ elo_diff * 0.001 + 2.2,
+        result < 0 ~ -elo_diff * 0.001 + 2.2,
+        TRUE ~ 1.0,
+      ),
+      elo_mult = log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input,
+      elo_shift = 20 * elo_mult * (outcome - wp)
+    ) %>%
+    dplyr::select(
+      -away_elo, -home_elo, -elo_diff, -wp, -estimate,
+      -outcome, -elo_input, -elo_mult
+    )
+
+  # apply elo shifts
+  teams <- teams %>%
+    dplyr::left_join(games %>%
+                       filter(week == week_num) %>%
+                       select(sim, away_team, elo_shift),
+                     by = c("sim" = "sim", "team" = "away_team")
+    ) %>%
+    dplyr::mutate(elo = elo - ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
+    dplyr::select(-elo_shift) %>%
+    dplyr::left_join(games %>%
+                       filter(week == week_num) %>%
+                       select(sim, home_team, elo_shift),
+                     by = c("sim" = "sim", "team" = "home_team")
+    ) %>%
+    dplyr::mutate(elo = elo + ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
+    dplyr::select(-elo_shift)
+
+  # remove elo shift
+  games <- games %>%
+    dplyr::select(-elo_shift)
+
+  return(list(teams = teams, games = games))
+}
+
+# rewritten in data.table
+default_process_games_dt <- function(teams, games, week_num, ...) {
+  cli::cli_progress_step(
+    "Compute week {.val #{week_num}}"
+  )
+  # teams = teams data
+  # games = games data
+  #
+  # this example estimates at PK/0 and 50%
+  # estimate = is the median spread expected (positive = home team favored)
+  # wp = is the probability of the team winning the game
+  #
+  # only simulate games through week week_num
+  # only simulate games with is.na(result)
+  # result = how many points home team won by
+
+  # round out (away from zero)
+  round_out <- function(x) {
+    x[!is.na(x) & x < 0] <- floor(x[!is.na(x) & x < 0])
+    x[!is.na(x) & x > 0] <- ceiling(x[!is.na(x) & x > 0])
+    return(x)
+  }
+
+  setDT(games, key = c("sim", "week"))
+  setDT(teams, key = c("sim", "team"))
+
+  # get elo if not in teams data already
+  if (!("elo" %in% colnames(teams))) {
+    args <- list(...)
+    if ("elo" %in% names(args)) {
+      # pull from custom arguments
+      ratings <- setDT(args$elo, key = "team")
+      teams <- merge(teams, ratings[,.(team, elo)])
+    } else {
+      # start everyone at a random default elo
+      ratings <- data.table(
+        team = unique(teams$team),
+        elo = rnorm(length(unique(teams$team)), 1500, 150),
+        key = "team"
+      )
+      teams <- merge(teams, ratings)
+    }
+  }
+
+  # merge elo values to home and away teams
+  games <- merge(x = games, y = teams[,.(sim, team, away_elo = elo)],
+                 by.x = c("sim", "away_team"),
+                 by.y = c("sim", "team"),
+                 sort = FALSE)
+  games <- merge(x = games, y = teams[,.(sim, team, home_elo = elo)],
+                 by.x = c("sim", "home_team"),
+                 by.y = c("sim", "team"),
+                 sort = FALSE)
+
+  # create elo diff
+  games[, elo_diff := home_elo - away_elo + (home_rest - away_rest) / 7 * 25]
+  # adjust elo diff for location = HOME
+  games["Home", elo_diff := elo_diff + 20, on = "location"]
+  # adjust elo_diff for game type = REG
+  games["REG", elo_diff := elo_diff * 1.2, on = "game_type"]
+  # create wp and estimate
+  games[, `:=`(wp = 1 / (10^(-elo_diff / 400) + 1),
+               estimate = elo_diff / 25)]
+  # adjust result in current week
+  games[week_num == week & is.na(result),
+        result := as.integer(round_out(rnorm(.N, estimate, 13)))]
+  # compute elo shift
+  games[, `:=`(
+    outcome = fcase(
+      is.na(result), NA_real_,
+      result > 0, 1,
+      result < 0, 0,
+      default = 0.5
+    ),
+    elo_input = fcase(
+      is.na(result), NA_real_,
+      result > 0, elo_diff * 0.001 + 2.2,
+      result < 0, -elo_diff * 0.001 + 2.2,
+      default = 1.0
+    )
+  )]
+  games[, elo_mult := log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input]
+  games[, elo_shift := 20 * elo_mult * (outcome - wp)]
+
+  # drop irrelevant columns
+  drop_cols <- c("away_elo", "home_elo", "elo_diff", "wp", "estimate",
+                 "outcome", "elo_input", "elo_mult")
+  games[, (drop_cols) := NULL]
+
+  # apply away team elo shift
+  away_teams <- games[.(week_num),
+                      .(sim, team = away_team, elo_shift = -elo_shift),
+                      on = "week"]
+  teams <- merge(teams, away_teams, by = c("sim", "team"), all = TRUE)
+  teams[!is.na(elo_shift), elo := elo + elo_shift]
+  teams[, elo_shift := NULL]
+
+  # apply home team elo shift
+  home_teams <- games[.(week_num),
+                      .(sim, team = home_team, elo_shift),
+                      on = "week"]
+  teams <- merge(teams, home_teams, by = c("sim", "team"), all = TRUE)
+  teams[!is.na(elo_shift), elo := elo + elo_shift]
+  teams[, elo_shift := NULL]
+
+  # remove elo shift
+  games[, elo_shift := NULL]
+
+  list("teams" = teams, "games" = games)
