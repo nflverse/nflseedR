@@ -12,19 +12,8 @@
 #'    \code{\link{divisions}} for valid team abbreviations).}
 #'  \item{result}{Equals home score - away score.}
 #' }
-#' @param teams This parameter is optional. If it is \code{NULL} the function
-#'  will compute it internally, otherwise it has to be a data frame of all teams
-#'  contained in the \code{games} data frame repeated for each simulation ID
-#'  (\code{sim}). The following variables are required:
-#' \describe{
-#'  \item{sim}{A simulation ID. Normally 1 - n simulated seasons.}
-#'  \item{team}{Team abbreviation of the team (please see
-#'    \code{\link{divisions}} for valid team abbreviations).}
-#'  \item{conf}{Conference abbreviation of the team (please see
-#'    \code{\link{divisions}} for valid team abbreviations).}
-#'  \item{division}{Division of the team (please see
-#'    \code{\link{divisions}} for valid division names).}
-#' }
+#' @param teams `r lifecycle::badge("deprecated")` This argument is no longer
+#'   supported. Instead, the functions computes it internally.
 #' @param tiebreaker_depth A single value equal to 1, 2, or 3. The default is 3. The
 #'  value controls the depth of tiebreakers that shall be applied. The deepest
 #'  currently implemented tiebreaker is strength of schedule. The following
@@ -64,7 +53,7 @@
 #' options(old)
 #' }
 compute_division_ranks <- function(games,
-                                   teams = NULL,
+                                   teams = lifecycle::deprecated(),
                                    tiebreaker_depth = 3,
                                    .debug = FALSE,
                                    h2h = NULL) {
