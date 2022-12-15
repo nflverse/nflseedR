@@ -336,7 +336,7 @@ simulate_round <- function(sim_round,
   } else {
     if (!is_tibble(teams)) teams <- teams$standings
     teams$draft_order <- NA_real_
-    teams <- teams %>%
+    teams <- tibble::as_tibble(teams) %>%
       dplyr::select(
         dplyr::any_of(c(
           "sim", "team", "conf", "division", "games",
