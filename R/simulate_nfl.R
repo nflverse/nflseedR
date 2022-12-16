@@ -529,7 +529,7 @@ default_process_games_dt <- function(teams, games, week_num, ...) {
     if ("elo" %in% names(args)) {
       # pull from custom arguments
       ratings <- setDT(args$elo, key = "team")
-      teams <- merge(teams, ratings[,.(team, elo)])
+      teams <- merge(teams, ratings[,list(team, elo)])
     } else {
       # start everyone at a random default elo
       ratings <- data.table(
@@ -542,11 +542,11 @@ default_process_games_dt <- function(teams, games, week_num, ...) {
   }
 
   # merge elo values to home and away teams
-  games <- merge(x = games, y = teams[,.(sim, team, away_elo = elo)],
+  games <- merge(x = games, y = teams[,list(sim, team, away_elo = elo)],
                  by.x = c("sim", "away_team"),
                  by.y = c("sim", "team"),
                  sort = FALSE)
-  games <- merge(x = games, y = teams[,.(sim, team, home_elo = elo)],
+  games <- merge(x = games, y = teams[,list(sim, team, home_elo = elo)],
                  by.x = c("sim", "home_team"),
                  by.y = c("sim", "team"),
                  sort = FALSE)
@@ -587,16 +587,16 @@ default_process_games_dt <- function(teams, games, week_num, ...) {
   games[, (drop_cols) := NULL]
 
   # apply away team elo shift
-  away_teams <- games[.(week_num),
-                      .(sim, team = away_team, elo_shift = -elo_shift),
+  away_teams <- games[list(week_num),
+                      list(sim, team = away_team, elo_shift = -elo_shift),
                       on = "week"]
   teams <- merge(teams, away_teams, by = c("sim", "team"), all = TRUE)
   teams[!is.na(elo_shift), elo := elo + elo_shift]
   teams[, elo_shift := NULL]
 
   # apply home team elo shift
-  home_teams <- games[.(week_num),
-                      .(sim, team = home_team, elo_shift),
+  home_teams <- games[list(week_num),
+                      list(sim, team = home_team, elo_shift),
                       on = "week"]
   teams <- merge(teams, home_teams, by = c("sim", "team"), all = TRUE)
   teams[!is.na(elo_shift), elo := elo + elo_shift]
