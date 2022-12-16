@@ -43,9 +43,9 @@ summary.nflseedR_simulation <- function(object, ...){
   )
 
   data <- object$overall %>%
-    mutate(
+    dplyr::mutate(
       division = gsub("AFC |NFC ", "", division),
-      division = case_when(
+      division = dplyr::case_when(
         division == "East" ~ "E A S T",
         division == "North" ~ "N O R T H",
         division == "South" ~ "S O U T H",
@@ -62,23 +62,23 @@ summary.nflseedR_simulation <- function(object, ...){
   hide_me <- names(column_is_empty[column_is_empty == FALSE])
 
   afc <- data %>%
-    filter(conf == "AFC") %>%
-    select(-conf) %>%
-    arrange(division, desc(wins), desc(playoff))
+    dplyr::filter(conf == "AFC") %>%
+    dplyr::select(-conf) %>%
+    dplyr::arrange(division, dplyr::desc(wins), dplyr::desc(playoff))
 
   names(afc) <- paste0("afc_", names(afc))
 
   nfc <- data %>%
-    filter(conf == "NFC") %>%
-    select(-conf) %>%
-    arrange(division, desc(wins), desc(playoff))
+    dplyr::filter(conf == "NFC") %>%
+    dplyr::select(-conf) %>%
+    dplyr::arrange(division, dplyr::desc(wins), dplyr::desc(playoff))
 
   names(nfc) <- paste0("nfc_", names(nfc))
 
-  tbl <- bind_cols(afc, nfc)
+  tbl <- dplyr::bind_cols(afc, nfc)
 
   tbl %>%
-    group_by(afc_division) %>%
+    dplyr::group_by(afc_division) %>%
     gt::gt() %>%
     # see below
     table_theme() %>%
@@ -145,13 +145,13 @@ summary.nflseedR_simulation <- function(object, ...){
       locations = gt::cells_body(gt::ends_with("team")),
       fn = function(x){
         url <- data.frame(team_abbr = x) %>%
-          left_join(
+          dplyr::left_join(
             nflreadr::load_teams() %>%
-              filter(!team_abbr %in% c("LAR", "OAK", "SD", "STL")) %>%
-              select(team_abbr, team_logo_espn),
+              dplyr::filter(!team_abbr %in% c("LAR", "OAK", "SD", "STL")) %>%
+              dplyr::select(team_abbr, team_logo_espn),
             by = "team_abbr"
           ) %>%
-          pull(team_logo_espn)
+          dplyr::pull(team_logo_espn)
         gt::web_image(url = url, height = 30)
       }) %>%
     gt::tab_source_note("nflseedR") %>%
@@ -284,5 +284,3 @@ table_colors_negative <- c("white",
   "#FFF2DFFF", "#FFDFB2FF", "#FFCC7FFF", "#FFB74CFF", "#FFA626FF", "#FF9800FF",
   "#FA8C00FF", "#F47B00FF", "#EE6C00FF", "#E55100FF"
 )
-
-
