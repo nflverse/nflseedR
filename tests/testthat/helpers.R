@@ -1,9 +1,16 @@
-load_test_games <- function(){
-  g <- nflseedR::load_sharpe_games()
+test_dir <- getwd()
 
-  if (!nrow(g) > 0) return(tibble::tibble())
+load_test_games <- function(dir = test_dir){
+  readRDS(file.path(dir, "games.rds"))
+}
 
-  g %>%
-    dplyr::filter(season %in% 2014:2019) %>%
-    dplyr::select(sim = season, game_type, week, away_team, home_team, result)
+load_reference <- function(type = c("div", "conf", "draft"),
+                           dir = test_dir){
+  type <- match.arg(type)
+  file_name <- switch (type,
+    "div" = "reference_div_ranks.rds",
+    "conf" = "reference_conf_seeds.rds",
+    "draft" = "reference_draft_order.rds",
+  )
+  readRDS(file.path(dir, file_name))
 }
