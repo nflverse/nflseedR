@@ -73,4 +73,7 @@ conf_rank <-
   team_logo_espn <-
   nfc_team <-
   losses <-
+  sdiv <-
+  count <-
+  location <-
   NULL
