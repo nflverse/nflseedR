@@ -128,15 +128,17 @@ compute_division_ranks <- function(games,
   teams[, div_game := fifelse(division == division_opp, 1, 0)]
   teams[, conf_game := fifelse(conf == conf_opp, 1, 0)]
   teams <- teams[, list(
-    div_pct = fifelse(sum(div_game) == 0, 0.5,
-                      sum(div_game * outcome) / sum(div_game)
+    div_pct = fifelse(
+      sum(div_game) == 0, 0.5,
+      sum(div_game * outcome) / sum(div_game)
     ),
-    conf_pct = fifelse(sum(conf_game) == 0, 0.5,
-                      sum(conf_game * outcome) / sum(conf_game)
+    conf_pct = fifelse(
+      sum(conf_game) == 0, 0.5,
+      sum(conf_game * outcome) / sum(conf_game)
     ),
-    sov = fifelse(sum(outcome == 1) == 0, 0,
-                 sum(wins_opp * (outcome == 1)) /
-                   sum(games_opp * (outcome == 1))
+    sov = fifelse(
+      sum(outcome == 1) == 0, 0,
+      sum(wins_opp * (outcome == 1)) / sum(games_opp * (outcome == 1))
     ),
     sos = sum(wins_opp) / sum(games_opp)
   ), by = c("sim", "conf", "division", "team", "games", "wins",
