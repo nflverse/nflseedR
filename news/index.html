@@ -82,6 +82,7 @@
 <li>
 <code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code> now uses data.table to combine simulation rounds data. This is a significant performance improvement. The returned list <code>"sim_params"</code> now includes the package version of nflseedR (for debugging) and the current system time when the simulation was finished. (<a href="https://github.com/nflverse/nflseedR/issues/36" class="external-link">#36</a>)</li>
 <li>Lots of internal improvements to reduce package dependencies and messaging. (<a href="https://github.com/nflverse/nflseedR/issues/36" class="external-link">#36</a>)</li>
+<li>The <code>summary</code> method <code><a href="../reference/summary.nflseedR_simulation.html">summary.nflseedR_simulation()</a></code> now uses <code><a href="../reference/fmt_pct_special.html">fmt_pct_special()</a></code> to format probability strings to avoid the impression of overconfidence by rounding to integer percentages. (<a href="https://github.com/nflverse/nflseedR/issues/37" class="external-link">#37</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="nflseedr-110">nflseedR 1.1.0<a class="anchor" aria-label="anchor" href="#nflseedr-110"></a></h2><p class="text-muted">CRAN release: 2022-07-07</p>

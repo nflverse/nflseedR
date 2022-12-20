@@ -144,11 +144,11 @@ wouldn’t do these things.</em></p>
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:14:16 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:14:16 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:14:42 | Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:14:42 | Aggregating across simulations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:14:42 | DONE!</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:32:11 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:32:12 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:32:45 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:32:45 | Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:32:45 | DONE!</span></span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as
 the individual results from each game of each simulation. For example,
 let’s look at the overall results for the Bears:</p>
@@ -496,11 +496,11 @@ what happens:</p>
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:14:42 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:14:42 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:15:05 | Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:15:05 | Aggregating across simulations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:15:05 | DONE!</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:32:45 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:32:45 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:33:14 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:33:14 | Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:33:14 | DONE!</span></span>
 <span></span>
 <span><span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -792,11 +792,11 @@ data type.</p>
 <span>  best <span class="op">=</span> <span class="st">"CHI"</span>, </span>
 <span>  worst <span class="op">=</span> <span class="st">"GB"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:15:05 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:15:05 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:15:28 | Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:15:28 | Aggregating across simulations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:15:28 | DONE!</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:33:14 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:33:14 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:33:43 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:33:43 | Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:33:43 | DONE!</span></span></code></pre></div>
 <p>Now let nflseedR summarize the simulation for you by using
 <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> with the nflseedR simulation object. This will
 print a gt table.</p>
@@ -1217,7 +1217,27 @@ html {
   text-indent: 25px;
 }
 </style>
-<table class="table gt_table">
+<table class="table gt_table" style="table-layout: fixed;">
+<colgroup>
+<col>
+<col>
+<col style="width:60px;">
+<col style="width:60px;">
+<col style="width:60px;">
+<col style="width:60px;">
+<col style="width:60px;">
+<col style="width:60px;">
+<col style="width:60px;">
+<col>
+<col>
+<col style="width:60px;">
+<col style="width:60px;">
+<col style="width:60px;">
+<col style="width:60px;">
+<col style="width:60px;">
+<col style="width:60px;">
+<col style="width:60px;">
+</colgroup>
 <thead class="gt_header">
 <tr>
 <td colspan="18" class="gt_heading gt_title gt_font_normal" style="font-family: 'Prosto One', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif; font-weight: bold;">Simulating the 2020 NFL Season</td>
@@ -1236,24 +1256,24 @@ html {
       </th>
     </tr>
 <tr>
-<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id=""></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="AVG.&lt;br&gt;WINS">AVG.<br>WINS</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Make&lt;br&gt;POST">Make<br>POST</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;DIV">Win<br>DIV</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="No.1&lt;br&gt;Seed">No.1<br>Seed</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;Conf">Win<br>Conf</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;SB">Win<br>SB</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="No.1&lt;br&gt;Pick">No.1<br>Pick</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Top-5&lt;br&gt;Pick">Top-5<br>Pick</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; border-left-width: 2px; border-left-style: solid; border-left-color: #000000;" scope="col" id=""></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="AVG.&lt;br&gt;WINS">AVG.<br>WINS</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Make&lt;br&gt;POST">Make<br>POST</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;DIV">Win<br>DIV</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="No.1&lt;br&gt;Seed">No.1<br>Seed</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;Conf">Win<br>Conf</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Win&lt;br&gt;SB">Win<br>SB</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="No.1&lt;br&gt;Pick">No.1<br>Pick</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="Top-5&lt;br&gt;Pick">Top-5<br>Pick</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id=""></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="AVG.&lt;br&gt;WINS">AVG.<br>WINS</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="Make&lt;br&gt;POST">Make<br>POST</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="Win&lt;br&gt;DIV">Win<br>DIV</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="No.1&lt;br&gt;Seed">No.1<br>Seed</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="Win&lt;br&gt;Conf">Win<br>Conf</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="Win&lt;br&gt;SB">Win<br>SB</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="No.1&lt;br&gt;Pick">No.1<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="Top-5&lt;br&gt;Pick">Top-5<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; border-left-width: 2px; border-left-style: solid; border-left-color: #000000; text-align: center; font-weight: bold;" scope="col" id=""></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="AVG.&lt;br&gt;WINS">AVG.<br>WINS</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="Make&lt;br&gt;POST">Make<br>POST</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="Win&lt;br&gt;DIV">Win<br>DIV</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="No.1&lt;br&gt;Seed">No.1<br>Seed</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="Win&lt;br&gt;Conf">Win<br>Conf</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="Win&lt;br&gt;SB">Win<br>SB</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="No.1&lt;br&gt;Pick">No.1<br>Pick</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; text-align: center; font-weight: bold;" scope="col" id="Top-5&lt;br&gt;Pick">Top-5<br>Pick</th>
     </tr>
 </thead>
 <tbody class="gt_table_body">
@@ -1780,9 +1800,9 @@ function.</p>
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  test_week <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:15:30 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:15:31 | Beginning simulation of <span style="color: #0000BB;">1000</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:15:33 | Aborting and returning your `process_games` function's results</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:33:45 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:33:45 | Beginning simulation of <span style="color: #0000BB;">1000</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:33:48 | Aborting and returning your `process_games` function's results</span></span>
 <span><span class="co">#&gt; from Week 3</span></span></code></pre></div>
 <p>Let’s look at the Bears’ Elo after Week 3 in the top handful of
 simulations:</p>
@@ -1860,7 +1880,7 @@ and the Elos were adjusted accordingly.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">away_team</span> <span class="op">==</span> <span class="st">"CHI"</span> <span class="op">|</span> <span class="va">home_team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-12-20 11:15:30 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-12-20 11:33:45 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 9</span></span></span>
 <span><span class="co">#&gt;      sim game_type  week away_team home_team away_rest home_rest location result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
