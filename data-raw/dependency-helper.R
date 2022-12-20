@@ -2,10 +2,8 @@
 imports <- c(
   "magrittr",
   "rlang",
-  "crayon",
   "cli",
   "dplyr",
-  "glue",
   "gsubfn",
   "purrr",
   "tidyr",
@@ -13,7 +11,7 @@ imports <- c(
   "furrr",
   "progressr",
   "future",
-  "readr"
+  "data.table"
 )
 purrr::walk(imports, usethis::use_package, "Imports")
 usethis::use_tidy_description()

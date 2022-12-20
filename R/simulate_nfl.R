@@ -242,25 +242,26 @@ simulate_nfl <- function(nfl_season = NULL,
     is_single_digit_numeric(simulations),
     is_single_digit_numeric(sims_per_round)
   )) {
-    stop(
-      "One or more of the parameters `nfl_season`, `tiebreaker_depth`, `test_week`, ",
-      "`simulations` and `sims_per_round` are not single digit numeric values!"
+    cli::cli_abort(
+      "One or more of the parameters {.arg nfl_season}, {.arg tiebreaker_depth}, \\
+      {.arg test_week}, {.arg simulations} and {.arg sims_per_round} are not \\
+      single digit numeric values!"
     )
   }
 
   if (!is.function(process_games)) {
-    stop("The parameter `process_games` has to be a function!")
+    cli::cli_abort("The parameter {.arg process_games} has to be a function!")
   }
 
   if (nfl_season < 2002) {
-    stop("The earliest season that can be simulated is 2002.")
+    cli::cli_abort("The earliest season that can be simulated is 2002.")
   }
 
   #### LOAD DATA ####
 
   # load games data
   report("Loading games data")
-  schedule <- load_sharpe_games() %>%
+  schedule <- nflreadr::load_schedules() %>%
     select(
       season, game_type, week, away_team, home_team,
       away_rest, home_rest, location, result
@@ -276,13 +277,16 @@ simulate_nfl <- function(nfl_season = NULL,
 
   if (nrow(schedule) == 0)
   {
-    fn <- glue::glue("https://github.com/nflverse/nfldata/blob/master/fake_schedule_{nfl_season}.csv?raw=true")
+    fn <- paste0(
+      "https://github.com/nflverse/nfldata/blob/master/fake_schedule_",
+      nfl_season,
+      ".csv?raw=true"
+    )
     tryCatch({
-      options(readr.num_columns = 0)
-      schedule <- readr::read_csv(fn)
-      sim_info(glue::glue("No actual schedule exists for {nfl_season}, using fake schedule with correct opponents"))
+      schedule <- data.table::fread(fn)
+      cli::cli_alert_info("No actual schedule exists for {.val {nfl_season}}, using fake schedule with correct opponents.")
     }, error = function(cond) {
-      stop("Unable to locate a schedule for ", nfl_season)
+      cli::cli_abort("Unable to locate a schedule for {.val {nfl_season}}")
     })
   }
 
@@ -323,14 +327,20 @@ simulate_nfl <- function(nfl_season = NULL,
   }
 
   if (sim_rounds > 1 && is_sequential()) {
-    sim_info(c(
-      "Computation in multiple rounds can be accelerated with parallel processing.",
-      "You should consider calling a `future::plan()`. Please see the function documentation for further information.",
-      "Will go on sequentially..."
-    ))
+    cli::cli_inform(c(
+      "i" = "Computation in multiple rounds can be accelerated
+            with parallel processing.",
+      "i" = "You should consider calling a {.code future::plan()}.
+            Please see the function documentation for further information.",
+      "i" = "Will go on sequentially..."
+    ), wrap = TRUE
+    )
   }
 
-  report(glue("Beginning simulation of {simulations} seasons in {sim_rounds} {ifelse(sim_rounds == 1, 'round', 'rounds')}"))
+  report(
+    "Beginning simulation of {.val {simulations}} season{?s} \\
+    in {.val {sim_rounds}} round{?s}"
+  )
 
   p <- progressr::progressor(along = seq_len(sim_rounds))
 
@@ -358,16 +368,24 @@ simulate_nfl <- function(nfl_season = NULL,
   if (isTRUE(.debug)) eval(run) else suppressMessages(eval(run))
 
   if (!is.null(test_week)) {
-    report(glue(
-      "Aborting and returning your `process_games` function's results from Week {test_week}"
-    ))
+    report(
+      "Aborting and returning your {.code process_games} function's \\
+      results from Week {test_week}"
+      , wrap = TRUE
+    )
     return(all[[1]])
   }
 
   report("Combining simulation data")
 
-  all_teams <- furrr::future_map_dfr(all, ~ .x$teams)
-  all_games <- furrr::future_map_dfr(all, ~ .x$games)
+  # `all` is a list of rounds where every round is containing the dataframes
+  # "teams" and "games". We loop over the list with purrr (that's not really bad
+  # because the length of the loop only is the number of rounds) but don't
+  # convert to a dataframe/tibble because dplyr::bind_rows() is too slow.
+  # Instead, we bind with data.table afterwards, it's a reverse dependency
+  # through nflreadr anyways.
+  all_teams <- data.table::rbindlist(purrr::map(all, ~ .x$teams))
+  all_games <- data.table::rbindlist(purrr::map(all, ~ .x$games))
 
   report("Aggregating across simulations")
 
@@ -427,6 +445,8 @@ simulate_nfl <- function(nfl_season = NULL,
     ungroup() %>%
     arrange(week)
 
+  report("DONE!")
+
   if (isTRUE(print_summary)) print(overall)
 
   out <- structure(
@@ -448,7 +468,9 @@ simulate_nfl <- function(nfl_season = NULL,
         "sims_per_round" = sims_per_round,
         ".debug" = .debug,
         "print_summary" = print_summary,
-        "sim_include" = sim_include
+        "sim_include" = sim_include,
+        "nflseedR_version" = utils::packageVersion("nflseedR"),
+        "finished_at" = Sys.time()
       )
     ),
     class = "nflseedR_simulation"

@@ -39,25 +39,26 @@ compute_conference_seeds <- function(teams,
                                      playoff_seeds = 7) {
   # catch invalid input
   if (!isTRUE(tiebreaker_depth %in% 1:3)) {
-    stop(
-      "The argument `tiebreaker_depth` has to be",
-      "a single value in the range of 1-3!"
+    cli::cli_abort(
+      "The argument {.arg tiebreaker_depth} has to be \\
+      a single value in the range of 1-3!"
     )
   }
 
   if (!is_tibble(teams)) teams <- teams$standings
 
   if (!any((names(teams) %in% "div_rank")) | !is.data.frame(teams)) {
-    stop(
-      "The argument `teams` has to be a data frame including ",
-      "the variable `div_rank` as computed by `compute_division_ranks()`!"
+    cli::cli_abort(
+      "The argument {.arg teams} has to be a data frame including \\
+      the variable {.val div_rank} as computed by {.fn compute_division_ranks}!"
     )
   }
 
   if(is.null(h2h) & tiebreaker_depth > TIEBREAKERS_NONE){
-    stop("You asked for tiebreakers but the argument `h2h` is NULL. ",
-         "Did you forget to pass the `h2h` data frame? It is computed with the ",
-         "function `compute_division_ranks()`."
+    cli::cli_abort(
+      "You asked for tiebreakers but the argument {.arg h2h} is {.val NULL}. \\
+       Did you forget to pass the {.val h2h} data frame? It is computed with \\
+       the function {.fn compute_division_ranks}."
     )
   }
 
@@ -67,7 +68,7 @@ compute_conference_seeds <- function(teams,
   # seed loop
   for (seed_num in seq_len(playoff_seeds))
   {
-    report(paste0("Calculating seed #", seed_num))
+    report("Calculating seed #{seed_num}")
 
     # find teams at this seed
     update <- teams %>%
@@ -96,5 +97,8 @@ compute_conference_seeds <- function(teams,
     mutate(exit = ifelse(is.na(seed), max_reg_week, NA_real_)) %>%
     select(-max_reg_week)
 
-  return(list(standings = teams, h2h = h2h))
+  list(
+    "standings" = tibble::as_tibble(teams),
+    "h2h" = tibble::as_tibble(h2h)
+  )
 }
