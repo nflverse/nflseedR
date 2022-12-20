@@ -4,6 +4,7 @@
 * The `summary` method `summary.nflseedR_simulation()` now hides columns where all values are `NA`. This is useful if `simulate_nfl()` skips the postseason or draft order. The method also reformats the number of simulations in the subtitle, e.g. from "10000" to "10k" (this requires scales >= 1.2.0, but it is a good idea to update scales anyways). (#35)
 * `simulate_nfl()` now uses data.table to combine simulation rounds data. This is a significant performance improvement. The returned list `"sim_params"` now includes the package version of nflseedR (for debugging) and the current system time when the simulation was finished. (#36)
 * Lots of internal improvements to reduce package dependencies and messaging. (#36)
+* The `summary` method `summary.nflseedR_simulation()` now uses `fmt_pct_special()` to format probability strings to avoid the impression of overconfidence by rounding to integer percentages. (#37)
 
 # nflseedR 1.1.0
 
