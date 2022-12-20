@@ -1,18 +1,10 @@
 
 # progress report using rlang to avoid usethis dependency
-report <- function(msg, .cli_fct = cli::cli_alert_info) {
-  .cli_fct(c(format(Sys.time(), '%H:%M:%S'), " | ", msg))
-}
-
-sim_info <- function(msg) {
-  rlang::inform(
-    paste0(
-      crayon::yellow(cli::symbol$info),
-      " ",
-      msg,
-      collapse = "\n"
-    )
-  )
+report <- function(msg,
+                   ...,
+                   .cli_fct = cli::cli_alert_info,
+                   .envir = parent.frame()) {
+  .cli_fct(c(format(Sys.time(), '%H:%M:%S'), " | ", msg), ..., .envir = .envir)
 }
 
 # this makes it so there's two rows per game (one/team)
@@ -38,3 +30,12 @@ is_single_digit_numeric <- function(x) is.numeric(x) && length(x) == 1L && !is.n
 
 # Identify sessions with sequential future resolving
 is_sequential <- function() inherits(future::plan(), "sequential")
+
+# strip nflverse attributes from games dataframe as they are misleading
+# .internal.selfref is a data.table attribute that is not necessary in this case
+strip_nflverse_attributes <- function(df){
+  input_attrs <- names(attributes(df))
+  input_remove <- input_attrs[grepl("nflverse|.internal.selfref", input_attrs)]
+  attributes(df)[input_remove] <- NULL
+  df
+}

@@ -53,33 +53,33 @@ compute_draft_order <- function(teams,
   )
 
   if (!sum(names(games) %in% required_vars, na.rm = TRUE) >= 6 | !is.data.frame(games)) {
-    stop(
-      "The argument `games` has to be a data frame including ",
-      "all of the following variables: ",
-      glue_collapse(required_vars, sep = ", ", last = " and "),
-      "!"
+    cli::cli_abort(
+      "The argument {.arg games} has to be a data frame including \\
+      all of the following variables: {.val {required_vars}}!"
     )
   }
 
   if (!any(games$game_type %in% "SB")) {
-    stop(
-      "Can't compute draft order for an incomplete season. It looks like the ",
-      "`games` data frame is missing the game_type 'SB'!"
+    cli::cli_abort(
+      "Can't compute draft order for an incomplete season. It looks like the \\
+       {.arg games} dataframe is missing the game_type {.val SB}!"
     )
   } else if (any(is.na(games$result[games$game_type == "SB"]))){
-    stop(
-      "Can't compute draft order for an incomplete season. It looks like the ",
-      "`games` data frame is missing the result for game_type 'SB'!"
+    cli::cli_abort(
+      "Can't compute draft order for an incomplete season. It looks like the \\
+       {.arg games} dataframe is missing the result for game_type {.val SB}!"
     )
   }
 
   if (is.null(h2h) & tiebreaker_depth > TIEBREAKERS_NONE) {
-    stop(
-      "You asked for tiebreakers but the argument `h2h` is NULL. ",
-      "Did you forget to pass the `h2h` data frame? It is computed with the ",
-      "function `compute_division_ranks()`."
+    cli::cli_abort(
+      "You asked for tiebreakers but the argument {.arg h2h} is {.val NULL}. \\
+       Did you forget to pass the {.val h2h} data frame? It is computed with \\
+       the function {.fn compute_division_ranks}."
     )
   }
+
+  games <- strip_nflverse_attributes(games)
 
   if (any(is.na(teams$exit))){
     # week tracker
@@ -173,7 +173,7 @@ compute_draft_order <- function(teams,
   for (do_num in rev(seq_len(max_do_num)))
   {
     # progress
-    report(paste0("Calculating draft order #", do_num))
+    report("Calculating draft order #{do_num}")
 
     # teams we can update
     update <- teams %>%
@@ -195,12 +195,13 @@ compute_draft_order <- function(teams,
 
   # playoff error?
   if (any(is.na(teams$draft_order))) {
-    stop(
-      "The playoff games did not function normally. Make sure that either `fresh_season` ",
-      "or `fresh_playoffs` to `TRUE`, or have playoff_seeds match the correct number of ",
-      "seeds for the season being simulated."
+    cli::cli_abort(
+      "The playoff games did not function normally. Make sure to set either \\
+       {.arg fresh_season} or {.arg fresh_playoffs} to {.val TRUE}, or have \\
+       {.arg playoff_seeds} match the correct number of seeds for the season \\
+       being simulated."
     )
   }
 
-  return(teams)
+  tibble::as_tibble(teams)
 }

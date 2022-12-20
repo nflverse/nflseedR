@@ -20,7 +20,7 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # divisional tiebreakers
-      if (isTRUE(.debug)) report(glue("DRAFT: Divisional Rank"))
+      if (isTRUE(.debug)) report("DRAFT: Divisional Rank")
       list[u, tied] <- tied %>%
         group_by(sim) %>%
         mutate(value = case_when(
@@ -34,7 +34,7 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # conference tiebreakers
-      if (isTRUE(.debug)) report(glue("DRAFT: Conference Rank"))
+      if (isTRUE(.debug)) report("DRAFT: Conference Rank")
       list[u, tied] <- tied %>%
         mutate(
           div_winner = NA, # we don't care about div winners here
@@ -59,7 +59,7 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # head-to-head sweep
-      if (isTRUE(.debug)) report(glue("DRAFT: Head-to-head Sweep"))
+      if (isTRUE(.debug)) report("DRAFT: Head-to-head Sweep")
       list[u, tied] <- tied %>%
         inner_join(tied %>% select(sim, team), by = c("sim"), suffix = c("", "_opp")) %>%
         rename(opp = team_opp) %>%
@@ -80,7 +80,7 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # common games
-      if (isTRUE(.debug)) report(glue("DRAFT: Common Record"))
+      if (isTRUE(.debug)) report("DRAFT: Common Record")
       list[u, tied] <- tied %>%
         inner_join(h2h, by = c("sim", "team")) %>%
         filter(h2h_played == 1) %>%
@@ -100,7 +100,7 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
       # strength of victory
-      if (isTRUE(.debug)) report(glue("DRAFT: Strength of Victory"))
+      if (isTRUE(.debug)) report("DRAFT: Strength of Victory")
       list[u, tied] <- tied %>%
         mutate(value = sov) %>%
         process_draft_ties(u, r)

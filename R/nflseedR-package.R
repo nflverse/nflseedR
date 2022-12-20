@@ -7,10 +7,9 @@
 #' @import dplyr
 #' @import gsubfn
 #' @importFrom cli symbol
-#' @importFrom crayon red
-#' @importFrom furrr future_map future_map_dfr furrr_options
+#' @importFrom data.table rbindlist fread
+#' @importFrom furrr future_map furrr_options
 #' @importFrom future plan
-#' @importFrom glue glue glue_collapse
 #' @importFrom magrittr %>%
 #' @importFrom progressr progressor
 #' @importFrom purrr pluck
