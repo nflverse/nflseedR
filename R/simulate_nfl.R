@@ -362,6 +362,8 @@ simulate_nfl <- function(nfl_season = NULL,
 
   report("DONE!")
 
+  report("DONE!")
+
   if (isTRUE(print_summary)) print(overall)
 
   out <- structure(
