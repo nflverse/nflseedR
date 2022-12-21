@@ -109,8 +109,9 @@ nflseedR simulation summary data frame.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nflseedr.com">nflseedR</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># set seed for recreation</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">20220315</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># set seed for recreation,</span></span></span>
+<span class="r-in"><span><span class="co"># internal parallelization requires a L'Ecuyer-CMRG random number generator</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">19980310</span>, kind <span class="op">=</span> <span class="st">"L'Ecuyer-CMRG"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Simulate the season 20 times in 1 round</span></span></span>
 <span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="simulate_nfl.html">simulate_nfl</a></span><span class="op">(</span></span></span>
@@ -118,11 +119,11 @@ nflseedR simulation summary data frame.</p>
 <span class="r-in"><span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  simulations <span class="op">=</span> <span class="fl">20</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:31:39 | Loading games data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:31:39 | Beginning simulation of <span style="color: #0000BB;">20</span> seasons in <span style="color: #0000BB;">1</span> round</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:31:57 | Combining simulation data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:31:57 | Aggregating across simulations</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:31:57 | DONE!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:08:14 | Loading games data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:08:14 | Beginning simulation of <span style="color: #0000BB;">20</span> seasons in <span style="color: #0000BB;">1</span> round</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:08:28 | Combining simulation data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:08:28 | Aggregating across simulations</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:08:28 | DONE!</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create Summary Tables</span></span></span>
 <span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></span></span>
