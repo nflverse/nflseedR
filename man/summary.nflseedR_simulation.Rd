@@ -23,8 +23,9 @@ nflseedR simulation summary data frame.
 \examples{
 \donttest{
 library(nflseedR)
-# set seed for recreation
-set.seed(20220315)
+# set seed for recreation,
+# internal parallelization requires a L'Ecuyer-CMRG random number generator
+set.seed(19980310, kind = "L'Ecuyer-CMRG")
 
 # Simulate the season 20 times in 1 round
 sim <- nflseedR::simulate_nfl(
