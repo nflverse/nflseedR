@@ -1,4 +1,4 @@
-# nflseedR (development version)
+# nflseedR 1.2.0
 
 * `simulate_nfl()` gained the new argument `sim_include` to allow more access to what is actually being simulated. This makes it possible skip playoff simulation or the (possibly heavy) computation of draft order. (#34)
 * The `summary` method `summary.nflseedR_simulation()` now hides columns where all values are `NA`. This is useful if `simulate_nfl()` skips the postseason or draft order. The method also reformats the number of simulations in the subtitle, e.g. from "10000" to "10k" (this requires scales >= 1.2.0, but it is a good idea to update scales anyways). (#35)
