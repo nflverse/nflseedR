@@ -99,6 +99,7 @@
 #' # Parallel processing can be activated via the following line
 #' # future::plan("multisession")
 #'
+#' try({#to avoid CRAN test problems
 #' # Simulate the season 4 times in 2 rounds
 #' sim <- nflseedR::simulate_nfl(
 #'   nfl_season = 2020,
@@ -109,6 +110,7 @@
 #'
 #' # Overview output
 #' dplyr::glimpse(sim)
+#' })
 #' }
 simulate_nfl <- function(nfl_season = NULL,
                          process_games = NULL,

@@ -158,6 +158,7 @@ library(nflseedR)
 # Parallel processing can be activated via the following line
 # future::plan("multisession")
 
+try({#to avoid CRAN test problems
 # Simulate the season 4 times in 2 rounds
 sim <- nflseedR::simulate_nfl(
   nfl_season = 2020,
@@ -168,6 +169,7 @@ sim <- nflseedR::simulate_nfl(
 
 # Overview output
 dplyr::glimpse(sim)
+})
 }
 }
 \seealso{
