@@ -83,7 +83,7 @@ Simulation will behave as follows:
 An \code{nflseedR_simulation} object containing a list of 6 data frames
 data frames with the results of all simulated games,
 the final standings in each simulated season (incl. playoffs and draft order),
-summary statistics across all simulated seasons, and the siumulation parameters. For a full list,
+summary statistics across all simulated seasons, and the simulation parameters. For a full list,
 please see \href{https://nflseedr.com/articles/articles/nflsim.html#simulation-output}{the package website}.
 }
 \description{
