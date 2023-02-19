@@ -65,7 +65,7 @@ pak::pak("nflverse/nflseedR")
 or prebuilt from the [development repo](https://nflverse.r-universe.dev)
 with:
 
-```r
+``` r
 install.packages("nflseedR", repos = c("https://nflverse.r-universe.dev", getOption("repos")))
 ```
 

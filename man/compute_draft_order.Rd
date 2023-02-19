@@ -61,6 +61,7 @@ Compute NFL Draft Order using Game Results and Divisional Rankings
 old <- options(list(digits = 3, tibble.print_min = 64))
 library(dplyr, warn.conflicts = FALSE)
 
+try({#to avoid CRAN test problems
 games <-
   nflseedR::load_sharpe_games() \%>\%
   dplyr::filter(season \%in\% 2018:2019) \%>\%
@@ -70,6 +71,7 @@ games \%>\%
   nflseedR::compute_division_ranks() \%>\%
   nflseedR::compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6) \%>\%
   nflseedR::compute_draft_order(games = games, h2h = .$h2h)
+})
 
 # Restore old options
 options(old)

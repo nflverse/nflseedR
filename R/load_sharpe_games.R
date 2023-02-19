@@ -9,8 +9,10 @@
 #' @seealso The internally called function [nflreadr::load_schedules()]
 #' @examples
 #' \donttest{
+#' try({#to avoid CRAN test problems
 #' games <- load_sharpe_games()
 #' dplyr::glimpse(games)
+#' })
 #' \dontshow{
 #' # Close open connections for R CMD Check
 #' future::plan("sequential")

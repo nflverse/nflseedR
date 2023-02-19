@@ -1,6 +1,6 @@
 Package: nflseedR
 Title: Functions to Efficiently Simulate and Evaluate NFL Seasons
-Version: 1.1.0.9002
+Version: 1.2.0
 Authors@R: c(
     person("Lee", "Sharpe", role = c("aut", "cph")),
     person("Sebastian", "Carl", , "mrcaseb@gmail.com", role = c("cre", "aut"))
