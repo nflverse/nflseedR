@@ -97,8 +97,10 @@ having to remember the correct url.
 }
 \examples{
 \donttest{
+try({#to avoid CRAN test problems
 games <- load_sharpe_games()
 dplyr::glimpse(games)
+})
 \dontshow{
 # Close open connections for R CMD Check
 future::plan("sequential")
