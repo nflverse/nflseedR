@@ -1,40 +1,35 @@
-source("helpers.R")
-
 test_that("compute_division_ranks() works for multiple seasons", {
   g <- load_test_games()
-  skip_if_not(nrow(g) > 0, message = NULL)
 
-  ref <- readRDS("reference_div_ranks.rds")
+  div_ranks <- compute_division_ranks(g)
+  div_ranks <- div_ranks$standings %>% strip_nflverse_attributes()
 
-  div_ranks <- g %>%
-    compute_division_ranks()
+  exp <- load_reference("div")
 
-  expect_identical(div_ranks$standings, ref)
+  expect_identical(div_ranks, exp)
 })
 
 test_that("compute_conference_seeds() works for multiple seasons", {
   g <- load_test_games()
-  skip_if_not(nrow(g) > 0, message = NULL)
-
-  ref <- readRDS("reference_conf_seeds.rds")
-
   conf_seeds <- g %>%
     compute_division_ranks() %>%
-    compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6)
+    compute_conference_seeds(playoff_seeds = 6)
+  conf_seeds <- conf_seeds$standings %>% strip_nflverse_attributes()
 
-  expect_identical(conf_seeds$standings, ref)
+  exp <- load_reference("conf")
+
+  expect_identical(conf_seeds, exp)
 })
 
 test_that("compute_draft_order() works for multiple seasons", {
   g <- load_test_games()
-  skip_if_not(nrow(g) > 0, message = NULL)
-
-  ref <- readRDS("reference_draft_order.rds")
-
   draft_order <- g %>%
     compute_division_ranks() %>%
-    compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6) %>%
-    compute_draft_order(games = g, h2h = .$h2h)
+    compute_conference_seeds(playoff_seeds = 6) %>%
+    compute_draft_order(games = g)
+  draft_order <- strip_nflverse_attributes(draft_order)
 
-  expect_identical(draft_order, ref)
+  exp <- load_reference("draft")
+
+  expect_identical(draft_order, exp)
 })

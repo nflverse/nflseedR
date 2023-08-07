@@ -31,12 +31,12 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
         ) %>%
         rename(opp = team_opp) %>%
         filter(team != opp) %>%
-        inner_join(h2h, by = c("sim", "team", "opp")) %>%
+        left_join(h2h, by = c("sim", "team", "opp")) %>%
         group_by(sim, division, team, div_pct, conf_pct, sov, sos, tied_teams) %>%
         summarize(value = case_when(
-          max(tied_teams) < min_tied ~ NA_real_,
-          sum(h2h_games) == 0 ~ 0.5,
-          TRUE ~ sum(h2h_wins) / sum(h2h_games)
+          max(tied_teams, na.rm = TRUE) < min_tied ~ NA_real_,
+          sum(h2h_games, na.rm = TRUE) == 0 ~ 0.5,
+          TRUE ~ sum(h2h_wins, na.rm = TRUE) / sum(h2h_games, na.rm = TRUE)
         )) %>%
         ungroup() %>%
         process_div_ties(u, r)
@@ -60,7 +60,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       # common games
       if (isTRUE(.debug)) report("DIV ({min_tied}): Common Record")
       list[u, tied] <- tied %>%
-        inner_join(h2h, by = c("sim", "team")) %>%
+        left_join(h2h, by = c("sim", "team")) %>%
         filter(h2h_played == 1) %>%
         group_by(sim, division, opp) %>%
         mutate(common = (tied_teams == n())) %>%

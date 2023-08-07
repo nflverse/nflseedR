@@ -64,12 +64,12 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
         inner_join(tied %>% select(sim, team), by = c("sim"), suffix = c("", "_opp")) %>%
         rename(opp = team_opp) %>%
         filter(team != opp) %>%
-        inner_join(h2h, by = c("sim", "team", "opp")) %>%
+        left_join(h2h, by = c("sim", "team", "opp")) %>%
         group_by(sim, team, sov, tied_teams) %>%
         summarize(value = case_when(
-          sum(h2h_games) < (max(tied_teams) - 1) ~ 0, # didn't play vs. each other tied team
-          sum(h2h_wins) == 0 ~ -1, # got swept by other tied teams
-          sum(h2h_wins) == (max(tied_teams) - 1) ~ 1, # swept other tied teams
+          sum(h2h_games, na.rm = TRUE) < (max(tied_teams) - 1) ~ 0, # didn't play vs. each other tied team
+          sum(h2h_wins, na.rm = TRUE) == 0 ~ -1, # got swept by other tied teams
+          sum(h2h_wins, na.rm = TRUE) == (max(tied_teams) - 1) ~ 1, # swept other tied teams
           TRUE ~ 0, # won some, lost others
         )) %>%
         ungroup() %>%
@@ -82,7 +82,7 @@ break_draft_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       # common games
       if (isTRUE(.debug)) report("DRAFT: Common Record")
       list[u, tied] <- tied %>%
-        inner_join(h2h, by = c("sim", "team")) %>%
+        left_join(h2h, by = c("sim", "team")) %>%
         filter(h2h_played == 1) %>%
         group_by(sim, opp) %>%
         mutate(common = (tied_teams == n())) %>%
