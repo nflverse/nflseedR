@@ -25,6 +25,17 @@ knitr::opts_chunk$set(
 [![nflverse support](https://img.shields.io/discord/789805604076126219?color=7289da&label=nflverse%20support&logo=discord&logoColor=fff&style=flat-square)](https://discord.com/invite/5Er2FBnnQa)
 <!-- badges: end -->
 
+## BETA DEVELOPMENT
+
+nflseedR is currently undergoing a major revision of the code base. We are focusing very strongly on *performance* through the use of data.table and more efficient logics. We plan to release these changes as version 2. The date of the release is not yet fixed. At the moment, version 2 is to be considered a beta. 
+
+We welcome any user who is willing to test version 2 and look for bugs! You can install the latest version of v2 at any time by executing the following code. 
+
+```{r eval=FALSE}
+if (!require("pak")) install.packages("pak")
+pak::pak("nflverse/nflseedR@v2")
+```
+
 ## Motivation
 
 The goal of nflseedR is to allow NFL modelers to simulate NFL seasons using
