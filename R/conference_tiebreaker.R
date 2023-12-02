@@ -99,6 +99,8 @@ break_conference_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
       # any ties to break at this size?
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
 
+      if (tb_depth < TIEBREAKERS_THROUGH_SOS) next
+
       # strength of victory
       if (isTRUE(.debug)) report("CONF ({min_tied}): Strength of Victory")
       list[u, tied] <- tied %>%
@@ -123,6 +125,7 @@ break_conference_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
   }
 
   # break any remaning ties at random
+  if (isTRUE(.debug)) report("CONF: Coinflip")
   u <- u %>%
     mutate(coin_flip = sample(n())) %>%
     group_by(sim, conf, conf_rank, div_winner, win_pct) %>%
