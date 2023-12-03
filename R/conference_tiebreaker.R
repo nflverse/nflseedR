@@ -60,7 +60,7 @@ break_conference_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
           TRUE ~ 0, # split vs. other tied teams
         )) %>%
         ungroup() %>%
-        process_conf_ties(u, r)
+        process_conf_ties(u, r, tb_type = "Head-to-head Sweep")
 
       # any ties to break at this size?
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
@@ -72,7 +72,7 @@ break_conference_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
           tied_teams < min_tied ~ NA_real_,
           TRUE ~ conf_pct
         )) %>%
-        process_conf_ties(u, r)
+        process_conf_ties(u, r, tb_type = "Conference Record")
 
       # any ties to break at this size?
       if (tb_depth < TIEBREAKERS_NO_COMMON) next
@@ -94,7 +94,7 @@ break_conference_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
           TRUE ~ sum(common * h2h_wins) / sum(common * h2h_games)
         )) %>%
         ungroup() %>%
-        process_conf_ties(u, r)
+        process_conf_ties(u, r, tb_type = "Common Record")
 
       # any ties to break at this size?
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
@@ -108,7 +108,7 @@ break_conference_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
           tied_teams < min_tied ~ NA_real_,
           TRUE ~ sov
         )) %>%
-        process_conf_ties(u, r)
+        process_conf_ties(u, r, tb_type = "SOV")
 
       # any ties to break at this size?
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
@@ -120,30 +120,41 @@ break_conference_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
           tied_teams < min_tied ~ NA_real_,
           TRUE ~ sos
         )) %>%
-        process_conf_ties(u, r)
+        process_conf_ties(u, r, tb_type = "SOS")
     }
   }
 
-  # break any remaning ties at random
-  if (isTRUE(.debug)) report("CONF: Coinflip")
+  if (any(is.na(u$conf_rank))){
+    # break any remaining ties at random
+    if (isTRUE(.debug)) report("CONF: Coinflip")
+    u <- u %>%
+      mutate(coin_flip = sample(n())) %>%
+      group_by(sim, conf, conf_rank, div_winner, win_pct) %>%
+      mutate(
+        conf_rank = case_when(
+          !is.na(conf_rank) ~ conf_rank,
+          coin_flip == max(coin_flip) ~ as.numeric(r),
+          TRUE ~ NA_real_
+        ),
+        tie_broken_by = case_when(
+          !is.na(conf_rank) ~ tie_broken_by,
+          coin_flip == max(coin_flip) ~ "Coinflip",
+          TRUE ~ NA_character_
+        )
+      ) %>%
+      ungroup()
+  }
+
   u <- u %>%
-    mutate(coin_flip = sample(n())) %>%
-    group_by(sim, conf, conf_rank, div_winner, win_pct) %>%
-    mutate(conf_rank = case_when(
-      !is.na(conf_rank) ~ conf_rank,
-      coin_flip == max(coin_flip) ~ as.numeric(r),
-      TRUE ~ NA_real_
-    )) %>%
-    ungroup() %>%
     filter(!is.na(conf_rank)) %>%
-    rename(new_rank = conf_rank) %>%
-    select(sim, team, new_rank)
+    rename(new_rank = conf_rank, tb_new = tie_broken_by) %>%
+    select(tidyselect::any_of(c("sim", "team", "new_rank", "tb_new")))
 
   # return updates
   return(u)
 }
 
-process_conf_ties <- function(t, u, r = seed_num) {
+process_conf_ties <- function(t, u, r = seed_num, tb_type = NA_character_) {
   # value = max value for this
   # 0 = teams elimianted from tiebreaker
   t <- t %>%
@@ -160,7 +171,10 @@ process_conf_ties <- function(t, u, r = seed_num) {
     left_join(t %>% select(sim, team, new_rank),
       by = c("sim", "team")
     ) %>%
-    mutate(conf_rank = ifelse(!is.na(new_rank), new_rank, conf_rank)) %>%
+    mutate(
+      conf_rank = ifelse(!is.na(new_rank), new_rank, conf_rank),
+      tie_broken_by = ifelse(!is.na(new_rank), tb_type, tie_broken_by),
+    ) %>%
     filter(is.na(new_rank) | new_rank != 0) %>%
     select(-new_rank)
   t <- t %>%

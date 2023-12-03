@@ -114,17 +114,20 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
     }
   }
 
-  # break any remaning ties at random
-  if (isTRUE(.debug)) report("DIV: Coinflip")
+  if(any(is.na(u$div_rank))){
+    # break any remaining ties at random
+    if (isTRUE(.debug)) report("DIV: Coinflip")
+    u <- u %>%
+      mutate(coin_flip = sample(n())) %>%
+      group_by(sim, division) %>%
+      mutate(div_rank = case_when(
+        !is.na(div_rank) ~ div_rank,
+        coin_flip == max(coin_flip) ~ r,
+        TRUE ~ NA_real_
+      )) %>%
+      ungroup()
+  }
   u <- u %>%
-    mutate(coin_flip = sample(n())) %>%
-    group_by(sim, division) %>%
-    mutate(div_rank = case_when(
-      !is.na(div_rank) ~ div_rank,
-      coin_flip == max(coin_flip) ~ r,
-      TRUE ~ NA_real_
-    )) %>%
-    ungroup() %>%
     filter(!is.na(div_rank)) %>%
     rename(new_rank = div_rank) %>%
     select(sim, team, new_rank)

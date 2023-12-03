@@ -74,6 +74,7 @@ compute_conference_seeds <- function(teams,
   if(isFALSE(h2h_flag)) h2h <- compute_h2h(NULL, update = FALSE)
 
   teams$conf_rank <- NA_real_
+  teams$tie_broken_by <- NA_character_
 
   # seed loop
   for (seed_num in seq_len(playoff_seeds))
@@ -97,8 +98,11 @@ compute_conference_seeds <- function(teams,
     # store updates
     teams <- teams %>%
       left_join(update, by = c("sim", "team")) %>%
-      mutate(conf_rank = ifelse(!is.na(new_rank), new_rank, conf_rank)) %>%
-      select(-new_rank)
+      mutate(
+        conf_rank = ifelse(!is.na(new_rank), new_rank, conf_rank),
+        tie_broken_by = ifelse(!is.na(new_rank), tb_new, tie_broken_by),
+      ) %>%
+      select(-new_rank, -tb_new)
   } # end conference rank loop
 
   # rename conference rank to seed
