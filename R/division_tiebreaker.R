@@ -39,7 +39,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
           TRUE ~ sum(h2h_wins, na.rm = TRUE) / sum(h2h_games, na.rm = TRUE)
         )) %>%
         ungroup() %>%
-        process_div_ties(u, r)
+        process_div_ties(u, r, tb_type = "Head-to-head")
 
       # any ties to break at this size?
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
@@ -51,7 +51,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
           tied_teams < min_tied ~ NA_real_,
           TRUE ~ div_pct
         )) %>%
-        process_div_ties(u, r)
+        process_div_ties(u, r, tb_type = "Division Record")
 
       # any ties to break at this size?
       if (tb_depth < TIEBREAKERS_NO_COMMON) next
@@ -72,7 +72,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
           TRUE ~ sum(common*h2h_wins) / sum(common*h2h_games)
         )) %>%
         ungroup() %>%
-        process_div_ties(u, r)
+        process_div_ties(u, r, tb_type = "Common Record")
 
       # any ties to break at this size?
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
@@ -84,7 +84,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
           tied_teams < min_tied ~ NA_real_,
           TRUE ~ conf_pct
         )) %>%
-        process_div_ties(u, r)
+        process_div_ties(u, r, tb_type = "Conference Record")
 
       # any ties to break at this size?
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
@@ -98,7 +98,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
           tied_teams < min_tied ~ NA_real_,
           TRUE ~ sov
         )) %>%
-        process_div_ties(u, r)
+        process_div_ties(u, r, tb_type = "SOV")
 
       # any ties to break at this size?
       if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
@@ -110,7 +110,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
           tied_teams < min_tied ~ NA_real_,
           TRUE ~ sos
         )) %>%
-        process_div_ties(u, r)
+        process_div_ties(u, r, tb_type = "SOS")
     }
   }
 
@@ -120,17 +120,25 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
     u <- u %>%
       mutate(coin_flip = sample(n())) %>%
       group_by(sim, division) %>%
-      mutate(div_rank = case_when(
-        !is.na(div_rank) ~ div_rank,
-        coin_flip == max(coin_flip) ~ r,
-        TRUE ~ NA_real_
-      )) %>%
+      mutate(
+        div_rank = case_when(
+          !is.na(div_rank) ~ div_rank,
+          coin_flip == max(coin_flip) ~ r,
+          TRUE ~ NA_real_
+        ),
+        tie_broken_by = case_when(
+          !is.na(div_rank) ~ tie_broken_by,
+          coin_flip == max(coin_flip) ~ "Coinflip",
+          TRUE ~ NA_character_
+        )
+      ) %>%
       ungroup()
   }
+
   u <- u %>%
     filter(!is.na(div_rank)) %>%
-    rename(new_rank = div_rank) %>%
-    select(sim, team, new_rank)
+    rename(new_rank = div_rank, tb_new = tie_broken_by) %>%
+    select(sim, team, new_rank, tb_new)
 
   # return updates
   return(u)
@@ -138,7 +146,7 @@ break_division_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
 
 
 
-process_div_ties <- function(t, u, r) {
+process_div_ties <- function(t, u, r, tb_type = NA_character_) {
   # value = max value for this
   # 0 = teams elimianted from tiebreaker
   t <- t %>%
@@ -155,7 +163,10 @@ process_div_ties <- function(t, u, r) {
     left_join(t %>% select(sim, team, new_rank),
               by = c("sim", "team")
     ) %>%
-    mutate(div_rank = ifelse(!is.na(new_rank), new_rank, div_rank)) %>%
+    mutate(
+      div_rank = ifelse(!is.na(new_rank), new_rank, div_rank),
+      tie_broken_by = ifelse(!is.na(new_rank), tb_type, tie_broken_by)
+    ) %>%
     filter(is.na(new_rank) | new_rank != 0) %>%
     select(-new_rank)
   t <- t %>%

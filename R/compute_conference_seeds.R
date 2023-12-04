@@ -107,7 +107,7 @@ compute_conference_seeds <- function(teams,
 
   # rename conference rank to seed
   teams <- teams %>%
-    rename(seed = conf_rank) %>%
+    rename(seed = conf_rank, conf_tie_broken_by = tie_broken_by) %>%
     mutate(exit = ifelse(is.na(seed), max_reg_week, NA_real_)) %>%
     select(-max_reg_week)
 

@@ -155,6 +155,7 @@ compute_division_ranks <- function(games,
 
   # initialize division rank
   teams$div_rank <- NA_real_
+  teams$tie_broken_by <- NA_character_
 
   # determine division ranks
   dr <- 0
@@ -178,9 +179,15 @@ compute_division_ranks <- function(games,
     # store updates
     teams <- teams %>%
       left_join(update, by = c("sim", "team")) %>%
-      mutate(div_rank = ifelse(!is.na(new_rank), new_rank, div_rank)) %>%
-      select(-new_rank)
+      mutate(
+        div_rank = ifelse(!is.na(new_rank), new_rank, div_rank),
+        tie_broken_by = ifelse(!is.na(new_rank), tb_new, tie_broken_by)
+      ) %>%
+      select(-new_rank, -tb_new)
   }
+
+  teams <- teams %>%
+    rename(div_tie_broken_by = tie_broken_by)
 
   teams$max_reg_week <- max(games$week[games$game_type == "REG"], na.rm = TRUE)
 

@@ -32,7 +32,7 @@ break_conference_ties <- function(u, r, h2h, tb_depth, .debug = FALSE) {
             TRUE ~ as.numeric(div_best_left)
           )) %>%
           ungroup() %>%
-          process_conf_ties(u, r)
+          process_conf_ties(u, r, tb_type = "Best-in-division reduction")
 
         # any ties to break at this size?
         if (tied %>% filter(tied_teams >= min_tied) %>% nrow() == 0) next
