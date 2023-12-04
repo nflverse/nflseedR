@@ -176,7 +176,7 @@ compute_draft_order <- function(teams,
   teams <- teams %>%
     mutate(
       draft_order = NA_real_,
-      tie_broken_by = NA_real_
+      tie_broken_by = NA_character_
     ) %>%
     arrange(sim, division, team)
 
