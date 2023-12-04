@@ -174,7 +174,10 @@ compute_draft_order <- function(teams,
 
   # set draft order variable
   teams <- teams %>%
-    mutate(draft_order = NA_real_) %>%
+    mutate(
+      draft_order = NA_real_,
+      tie_broken_by = NA_real_
+    ) %>%
     arrange(sim, division, team)
 
   max_do_num <- min(length(unique(teams$team)), 32)
@@ -202,6 +205,9 @@ compute_draft_order <- function(teams,
       mutate(draft_order = ifelse(!is.na(new_do), new_do, draft_order)) %>%
       select(-new_do)
   } # end draft order loop
+
+  teams <- teams %>%
+    rename(draft_tie_broken_by = tie_broken_by)
 
   # playoff error?
   if (any(is.na(teams$draft_order))) {
