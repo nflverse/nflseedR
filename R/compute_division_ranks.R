@@ -59,6 +59,10 @@ compute_division_ranks <- function(games,
                                    tiebreaker_depth = 3,
                                    .debug = FALSE,
                                    h2h = NULL) {
+
+  # games <- nflreadr::load_schedules(2021:2022) |>
+  #   dplyr::select(sim = season, game_type, week, away_team, home_team, result)
+
   # catch invalid input
   if (!isTRUE(tiebreaker_depth %in% 1:3)) {
     cli::cli_abort(
@@ -95,56 +99,9 @@ compute_division_ranks <- function(games,
   games_doubled <- double_games(games)
 
   report("Calculating team data")
-  # record of each team
-  setDT(games_doubled)
-  team_records <-
-    merge(
-      games_doubled["REG", on = "game_type"],
-      data.table(nflseedR::divisions)[,sdiv:=NULL],
-      by = "team",
-      sort = FALSE
-    )[,
-      list(
-        games = .N,
-        wins = sum(outcome),
-        true_wins = sum(outcome == 1),
-        losses = sum(outcome == 0),
-        ties = sum(outcome == 0.5),
-        win_pct = sum(outcome) / .N
-      ), by = c("sim", "conf", "division", "team")]
 
-  # add in tiebreaker info
-  teams <- team_records %>%
-    merge(
-      games_doubled["REG", on = "game_type"],
-      by = c("sim", "team"),
-      sort = FALSE
-    ) %>%
-    merge(
-      team_records,
-      by.x = c("sim", "opp"),
-      by.y = c("sim", "team"),
-      suffixes = c("", "_opp"),
-      sort = FALSE
-    )
-  teams[, div_game := fifelse(division == division_opp, 1, 0)]
-  teams[, conf_game := fifelse(conf == conf_opp, 1, 0)]
-  teams <- teams[, list(
-    div_pct = fifelse(
-      sum(div_game) == 0, 0.5,
-      sum(div_game * outcome) / sum(div_game)
-    ),
-    conf_pct = fifelse(
-      sum(conf_game) == 0, 0.5,
-      sum(conf_game * outcome) / sum(conf_game)
-    ),
-    sov = fifelse(
-      sum(outcome == 1) == 0, 0,
-      sum(wins_opp * (outcome == 1)) / sum(games_opp * (outcome == 1))
-    ),
-    sos = sum(wins_opp) / sum(games_opp)
-  ), by = c("sim", "conf", "division", "team", "games", "wins",
-            "true_wins", "losses", "ties", "win_pct")][order(sim, conf, division, team)]
+  # record of each team
+  teams <- init_teams(games_doubled)
 
   # below only if there are tiebreakers
   if (is.null(h2h) & tiebreaker_depth > TIEBREAKERS_NONE) {
@@ -153,6 +110,78 @@ compute_division_ranks <- function(games,
 
   #### FIND DIVISION RANKS ####
 
+  #######################################################
+  # Seb's new code #
+  #######################################################
+  dt_ties_method <- if (tiebreaker_depth == 0) "random" else "min"
+
+  # Set ranks. If tied method is "random" we will break
+
+  teams[, div_rank := frankv(win_pct, ties.method = dt_ties_method), by = c("sim", "division")]
+  teams[, div_rank_counter := .N, by = c("sim", "division", "div_rank")]
+
+  # LOOK FOR TIED TEAMS, i.e. div_ranks exist more than one per rank
+  ties <- teams[div_rank_counter > 1]
+
+  if(any(teams$div_rank_counter > 1)){
+
+    # larger ties before smaller ties
+    #
+    for (tied_teams in 3:2) {
+
+      ties <- teams[div_rank_counter == tied_teams]
+
+      if (nrow(ties) == 0) next
+
+      # Head To Head ------------------------------------------------------------
+      if (isTRUE(.debug)) report("DIV ({tied_teams}): Head-to-head")
+
+      h2h_games_played <- merge(
+        ties[, list(sim, team)],
+        ties[, list(sim, opp = team)],
+        by = c(sim),
+        allow.cartesian = TRUE
+      )[team != opp]
+
+      h2h_win_pct <- merge(
+        h2h_games_played, h2h, by = c("sim", "team", "opp")
+      )[, list(h2h_win_pct = sum(h2h_wins) / sum(h2h_games)), by = c("sim", "team")]
+
+      teams <- merge(teams, h2h_win_pct, by = c("sim", "team"), all.x = TRUE)
+      teams <- teams[
+        !is.na(h2h_win_pct), div_rank := frank(list(div_rank, -h2h_win_pct), ties.method = "min"),
+        by = c("sim", "division")
+      ][order(sim, division, div_rank)]
+      teams[, div_rank_counter := .N, by = c("sim", "division", "div_rank")]
+      teams[!is.na(h2h_win_pct) & div_rank_counter == 1, div_tie_broken_by := "Head-To-Head Win PCT"]
+      teams <- teams[,!c("h2h_win_pct")]
+
+      ties <- teams[div_rank_counter == tied_teams]
+
+      if (nrow(ties) == 0) next
+
+      # Division Record ---------------------------------------------------------
+      if (isTRUE(.debug)) report("DIV ({tied_teams}): Division Record")
+
+      teams <- teams[
+        div_rank_counter == tied_teams,
+        `:=`(div_rank = frank(list(div_rank, -div_pct), ties.method = "min"),
+             div_tie_broken_by = "Division Win PCT"),
+        by = c("sim", "division")
+      ][order(sim, division, div_rank)]
+      teams[, div_rank_counter := .N, by = c("sim", "division", "div_rank")]
+      teams[div_rank_counter > 1, div_tie_broken_by := NA_character_]
+
+      ties <- teams[div_rank_counter == tied_teams]
+
+      if (nrow(ties) == 0) next
+    }
+
+
+  }
+
+
+  #################################################
   # initialize division rank
   teams$div_rank <- NA_real_
   teams$tie_broken_by <- NA_character_
