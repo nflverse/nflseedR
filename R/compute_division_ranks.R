@@ -60,7 +60,7 @@ compute_division_ranks <- function(games,
                                    .debug = FALSE,
                                    h2h = NULL) {
 
-  # games <- nflreadr::load_schedules(2021:2022) |>
+  # games <- nflreadr::load_schedules(2010:2022) |>
   #   dplyr::select(sim = season, game_type, week, away_team, home_team, result)
 
   # catch invalid input
@@ -117,7 +117,10 @@ compute_division_ranks <- function(games,
 
   # Set ranks. If tied method is "random" we will break
 
-  teams[, div_rank := frankv(win_pct, ties.method = dt_ties_method), by = c("sim", "division")]
+  teams <- teams[
+    , div_rank := frankv(-win_pct, ties.method = dt_ties_method),
+    by = c("sim", "division")
+    ][order(sim, division, div_rank)]
   teams[, div_rank_counter := .N, by = c("sim", "division", "div_rank")]
 
   # LOOK FOR TIED TEAMS, i.e. div_ranks exist more than one per rank
@@ -134,7 +137,7 @@ compute_division_ranks <- function(games,
       if (nrow(ties) == 0) next
 
       # Head To Head ------------------------------------------------------------
-      if (isTRUE(.debug)) report("DIV ({tied_teams}): Head-to-head")
+      if (isTRUE(.debug)) report("DIV ({tied_teams}): Head-to-head Win PCT")
 
       h2h_games_played <- merge(
         ties[, list(sim, team)],
@@ -161,7 +164,7 @@ compute_division_ranks <- function(games,
       if (nrow(ties) == 0) next
 
       # Division Record ---------------------------------------------------------
-      if (isTRUE(.debug)) report("DIV ({tied_teams}): Division Record")
+      if (isTRUE(.debug)) report("DIV ({tied_teams}): Division Win PCT")
 
       teams <- teams[
         div_rank_counter == tied_teams,
@@ -175,6 +178,11 @@ compute_division_ranks <- function(games,
       ties <- teams[div_rank_counter == tied_teams]
 
       if (nrow(ties) == 0) next
+
+      # Common Games Win Pct ----------------------------------------------------
+      if (isTRUE(.debug)) report("DIV ({tied_teams}): Common Games Win PCT")
+
+
     }
 
 
