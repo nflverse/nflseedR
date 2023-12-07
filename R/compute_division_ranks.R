@@ -13,28 +13,22 @@
 #'  \item{result}{Equals home score - away score.}
 #' }
 #' @param teams `r lifecycle::badge("deprecated")` This argument is no longer
-#'   supported. Instead, the functions computes it internally.
-#' @param tiebreaker_depth A single value equal to 1, 2, or 3. The default is 3. The
-#'  value controls the depth of tiebreakers that shall be applied. The deepest
-#'  currently implemented tiebreaker is strength of schedule. The following
-#'  values are valid:
+#'   supported. Instead, the function computes it internally.
+#' @param tiebreaker_depth One of `"SOS"`, `"PRE-SOV"`, or `"RANDOM"`.
+#'  The default `"SOS"`. The value controls the depth of tiebreakers that
+#'  shall be applied. The deepest currently implemented tiebreaker is strength
+#'  of schedule (SOS). The following values are valid:
 #'  \describe{
-#'  \item{tiebreaker_depth = 1}{Break all ties with a coinflip. Fastest variant.}
-#'  \item{tiebreaker_depth = 2}{Apply head-to-head and division win percentage tiebreakers. Random if still tied.}
-#'  \item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule. Random if still tied.}
+#'  \item{tiebreaker_depth = `"RANDOM"`}{Break all ties with a coinflip. Fastest variant.}
+#'  \item{tiebreaker_depth = `"PRE-SOV"`}{Apply head-to-head, division win percentage, common games win percentage, conference games win percentage tiebreakers. Random if still tied.}
+#'  \item{tiebreaker_depth = `"SOS"`}{Apply all tiebreakers through strength of schedule. Random if still tied.}
 #'  }
 #' @param .debug Either \code{TRUE} or \code{FALSE}. Controls whether additional
 #' messages are printed to the console showing what the tie-breaking algorithms
 #' are currently performing.
-#' @param h2h A data frame that is used for head-to-head tiebreakers across the
-#' tie-breaking functions. It is computed by the function
-#' \code{\link{compute_division_ranks}}.
-#' @returns A list of two data frames:
-#'  \describe{
-#'  \item{standings}{Division standings.}
-#'  \item{h2h}{A data frame that is used for head-to-head tiebreakers across the
-#'  tie-breaking functions.}
-#'  }
+#' @param h2h `r lifecycle::badge("deprecated")` This argument is no longer
+#'   supported. Instead, the function computes it internally.
+#' @returns A Division standings data table
 #' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflseedR.html)
 #' @export
 #' @examples
@@ -44,11 +38,10 @@
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' try({#to avoid CRAN test problems
-#' nflseedR::load_sharpe_games() %>%
-#'   dplyr::filter(season %in% 2019:2020) %>%
-#'   dplyr::select(sim = season, game_type, week, away_team, home_team, result) %>%
-#'   nflseedR::compute_division_ranks() %>%
-#'   purrr::pluck("standings")
+#' games <- nflreadr::load_schedules(2019:2020) |>
+#'   dplyr::select(sim = season, game_type, week, away_team, home_team, result)
+#'
+#' nflseedR::compute_division_ranks(games)
 #' })
 #'
 #' # Restore old options
@@ -56,20 +49,32 @@
 #' }
 compute_division_ranks <- function(games,
                                    teams = lifecycle::deprecated(),
-                                   tiebreaker_depth = 3,
+                                   tiebreaker_depth = c("SOS", "PRE-SOV", "RANDOM"),
                                    .debug = FALSE,
-                                   h2h = NULL) {
+                                   h2h = lifecycle::deprecated()) {
 
-  # games <- nflreadr::load_schedules(2010:2022) |>
+  # Size of teams: 32 * n_sims
+  # Size of double_games: nrow(games) * n_sims
+  # Size of h2h: 32 teams * 13 opponents/team * n_sims
+
+  # games <- nflreadr::load_schedules(2010:2019) |>
   #   dplyr::select(sim = season, game_type, week, away_team, home_team, result)
+  #
+  # s <- nflreadr::load_schedules()
+  #
+  # games <- tidyr::crossing(y = 2002:2019, w = 5:17) |>
+  #   purrr::pmap(function(y, w, sched){
+  #   sched |>
+  #       dplyr::filter(season == y, week <= w, game_type == "REG") |>
+  #       dplyr::mutate(
+  #         sim = paste(season, week, sep = "_")
+  #       )
+  # }, sched = s
+  # ) |>
+  #   purrr::list_rbind() |>
+  #   dplyr::select(sim, game_type, week, away_team, home_team, result)
 
-  # catch invalid input
-  if (!isTRUE(tiebreaker_depth %in% 1:3)) {
-    cli::cli_abort(
-      "The argument {.arg tiebreaker_depth} has to be \\
-      a single value in the range of 1-3!"
-    )
-  }
+  tiebreaker_depth <- rlang::arg_match(tiebreaker_depth)
 
   required_vars <- c(
     "sim",
@@ -80,7 +85,7 @@ compute_division_ranks <- function(games,
     "result"
   )
 
-  if (!sum(names(games) %in% required_vars, na.rm = TRUE) >= 6 | !is.data.frame(games)) {
+  if ( !all(required_vars %in% names(games)) ) {
     cli::cli_abort(
       "The argument {.arg games} has to be a data frame including \\
       all of the following variables: {.val {required_vars}}!"
@@ -95,141 +100,112 @@ compute_division_ranks <- function(games,
     )
   }
 
-  # double games
-  games_doubled <- double_games(games)
-
   report("Calculating team data")
 
   # record of each team
-  teams <- init_teams(games_doubled)
+  teams <- init_teams(double_games(games, update = TRUE))
 
-  # below only if there are tiebreakers
-  if (is.null(h2h) & tiebreaker_depth > TIEBREAKERS_NONE) {
-    h2h <- compute_h2h(games_doubled)
-  }
-
-  #### FIND DIVISION RANKS ####
-
-  #######################################################
-  # Seb's new code #
-  #######################################################
-  dt_ties_method <- if (tiebreaker_depth == 0) "random" else "min"
-
-  # Set ranks. If tied method is "random" we will break
-
-  teams <- teams[
+  # Set ranks by win percentage in descending order by sim and division.
+  # If ties method is "random", data.table will break all ties randomly
+  # and we won't need any further tie-breaking methods
+  dt_ties_method <- if (tiebreaker_depth == "RANDOM") "random" else "min"
+  teams[
     , div_rank := frankv(-win_pct, ties.method = dt_ties_method),
     by = c("sim", "division")
-    ][order(sim, division, div_rank)]
+  ]
+
+  # If tiebreaker_depth == "RANDOM", all ties are broken at this stage. We add
+  # tiebreaker information to the tied teams.
+  if (tiebreaker_depth == "RANDOM") {
+    teams[, div_rank_counter := .N, by = c("sim", "division", "win_pct")]
+    teams[
+      div_rank_counter > 1,
+      div_tie_broken_by := "Coin Toss",
+    ]
+  }
+
+  # Count division ranks by sim and division. If each rank only exists once,
+  # then there are no ties that need to be broken
   teams[, div_rank_counter := .N, by = c("sim", "division", "div_rank")]
 
-  # LOOK FOR TIED TEAMS, i.e. div_ranks exist more than one per rank
-  ties <- teams[div_rank_counter > 1]
+  # enter tie breaking procedure only if there are actual ties,
+  # i.e. a division rank exists more than once per sim and division
+  if ( any(teams$div_rank_counter > 1) ) {
+    # Report if we have to break ties
+    report("Breaking Ties")
 
-  if(any(teams$div_rank_counter > 1)){
+    # If we have to break ties, we need the h2h data
+    h2h <- compute_h2h(double_games(games), update = TRUE)
 
-    # larger ties before smaller ties
-    #
+    # 3-Team ties need to go through all these steps until at least one team
+    # is eliminated. If that's the case, we have to jump back to the beginning
+    # of the process with the 2 remaining teams. That's why we have to loop over
+    # this process twice and check number of tied teams after each step.
+    # A two iterations for loop is fine. No need to go crazy about it.
     for (tied_teams in 3:2) {
 
-      ties <- teams[div_rank_counter == tied_teams]
-
-      if (nrow(ties) == 0) next
+      if (tie_break_done(teams, tied_teams)) next
 
       # Head To Head ------------------------------------------------------------
-      if (isTRUE(.debug)) report("DIV ({tied_teams}): Head-to-head Win PCT")
-
-      h2h_games_played <- merge(
-        ties[, list(sim, team)],
-        ties[, list(sim, opp = team)],
-        by = c(sim),
-        allow.cartesian = TRUE
-      )[team != opp]
-
-      h2h_win_pct <- merge(
-        h2h_games_played, h2h, by = c("sim", "team", "opp")
-      )[, list(h2h_win_pct = sum(h2h_wins) / sum(h2h_games)), by = c("sim", "team")]
-
-      teams <- merge(teams, h2h_win_pct, by = c("sim", "team"), all.x = TRUE)
-      teams <- teams[
-        !is.na(h2h_win_pct), div_rank := frank(list(div_rank, -h2h_win_pct), ties.method = "min"),
-        by = c("sim", "division")
-      ][order(sim, division, div_rank)]
-      teams[, div_rank_counter := .N, by = c("sim", "division", "div_rank")]
-      teams[!is.na(h2h_win_pct) & div_rank_counter == 1, div_tie_broken_by := "Head-To-Head Win PCT"]
-      teams <- teams[,!c("h2h_win_pct")]
-
-      ties <- teams[div_rank_counter == tied_teams]
-
-      if (nrow(ties) == 0) next
+      if (isTRUE(.debug)) report("DIV ({tied_teams}): Head-to-Head Win PCT")
+      teams <- break_div_ties_by_h2h(teams = teams, h2h = h2h, n_tied = tied_teams)
+      if (tie_break_done(teams, tied_teams)) next
 
       # Division Record ---------------------------------------------------------
       if (isTRUE(.debug)) report("DIV ({tied_teams}): Division Win PCT")
-
-      teams <- teams[
-        div_rank_counter == tied_teams,
-        `:=`(div_rank = frank(list(div_rank, -div_pct), ties.method = "min"),
-             div_tie_broken_by = "Division Win PCT"),
-        by = c("sim", "division")
-      ][order(sim, division, div_rank)]
-      teams[, div_rank_counter := .N, by = c("sim", "division", "div_rank")]
-      teams[div_rank_counter > 1, div_tie_broken_by := NA_character_]
-
-      ties <- teams[div_rank_counter == tied_teams]
-
-      if (nrow(ties) == 0) next
+      teams <- break_div_ties_by_div_win_pct(teams = teams, n_tied = tied_teams)
+      if (tie_break_done(teams, tied_teams)) next
 
       # Common Games Win Pct ----------------------------------------------------
       if (isTRUE(.debug)) report("DIV ({tied_teams}): Common Games Win PCT")
+      teams <- break_div_ties_by_common_win_pct(teams = teams, h2h = h2h, n_tied = tied_teams)
+      if (tie_break_done(teams, tied_teams)) next
 
+      # Conference Win PCT ------------------------------------------------------
+      if (isTRUE(.debug)) report("DIV ({tied_teams}): Conference Win PCT")
+      teams <- break_div_ties_by_conf_win_pct(teams = teams, n_tied = tied_teams)
+      if (tie_break_done(teams, tied_teams)) next
 
+      # SOV ---------------------------------------------------------------------
+      if (isTRUE(.debug)) report("DIV ({tied_teams}): SOV")
+      teams <- break_div_ties_by_sov(teams = teams, n_tied = tied_teams)
+      if (tie_break_done(teams, tied_teams)) next
+
+      # SOS ---------------------------------------------------------------------
+      if (isTRUE(.debug)) report("DIV ({tied_teams}): SOS")
+      teams <- break_div_ties_by_sos(teams = teams, n_tied = tied_teams)
+      if (tie_break_done(teams, tied_teams)) next
     }
 
-
-  }
-
-
-  #################################################
-  # initialize division rank
-  teams$div_rank <- NA_real_
-  teams$tie_broken_by <- NA_character_
-
-  # determine division ranks
-  dr <- 0
-  while (any(is.na(teams$div_rank))) {
-    # increment division rank
-    dr <- dr + 1
-    if(dr > 4){
-      cli::cli_abort("Aborting because division rank computation entered infinite loop!")
+    # We've worked through all implemented tie-breakers.
+    # If there are still ties, we break them randomly
+    if ( any(teams$div_rank_counter > 1) ) {
+      if (isTRUE(.debug)) report("DIV : Coin Toss")
+      teams[
+        div_rank_counter > 1,
+        div_rank := min(div_rank) - 1 + frank(list(div_rank, -win_pct), ties.method = "random"),
+        by = c("sim", "division")
+      ]
+      teams[
+        div_rank_counter > 1,
+        div_tie_broken_by := "Coin Toss",
+      ]
     }
-    report("Calculating division rank #{dr}")
-
-    # update teams with this rank
-    update <- teams %>%
-      filter(is.na(div_rank)) %>%
-      group_by(sim, division) %>%
-      filter(win_pct == max(win_pct)) %>%
-      mutate(div_rank = ifelse(n() == 1, dr, div_rank)) %>%
-      ungroup() %>%
-      break_division_ties(dr, h2h = h2h, tb_depth = tiebreaker_depth, .debug = .debug)
-
-    # store updates
-    teams <- teams %>%
-      left_join(update, by = c("sim", "team")) %>%
-      mutate(
-        div_rank = ifelse(!is.na(new_rank), new_rank, div_rank),
-        tie_broken_by = ifelse(!is.na(new_rank), tb_new, tie_broken_by)
-      ) %>%
-      select(-new_rank, -tb_new)
   }
 
-  teams <- teams %>%
-    rename(div_tie_broken_by = tie_broken_by)
+  # In simulations, we need to know the maximum regular season week as this has
+  # changed over the time. We compute the max week by sim and join it
+  # to the teams data
+  max_reg_week <- games[
+    game_type == "REG",
+    list(max_reg_week = max(week)),
+    by = "sim"
+  ]
+  teams <- merge(teams, max_reg_week, by = "sim")
 
-  teams$max_reg_week <- max(games$week[games$game_type == "REG"], na.rm = TRUE)
-
-  list(
-    "standings" = tibble::as_tibble(teams),
-    "h2h" = tibble::as_tibble(h2h)
-  )
+  # Finally, the div_rank_counter can be removed and we sort data by
+  # sim, division, and division rank
+  teams <- teams[,!c("div_rank_counter")][order(sim, division, div_rank)]
+  report("DONE: Division Standings")
+  teams
 }
