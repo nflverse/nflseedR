@@ -57,23 +57,6 @@ compute_division_ranks <- function(games,
   # Size of double_games: nrow(games) * n_sims
   # Size of h2h: 32 teams * 13 opponents/team * n_sims
 
-  # games <- nflreadr::load_schedules(2010:2019) |>
-  #   dplyr::select(sim = season, game_type, week, away_team, home_team, result)
-  #
-  # s <- nflreadr::load_schedules()
-  #
-  # games <- tidyr::crossing(y = 2002:2019, w = 5:17) |>
-  #   purrr::pmap(function(y, w, sched){
-  #   sched |>
-  #       dplyr::filter(season == y, week <= w, game_type == "REG") |>
-  #       dplyr::mutate(
-  #         sim = paste(season, week, sep = "_")
-  #       )
-  # }, sched = s
-  # ) |>
-  #   purrr::list_rbind() |>
-  #   dplyr::select(sim, game_type, week, away_team, home_team, result)
-
   tiebreaker_depth <- rlang::arg_match(tiebreaker_depth)
 
   required_vars <- c(
@@ -95,7 +78,15 @@ compute_division_ranks <- function(games,
   if (lifecycle::is_present(teams)) {
     lifecycle::deprecate_warn(
       when = "2.0.0",
-      what = "compute_division_ranks(teams)",# = 'is computed internally')"
+      what = "compute_division_ranks(teams)",
+      details = "The function computes the corresponding data internally."
+    )
+  }
+
+  if (lifecycle::is_present(h2h)) {
+    lifecycle::deprecate_warn(
+      when = "2.0.0",
+      what = "compute_division_ranks(h2h)",
       details = "The function computes the corresponding data internally."
     )
   }
@@ -167,12 +158,12 @@ compute_division_ranks <- function(games,
       if (tie_break_done(teams, tied_teams)) next
 
       # SOV ---------------------------------------------------------------------
-      if (isTRUE(.debug)) report("DIV ({tied_teams}): SOV")
+      if (isTRUE(.debug)) report("DIV ({tied_teams}): Strength of Victory")
       teams <- break_div_ties_by_sov(teams = teams, n_tied = tied_teams)
       if (tie_break_done(teams, tied_teams)) next
 
       # SOS ---------------------------------------------------------------------
-      if (isTRUE(.debug)) report("DIV ({tied_teams}): SOS")
+      if (isTRUE(.debug)) report("DIV ({tied_teams}): Strength of Schedule")
       teams <- break_div_ties_by_sos(teams = teams, n_tied = tied_teams)
       if (tie_break_done(teams, tied_teams)) next
     }
