@@ -24,8 +24,7 @@ compute_h2h <- function(gd, update = FALSE){
     setDT(gd, key = c("sim", "team", "opp"))
     out <- gd[game_type == "REG", list(
       h2h_games = .N,
-      h2h_wins = sum(outcome),
-      h2h_played = fifelse(.N > 0, 1, 0)
+      h2h_wins = sum(outcome)
     ), by = c("sim", "team", "opp")]
     assign(".h2h", out, envir = .nflseedR_env)
   }
