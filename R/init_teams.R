@@ -34,11 +34,11 @@ init_teams <- function(games_doubled){
   teams[, conf_game := fifelse(conf == conf_opp, 1, 0)]
   teams <- teams[, list(
     div_pct = fifelse(
-      sum(div_game) == 0, 0.5,
+      sum(div_game) == 0, 0,
       sum(div_game * outcome) / sum(div_game)
     ),
     conf_pct = fifelse(
-      sum(conf_game) == 0, 0.5,
+      sum(conf_game) == 0, 0,
       sum(conf_game * outcome) / sum(conf_game)
     ),
     sov = fifelse(
@@ -47,6 +47,6 @@ init_teams <- function(games_doubled){
     ),
     sos = sum(wins_opp) / sum(games_opp)
   ), by = c("sim", "conf", "division", "team", "games", "wins",
-            "true_wins", "losses", "ties", "win_pct")][order(sim, conf, division, team)]
+            "true_wins", "losses", "ties", "win_pct")]
   teams
 }
