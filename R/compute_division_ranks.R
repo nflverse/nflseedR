@@ -137,12 +137,12 @@ compute_division_ranks <- function(games,
     # If we have to break ties, we need the h2h data
     h2h <- compute_h2h(double_games(games), update = TRUE)
 
-    # 3-Team ties need to go through all these steps until at least one team
-    # is eliminated. If that's the case, we have to jump back to the beginning
+    # 3 or 4-Team ties need to go through all these steps until at least 2 tied
+    # teams remain. If that's the case, we have to jump back to the beginning
     # of the process with the 2 remaining teams. That's why we have to loop over
-    # this process twice and check number of tied teams after each step.
-    # A two iterations for loop is fine. No need to go crazy about it.
-    for (tied_teams in 3:2) {
+    # this process and check the number of tied teams after each step.
+    # A 3 iterations for loop is fine. No need to go crazy about it.
+    for (tied_teams in 4:2) {
 
       if (tie_break_done(teams, tied_teams)) next
 
