@@ -17,7 +17,7 @@ nfl_standings <- function(games,
                           verbose = getOption("nflseedR.verbose", default = TRUE)){
 
   # VALIDATE INPUT ----------------------------------------------------------
-  games <- validate_games(games)
+  games <- standings_validate_games(games)
   ranks <- rlang::arg_match(ranks)
   tiebreaker_depth <- rlang::arg_match(tiebreaker_depth)
   if ( !any(isTRUE(verbose), isFALSE(verbose)) ){
@@ -28,7 +28,7 @@ nfl_standings <- function(games,
 
   # INITIATE STANDINGS WITHOUT ANY RANKINGS ---------------------------------
   report("Initiate Standings")
-  dg <- standings_double_games(games, update = TRUE)
+  dg <- standings_double_games(games)
   standings <- standings_init(dg)
   h2h <- standings_h2h(dg)
 

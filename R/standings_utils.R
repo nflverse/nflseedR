@@ -1,5 +1,5 @@
 standings_double_games <- function(g){
-  if( !is.data.table(g) ) setDT(g)
+  setDT(g)
   away <- g[,list(sim, game_type, week, team = away_team, opp = home_team, result = -result)]
   home <- g[,list(sim, game_type, week, team = home_team, opp = away_team, result)]
   out <- rbind(away, home)
@@ -56,6 +56,7 @@ standings_validate_games <- function(games){
 }
 
 finalize_standings <- function(standings, games){
+  standings <- standings[order(sim, division, div_rank)]
   if (attributes(games)[["uses_season"]]){
     colnames(standings)[colnames(standings) == "sim"] <- "season"
   }
