@@ -20,7 +20,7 @@ double_games <- function(g, update = FALSE){
 #' @import data.table
 compute_h2h <- function(gd, update = FALSE){
   if (!".h2h" %in% ls(envir = .nflseedR_env, all.names = !update)){
-    report("Calculating Head-to-Head Data")
+    report("Calculate Head-to-Head Data")
     setDT(gd, key = c("sim", "team", "opp"))
     out <- gd[game_type == "REG", list(
       h2h_games = .N,

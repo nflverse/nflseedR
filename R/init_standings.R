@@ -1,4 +1,4 @@
-init_teams <- function(games_doubled){
+init_standings <- function(games_doubled){
   setDT(games_doubled)
   team_records <-
     merge(
@@ -17,7 +17,7 @@ init_teams <- function(games_doubled){
       ), by = c("sim", "conf", "division", "team")]
 
   # add in tiebreaker info
-  teams <- team_records %>%
+  standings <- team_records %>%
     merge(
       games_doubled["REG", on = "game_type"],
       by = c("sim", "team"),
@@ -30,9 +30,9 @@ init_teams <- function(games_doubled){
       suffixes = c("", "_opp"),
       sort = FALSE
     )
-  teams[, div_game := fifelse(division == division_opp, 1, 0)]
-  teams[, conf_game := fifelse(conf == conf_opp, 1, 0)]
-  teams <- teams[, list(
+  standings[, div_game := fifelse(division == division_opp, 1, 0)]
+  standings[, conf_game := fifelse(conf == conf_opp, 1, 0)]
+  standings <- standings[, list(
     div_pct = fifelse(
       sum(div_game) == 0, 0,
       sum(div_game * outcome) / sum(div_game)
@@ -48,5 +48,15 @@ init_teams <- function(games_doubled){
     sos = sum(wins_opp) / sum(games_opp)
   ), by = c("sim", "conf", "division", "team", "games", "wins",
             "true_wins", "losses", "ties", "win_pct")]
-  teams
+
+  # In simulations, we need to know the maximum regular season week as this has
+  # changed over the time. We compute the max week by sim and join it
+  # to the teams data
+  max_reg_week <- games_doubled[
+    game_type == "REG",
+    list(max_reg_week = max(week)),
+    by = "sim"
+  ]
+  standings <- merge(standings, max_reg_week, keyby = "sim")
+  standings
 }

@@ -20,3 +20,37 @@ strip_nflverse_attributes <- function(df){
   attributes(df)[input_remove] <- NULL
   df
 }
+
+# A games files is valid if we can perform all necessary steps in the tiebreaking
+# process.
+validate_games <- function(games){
+  if( !is.data.table(games) ) setDT(games)
+  games_names <- colnames(games)
+  required_vars <- c(
+    "game_type",
+    "week",
+    "away_team",
+    "home_team",
+    "result"
+  )
+  uses_sim <- all(c("sim", required_vars) %in% games_names)
+  uses_season <- all(c("season", required_vars) %in% games_names)
+  has_scores <- all(c("away_score", "home_score") %in% games_names)
+  setattr(games, "uses_season", uses_season)
+  setattr(games, "has_scores", has_scores)
+  if( !any(uses_sim, uses_season) ){
+    cli::cli_abort(
+      "The {.arg games} argument has to be a table including one of the \\
+      identifiers {.val sim} or {.val season} as well as \\
+      all of the following variables: {.val {required_vars}}!"
+    )
+  }
+  if ( any(is.na(games$result)) ){
+    cli::cli_abort(
+      "The {.arg games} table includes {.val NA} results! Please fix and rerun."
+    )
+  }
+  if (uses_season) colnames(games)[colnames(games) == "season"] <- "sim"
+
+  games
+}
