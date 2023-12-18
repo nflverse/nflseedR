@@ -1,4 +1,5 @@
-standings_init <- function(games_doubled){
+standings_init <- function(games_doubled, verbosity){
+  if (verbosity == 2L) report("Compute Raw Standings")
   setDT(games_doubled)
   team_records <-
     merge(

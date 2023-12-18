@@ -1,4 +1,5 @@
-standings_double_games <- function(g){
+standings_double_games <- function(g, verbosity){
+  if (verbosity == 2L) report("Clean Home/Away in Games Data")
   setDT(g)
   away <- g[,list(sim, game_type, week, team = away_team, opp = home_team, result = -result)]
   home <- g[,list(sim, game_type, week, team = home_team, opp = away_team, result)]
@@ -12,8 +13,8 @@ standings_double_games <- function(g){
   out
 }
 
-standings_h2h <- function(gd, verbose = FALSE){
-  report("Calculate Head-to-Head Data")
+standings_h2h <- function(gd, verbosity){
+  if (verbosity == 2L) report("Calculate Head-to-Head Data")
   if( !is.data.table(gd) ) setDT(gd)
   out <- gd[game_type == "REG", list(
     h2h_games = .N,

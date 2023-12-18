@@ -1,7 +1,8 @@
+# https://www.nfl.com/standings/tie-breaking-procedures
 add_div_ranks <- function(standings,
                           h2h,
                           tiebreaker_depth,
-                          verbose){
+                          verbosity){
   # Set ranks by win percentage in descending order by sim and division.
   # If ties method is "random", data.table will break all ties randomly
   # and we won't need any further tie-breaking methods
@@ -35,43 +36,43 @@ add_div_ranks <- function(standings,
     # A 3 iterations for loop is fine. No need to go crazy about it.
     for (tied_teams in 4:2) {
 
-      if (tie_break_done(standings, tied_teams)) next
+      if (div_tie_break_done(standings, tied_teams)) next
 
       # Head To Head ------------------------------------------------------------
-      if (isTRUE(verbose)) report("DIV ({tied_teams}): Head-to-Head Win PCT")
+      if (verbosity == 2L) report("DIV ({tied_teams}): Head-to-Head Win PCT")
       standings <- break_div_ties_by_h2h(standings = standings, h2h = h2h, n_tied = tied_teams)
-      if (tie_break_done(standings, tied_teams)) next
+      if (div_tie_break_done(standings, tied_teams)) next
 
       # Division Record ---------------------------------------------------------
-      if (isTRUE(verbose)) report("DIV ({tied_teams}): Division Win PCT")
+      if (verbosity == 2L) report("DIV ({tied_teams}): Division Win PCT")
       standings <- break_div_ties_by_div_win_pct(standings = standings, n_tied = tied_teams)
-      if (tie_break_done(standings, tied_teams)) next
+      if (div_tie_break_done(standings, tied_teams)) next
 
       # Common Games Win Pct ----------------------------------------------------
-      if (isTRUE(verbose)) report("DIV ({tied_teams}): Common Games Win PCT")
+      if (verbosity == 2L) report("DIV ({tied_teams}): Common Games Win PCT")
       standings <- break_div_ties_by_common_win_pct(standings = standings, h2h = h2h, n_tied = tied_teams)
-      if (tie_break_done(standings, tied_teams)) next
+      if (div_tie_break_done(standings, tied_teams)) next
 
       # Conference Win PCT ------------------------------------------------------
-      if (isTRUE(verbose)) report("DIV ({tied_teams}): Conference Win PCT")
+      if (verbosity == 2L) report("DIV ({tied_teams}): Conference Win PCT")
       standings <- break_div_ties_by_conf_win_pct(standings = standings, n_tied = tied_teams)
-      if (tie_break_done(standings, tied_teams)) next
+      if (div_tie_break_done(standings, tied_teams)) next
 
       # SOV ---------------------------------------------------------------------
-      if (isTRUE(verbose)) report("DIV ({tied_teams}): Strength of Victory")
+      if (verbosity == 2L) report("DIV ({tied_teams}): Strength of Victory")
       standings <- break_div_ties_by_sov(standings = standings, n_tied = tied_teams)
-      if (tie_break_done(standings, tied_teams)) next
+      if (div_tie_break_done(standings, tied_teams)) next
 
       # SOS ---------------------------------------------------------------------
-      if (isTRUE(verbose)) report("DIV ({tied_teams}): Strength of Schedule")
+      if (verbosity == 2L) report("DIV ({tied_teams}): Strength of Schedule")
       standings <- break_div_ties_by_sos(standings = standings, n_tied = tied_teams)
-      if (tie_break_done(standings, tied_teams)) next
+      if (div_tie_break_done(standings, tied_teams)) next
     }
 
     # We've worked through all implemented tie-breakers.
     # If there are still ties, we break them randomly
     if ( any(standings$div_rank_counter > 1) ) {
-      if (isTRUE(verbose)) report("DIV : Coin Toss")
+      if (verbosity == 2L) report("DIV    : Coin Toss")
       standings[
         div_rank_counter > 1,
         div_rank := min(div_rank) - 1 + frank(list(div_rank, -win_pct), ties.method = "random"),
@@ -90,7 +91,7 @@ add_div_ranks <- function(standings,
 }
 
 break_div_ties_by_h2h <- function(standings, h2h, n_tied){
-  ties <- compute_tied_teams(standings, n_tied)
+  ties <- div_compute_tied_teams(standings, n_tied)
 
   h2h_games_played <- merge(
     ties[, list(sim, team, division, div_rank)],
@@ -117,11 +118,6 @@ break_div_ties_by_h2h <- function(standings, h2h, n_tied){
     div_rank := min(div_rank) - 1 + frank(list(div_rank, -h2h_win_pct), ties.method = "min"),
     by = c("sim", "division")
   ]
-  standings[
-    div_rank_counter == n_tied,
-    div_rank := min(div_rank) - 1 + frank(list(div_rank, -h2h_win_pct), ties.method = "min"),
-    by = c("sim", "division")
-  ]
   standings[, div_rank_counter := .N, by = c("sim", "division", "div_rank")]
   standings[!is.na(h2h_win_pct) & div_rank_counter == 1, div_tie_broken_by := paste0("Head-To-Head Win PCT (", n_tied, ")")]
   standings <- standings[,!c("h2h_win_pct")]
@@ -129,7 +125,7 @@ break_div_ties_by_h2h <- function(standings, h2h, n_tied){
 }
 
 break_div_ties_by_div_win_pct <- function(standings, n_tied){
-  ties <- compute_tied_teams(standings, n_tied)
+  ties <- div_compute_tied_teams(standings, n_tied)
 
   standings[
     div_rank_counter == n_tied,
@@ -146,7 +142,7 @@ break_div_ties_by_div_win_pct <- function(standings, n_tied){
 }
 
 break_div_ties_by_common_win_pct <- function(standings, h2h, n_tied){
-  ties <- compute_tied_teams(standings, n_tied)
+  ties <- div_compute_tied_teams(standings, n_tied)
 
   common_win_pct <- merge(
     ties[, list(sim, division, team, div_rank)], h2h, by = c("sim", "team"), all.y = FALSE
@@ -180,7 +176,7 @@ break_div_ties_by_common_win_pct <- function(standings, h2h, n_tied){
 }
 
 break_div_ties_by_conf_win_pct <- function(standings, n_tied){
-  ties <- compute_tied_teams(standings, n_tied)
+  ties <- div_compute_tied_teams(standings, n_tied)
 
   standings[
     div_rank_counter == n_tied,
@@ -197,7 +193,7 @@ break_div_ties_by_conf_win_pct <- function(standings, n_tied){
 }
 
 break_div_ties_by_sov <- function(standings, n_tied){
-  ties <- compute_tied_teams(standings, n_tied)
+  ties <- div_compute_tied_teams(standings, n_tied)
 
   standings[
     div_rank_counter == n_tied,
@@ -214,7 +210,7 @@ break_div_ties_by_sov <- function(standings, n_tied){
 }
 
 break_div_ties_by_sos <- function(standings, n_tied){
-  ties <- compute_tied_teams(standings, n_tied)
+  ties <- div_compute_tied_teams(standings, n_tied)
 
   standings[
     div_rank_counter == n_tied,
@@ -230,6 +226,6 @@ break_div_ties_by_sos <- function(standings, n_tied){
   standings
 }
 
-compute_tied_teams <- function(standings, n_tied) standings[div_rank_counter == n_tied]
+div_compute_tied_teams <- function(standings, n_tied) standings[div_rank_counter == n_tied]
 
-tie_break_done <- function(standings, n_tied) all(standings$div_rank_counter < n_tied)
+div_tie_break_done <- function(standings, n_tied) all(standings$div_rank_counter < n_tied)
