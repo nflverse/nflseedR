@@ -42,124 +42,17 @@ simulate_round <- function(sim_round,
     stop("`playoff_seeds` must be between 1 and ",max_seeds)
   }
 
-  # function to simulate a week
-  simulate_week <- function(teams, games, week_num, test_week, ...) {
-
-    # recall old data for comparison
-    old_teams <- teams
-    old_games <- games %>%
-      rename(.old_result = result)
-
-    # estimate and simulate games
-    return_value <- process_games(teams, games, week_num, ...)
-
-    # testing?
-    if (!is.null(test_week) && week_num == test_week) {
-      return(return_value)
-    }
-
-    # did we get the right data back?
-    problems <- c()
-    if (typeof(return_value) != "list") {
-      problems[length(problems) + 1] <- "the returned value was not a list"
-    } else {
-      if (!("teams" %in% names(return_value))) {
-        problems[length(problems) + 1] <- "`teams` was not in the returned list"
-      } else {
-        teams <- return_value$teams
-        if (!is_tibble(teams)) {
-          problems[length(problems) + 1] <- "`teams` was not a tibble"
-        } else {
-          if (nrow(teams) != nrow(old_teams)) {
-            problems[length(problems) + 1] <- paste(
-              "`teams` changed from", nrow(old_teams), "to",
-              nrow(teams), "rows",
-              collapse = " "
-            )
-          }
-          for (cname in colnames(old_teams)) {
-            if (!(cname %in% colnames(teams))) {
-              problems[length(problems) + 1] <- paste(
-                "`teams` column `", cname, "` was removed"
-              )
-            }
-          }
-        }
-      }
-      if (!("games" %in% names(return_value))) {
-        problems[length(problems) + 1] <- "`games` was not in the returned list"
-      } else {
-        games <- return_value$games
-        if (!is_tibble(games)) {
-          problems[length(problems) + 1] <- "`games` was not a tibble"
-        } else {
-          if (nrow(games) != nrow(old_games)) {
-            problems[length(problems) + 1] <- paste(
-              "`games` changed from", nrow(old_games), "to",
-              nrow(games), "rows",
-              collapse = " "
-            )
-          }
-          for (cname in colnames(old_games)) {
-            if (!(cname %in% colnames(games)) && cname != ".old_result") {
-              problems[length(problems) + 1] <- paste(
-                "`teams` column `", cname, "` was removed"
-              )
-            }
-          }
-        }
-      }
-    }
-
-    # report data structure problems
-    problems <- paste(problems, collapse = ", ")
-    if (problems != "") {
-      stop(
-        "During Week ", week_num, ", your `process_games()` function had the ",
-        "following issues: ", problems, ". "
-      )
-    }
-
-    # identify improper results values
-    problems <- old_games %>%
-      inner_join(games, by = intersect(colnames(old_games), colnames(games))) %>%
-      mutate(problem = case_when(
-        week == week_num & is.na(result) ~
-        "a result from the current week is missing",
-        week != week_num & !is.na(.old_result) & is.na(result) ~
-        "a known result outside the current week was blanked out",
-        week != week_num & is.na(.old_result) & !is.na(result) ~
-        "a result outside the current week was entered",
-        week != week_num & .old_result != result ~
-        "a known result outside the current week was updated",
-        !is.na(.old_result) & is.na(result) ~
-        "a known result was blanked out",
-        !is.na(result) & result == 0 & game_type != "REG" ~
-        "a playoff game resulted in a tie (had result == 0)",
-        TRUE ~ NA_character_
-      )) %>%
-      filter(!is.na(problem)) %>%
-      pull(problem) %>%
-      unique() %>%
-      paste(collapse = ", ")
-
-    # report result value problems
-    if (problems != "") {
-      stop(
-        "During Week ", week_num, ", your `process_games()` function had the",
-        "following issues: ", problems, ". Make sure you only change results ",
-        "when week == week_num & is.na(result)"
-      )
-    }
-
-    return(list(teams = teams, games = games))
-  }
-
   # simulate remaining regular season games
   for (week_num in weeks_to_sim)
   {
     return_value <-
-      simulate_week(teams, games, week_num, test_week, ...)
+      simulate_week(teams = teams,
+                    games = games,
+                    week_num = week_num,
+                    process_games = process_games,
+                    test_week = test_week,
+                    .debug = .debug,
+                    ...)
     if (!is.null(test_week) && week_num == test_week) {
       return(return_value)
     }
@@ -266,16 +159,24 @@ simulate_round <- function(sim_round,
 
       # process any new games
       return_value <-
-        simulate_week(teams, games, week_num, test_week, ...)
+        simulate_week(teams = teams,
+                      games = games,
+                      week_num = week_num,
+                      process_games = process_games,
+                      test_week = test_week,
+                      .debug = .debug,
+                      ...)
       if (!is.null(test_week) && week_num == test_week) {
         return(return_value)
       }
       list[teams, games] <- return_value
 
-      # record losers
-      teams <- games %>%
+      week_games_doubled <- games %>%
         filter(week == week_num) %>%
-        double_games() %>%
+        double_games()
+
+      # record losers
+      teams <- week_games_doubled %>%
         filter(outcome == 0) %>%
         select(sim, team, outcome) %>%
         right_join(teams, by = c("sim", "team")) %>%
@@ -285,9 +186,7 @@ simulate_round <- function(sim_round,
       # if super bowl, record winner
       if (any(playoff_teams$conf == "SB")) {
         # super bowl winner exit is +1 to SB week
-        teams <- games %>%
-          filter(week == week_num) %>%
-          double_games() %>%
+        teams <- week_games_doubled %>%
           filter(outcome == 1) %>%
           select(sim, team, outcome) %>%
           right_join(teams, by = c("sim", "team")) %>%
@@ -296,9 +195,7 @@ simulate_round <- function(sim_round,
       }
 
       # filter to winners or byes
-      playoff_teams <- games %>%
-        filter(week == week_num) %>%
-        double_games() %>%
+      teams <- week_games_doubled %>%
         right_join(playoff_teams, by = c("sim", "team")) %>%
         filter(is.na(result) | result > 0) %>%
         select(sim, conf, seed, team) %>%
@@ -332,7 +229,7 @@ simulate_round <- function(sim_round,
   } else {
     if (!is_tibble(teams)) teams <- teams$standings
     teams$draft_order <- NA_real_
-    teams <- teams %>%
+    teams <- tibble::as_tibble(teams) %>%
       dplyr::select(
         dplyr::any_of(c(
           "sim", "team", "conf", "division", "games",
@@ -345,4 +242,124 @@ simulate_round <- function(sim_round,
   p(sprintf("finished sim round %g", sim_round))
 
   list("teams" = teams, "games" = games)
+}
+
+# function to simulate a week
+simulate_week <- function(teams,
+                          games,
+                          week_num,
+                          process_games,
+                          test_week = NULL,
+                          .debug = FALSE,
+                          ...) {
+  # estimate and simulate games
+  return_value <- process_games(teams, games, week_num, ...)
+
+  # testing?
+  if (!is.null(test_week) && week_num == test_week) {
+    return(return_value)
+  }
+
+  if(isTRUE(.debug) && FALSE){
+    # recall old data for comparison
+    old_teams <- teams
+    old_games <- games %>%
+      rename(.old_result = result)
+    # did we get the right data back?
+    # currently, we will catch a maximum of 9 problems. Allocate the vector
+    problems <- vector("character", length = 9L)
+    i <- 0
+    if (typeof(return_value) != "list") {
+      problems[i + 1] <- "the returned value was not a list"
+    } else {
+      if (!("teams" %in% names(return_value))) {
+        problems[i + 2] <- "`teams` was not in the returned list"
+      } else {
+        teams <- return_value$teams
+        if (!is_tibble(teams)) {
+          problems[i + 3] <- "`teams` was not a tibble"
+        } else {
+          if (nrow(teams) != nrow(old_teams)) {
+            problems[i + 4] <- paste(
+              "`teams` changed from", nrow(old_teams), "to",
+              nrow(teams), "rows",
+              collapse = " "
+            )
+          }
+          for (cname in colnames(old_teams)) {
+            if (!(cname %in% colnames(teams))) {
+              problems[i + 5] <- paste(
+                "`teams` column `", cname, "` was removed"
+              )
+            }
+          }
+        }
+      }
+      if (!("games" %in% names(return_value))) {
+        problems[i + 6] <- "`games` was not in the returned list"
+      } else {
+        games <- return_value$games
+        if (!is_tibble(games)) {
+          problems[i + 7] <- "`games` was not a tibble"
+        } else {
+          if (nrow(games) != nrow(old_games)) {
+            problems[i + 8] <- paste(
+              "`games` changed from", nrow(old_games), "to",
+              nrow(games), "rows",
+              collapse = " "
+            )
+          }
+          for (cname in colnames(old_games)) {
+            if (!(cname %in% colnames(games)) && cname != ".old_result") {
+              problems[i + 9] <- paste(
+                "`teams` column `", cname, "` was removed"
+              )
+            }
+          }
+        }
+      }
+    }
+
+    # report data structure problems
+    problems <- problems[problems != ""]
+    if (length(problems)) {
+      cli::cli_abort(
+        "During Week {week_num}, your {.code process_games} function had the \\
+        following issues: {problems}."
+      )
+    }
+
+    # identify improper results values
+    problems <- old_games %>%
+      inner_join(games, by = intersect(colnames(old_games), colnames(games))) %>%
+      mutate(problem = case_when(
+        week == week_num & is.na(result) ~
+          "a result from the current week is missing",
+        week != week_num & !is.na(.old_result) & is.na(result) ~
+          "a known result outside the current week was blanked out",
+        week != week_num & is.na(.old_result) & !is.na(result) ~
+          "a result outside the current week was entered",
+        week != week_num & .old_result != result ~
+          "a known result outside the current week was updated",
+        !is.na(.old_result) & is.na(result) ~
+          "a known result was blanked out",
+        !is.na(result) & result == 0 & game_type != "REG" ~
+          "a playoff game resulted in a tie (had result == 0)",
+        TRUE ~ NA_character_
+      )) %>%
+      filter(!is.na(problem)) %>%
+      pull(problem) %>%
+      unique()
+
+    # report result value problems
+    if (problems != "") {
+      cli::cli_abort(
+        "During Week {week_num}, your {.code process_games} function had the \\
+        following issues: {problems}. Make sure you only change results \\
+        when {.code week == week_num} & {.code is.na(result)}"
+      )
+    }
+  }
+
+  list("teams" = return_value$teams, "games" = return_value$games)
 }
