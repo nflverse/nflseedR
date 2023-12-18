@@ -8,7 +8,7 @@
 #' @import gsubfn
 #' @importFrom dplyr select mutate rename left_join inner_join n arrange group_by
 #' @importFrom dplyr ungroup filter case_when summarize pull right_join everything
-#' @importFrom dplyr slice bind_rows row_number
+#' @importFrom dplyr slice bind_rows row_number distinct
 #' @importFrom cli symbol
 #' @importFrom furrr future_map furrr_options
 #' @importFrom future plan
