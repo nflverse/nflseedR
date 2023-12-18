@@ -29,6 +29,7 @@ Imports:
 Suggests: 
     gt,
     knitr,
+    nflplotR (>= 1.2.0), 
     rmarkdown,
     scales,
     testthat (>= 3.0.0)
