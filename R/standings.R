@@ -16,7 +16,7 @@
 #' @param ranks One of `"DIV"`, `"CONF"`, `"DRAFT"`, or `"NONE"` to specify
 #'   which ranks - and thus the associated tiebreakers - are to be determined.
 #'   - `"DIV"`: Adds the division ranking variable `div_rank`
-#'   - `"CONF"`: `"DIV"` + the conference variable `conf_rank`. For better
+#'   - `"CONF"` (default): `"DIV"` + the conference variable `conf_rank`. For better
 #'   performance, it is possible to set `playoff_seeds` to a value < 16 to make
 #'   the function skip tiebreakers of irrelevant conference ranks.
 #'   - `"DRAFT"`: `"CONF"` + the draft variable `draft_rank`. This is the actual
@@ -25,7 +25,7 @@
 #'   which tiebreakers are to be applied. The implemented tiebreakers are
 #'   documented here <https://nflseedr.com/articles/tiebreaker.hmtl>.
 #'   The values mean:
-#'   - `"SOS"`: Apply all tiebreakers through Strength of Schedule. If there are
+#'   - `"SOS"` (default): Apply all tiebreakers through Strength of Schedule. If there are
 #'   still remaining ties, break them through coin toss.
 #'   - `"PRE-SOV"`: Apply all tiebreakers before Strength of Victory. If there are
 #'   still remaining ties, break them through coin toss. Why Pre SOV? It's the
@@ -38,7 +38,7 @@
 #'   value < 16 to make the function skip tiebreakers of those conference ranks.
 #' @param verbosity One of `"MIN"`, `"MAX"`, or `"NONE"` allowing the user
 #'  to set the grade of verbosity of status reports. They mean:
-#'  - `"MIN"`: Prints main steps of the process.
+#'  - `"MIN"` (default): Prints main steps of the process.
 #'  - `"MAX"`: Prints all steps of the complete tiebreaking process.
 #'  - `"NONE"`: No status reports at all.
 #'

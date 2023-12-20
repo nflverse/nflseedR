@@ -31,7 +31,7 @@ game was a regular season game or one of the playoff rounds.}
 which ranks - and thus the associated tiebreakers - are to be determined.
 \itemize{
 \item \code{"DIV"}: Adds the division ranking variable \code{div_rank}
-\item \code{"CONF"}: \code{"DIV"} + the conference variable \code{conf_rank}. For better
+\item \code{"CONF"} (default): \code{"DIV"} + the conference variable \code{conf_rank}. For better
 performance, it is possible to set \code{playoff_seeds} to a value < 16 to make
 the function skip tiebreakers of irrelevant conference ranks.
 \item \code{"DRAFT"}: \code{"CONF"} + the draft variable \code{draft_rank}. This is the actual
@@ -43,7 +43,7 @@ which tiebreakers are to be applied. The implemented tiebreakers are
 documented here \url{https://nflseedr.com/articles/tiebreaker.hmtl}.
 The values mean:
 \itemize{
-\item \code{"SOS"}: Apply all tiebreakers through Strength of Schedule. If there are
+\item \code{"SOS"} (default): Apply all tiebreakers through Strength of Schedule. If there are
 still remaining ties, break them through coin toss.
 \item \code{"PRE-SOV"}: Apply all tiebreakers before Strength of Victory. If there are
 still remaining ties, break them through coin toss. Why Pre SOV? It's the
@@ -60,7 +60,7 @@ value < 16 to make the function skip tiebreakers of those conference ranks.}
 \item{verbosity}{One of \code{"MIN"}, \code{"MAX"}, or \code{"NONE"} allowing the user
 to set the grade of verbosity of status reports. They mean:
 \itemize{
-\item \code{"MIN"}: Prints main steps of the process.
+\item \code{"MIN"} (default): Prints main steps of the process.
 \item \code{"MAX"}: Prints all steps of the complete tiebreaking process.
 \item \code{"NONE"}: No status reports at all.
 }}
