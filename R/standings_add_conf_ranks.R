@@ -45,111 +45,114 @@ add_conf_ranks <- function(standings,
   # then there are no ties that need to be broken
   standings <- conf_count_ranks(standings)
 
-  # If all tied clubs are from the same division, we can apply
-  # division tiebreakers, i.e. the div_rank
-  # We do this here before any tiebreaking starts
-  standings <- break_conf_ties_by_division(standings, verbosity = verbosity)
+  # Do this only if any ties exist
+  if ( any(standings$draft_rank_counter > 1) ){
+    if(verbosity == 2L) report("Break CONF ties")
 
-  # enter tie breaking procedure only if there are actual ties,
-  # i.e. a conference rank exists more than once per sim and conference
-  # and tied teams don't share the same division
-  # conference tie breakers allow only one team to advance in any tie-breaking
-  # step. So if there are ties with more than 2 teams, we have to do the 4:3:2
-  # loop multiple times. We could calculate the number of loops as the maximum
-  # of conf_rank_counter numbers. But it is easier to loop over this thing in a
-  # while loop.
-
-  # We add a loop counter to avoid infinite loops
-  while_counter <- 0L
-
-  if ( any(standings$conf_rank_counter > 1) && verbosity == 2L) report("Break CONF ties")
-
-  while ( any(standings$conf_rank_counter > 1) ) {
-
-    while_counter <- while_counter + 1L
-
-    if (while_counter > 12L){
-      cli::cli_abort("Entered infinite loop in conference tiebreaking procedure")
-    }
-
-    # Add a helper variable to summarize information on tied teams
-    # We use this as grouping vartiable in subsequent functions
-    standings[
-      conf_rank_counter > 1,
-      tied_for := paste0(sim, " ", conf, " #", conf_rank, " (n = ", conf_rank_counter, ")")
-    ]
-
-    # NOTE: The system of the below code is as follows
-    # All teams that are eliminated in any tiebreaking step, either through
-    # division reduction or through actual tiebreakers, will get their
-    # `conf_rank` increased by 1 (they lost, so they won't get that rank)
-    # `conf_rank_counter` set to NA_integer_
-    # After the 4:3:2 tiebreaking loop, we count conf_ranks again. If all ties
-    # are broken, there won't be any counter > 1 and we are done.
-
-    # If multiple teams from one division are part of a tiebreaker, we have to
-    # make multiple rounds and start with the highest div rank.
-    # Teams losing at this stage get their counter set to NA and rank incremented
-    standings <- conf_apply_division_reduction(standings, verbosity = verbosity)
-
-    # Since we allow only one team per tie, there can never be more than 4
-    # tied teams during a tiebreaking process. That's why we have to loop over
-    # the number of tied teams and check the number of tied teams after each step.
-    # Every tiebreaking function updates the conf_rank_counter and the conf_rank
-    # of eliminated or winning teams.
-    # As soon as at least one team is eliminated, we have to restart with the lower
-    # number of tied teams.
-    for (tied_teams in 4:2) {
-
-      if (conf_tie_break_done(standings, tied_teams)) next
-
-      # Head To Head ------------------------------------------------------------
-      if (verbosity == 2L) report("CONF ({tied_teams}): Head-to-Head Sweep")
-      standings <- break_conf_ties_by_h2h(standings = standings, h2h = h2h, n_tied = tied_teams)
-      if (conf_tie_break_done(standings, tied_teams)) next
-
-      # Conference Win PCT ------------------------------------------------------
-      if (verbosity == 2L) report("CONF ({tied_teams}): Conference Win PCT")
-      standings <- break_conf_ties_by_conf_win_pct(standings = standings, n_tied = tied_teams)
-      if (conf_tie_break_done(standings, tied_teams)) next
-
-      # Common Games Win Pct ----------------------------------------------------
-      if (verbosity == 2L) report("CONF ({tied_teams}): Common Games Win PCT")
-      standings <- break_conf_ties_by_common_win_pct(standings = standings, h2h = h2h, n_tied = tied_teams)
-      if (conf_tie_break_done(standings, tied_teams)) next
-
-      if (tiebreaker_depth == "SOS"){
-
-        # SOV ---------------------------------------------------------------------
-        if (verbosity == 2L) report("CONF ({tied_teams}): Strength of Victory")
-        standings <- break_conf_ties_by_sov(standings = standings, n_tied = tied_teams)
-        if (conf_tie_break_done(standings, tied_teams)) next
-
-        # SOS ---------------------------------------------------------------------
-        if (verbosity == 2L) report("CONF ({tied_teams}): Strength of Schedule")
-        standings <- break_conf_ties_by_sos(standings = standings, n_tied = tied_teams)
-        if (conf_tie_break_done(standings, tied_teams)) next
-
-      }
-
-      # Coin Flip ---------------------------------------------------------------
-      if (verbosity == 2L) report("CONF ({tied_teams}): Coin Toss")
-      standings <- break_conf_ties_by_coinflip(standings = standings, n_tied = tied_teams)
-
-    } # end of tied teams loop
-
-    # The round of ties is broken and we have set the counter of the eliminated
-    # teams to NA during the process.
-    # We've also increased the possible conf rank of the eliminated teams by 1,
-    # so now we need to recount all ranks and break ties again, if necessary.
-    standings <- conf_count_ranks(standings)
-
-    # At this spot, we might have remaining ties within one division where we can
-    # apply the division tiebreaker. We do this here to avoid another round of
-    # the loop
+    # If all tied clubs are from the same division, we can apply
+    # division tiebreakers, i.e. the div_rank
+    # We do this here before any tiebreaking starts
     standings <- break_conf_ties_by_division(standings, verbosity = verbosity)
 
-  }# end of conf_rank_counter loop
+    # enter tie breaking procedure only if there are actual ties,
+    # i.e. a conference rank exists more than once per sim and conference
+    # and tied teams don't share the same division
+    # conference tie breakers allow only one team to advance in any tie-breaking
+    # step. So if there are ties with more than 2 teams, we have to do the 4:3:2
+    # loop multiple times. We could calculate the number of loops as the maximum
+    # of conf_rank_counter numbers. But it is easier to loop over this thing in a
+    # while loop.
+
+    # We add a loop counter to avoid infinite loops
+    while_counter <- 0L
+
+    while ( any(standings$conf_rank_counter > 1) ) {
+
+      while_counter <- while_counter + 1L
+
+      if (while_counter > 12L){
+        cli::cli_abort("Entered infinite loop in conference tiebreaking procedure")
+      }
+
+      # Add a helper variable to summarize information on tied teams
+      # We use this as grouping vartiable in subsequent functions
+      standings[
+        conf_rank_counter > 1,
+        tied_for := paste0(sim, " ", conf, " #", conf_rank, " (n = ", conf_rank_counter, ")")
+      ]
+
+      # NOTE: The system of the below code is as follows
+      # All teams that are eliminated in any tiebreaking step, either through
+      # division reduction or through actual tiebreakers, will get their
+      # `conf_rank` increased by 1 (they lost, so they won't get that rank)
+      # `conf_rank_counter` set to NA_integer_
+      # After the 4:3:2 tiebreaking loop, we count conf_ranks again. If all ties
+      # are broken, there won't be any counter > 1 and we are done.
+
+      # If multiple teams from one division are part of a tiebreaker, we have to
+      # make multiple rounds and start with the highest div rank.
+      # Teams losing at this stage get their counter set to NA and rank incremented
+      standings <- conf_apply_division_reduction(standings, verbosity = verbosity)
+
+      # Since we allow only one team per tie, there can never be more than 4
+      # tied teams during a tiebreaking process. That's why we have to loop over
+      # the number of tied teams and check the number of tied teams after each step.
+      # Every tiebreaking function updates the conf_rank_counter and the conf_rank
+      # of eliminated or winning teams.
+      # As soon as at least one team is eliminated, we have to restart with the lower
+      # number of tied teams.
+      for (tied_teams in 4:2) {
+
+        if (conf_tie_break_done(standings, tied_teams)) next
+
+        # Head To Head ------------------------------------------------------------
+        if (verbosity == 2L) report("CONF ({tied_teams}): Head-to-Head Sweep")
+        standings <- break_conf_ties_by_h2h(standings = standings, h2h = h2h, n_tied = tied_teams)
+        if (conf_tie_break_done(standings, tied_teams)) next
+
+        # Conference Win PCT ------------------------------------------------------
+        if (verbosity == 2L) report("CONF ({tied_teams}): Conference Win PCT")
+        standings <- break_conf_ties_by_conf_win_pct(standings = standings, n_tied = tied_teams)
+        if (conf_tie_break_done(standings, tied_teams)) next
+
+        # Common Games Win Pct ----------------------------------------------------
+        if (verbosity == 2L) report("CONF ({tied_teams}): Common Games Win PCT")
+        standings <- break_conf_ties_by_common_win_pct(standings = standings, h2h = h2h, n_tied = tied_teams)
+        if (conf_tie_break_done(standings, tied_teams)) next
+
+        if (tiebreaker_depth == "SOS"){
+
+          # SOV ---------------------------------------------------------------------
+          if (verbosity == 2L) report("CONF ({tied_teams}): Strength of Victory")
+          standings <- break_conf_ties_by_sov(standings = standings, n_tied = tied_teams)
+          if (conf_tie_break_done(standings, tied_teams)) next
+
+          # SOS ---------------------------------------------------------------------
+          if (verbosity == 2L) report("CONF ({tied_teams}): Strength of Schedule")
+          standings <- break_conf_ties_by_sos(standings = standings, n_tied = tied_teams)
+          if (conf_tie_break_done(standings, tied_teams)) next
+
+        }
+
+        # Coin Flip ---------------------------------------------------------------
+        if (verbosity == 2L) report("CONF ({tied_teams}): Coin Toss")
+        standings <- break_conf_ties_by_coinflip(standings = standings, n_tied = tied_teams)
+
+      } # end of tied teams loop
+
+      # The round of ties is broken and we have set the counter of the eliminated
+      # teams to NA during the process.
+      # We've also increased the possible conf rank of the eliminated teams by 1,
+      # so now we need to recount all ranks and break ties again, if necessary.
+      standings <- conf_count_ranks(standings)
+
+      # At this spot, we might have remaining ties within one division where we can
+      # apply the division tiebreaker. We do this here to avoid another round of
+      # the loop
+      standings <- break_conf_ties_by_division(standings, verbosity = verbosity)
+      standings[, tied_for := NULL]
+    }# end of conf_rank_counter loop
+  }# end of tie breaking
 
   # If the user supplied a number of playoff seeds, we have set the lower
   # conference ranks to a random value and now we remove it
@@ -158,11 +161,10 @@ add_conf_ranks <- function(standings,
       conf_rank > playoff_seeds,
       conf_rank := NA_integer_
     ]
-    # standings[, max_seed := NULL]
   }
 
   # Finally, the helper variables can be removed
-  standings <- standings[,`:=`(conf_rank_counter = NULL, tied_for = NULL)]
+  standings <- standings[, conf_rank_counter := NULL]
   standings
 }
 
