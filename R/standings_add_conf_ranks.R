@@ -62,9 +62,9 @@ add_conf_ranks <- function(standings,
   # We add a loop counter to avoid infinite loops
   while_counter <- 0L
 
-  while ( any(standings$conf_rank_counter > 1) ) {
+  if ( any(standings$conf_rank_counter > 1) && verbosity == 2L) report("Break CONF ties")
 
-    if (verbosity == 2L) report("Break CONF ties")
+  while ( any(standings$conf_rank_counter > 1) ) {
 
     while_counter <- while_counter + 1L
 

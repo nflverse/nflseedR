@@ -56,9 +56,9 @@ add_draft_ranks <- function(standings,
   # We add a loop counter to avoid infinite loops
   while_counter <- 0L
 
-  while ( any(standings$draft_rank_counter > 1) ) {
+  if ( any(standings$draft_rank_counter > 1) && verbosity == 2L) report("Break DRAFT ties")
 
-    if (verbosity == 2L) report("Break DRAFT ties")
+  while ( any(standings$draft_rank_counter > 1) ) {
 
     while_counter <- while_counter + 1L
 
