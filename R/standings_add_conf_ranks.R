@@ -116,15 +116,19 @@ add_conf_ranks <- function(standings,
       standings <- break_conf_ties_by_common_win_pct(standings = standings, h2h = h2h, n_tied = tied_teams)
       if (conf_tie_break_done(standings, tied_teams)) next
 
-      # SOV ---------------------------------------------------------------------
-      if (verbosity == 2L) report("CONF ({tied_teams}): Strength of Victory")
-      standings <- break_conf_ties_by_sov(standings = standings, n_tied = tied_teams)
-      if (conf_tie_break_done(standings, tied_teams)) next
+      if (tiebreaker_depth == "SOS"){
 
-      # SOS ---------------------------------------------------------------------
-      if (verbosity == 2L) report("CONF ({tied_teams}): Strength of Schedule")
-      standings <- break_conf_ties_by_sos(standings = standings, n_tied = tied_teams)
-      if (conf_tie_break_done(standings, tied_teams)) next
+        # SOV ---------------------------------------------------------------------
+        if (verbosity == 2L) report("CONF ({tied_teams}): Strength of Victory")
+        standings <- break_conf_ties_by_sov(standings = standings, n_tied = tied_teams)
+        if (conf_tie_break_done(standings, tied_teams)) next
+
+        # SOS ---------------------------------------------------------------------
+        if (verbosity == 2L) report("CONF ({tied_teams}): Strength of Schedule")
+        standings <- break_conf_ties_by_sos(standings = standings, n_tied = tied_teams)
+        if (conf_tie_break_done(standings, tied_teams)) next
+
+      }
 
       # Coin Flip ---------------------------------------------------------------
       if (verbosity == 2L) report("CONF ({tied_teams}): Coin Toss")

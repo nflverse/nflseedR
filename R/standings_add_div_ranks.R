@@ -58,6 +58,8 @@ add_div_ranks <- function(standings,
       standings <- break_div_ties_by_conf_win_pct(standings = standings, n_tied = tied_teams)
       if (div_tie_break_done(standings, tied_teams)) next
 
+      if (tiebreaker_depth != "SOS") next
+
       # SOV ---------------------------------------------------------------------
       if (verbosity == 2L) report("DIV ({tied_teams}): Strength of Victory")
       standings <- break_div_ties_by_sov(standings = standings, n_tied = tied_teams)
