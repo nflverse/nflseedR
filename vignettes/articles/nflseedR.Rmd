@@ -12,9 +12,9 @@ knitr::opts_chunk$set(
 
 # Preface
 
-nflseedR is designed to efficiently take over the sophisticated and complex rule set of the NFL regarding division ranks, postseason seeding and draft order. It is intended to be used for NFL season simulations to help modelers focus on their models rather than the tie-breaking procedures. The NFL's official procedures for breaking ties for postseason playoffs can be found [here](https://operations.nfl.com/the-rules/nfl-tie-breaking-procedures/) and [this site](https://operations.nfl.com/journey-to-the-nfl/the-nfl-draft/the-rules-of-the-draft/) explains the assigning of draft picks. 
+nflseedR is designed to efficiently take over the sophisticated and complex rule set of the NFL regarding division ranks, postseason seeding and draft order. It is intended to be used for NFL season simulations to help modelers focus on their models rather than tie-breaking procedures. The NFL's official procedures for breaking ties for postseason playoffs may be found [here](https://operations.nfl.com/the-rules/nfl-tie-breaking-procedures/), and [this site](https://operations.nfl.com/journey-to-the-nfl/the-nfl-draft/the-rules-of-the-draft/) explains the assignment of draft pick order. 
 
-However, it must be mentioned that nflseedR does not support all levels of tie-breakers at the moment. The deepest tie-breaker possible at the moment is the strength of schedule. After that, the decision is made at random. It should be noted, however, that the need for additional levels is extremely unlikely in reality.
+nflseedR does not support all levels of tie-breakers at the moment. The deepest tie-breaker currently is strength of schedule. After that, the decision is made at random. However, the need for additional levels is extremely unlikely in practice and deeper levels have never actually been needed to resolve season-end standings since the NFL expanded to 32 teams.
 
 # Using In-Simulation Functions
 
@@ -22,7 +22,7 @@ You can get NFL game data from this function:
 
 * `load_sharpe_games()` to collect game information and results
 
-And if you prefer, you can take or generate any set of game outcomes and let nflseedR
+If preferred, one can obtain or generate any set of game outcomes and let nflseedR
 handle all of the NFL seeding and tiebreaker math for you with three in-simulation
 functions (each can handle thousands of seasons at once):
 
@@ -49,11 +49,11 @@ games %>% dplyr::slice_tail(n = 20) %>% knitr::kable()
 ```
 
 This pulls game information from the games.rds file (equivalent to the games.csv file) from
-[Lee Sharpe's NFL Data Github](https://github.com/nflverse/nfldata/tree/master/data)
+[Lee Sharpe's NFL Data Github](https://github.com/nflverse/nfldata/tree/master/data).
 
 ## Find Division Ranks
 
-This functions computes division ranks based on a data frame containing game results of one or more NFL seasons. So let's load some game data first (this example uses the game data of the 2012 and 2019 seasons):
+This function computes division ranks based on a data frame containing game results of one or more NFL seasons. So let's load some game data first (this example uses the game data of the 2012 and 2019 seasons):
 
 ```{r}
 games <- nflseedR::load_sharpe_games() %>%
@@ -84,9 +84,9 @@ div_standings <- nflseedR::compute_division_ranks(games, .debug = TRUE)
 dplyr::glimpse(div_standings)
 ```
 
-Please note that the function outputs a list of data frames, the actual division standings as well as a data frame named `h2h`. The latter is an important input in the other functions (as it is used to break head-to-head ties) and can only be computed with `compute_division_ranks()`.
+Please note that the function outputs a list of data frames, the actual division standings, and a data frame named `h2h`. The latter is an important input in the other functions (as it is used to break head-to-head ties) and can only be computed with `compute_division_ranks()`.
 
-So here is the resulting division standings data frame for the 2012 season
+Here is the resulting division standings data frame for the 2012 season:
 
 ```{r}
 div_standings %>% 
@@ -96,11 +96,11 @@ div_standings %>%
   knitr::kable()
 ```
 
-In that season the seconds division rank of the NFC South required a three way tie-breaker between the Panthers, Saints and Bucs. It was broken with the three-way Conference Record. This can be seen in the above given console output: `...DIV (3): Common Record` for the division rank number 2. The Bucs lost this tie-breaker with a 0.333 win percentage in the conference and the tie-breaking procedure goes on with a 2-way head-to-head comparison.
+In that season, the second-place finish in the NFC South required a three way tie-breaker between the Panthers, Saints and Bucs. It was broken with the three-way Conference Record. This can be seen in the above given console output: `...DIV (3): Common Record` for the division rank number 2. The Bucs lost this tie-breaker with a 0.333 win percentage in the conference and the tie-breaking procedure goes forward with a 2-way head-to-head comparison.
 
 ## Find Conference Seedings
 
-This functions computes conference seedings based on the above computed division standings data frame. For efficiency reasons the above computed `h2h` data frame has to be passed to the function. The easiest way is to pass the list of data frames that is computed in the first step so we can do this (please note the number of playoff seeds):
+This function computes conference seedings based on the above computed division standings data frame. For efficiency, reasons the `h2h` data frame computed above has to be passed to the function. The easiest way is to pass the list of data frames that is computed in the first step. For example (please note the number of playoff seeds):
 
 ```{r}
 seeds <- div_standings %>% 
@@ -120,7 +120,7 @@ seeds %>%
 
 ## Find Draft Order
 
-This function computes the draft order based on the playoff outcome and the regular season games. It requires all playoff results in the `games` data frame and the `game_type` of the Super Bowl has to be `"SB"`. For efficiency reasons the above computed `h2h` data frame has to be passed to the function as well. The easiest way is to pass the list of data frames that is computed in the above steps:
+This function computes the draft order based on playoff outcomes and the regular season games. It requires all playoff results in the `games` data frame and the `game_type` of the Super Bowl has to be `"SB"`. For efficiency reasons, the `h2h` data frame computed above has to be passed to the function as well. The easiest way is to pass the list of data frames that is computed in the above steps:
 
 ```{r}
 draft <- seeds %>% 
