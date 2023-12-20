@@ -1,8 +1,13 @@
 standings_double_games <- function(g, verbosity){
   if (verbosity == 2L) report("Clean Home/Away in Games Data")
   setDT(g)
-  away <- g[,list(sim, game_type, week, team = away_team, opp = home_team, result = -result)]
-  home <- g[,list(sim, game_type, week, team = home_team, opp = away_team, result)]
+  if (attr(g, "has_scores") == TRUE){
+    away <- g[,list(sim, game_type, week, team = away_team, opp = home_team, score = away_score, result = -result)]
+    home <- g[,list(sim, game_type, week, team = home_team, opp = away_team, score = home_score, result)]
+  } else {
+    away <- g[,list(sim, game_type, week, team = away_team, opp = home_team, result = -result)]
+    home <- g[,list(sim, game_type, week, team = home_team, opp = away_team, result)]
+  }
   out <- rbind(away, home)
   out[, outcome := fcase(
     is.na(result), NA_real_,
@@ -57,7 +62,11 @@ standings_validate_games <- function(games){
 }
 
 finalize_standings <- function(standings, games){
-  standings <- standings[order(sim, division, div_rank)]
+  if ("div_rank" %chin% colnames(standings)){
+    standings <- standings[order(sim, division, div_rank)]
+  } else {
+    standings <- standings[order(sim, division)]
+  }
   if (attributes(games)[["uses_season"]]){
     colnames(standings)[colnames(standings) == "sim"] <- "season"
   }
