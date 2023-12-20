@@ -21,7 +21,7 @@ This website documents the currently in nflseedR implemented process in case the
 
 # Break a Tie Within a Division
 
-*This is being used to calculated the variable `div_rank`*
+*This is being used to calculate the variable `div_rank`*
 
 If, at the end of the regular season, two or more clubs in the same division finish with identical won-lost-tied percentages, the following steps will be taken until a champion is determined.
 
@@ -59,7 +59,7 @@ If two clubs remain tied after one-or-more clubs are eliminated during any step,
 
 # Break a Tie for Conference Seeds
 
-*This is being used to calculated the variable `conf_rank`*
+*This is being used to calculate the variable `conf_rank`*
 
 The seven postseason participants from each conference are seeded as follows
 
@@ -122,7 +122,7 @@ When the first Wild Card team has been identified, the procedure is repeated to 
 
 # Break a Tie for the Draft ("Selection Meeting")
 
-*This is being used to calculated the variable `draft_rank`*
+*This is being used to calculate the variable `draft_rank`*
 
 The order of selection is determined by the reverse order of finish in the previous season. Barring any trades between clubs, each round starts with the team that finished with the worst record and ends with the Super Bowl champions.
 
