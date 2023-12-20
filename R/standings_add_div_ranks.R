@@ -29,6 +29,7 @@ add_div_ranks <- function(standings,
   # enter tie breaking procedure only if there are actual ties,
   # i.e. a division rank exists more than once per sim and division
   if ( any(standings$div_rank_counter > 1) ) {
+    if (verbosity == 2L) report("Break DIV ties")
     # 3 or 4-Team ties need to go through all these steps until at least 2 tied
     # teams remain. If that's the case, we have to jump back to the beginning
     # of the process with the 2 remaining teams. That's why we have to loop over

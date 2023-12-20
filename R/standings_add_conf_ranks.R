@@ -64,6 +64,8 @@ add_conf_ranks <- function(standings,
 
   while ( any(standings$conf_rank_counter > 1) ) {
 
+    if (verbosity == 2L) report("Break CONF ties")
+
     while_counter <- while_counter + 1L
 
     if (while_counter > 12L){

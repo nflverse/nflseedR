@@ -58,6 +58,8 @@ add_draft_ranks <- function(standings,
 
   while ( any(standings$draft_rank_counter > 1) ) {
 
+    if (verbosity == 2L) report("Break DRAFT ties")
+
     while_counter <- while_counter + 1L
 
     if (while_counter > 18L){
