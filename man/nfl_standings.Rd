@@ -17,7 +17,8 @@ nfl_standings(
 following variables are required:
 \describe{
 \item{sim or season}{A simulation ID. Normally 1 - n simulated seasons.}
-\item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.}
+\item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a
+game was a regular season game or one of the playoff rounds.}
 \item{week}{The week of the corresponding NFL season.}
 \item{away_team}{Team abbreviation of the away team (please see
 \code{\link{divisions}} for valid team abbreviations).}
@@ -33,6 +34,8 @@ which ranks - and thus the associated tiebreakers - are to be determined.
 \item \code{"CONF"}: \code{"DIV"} + the conference variable \code{conf_rank}. For better
 performance, it is possible to set \code{playoff_seeds} to a value < 16 to make
 the function skip tiebreakers of irrelevant conference ranks.
+\item \code{"DRAFT"}: \code{"CONF"} + the draft variable \code{draft_rank}. This is the actual
+pick in the draft based off game results. No trades of course.
 }}
 
 \item{tiebreaker_depth}{One of \code{"SOS"}, \code{"PRE-SOV"}, or \code{"RANDOM"}. Controls

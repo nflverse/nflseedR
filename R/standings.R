@@ -4,7 +4,8 @@
 #' following variables are required:
 #' \describe{
 #'  \item{sim or season}{A simulation ID. Normally 1 - n simulated seasons.}
-#'  \item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.}
+#'  \item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a
+#'     game was a regular season game or one of the playoff rounds.}
 #'  \item{week}{The week of the corresponding NFL season.}
 #'  \item{away_team}{Team abbreviation of the away team (please see
 #'    \code{\link{divisions}} for valid team abbreviations).}
@@ -18,6 +19,8 @@
 #'   - `"CONF"`: `"DIV"` + the conference variable `conf_rank`. For better
 #'   performance, it is possible to set `playoff_seeds` to a value < 16 to make
 #'   the function skip tiebreakers of irrelevant conference ranks.
+#'   - `"DRAFT"`: `"CONF"` + the draft variable `draft_rank`. This is the actual
+#'   pick in the draft based off game results. No trades of course.
 #' @param tiebreaker_depth One of `"SOS"`, `"PRE-SOV"`, or `"RANDOM"`. Controls
 #'   which tiebreakers are to be applied. The implemented tiebreakers are
 #'   documented here <https://nflseedr.com/articles/tiebreaker.hmtl>.
@@ -108,6 +111,7 @@ nfl_standings <- function(games,
   standings <- add_draft_ranks(
     standings = standings,
     h2h = h2h,
+    dg = dg,
     tiebreaker_depth = tiebreaker_depth,
     verbosity = verbosity
   )
