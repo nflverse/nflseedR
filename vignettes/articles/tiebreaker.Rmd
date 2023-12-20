@@ -1,7 +1,7 @@
 ---
 title: "NFL Tiebreaking Procedures"
 author: "Sebastian Carl & NFL"
-date: "2023-12-14"
+date: "2023-12-20"
 ---
 
 ```{r, include = FALSE}
@@ -14,6 +14,8 @@ knitr::opts_chunk$set(
 NFL tiebreaking procedures for division ranks and conference seeds are documented [on the NFL.com website](https://www.nfl.com/standings/tie-breaking-procedures) and [on the NFL Football Operations website](https://operations.nfl.com/the-rules/nfl-tie-breaking-procedures/). They are mostly identical, but not exactly[^waitwhat]. 
 
 [^waitwhat]: Yes, you are reading right. And the difference is huge when you try to efficiently code the process, smh. NFL Football Ops prefaces the wildcard tiebreaking process for 3 or more clubs with *Note: If two clubs remain tied after a third club or other clubs are eliminated, the tiebreaker reverts to step 1 of the applicable two-club format.* NFL.com adds a second - very important - sentence to this, which is *If three clubs remain tied after a fourth club is eliminated during any step, tiebreaker restarts at Step 2 of three-club format.* That's a big difference because the first part of that section sounds like we are only allowed to restart the process if two clubs remain tied. But we actually have to restart every time a team is eliminated. That's good news because it is easier to code.
+
+Draft pick assignment is also documented [on the NFL.com website](https://www.nfl.com/standings/tie-breaking-procedures) and [on the NFL Football Operations website](https://operations.nfl.com/journey-to-the-nfl/the-nfl-draft/the-rules-of-the-draft/). However, the author is of the opinion that both texts are so cumbersome and misleadingly worded that he has written his own summary instead. 
 
 This website documents the currently in nflseedR implemented process in case the above linked websites change in the future. 
 
@@ -118,3 +120,47 @@ When the first Wild Card team has been identified, the procedure is repeated to 
 1. To determine home-field priority for Wild Card qualifiers, apply division tiebreakers (if teams are from the same division) or Wild Card tiebreakers (if teams are from different divisions).
 1. To determine the best combined ranking among conference team's in points scored and points allowed, add a team's position in the two categories, and the lowest score wins. For example, if Team A is first in points scored and second in points allowed, its combined ranking is "3." If Team B is third in points scored and first in points allowed, its combined ranking is "4." Team A then wins the tiebreaker. If two teams are tied for a position, both teams are awarded the ranking as if they held it solely. For example, if Team A and Team B are tied for first in points scored, each team is assigned a ranking of "1" in that category, and if Team C is third, its ranking will still be "3."
 
+# Break a Tie for the Draft ("Selection Meeting")
+
+*This is being used to calculated the variable `draft_rank`*
+
+The order of selection is determined by the reverse order of finish in the previous season. Barring any trades between clubs, each round starts with the team that finished with the worst record and ends with the Super Bowl champions.
+
+Picks are assigned by win percentage in ascending order as follows:
+
+1. Clubs not participating in the playoffs shall select in the first through 18th positions.
+1. The losers of the Wild Card games shall select in the 19th through 24th positions.
+1. The losers of the Divisional playoff games shall select in the 25th through 28th positions.
+1. The losers of the Conference Championship games shall select 29th and 30th.
+1. The winner of the Super Bowl game shall select last and the Super Bowl loser will select next-to-last.
+
+In situations where teams finished the previous season with identical win percentage, the determination of draft position is decided by strength of schedule — the aggregate winning percentage of a team’s opponents. The team that played the schedule with the lowest winning percentage will be awarded the earlier pick.
+
+If the teams have the same strength of schedule, division or conference tiebreakers are applied first.
+
+## Divisional Draft Pick Tie
+
+If all teams tied for a pick are from the same division, then the division rank is used. The lower division rank gets the earlier pick.
+
+## Conference Draft Pick Tie
+
+If all teams tied for a pick are from the same conference, then the conference rank is used. The lower conference rank gets the earlier pick.
+
+## Inter-Conference Draft Pick Tie
+
+If the divisional or conference tiebreakers are not applicable, or ties still exist between teams of different conferences, ties will be broken by the following procedure:
+
+Ties involving THREE-OR-MORE clubs from different conferences will be broken by applying 
+  
+  (a) divisional tiebreakers to determine the lowest-ranked team in a division, 
+  (b) conference tiebreakers to determine the lowest-ranked team within a conference.
+  
+After this process, there can only be 2 inter-conference teams participating in the following steps (draft pick assignment is reversed to division or conference ties. Worse teams get earlier picks):
+
+1. Head-to-head, if applicable. The loser gets the earlier pick.
+1. Worst won-lost-tied percentage in common games (minimum of four)
+1. Worst Strength of victory in all games
+1. Worst combined ranking among all teams in points scored and points allowed in all games
+1. Worst net points in all games
+1. Worst net touchdowns in all games
+1. Coin toss
