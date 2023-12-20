@@ -40,7 +40,7 @@
 #'  to set the grade of verbosity of status reports. They mean:
 #'  - `"MIN"` (default): Prints main steps of the process.
 #'  - `"MAX"`: Prints all steps of the complete tiebreaking process.
-#'  - `"NONE"`: No status reports at all.
+#'  - `"NONE"`: No status reports at all. Do this to maximize the performance.
 #'
 #' @return A data.table of NFL standings including the ranks selected in the
 #'   argument `ranks`

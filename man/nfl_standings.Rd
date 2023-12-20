@@ -62,7 +62,7 @@ to set the grade of verbosity of status reports. They mean:
 \itemize{
 \item \code{"MIN"} (default): Prints main steps of the process.
 \item \code{"MAX"}: Prints all steps of the complete tiebreaking process.
-\item \code{"NONE"}: No status reports at all.
+\item \code{"NONE"}: No status reports at all. Do this to maximize the performance.
 }}
 }
 \value{
