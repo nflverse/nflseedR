@@ -21,7 +21,7 @@ This website documents the currently in nflseedR implemented process in case the
 
 # Break a Tie Within a Division
 
-*This is being used to calculate the variable `div_rank`*
+*This is used to calculate the variable `div_rank`*
 
 If, at the end of the regular season, two or more clubs in the same division finish with identical won-lost-tied percentages, the following steps will be taken until a champion is determined.
 
@@ -38,11 +38,11 @@ If, at the end of the regular season, two or more clubs in the same division fin
 1. Best net points in common games.
 1. Best net points in all games.
 1. Best net touchdowns in all games.
-1. Coin toss
+1. Coin toss.
 
 ## Three or More Clubs
 
-If two clubs remain tied after one-or-more clubs are eliminated during any step, tiebreaker restarts at Step 1 of two-club format. If three clubs remain tied after a fourth club is eliminated during any step, tiebreaker restarts at Step 1 of three-club format.
+If two clubs remain tied after one or more clubs are eliminated during any step, tiebreaker restarts at Step 1 of two-club format. If three clubs remain tied after a fourth club is eliminated during any step, tiebreaker restarts at Step 1 of three-club format.
 
 1. Head-to-head (best won-lost-tied percentage in games among the clubs).
 1. Best won-lost-tied percentage in games played within the division.
@@ -55,26 +55,26 @@ If two clubs remain tied after one-or-more clubs are eliminated during any step,
 1. Best net points in common games.
 1. Best net points in all games.
 1. Best net touchdowns in all games.
-1. Coin toss
+1. Coin toss.
 
 # Break a Tie for Conference Seeds
 
-*This is being used to calculate the variable `conf_rank`*
+*This is used to calculate the variable `conf_rank`*
 
 The seven postseason participants from each conference are seeded as follows
 
-1. The division champion with the best record
-1. The division champion with the second-best record
-1. The division champion with the third-best record
-1. The division champion with the fourth-best record
-1. The wild card club with the best record
-1. The wild card club with the second-best record
-1. The wild card club with the third-best record
+1. The division champion with the best record.
+1. The division champion with the second-best record.
+1. The division champion with the third-best record.
+1. The division champion with the fourth-best record.
+1. The wild card club with the best record.
+1. The wild card club with the second-best record.
+1. The wild card club with the third-best record.
 
 The following procedures will be used to break standings ties for postseason playoffs and to determine regular-season schedules.
 NOTE: Tie games count as one-half win and one-half loss for both clubs.
 
-If it is necessary to break ties to determine the three Wild-Card clubs from each conference, the following steps will be taken.
+If it is necessary to break ties to determine the three Wild Card clubs from each conference, the following steps will be taken.
 
 1. If the tied clubs are from the same division, apply division tiebreaker.
 1. If the tied clubs are from different divisions, apply the following steps.
@@ -95,7 +95,7 @@ If it is necessary to break ties to determine the three Wild-Card clubs from eac
 
 ## Three or More Clubs
 
-If two clubs remain tied after one-or-more clubs are eliminated during any step, tiebreaker restarts at Step 1 of two-club format. If three clubs remain tied after a fourth club is eliminated during any step, tiebreaker restarts at Step 2 of three-club format.
+If two clubs remain tied after one or more clubs are eliminated during any step, tiebreaker restarts at Step 1 of two-club format. If three clubs remain tied after a fourth club is eliminated during any step, tiebreaker restarts at Step 2 of three-club format.
 
 When the first Wild Card team has been identified, the procedure is repeated to name the second and third Wild Card (i.e., eliminate all but the highest-ranked club in each division prior to proceeding to Step 2). In situations in which three teams from the same division are involved in the procedure, the original seeding of the teams remains the same for subsequent applications of the tiebreaker if the top-ranked team in that division qualifies for a Wild Card berth.
 
@@ -110,19 +110,19 @@ When the first Wild Card team has been identified, the procedure is repeated to 
 1. Best net points in conference games.
 1. Best net points in all games.
 1. Best net touchdowns in all games.
-1. Coin toss
+1. Coin toss.
 
 # Other Tie-Breaking Procedures
 
 1. Only one club advances to the playoffs in any tie-breaking step. Remaining tied clubs revert to the first step of the applicable division or Wild Card tie-breakers. As an example, if two clubs remain tied in any tie-breaker step after all other clubs have been eliminated, the procedure reverts to Step 1 of the two-club format to determine the winner. When one club wins the tiebreaker, all other clubs revert to Step 1 of the applicable two-club or three-club format.
 1. In comparing records against common opponents among tied teams, the best won-lost-tied percentage is the deciding factor, since teams may have played an unequal number of games.
-1. To determine home-field priority among division winners, apply Wild Card tiebreakers.
-1. To determine home-field priority for Wild Card qualifiers, apply division tiebreakers (if teams are from the same division) or Wild Card tiebreakers (if teams are from different divisions).
+1. To determine home field priority among division winners, apply Wild Card tiebreakers.
+1. To determine home field priority for Wild Card qualifiers, apply division tiebreakers (if teams are from the same division) or Wild Card tiebreakers (if teams are from different divisions).
 1. To determine the best combined ranking among conference team's in points scored and points allowed, add a team's position in the two categories, and the lowest score wins. For example, if Team A is first in points scored and second in points allowed, its combined ranking is "3." If Team B is third in points scored and first in points allowed, its combined ranking is "4." Team A then wins the tiebreaker. If two teams are tied for a position, both teams are awarded the ranking as if they held it solely. For example, if Team A and Team B are tied for first in points scored, each team is assigned a ranking of "1" in that category, and if Team C is third, its ranking will still be "3."
 
 # Break a Tie for the Draft ("Selection Meeting")
 
-*This is being used to calculate the variable `draft_rank`*
+*This is used to calculate the variable `draft_rank`*
 
 The order of selection is determined by the reverse order of finish in the previous season. Barring any trades between clubs, each round starts with the team that finished with the worst record and ends with the Super Bowl champions.
 
@@ -150,7 +150,7 @@ If all teams tied for a pick are from the same conference, then the conference r
 
 If the divisional or conference tiebreakers are not applicable, or ties still exist between teams of different conferences, ties will be broken by the following procedure:
 
-Ties involving THREE-OR-MORE clubs from different conferences will be broken by applying 
+Ties involving THREE OR MORE clubs from different conferences will be broken by applying 
   
   (a) divisional tiebreakers to determine the lowest-ranked team in a division, 
   (b) conference tiebreakers to determine the lowest-ranked team within a conference.
@@ -158,9 +158,9 @@ Ties involving THREE-OR-MORE clubs from different conferences will be broken by 
 After this process, there can only be 2 inter-conference teams participating in the following steps (draft pick assignment is reversed to division or conference ties. Worse teams get earlier picks):
 
 1. Head-to-head, if applicable. The loser gets the earlier pick.
-1. Worst won-lost-tied percentage in common games (minimum of four)
-1. Worst Strength of victory in all games
-1. Worst combined ranking among all teams in points scored and points allowed in all games
-1. Worst net points in all games
-1. Worst net touchdowns in all games
-1. Coin toss
+1. Worst won-lost-tied percentage in common games (minimum of four).
+1. Worst Strength of victory in all games.
+1. Worst combined ranking among all teams in points scored and points allowed in all games.
+1. Worst net points in all games.
+1. Worst net touchdowns in all games.
+1. Coin toss.
