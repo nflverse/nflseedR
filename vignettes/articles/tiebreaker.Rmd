@@ -134,7 +134,7 @@ Picks are assigned by win percentage in ascending order as follows:
 1. The losers of the Conference Championship games shall select 29th and 30th.
 1. The winner of the Super Bowl game shall select last and the Super Bowl loser will select next-to-last.
 
-In situations where teams finished the previous season with identical win percentage, the determination of draft position is decided by strength of schedule — the aggregate winning percentage of a team’s opponents. The team that played the schedule with the lowest winning percentage will be awarded the earlier pick.
+In situations where teams finished the previous season with identical win percentage, the determination of draft position is decided by strength of schedule — the aggregate winning percentage of a team's opponents. The team that played the schedule with the lowest winning percentage will be awarded the earlier pick.
 
 If the teams have the same strength of schedule, division or conference tiebreakers are applied first.
 
