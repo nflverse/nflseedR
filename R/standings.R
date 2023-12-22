@@ -13,6 +13,7 @@
 #'    \code{\link{divisions}} for valid team abbreviations).}
 #'  \item{result}{Equals home score - away score.}
 #' }
+#' @param ... currently not used
 #' @param ranks One of `"DIV"`, `"CONF"`, `"DRAFT"`, or `"NONE"` to specify
 #'   which ranks - and thus the associated tiebreakers - are to be determined.
 #'   - `"DIV"`: Adds the division ranking variable `div_rank`
@@ -58,6 +59,7 @@
 #' })
 #' }
 nfl_standings <- function(games,
+                          ...,
                           ranks = c("CONF", "DIV", "DRAFT", "NONE"),
                           tiebreaker_depth = c("SOS", "PRE-SOV", "RANDOM"),
                           playoff_seeds = NULL,

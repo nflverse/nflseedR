@@ -6,6 +6,7 @@
 \usage{
 nfl_standings(
   games,
+  ...,
   ranks = c("CONF", "DIV", "DRAFT", "NONE"),
   tiebreaker_depth = c("SOS", "PRE-SOV", "RANDOM"),
   playoff_seeds = NULL,
@@ -26,6 +27,8 @@ game was a regular season game or one of the playoff rounds.}
 \code{\link{divisions}} for valid team abbreviations).}
 \item{result}{Equals home score - away score.}
 }}
+
+\item{...}{currently not used}
 
 \item{ranks}{One of \code{"DIV"}, \code{"CONF"}, \code{"DRAFT"}, or \code{"NONE"} to specify
 which ranks - and thus the associated tiebreakers - are to be determined.
