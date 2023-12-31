@@ -101,7 +101,7 @@
 #' })
 #' }
 nfl_simulations <- function(games,
-                            compute_results = NULL,
+                            compute_results = default_compute_results,
                             ...,
                             playoff_seeds = 7L,
                             test_week = NULL,
@@ -115,6 +115,11 @@ nfl_simulations <- function(games,
   games <- sims_validate_games(games)
   tiebreaker_depth <- rlang::arg_match(tiebreaker_depth)
   sim_include <- rlang::arg_match(sim_include)
+  sim_include <- switch (sim_include,
+    "REG" = 0L,
+    "POST" = 1L,
+    "DRAFT" = 2L
+  )
   verbosity <- rlang::arg_match(verbosity)
   verbosity <- switch (verbosity,
     "MIN" = 1L,
@@ -138,13 +143,19 @@ nfl_simulations <- function(games,
   }
 
   # PREPARE SIMULATIONS -----------------------------------------------------
-  weeks_to_sim <- games[game_type == "REG" & is.na(result), sort(unique(week))]
+  weeks_to_simulate <- games[game_type == "REG" & is.na(result), sort(unique(week))]
+  teams <- data.table::as.data.table(nflseedR::divisions)
+  teams <- teams[team %chin% games$away_team | team %chin% games$home_team]
 
-  # Repeat games as many times as simulations are required
+  # Repeat games and teams as many times as simulations are required
   game_number <- nrow(games)
-  sims <- games[rep(seq_len(game_number), times = simulations)]
+  sim_games <- games[rep(seq_len(game_number), times = simulations)]
+  team_number <- nrow(teams)
+  sim_teams <- teams[rep(seq_len(team_number), times = simulations)]
+
   # Now add the simulation identifier
-  sims[, sim := rep(seq_len(simulations), each = game_number)]
+  sim_games[, sim := rep(seq_len(simulations), each = game_number)]
+  sim_teams[, sim := rep(seq_len(simulations), each = team_number)]
 
   # This is wip and needs to go into simulate_chunk
   # standings_list <- furrr::future_map(
@@ -156,10 +167,6 @@ nfl_simulations <- function(games,
   #   }, nsims = simulations, nchunks = chunks, sims = sims, .options = furrr::furrr_options(seed = TRUE)
   # )
   # all_standings <- rbindlist(standings_list)
-
-  if (!is.null(test_week)) {
-    sim_rounds <- 1
-  }
 
   if (chunks > 1 && is_sequential()) {
     cli::cli_inform(c(
@@ -179,33 +186,26 @@ nfl_simulations <- function(games,
     {.pkg {prettyNum(ceiling(simulations / chunks), big.mark = ' ')}}."
   )
   p <- progressr::progressor(along = seq_len(chunks))
-  all <- furrr::future_map(
+  all <- purrr::map(
     .x = seq_len(chunks),
     .f = simulate_chunk,
-    sims = sims,
-    weeks_to_sim = weeks_to_sim,
-    compute_results = compute_results,
+    compute_results = default_compute_results,
     ...,
+    weeks_to_simulate = weeks_to_simulate,
+    nsims = simulations,
+    nchunks = chunks,
+    sim_games = sim_games,
+    sim_teams = sim_teams,
     tiebreaker_depth = tiebreaker_depth,
-    test_week = test_week,
     verbosity = verbosity,
     playoff_seeds = playoff_seeds,
     p = p,
-    sim_include = sim_include,
-    .options = furrr::furrr_options(seed = TRUE)
+    sim_include = sim_include
+    # .options = furrr::furrr_options(seed = TRUE)
   )
 
-  if (!is.null(test_week)) {
-    report(
-      "Aborting and returning your {.code process_games} function's \\
-      results from Week {test_week}"
-      , wrap = TRUE
-    )
-    return(all[[1]])
-  }
-
   # POSTPROCESS SIMULATIONS -------------------------------------------------
-  report("Combine simulation data")
+  if (verbosity > 0L) report("Combine simulation data")
   # `all` is a list of chunks where every chunk is containing the tables
   # "teams" and "games". We loop over the list (that's not really bad
   # because the length of the loop only is the number of chunks) and
@@ -213,7 +213,7 @@ nfl_simulations <- function(games,
   all_teams <- data.table::rbindlist(lapply(all, function(i) i[["teams"]]))
   all_games <- data.table::rbindlist(lapply(all, function(i) i[["games"]]))
 
-  report("Aggregate across simulations")
+  if (verbosity > 0L) report("Aggregate across simulations")
   # we need the exit number of the sb winner to compute sb and conf percentages
   # with "exit" because draft_order might not be available depending on the
   # value of `sim_include`. Need to remove NAs here because Exit will be NA
@@ -261,7 +261,7 @@ nfl_simulations <- function(games,
     team = team_vec,
     wins = wins_vec,
     key = c("team", "wins")
-  ) %>%
+  ) |>
     merge(
       all_teams[,list(sim, team, true_wins)],
       by = c("sim", "team"),
@@ -319,134 +319,4 @@ nfl_simulations <- function(games,
   )
 
   out
-}
-
-default_compute_results <- function(teams, games, week_num, ...) {
-  cli::cli_progress_step(
-    "Compute week {.val #{week_num}}"
-  )
-  # teams = teams data
-  # games = games data
-  #
-  # this example estimates at PK/0 and 50%
-  # estimate = is the median spread expected (positive = home team favored)
-  # wp = is the probability of the team winning the game
-  #
-  # only simulate games through week week_num
-  # only simulate games with is.na(result)
-  # result = how many points home team won by
-
-  # round out (away from zero)
-  round_out <- function(x) {
-    x[!is.na(x) & x < 0] <- floor(x[!is.na(x) & x < 0])
-    x[!is.na(x) & x > 0] <- ceiling(x[!is.na(x) & x > 0])
-    as.integer(x)
-  }
-
-  setDT(games, key = c("sim", "week"))
-  setDT(teams, key = c("sim", "team"))
-
-  # get elo if not in teams data already
-  if (!("elo" %in% colnames(teams))) {
-    args <- list(...)
-    if ("elo" %in% names(args)) {
-      # pull from custom arguments
-      ratings <- setDT(args$elo, key = "team")
-      teams <- merge(teams, ratings[,list(team, elo)])
-    } else {
-      # start everyone at a random default elo
-      ratings <- data.table(
-        team = unique(teams$team),
-        elo = rnorm(length(unique(teams$team)), 1500, 150),
-        key = "team"
-      )
-      teams <- merge(teams, ratings)
-    }
-  }
-
-  # merge elo values to home and away teams
-  games <- merge(x = games, y = teams[,list(sim, team, away_elo = elo)],
-                 by.x = c("sim", "away_team"),
-                 by.y = c("sim", "team"),
-                 sort = FALSE)
-  games <- merge(x = games, y = teams[,list(sim, team, home_elo = elo)],
-                 by.x = c("sim", "home_team"),
-                 by.y = c("sim", "team"),
-                 sort = FALSE)
-
-  # create elo diff
-  games[, elo_diff := home_elo - away_elo + (home_rest - away_rest) / 7 * 25]
-  # adjust elo diff for location = HOME
-  games["Home", elo_diff := elo_diff + 20, on = "location"]
-  # adjust elo_diff for game type = REG
-  games["REG", elo_diff := elo_diff * 1.2, on = "game_type"]
-  # create wp and estimate
-  games[, `:=`(wp = 1 / (10^(-elo_diff / 400) + 1),
-               estimate = elo_diff / 25)]
-  # adjust result in current week
-  games[week_num == week & is.na(result),
-        result := round_out(rnorm(.N, estimate, 13))]
-  # compute elo shift
-  games[, `:=`(
-    outcome = fcase(
-      is.na(result), NA_real_,
-      result > 0, 1,
-      result < 0, 0,
-      default = 0.5
-    ),
-    elo_input = fcase(
-      is.na(result), NA_real_,
-      result > 0, elo_diff * 0.001 + 2.2,
-      result < 0, -elo_diff * 0.001 + 2.2,
-      default = 1.0
-    )
-  )]
-  games[, elo_mult := log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input]
-  games[, elo_shift := 20 * elo_mult * (outcome - wp)]
-
-  # drop irrelevant columns
-  drop_cols <- c("away_elo", "home_elo", "elo_diff", "wp", "estimate",
-                 "outcome", "elo_input", "elo_mult")
-  games[, (drop_cols) := NULL]
-
-  # apply away team elo shift
-  away_teams <- games[list(week_num),
-                      list(sim, team = away_team, elo_shift = -elo_shift),
-                      on = "week"]
-  teams <- merge(teams, away_teams, by = c("sim", "team"), all = TRUE)
-  teams[!is.na(elo_shift), elo := elo + elo_shift]
-  teams[, elo_shift := NULL]
-
-  # apply home team elo shift
-  home_teams <- games[list(week_num),
-                      list(sim, team = home_team, elo_shift),
-                      on = "week"]
-  teams <- merge(teams, home_teams, by = c("sim", "team"), all = TRUE)
-  teams[!is.na(elo_shift), elo := elo + elo_shift]
-
-  # remove elo shift
-  games[, elo_shift := NULL]
-
-  list("teams" = teams, "games" = games)
-}
-
-sims_validate_games <- function(games){
-  setDT(games)
-  games_names <- colnames(games)
-  required_vars <- c(
-    "game_type", "week", "away_team", "home_team",
-    "away_rest", "home_rest", "location", "result"
-  )
-  uses_sim <- all(c("sim", required_vars) %in% games_names)
-  uses_season <- all(c("season", required_vars) %in% games_names)
-  setattr(games, "uses_season", uses_season)
-  if( !any(uses_sim, uses_season) ){
-    cli::cli_abort(
-      "The {.arg games} argument has to be a table including one of the \\
-      identifiers {.val sim} or {.val season} as well as \\
-      all of the following variables: {.val {required_vars}}!"
-    )
-  }
-  games <- games[, required_vars, with = FALSE]
-  games
 }
