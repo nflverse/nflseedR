@@ -15,16 +15,22 @@ standings_double_games <- function(g, verbosity){
     result < 0, 0,
     default = 0.5
   )]
+  setindexv(out, "game_type")
   out
 }
 
 standings_h2h <- function(gd, verbosity){
   if (verbosity == 2L) report("Calculate Head-to-Head Data")
   if( !is.data.table(gd) ) setDT(gd)
-  out <- gd[game_type == "REG", list(
-    h2h_games = .N,
-    h2h_wins = sum(outcome)
-  ), keyby = c("sim", "team", "opp")]
+  out <- gd[
+    "REG",
+    list(
+      h2h_games = .N,
+      h2h_wins = sum(outcome)
+    ),
+    by = c("sim", "team", "opp"),
+    on = "game_type"
+  ]
 }
 
 # A games files is valid if we can perform all necessary steps in the tiebreaking

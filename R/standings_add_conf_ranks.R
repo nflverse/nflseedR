@@ -8,6 +8,7 @@ add_conf_ranks <- function(standings,
   # If ties method is "random", data.table will break all ties randomly
   # and we won't need any further tie-breaking methods
   dt_ties_method <- if (tiebreaker_depth == "RANDOM") "random" else "min"
+  setindexv(standings, "div_rank")
   standings[
     div_rank == 1,
     conf_rank := frankv(-win_pct, ties.method = dt_ties_method),
@@ -46,7 +47,7 @@ add_conf_ranks <- function(standings,
   standings <- conf_count_ranks(standings)
 
   # Do this only if any ties exist
-  if ( any(standings$draft_rank_counter > 1) ){
+  if ( any(standings$conf_rank_counter > 1) ){
     if(verbosity == 2L) report("Break CONF ties")
 
     # If all tied clubs are from the same division, we can apply
@@ -429,5 +430,6 @@ conf_apply_division_reduction <- function(standings, verbosity){
 
 conf_count_ranks <- function(standings){
   standings[, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
+  setindexv(standings, "conf_rank_counter")
 }
 

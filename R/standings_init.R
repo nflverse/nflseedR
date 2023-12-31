@@ -13,7 +13,7 @@ standings_init <- function(games_doubled, verbosity){
     conf_game = conf_vec[team] == conf_vec[opp]
   )]
   team_records <- games_doubled[
-    game_type == "REG",
+    "REG",
     list(
       games = .N,
       wins = sum(outcome),
@@ -32,7 +32,8 @@ standings_init <- function(games_doubled, verbosity){
         sum(conf_game * outcome) / sum(conf_game)
       )
     ),
-    by = c("sim", "team")
+    by = c("sim", "team"),
+    on = "game_type"
   ]
   team_records[, `:=`(
     division = div_vec[team],
@@ -40,7 +41,7 @@ standings_init <- function(games_doubled, verbosity){
   )]
 
   opp_info <- merge(
-    games_doubled[game_type == "REG", list(sim, team, opp, outcome)],
+    games_doubled["REG", list(sim, team, opp, outcome), on = "game_type"],
     team_records[,list(sim, opp = team, wins_opp = wins, games_opp = games)],
     by = c("sim", "opp")
   )[, list(
