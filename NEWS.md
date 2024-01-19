@@ -1,3 +1,7 @@
+# nflseedR (development version)
+
+* Fixed error in `simulate_nfl()` where it crashes because the "fake schedule" isn't a tibble. (#43)
+
 # nflseedR 1.2.0
 
 * `simulate_nfl()` gained the new argument `sim_include` to allow more access to what is actually being simulated. This makes it possible skip playoff simulation or the (possibly heavy) computation of draft order. (#34)
