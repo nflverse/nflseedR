@@ -14,10 +14,10 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="../deps/IBM_Plex_Sans-0.4.5/font.css" rel="stylesheet">
-<link href="../deps/Fira_Code-0.4.5/font.css" rel="stylesheet">
-<link href="../deps/Kanit-0.4.5/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/IBM_Plex_Sans-0.4.8/font.css" rel="stylesheet">
+<link href="../deps/Fira_Code-0.4.8/font.css" rel="stylesheet">
+<link href="../deps/Kanit-0.4.8/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -41,7 +41,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -195,11 +195,12 @@ input is required.</p>
 <col width="1%">
 <col width="1%">
 <col width="2%">
-<col width="0%">
+<col width="1%">
 <col width="2%">
 <col width="2%">
 <col width="0%">
 <col width="1%">
+<col width="0%">
 <col width="1%">
 <col width="1%">
 <col width="2%">
@@ -212,7 +213,7 @@ input is required.</p>
 <col width="1%">
 <col width="1%">
 <col width="1%">
-<col width="1%">
+<col width="2%">
 <col width="0%">
 <col width="0%">
 <col width="2%">
@@ -247,6 +248,7 @@ input is required.</p>
 <th align="left">pfr</th>
 <th align="right">pff</th>
 <th align="left">espn</th>
+<th align="right">ftn</th>
 <th align="right">away_rest</th>
 <th align="right">home_rest</th>
 <th align="right">away_moneyline</th>
@@ -274,944 +276,964 @@ input is required.</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">2022_18_CLE_PIT</td>
-<td align="right">2022</td>
+<td align="left">2023_18_ATL_NO</td>
+<td align="right">2023</td>
 <td align="left">REG</td>
 <td align="right">18</td>
-<td align="left">2023-01-08</td>
+<td align="left">2024-01-07</td>
 <td align="left">Sunday</td>
 <td align="left">13:00</td>
-<td align="left">CLE</td>
-<td align="right">14</td>
-<td align="left">PIT</td>
-<td align="right">28</td>
+<td align="left">ATL</td>
+<td align="right">17</td>
+<td align="left">NO</td>
+<td align="right">48</td>
 <td align="left">Home</td>
-<td align="right">14</td>
-<td align="right">42</td>
-<td align="right">0</td>
-<td align="left">2023010810</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">202301080pit</td>
-<td align="right">NA</td>
-<td align="left">401437958</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">128</td>
-<td align="right">-142</td>
-<td align="right">2.5</td>
-<td align="right">-101</td>
-<td align="right">-109</td>
-<td align="right">40.0</td>
-<td align="right">-106</td>
-<td align="right">-106</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">36</td>
-<td align="right">8</td>
-<td align="left">00-0033537</td>
-<td align="left">00-0038102</td>
-<td align="left">Deshaun Watson</td>
-<td align="left">Kenny Pickett</td>
-<td align="left">Kevin Stefanski</td>
-<td align="left">Mike Tomlin</td>
-<td align="left">Clete Blakeman</td>
-<td align="left">PIT00</td>
-<td align="left">Acrisure Stadium</td>
-</tr>
-<tr class="even">
-<td align="left">2022_18_LAC_DEN</td>
-<td align="right">2022</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2023-01-08</td>
-<td align="left">Sunday</td>
-<td align="left">16:25</td>
-<td align="left">LAC</td>
-<td align="right">28</td>
-<td align="left">DEN</td>
 <td align="right">31</td>
-<td align="left">Home</td>
-<td align="right">3</td>
-<td align="right">59</td>
+<td align="right">65</td>
 <td align="right">0</td>
-<td align="left">2023010812</td>
-<td align="right">NA</td>
+<td align="left">2024010700</td>
+<td align="right">59440</td>
 <td align="left">NA</td>
-<td align="left">202301080den</td>
+<td align="left">202401070nor</td>
 <td align="right">NA</td>
-<td align="left">401437960</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">222</td>
-<td align="right">-254</td>
-<td align="right">6.0</td>
-<td align="right">-104</td>
-<td align="right">-106</td>
-<td align="right">38.5</td>
-<td align="right">-103</td>
-<td align="right">-110</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">43</td>
-<td align="right">4</td>
-<td align="left">00-0036355</td>
-<td align="left">00-0029263</td>
-<td align="left">Justin Herbert</td>
-<td align="left">Russell Wilson</td>
-<td align="left">Brandon Staley</td>
-<td align="left">Jay Rosburg</td>
-<td align="left">Shawn Hochuli</td>
-<td align="left">DEN00</td>
-<td align="left">Empower Field at Mile High</td>
-</tr>
-<tr class="odd">
-<td align="left">2022_18_NYG_PHI</td>
-<td align="right">2022</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2023-01-08</td>
-<td align="left">Sunday</td>
-<td align="left">16:25</td>
-<td align="left">NYG</td>
-<td align="right">16</td>
-<td align="left">PHI</td>
-<td align="right">22</td>
-<td align="left">Home</td>
-<td align="right">6</td>
-<td align="right">38</td>
-<td align="right">0</td>
-<td align="left">2023010809</td>
+<td align="left">401547649</td>
 <td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">202301080phi</td>
-<td align="right">NA</td>
-<td align="left">401437957</td>
 <td align="right">7</td>
 <td align="right">7</td>
-<td align="right">858</td>
-<td align="right">-1252</td>
-<td align="right">16.5</td>
-<td align="right">-103</td>
-<td align="right">-107</td>
-<td align="right">42.5</td>
-<td align="right">-105</td>
-<td align="right">-107</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">43</td>
-<td align="right">12</td>
-<td align="left">00-0033550</td>
-<td align="left">00-0036389</td>
-<td align="left">Davis Webb</td>
-<td align="left">Jalen Hurts</td>
-<td align="left">Brian Daboll</td>
-<td align="left">Nick Sirianni</td>
-<td align="left">Carl Cheffers</td>
-<td align="left">PHI00</td>
-<td align="left">Lincoln Financial Field</td>
-</tr>
-<tr class="even">
-<td align="left">2022_18_LA_SEA</td>
-<td align="right">2022</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2023-01-08</td>
-<td align="left">Sunday</td>
-<td align="left">16:25</td>
-<td align="left">LA</td>
-<td align="right">16</td>
-<td align="left">SEA</td>
-<td align="right">19</td>
-<td align="left">Home</td>
-<td align="right">3</td>
-<td align="right">35</td>
-<td align="right">1</td>
-<td align="left">2023010814</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">202301080sea</td>
-<td align="right">NA</td>
-<td align="left">401437963</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">198</td>
-<td align="right">-224</td>
-<td align="right">5.5</td>
-<td align="right">-112</td>
+<td align="right">145</td>
+<td align="right">-175</td>
+<td align="right">3.5</td>
+<td align="right">-122</td>
 <td align="right">102</td>
 <td align="right">41.5</td>
-<td align="right">-101</td>
-<td align="right">-111</td>
+<td align="right">-108</td>
+<td align="right">-112</td>
 <td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">fieldturf</td>
-<td align="right">45</td>
-<td align="right">4</td>
-<td align="left">00-0034855</td>
-<td align="left">00-0030565</td>
-<td align="left">Baker Mayfield</td>
-<td align="left">Geno Smith</td>
-<td align="left">Sean McVay</td>
-<td align="left">Pete Carroll</td>
-<td align="left">Craig Wrolstad</td>
-<td align="left">SEA00</td>
-<td align="left">Lumen Field</td>
-</tr>
-<tr class="odd">
-<td align="left">2022_18_ARI_SF</td>
-<td align="right">2022</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2023-01-08</td>
-<td align="left">Sunday</td>
-<td align="left">16:25</td>
-<td align="left">ARI</td>
-<td align="right">13</td>
-<td align="left">SF</td>
-<td align="right">38</td>
-<td align="left">Home</td>
-<td align="right">25</td>
-<td align="right">51</td>
-<td align="right">0</td>
-<td align="left">2023010815</td>
+<td align="left">dome</td>
+<td align="left">sportturf</td>
 <td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">202301080sfo</td>
 <td align="right">NA</td>
-<td align="left">401437962</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">753</td>
-<td align="right">-1061</td>
-<td align="right">14.0</td>
-<td align="right">100</td>
-<td align="right">-111</td>
-<td align="right">40.0</td>
-<td align="right">-107</td>
-<td align="right">-105</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">57</td>
-<td align="right">2</td>
-<td align="left">00-0035040</td>
-<td align="left">00-0037834</td>
-<td align="left">David Blough</td>
-<td align="left">Brock Purdy</td>
-<td align="left">Kliff Kingsbury</td>
-<td align="left">Kyle Shanahan</td>
-<td align="left">Adrian Hill</td>
-<td align="left">SFO01</td>
-<td align="left">Levi’s Stadium</td>
+<td align="left">00-0038122</td>
+<td align="left">00-0031280</td>
+<td align="left">Desmond Ridder</td>
+<td align="left">Derek Carr</td>
+<td align="left">Arthur Smith</td>
+<td align="left">Dennis Allen</td>
+<td align="left">John Hussey</td>
+<td align="left">NOR00</td>
+<td align="left">Mercedes-Benz Superdome</td>
 </tr>
 <tr class="even">
-<td align="left">2022_18_DAL_WAS</td>
-<td align="right">2022</td>
+<td align="left">2023_18_JAX_TEN</td>
+<td align="right">2023</td>
 <td align="left">REG</td>
 <td align="right">18</td>
-<td align="left">2023-01-08</td>
+<td align="left">2024-01-07</td>
 <td align="left">Sunday</td>
-<td align="left">16:25</td>
-<td align="left">DAL</td>
-<td align="right">6</td>
-<td align="left">WAS</td>
-<td align="right">26</td>
-<td align="left">Home</td>
+<td align="left">13:00</td>
+<td align="left">JAX</td>
 <td align="right">20</td>
-<td align="right">32</td>
+<td align="left">TEN</td>
+<td align="right">28</td>
+<td align="left">Home</td>
+<td align="right">8</td>
+<td align="right">48</td>
 <td align="right">0</td>
-<td align="left">2023010811</td>
-<td align="right">NA</td>
+<td align="left">2024010702</td>
+<td align="right">59443</td>
 <td align="left">NA</td>
-<td align="left">202301080was</td>
+<td align="left">202401070oti</td>
 <td align="right">NA</td>
-<td align="left">401437959</td>
-<td align="right">10</td>
+<td align="left">401547652</td>
+<td align="right">NA</td>
 <td align="right">7</td>
-<td align="right">-320</td>
-<td align="right">274</td>
-<td align="right">-7.5</td>
-<td align="right">-100</td>
-<td align="right">-110</td>
-<td align="right">40.5</td>
-<td align="right">-104</td>
+<td align="right">7</td>
+<td align="right">-185</td>
+<td align="right">154</td>
+<td align="right">-3.5</td>
+<td align="right">-102</td>
+<td align="right">-118</td>
+<td align="right">41.5</td>
+<td align="right">-112</td>
 <td align="right">-108</td>
 <td align="right">1</td>
 <td align="left">outdoors</td>
 <td align="left">grass</td>
-<td align="right">42</td>
+<td align="right">41</td>
+<td align="right">11</td>
+<td align="left">00-0036971</td>
+<td align="left">00-0029701</td>
+<td align="left">Trevor Lawrence</td>
+<td align="left">Ryan Tannehill</td>
+<td align="left">Doug Pederson</td>
+<td align="left">Mike Vrabel</td>
+<td align="left">Tra Blake</td>
+<td align="left">NAS00</td>
+<td align="left">Nissan Stadium</td>
+</tr>
+<tr class="odd">
+<td align="left">2023_18_SEA_ARI</td>
+<td align="right">2023</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2024-01-07</td>
+<td align="left">Sunday</td>
+<td align="left">16:25</td>
+<td align="left">SEA</td>
+<td align="right">21</td>
+<td align="left">ARI</td>
+<td align="right">20</td>
+<td align="left">Home</td>
+<td align="right">-1</td>
+<td align="right">41</td>
+<td align="right">0</td>
+<td align="left">2024010712</td>
+<td align="right">59429</td>
+<td align="left">NA</td>
+<td align="left">202401070crd</td>
+<td align="right">NA</td>
+<td align="left">401547638</td>
+<td align="right">NA</td>
 <td align="right">7</td>
+<td align="right">7</td>
+<td align="right">-155</td>
+<td align="right">130</td>
+<td align="right">-2.5</td>
+<td align="right">-122</td>
+<td align="right">102</td>
+<td align="right">48.0</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">1</td>
+<td align="left">closed</td>
+<td align="left">grass</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">00-0030565</td>
+<td align="left">00-0035228</td>
+<td align="left">Geno Smith</td>
+<td align="left">Kyler Murray</td>
+<td align="left">Pete Carroll</td>
+<td align="left">Jonathan Gannon</td>
+<td align="left">Adrian Hill</td>
+<td align="left">PHO00</td>
+<td align="left">State Farm Stadium</td>
+</tr>
+<tr class="even">
+<td align="left">2023_18_CHI_GB</td>
+<td align="right">2023</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2024-01-07</td>
+<td align="left">Sunday</td>
+<td align="left">16:25</td>
+<td align="left">CHI</td>
+<td align="right">9</td>
+<td align="left">GB</td>
+<td align="right">17</td>
+<td align="left">Home</td>
+<td align="right">8</td>
+<td align="right">26</td>
+<td align="right">0</td>
+<td align="left">2024010706</td>
+<td align="right">59434</td>
+<td align="left">NA</td>
+<td align="left">202401070gnb</td>
+<td align="right">NA</td>
+<td align="left">401547643</td>
+<td align="right">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">124</td>
+<td align="right">-148</td>
+<td align="right">2.5</td>
+<td align="right">-102</td>
+<td align="right">-118</td>
+<td align="right">45.5</td>
+<td align="right">-108</td>
+<td align="right">-112</td>
+<td align="right">1</td>
+<td align="left">outdoors</td>
+<td align="left">grass</td>
+<td align="right">34</td>
+<td align="right">7</td>
+<td align="left">00-0036945</td>
+<td align="left">00-0036264</td>
+<td align="left">Justin Fields</td>
+<td align="left">Jordan Love</td>
+<td align="left">Matt Eberflus</td>
+<td align="left">Matt LaFleur</td>
+<td align="left">Carl Cheffers</td>
+<td align="left">GNB00</td>
+<td align="left">Lambeau Field</td>
+</tr>
+<tr class="odd">
+<td align="left">2023_18_KC_LAC</td>
+<td align="right">2023</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2024-01-07</td>
+<td align="left">Sunday</td>
+<td align="left">16:25</td>
+<td align="left">KC</td>
+<td align="right">13</td>
+<td align="left">LAC</td>
+<td align="right">12</td>
+<td align="left">Home</td>
+<td align="right">-1</td>
+<td align="right">25</td>
+<td align="right">0</td>
+<td align="left">2024010709</td>
+<td align="right">59436</td>
+<td align="left">NA</td>
+<td align="left">202401070sdg</td>
+<td align="right">NA</td>
+<td align="left">401547645</td>
+<td align="right">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">154</td>
+<td align="right">-185</td>
+<td align="right">3.5</td>
+<td align="right">-115</td>
+<td align="right">-105</td>
+<td align="right">35.0</td>
+<td align="right">-108</td>
+<td align="right">-115</td>
+<td align="right">1</td>
+<td align="left">dome</td>
+<td align="left">matrixturf</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">00-0027948</td>
+<td align="left">00-0035282</td>
+<td align="left">Blaine Gabbert</td>
+<td align="left">Easton Stick</td>
+<td align="left">Andy Reid</td>
+<td align="left">Brandon Staley</td>
+<td align="left">Scott Novak</td>
+<td align="left">LAX01</td>
+<td align="left">SoFi Stadium</td>
+</tr>
+<tr class="even">
+<td align="left">2023_18_DEN_LV</td>
+<td align="right">2023</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2024-01-07</td>
+<td align="left">Sunday</td>
+<td align="left">16:25</td>
+<td align="left">DEN</td>
+<td align="right">14</td>
+<td align="left">LV</td>
+<td align="right">27</td>
+<td align="left">Home</td>
+<td align="right">13</td>
+<td align="right">41</td>
+<td align="right">0</td>
+<td align="left">2024010708</td>
+<td align="right">59437</td>
+<td align="left">NA</td>
+<td align="left">202401070rai</td>
+<td align="right">NA</td>
+<td align="left">401547646</td>
+<td align="right">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">145</td>
+<td align="right">-175</td>
+<td align="right">3.5</td>
+<td align="right">-118</td>
+<td align="right">-102</td>
+<td align="right">37.5</td>
+<td align="right">-115</td>
+<td align="right">-105</td>
+<td align="right">1</td>
+<td align="left">dome</td>
+<td align="left">grass</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">00-0035264</td>
+<td align="left">00-0038579</td>
+<td align="left">Jarrett Stidham</td>
+<td align="left">Aidan O’Connell</td>
+<td align="left">Sean Payton</td>
+<td align="left">Antonio Pierce</td>
+<td align="left">Shawn Hochuli</td>
+<td align="left">VEG00</td>
+<td align="left">Allegiant Stadium</td>
+</tr>
+<tr class="odd">
+<td align="left">2023_18_PHI_NYG</td>
+<td align="right">2023</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2024-01-07</td>
+<td align="left">Sunday</td>
+<td align="left">16:25</td>
+<td align="left">PHI</td>
+<td align="right">10</td>
+<td align="left">NYG</td>
+<td align="right">27</td>
+<td align="left">Home</td>
+<td align="right">17</td>
+<td align="right">37</td>
+<td align="right">0</td>
+<td align="left">2024010711</td>
+<td align="right">59441</td>
+<td align="left">NA</td>
+<td align="left">202401070nyg</td>
+<td align="right">NA</td>
+<td align="left">401547650</td>
+<td align="right">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">-238</td>
+<td align="right">190</td>
+<td align="right">-4.5</td>
+<td align="right">-112</td>
+<td align="right">-108</td>
+<td align="right">43.0</td>
+<td align="right">-105</td>
+<td align="right">-115</td>
+<td align="right">1</td>
+<td align="left">outdoors</td>
+<td align="left">fieldturf</td>
+<td align="right">36</td>
+<td align="right">12</td>
+<td align="left">00-0036389</td>
+<td align="left">00-0028118</td>
+<td align="left">Jalen Hurts</td>
+<td align="left">Tyrod Taylor</td>
+<td align="left">Nick Sirianni</td>
+<td align="left">Brian Daboll</td>
+<td align="left">Craig Wrolstad</td>
+<td align="left">NYC01</td>
+<td align="left">MetLife Stadium</td>
+</tr>
+<tr class="even">
+<td align="left">2023_18_LA_SF</td>
+<td align="right">2023</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2024-01-07</td>
+<td align="left">Sunday</td>
+<td align="left">16:25</td>
+<td align="left">LA</td>
+<td align="right">21</td>
+<td align="left">SF</td>
+<td align="right">20</td>
+<td align="left">Home</td>
+<td align="right">-1</td>
+<td align="right">41</td>
+<td align="right">0</td>
+<td align="left">2024010710</td>
+<td align="right">59442</td>
+<td align="left">NA</td>
+<td align="left">202401070sfo</td>
+<td align="right">NA</td>
+<td align="left">401547651</td>
+<td align="right">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">200</td>
+<td align="right">-245</td>
+<td align="right">5.5</td>
+<td align="right">-108</td>
+<td align="right">-112</td>
+<td align="right">40.0</td>
+<td align="right">-108</td>
+<td align="right">-112</td>
+<td align="right">1</td>
+<td align="left">outdoors</td>
+<td align="left">grass</td>
+<td align="right">52</td>
+<td align="right">11</td>
+<td align="left">00-0032950</td>
+<td align="left">00-0034869</td>
+<td align="left">Carson Wentz</td>
+<td align="left">Sam Darnold</td>
+<td align="left">Sean McVay</td>
+<td align="left">Kyle Shanahan</td>
+<td align="left">Clay Martin</td>
+<td align="left">SFO01</td>
+<td align="left">Levi’s Stadium</td>
+</tr>
+<tr class="odd">
+<td align="left">2023_18_DAL_WAS</td>
+<td align="right">2023</td>
+<td align="left">REG</td>
+<td align="right">18</td>
+<td align="left">2024-01-07</td>
+<td align="left">Sunday</td>
+<td align="left">16:25</td>
+<td align="left">DAL</td>
+<td align="right">38</td>
+<td align="left">WAS</td>
+<td align="right">10</td>
+<td align="left">Home</td>
+<td align="right">-28</td>
+<td align="right">48</td>
+<td align="right">0</td>
+<td align="left">2024010707</td>
+<td align="right">59444</td>
+<td align="left">NA</td>
+<td align="left">202401070was</td>
+<td align="right">NA</td>
+<td align="left">401547653</td>
+<td align="right">NA</td>
+<td align="right">8</td>
+<td align="right">7</td>
+<td align="right">-850</td>
+<td align="right">575</td>
+<td align="right">-13.0</td>
+<td align="right">-115</td>
+<td align="right">-105</td>
+<td align="right">47.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">1</td>
+<td align="left">outdoors</td>
+<td align="left">grass</td>
+<td align="right">48</td>
+<td align="right">13</td>
 <td align="left">00-0033077</td>
 <td align="left">00-0037077</td>
 <td align="left">Dak Prescott</td>
 <td align="left">Sam Howell</td>
 <td align="left">Mike McCarthy</td>
 <td align="left">Ron Rivera</td>
-<td align="left">Tra Blake</td>
+<td align="left">Shawn Smith</td>
 <td align="left">WAS00</td>
 <td align="left">FedExField</td>
 </tr>
-<tr class="odd">
-<td align="left">2022_18_DET_GB</td>
-<td align="right">2022</td>
+<tr class="even">
+<td align="left">2023_18_BUF_MIA</td>
+<td align="right">2023</td>
 <td align="left">REG</td>
 <td align="right">18</td>
-<td align="left">2023-01-08</td>
+<td align="left">2024-01-07</td>
 <td align="left">Sunday</td>
 <td align="left">20:20</td>
-<td align="left">DET</td>
-<td align="right">20</td>
-<td align="left">GB</td>
-<td align="right">16</td>
-<td align="left">Home</td>
-<td align="right">-4</td>
-<td align="right">36</td>
-<td align="right">0</td>
-<td align="left">2023010804</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">202301080gnb</td>
-<td align="right">NA</td>
-<td align="left">401437952</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">237</td>
-<td align="right">-273</td>
-<td align="right">5.5</td>
-<td align="right">-110</td>
-<td align="right">-100</td>
-<td align="right">49.0</td>
-<td align="right">-113</td>
-<td align="right">101</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
+<td align="left">BUF</td>
 <td align="right">21</td>
-<td align="right">4</td>
-<td align="left">00-0033106</td>
-<td align="left">00-0023459</td>
-<td align="left">Jared Goff</td>
-<td align="left">Aaron Rodgers</td>
-<td align="left">Dan Campbell</td>
-<td align="left">Matt LaFleur</td>
-<td align="left">Brad Rogers</td>
-<td align="left">GNB00</td>
-<td align="left">Lambeau Field</td>
-</tr>
-<tr class="even">
-<td align="left">2022_19_SEA_SF</td>
-<td align="right">2022</td>
-<td align="left">WC</td>
-<td align="right">19</td>
-<td align="left">2023-01-14</td>
-<td align="left">Saturday</td>
-<td align="left">16:30</td>
-<td align="left">SEA</td>
-<td align="right">23</td>
-<td align="left">SF</td>
-<td align="right">41</td>
+<td align="left">MIA</td>
+<td align="right">14</td>
 <td align="left">Home</td>
-<td align="right">18</td>
-<td align="right">64</td>
+<td align="right">-7</td>
+<td align="right">35</td>
 <td align="right">0</td>
-<td align="left">2023011400</td>
-<td align="right">NA</td>
+<td align="left">2024010713</td>
+<td align="right">59438</td>
 <td align="left">NA</td>
-<td align="left">202301140sfo</td>
+<td align="left">202401070mia</td>
 <td align="right">NA</td>
-<td align="left">401438000</td>
-<td align="right">6</td>
-<td align="right">6</td>
-<td align="right">367</td>
-<td align="right">-447</td>
-<td align="right">10.0</td>
-<td align="right">-123</td>
-<td align="right">112</td>
-<td align="right">42.0</td>
-<td align="right">-102</td>
+<td align="left">401547647</td>
+<td align="right">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">-155</td>
+<td align="right">130</td>
+<td align="right">-2.5</td>
+<td align="right">-125</td>
+<td align="right">105</td>
+<td align="right">47.5</td>
+<td align="right">-110</td>
 <td align="right">-110</td>
 <td align="right">1</td>
 <td align="left">outdoors</td>
 <td align="left">grass</td>
-<td align="right">57</td>
-<td align="right">11</td>
-<td align="left">00-0030565</td>
-<td align="left">00-0037834</td>
-<td align="left">Geno Smith</td>
-<td align="left">Brock Purdy</td>
-<td align="left">Pete Carroll</td>
-<td align="left">Kyle Shanahan</td>
+<td align="right">63</td>
+<td align="right">6</td>
+<td align="left">00-0034857</td>
+<td align="left">00-0036212</td>
+<td align="left">Josh Allen</td>
+<td align="left">Tua Tagovailoa</td>
+<td align="left">Sean McDermott</td>
+<td align="left">Mike McDaniel</td>
 <td align="left">Alex Kemp</td>
-<td align="left">SFO01</td>
-<td align="left">Levi’s Stadium</td>
+<td align="left">MIA00</td>
+<td align="left">Hard Rock Stadium</td>
 </tr>
 <tr class="odd">
-<td align="left">2022_19_LAC_JAX</td>
-<td align="right">2022</td>
+<td align="left">2023_19_CLE_HOU</td>
+<td align="right">2023</td>
 <td align="left">WC</td>
 <td align="right">19</td>
-<td align="left">2023-01-14</td>
+<td align="left">2024-01-13</td>
 <td align="left">Saturday</td>
-<td align="left">20:15</td>
-<td align="left">LAC</td>
-<td align="right">30</td>
-<td align="left">JAX</td>
-<td align="right">31</td>
+<td align="left">16:30</td>
+<td align="left">CLE</td>
+<td align="right">14</td>
+<td align="left">HOU</td>
+<td align="right">45</td>
 <td align="left">Home</td>
-<td align="right">1</td>
-<td align="right">61</td>
+<td align="right">31</td>
+<td align="right">59</td>
 <td align="right">0</td>
-<td align="left">2023011401</td>
-<td align="right">NA</td>
+<td align="left">2024011300</td>
+<td align="right">59494</td>
 <td align="left">NA</td>
-<td align="left">202301140jax</td>
+<td align="left">202401130htx</td>
 <td align="right">NA</td>
-<td align="left">401437998</td>
+<td align="left">401547749</td>
+<td align="right">NA</td>
 <td align="right">6</td>
 <td align="right">7</td>
-<td align="right">-126</td>
-<td align="right">114</td>
-<td align="right">-2.0</td>
-<td align="right">-102</td>
-<td align="right">-108</td>
-<td align="right">46.5</td>
+<td align="right">-148</td>
+<td align="right">124</td>
+<td align="right">-2.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">45.0</td>
 <td align="right">-105</td>
-<td align="right">-107</td>
+<td align="right">-115</td>
+<td align="right">0</td>
+<td align="left">closed</td>
+<td align="left">astroturf</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">00-0026158</td>
+<td align="left">00-0039163</td>
+<td align="left">Joe Flacco</td>
+<td align="left">C.J. Stroud</td>
+<td align="left">Kevin Stefanski</td>
+<td align="left">DeMeco Ryans</td>
+<td align="left">Clay Martin</td>
+<td align="left">HOU00</td>
+<td align="left">NRG Stadium</td>
+</tr>
+<tr class="even">
+<td align="left">2023_19_MIA_KC</td>
+<td align="right">2023</td>
+<td align="left">WC</td>
+<td align="right">19</td>
+<td align="left">2024-01-13</td>
+<td align="left">Saturday</td>
+<td align="left">20:00</td>
+<td align="left">MIA</td>
+<td align="right">7</td>
+<td align="left">KC</td>
+<td align="right">26</td>
+<td align="left">Home</td>
+<td align="right">19</td>
+<td align="right">33</td>
+<td align="right">0</td>
+<td align="left">2024011301</td>
+<td align="right">59495</td>
+<td align="left">NA</td>
+<td align="left">202401130kan</td>
+<td align="right">NA</td>
+<td align="left">401547750</td>
+<td align="right">NA</td>
+<td align="right">6</td>
+<td align="right">6</td>
+<td align="right">190</td>
+<td align="right">-230</td>
+<td align="right">4.5</td>
+<td align="right">-102</td>
+<td align="right">-118</td>
+<td align="right">43.5</td>
+<td align="right">-118</td>
+<td align="right">-102</td>
 <td align="right">0</td>
 <td align="left">outdoors</td>
 <td align="left">grass</td>
-<td align="right">37</td>
-<td align="right">4</td>
-<td align="left">00-0036355</td>
-<td align="left">00-0036971</td>
-<td align="left">Justin Herbert</td>
-<td align="left">Trevor Lawrence</td>
-<td align="left">Brandon Staley</td>
-<td align="left">Doug Pederson</td>
-<td align="left">Shawn Smith</td>
-<td align="left">JAX00</td>
-<td align="left">TIAA Bank Stadium</td>
+<td align="right">-4</td>
+<td align="right">19</td>
+<td align="left">00-0036212</td>
+<td align="left">00-0033873</td>
+<td align="left">Tua Tagovailoa</td>
+<td align="left">Patrick Mahomes</td>
+<td align="left">Mike McDaniel</td>
+<td align="left">Andy Reid</td>
+<td align="left">Brad Rogers</td>
+<td align="left">KAN00</td>
+<td align="left">GEHA Field at Arrowhead Stadium</td>
 </tr>
-<tr class="even">
-<td align="left">2022_19_MIA_BUF</td>
-<td align="right">2022</td>
+<tr class="odd">
+<td align="left">2023_19_GB_DAL</td>
+<td align="right">2023</td>
 <td align="left">WC</td>
 <td align="right">19</td>
-<td align="left">2023-01-15</td>
+<td align="left">2024-01-14</td>
 <td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">MIA</td>
-<td align="right">31</td>
-<td align="left">BUF</td>
-<td align="right">34</td>
+<td align="left">16:30</td>
+<td align="left">GB</td>
+<td align="right">48</td>
+<td align="left">DAL</td>
+<td align="right">32</td>
 <td align="left">Home</td>
-<td align="right">3</td>
-<td align="right">65</td>
+<td align="right">-16</td>
+<td align="right">80</td>
 <td align="right">0</td>
-<td align="left">2023011500</td>
-<td align="right">NA</td>
+<td align="left">2024011401</td>
+<td align="right">59497</td>
 <td align="left">NA</td>
-<td align="left">202301150buf</td>
+<td align="left">202401140dal</td>
 <td align="right">NA</td>
-<td align="left">401438002</td>
+<td align="left">401547752</td>
+<td align="right">NA</td>
 <td align="right">7</td>
 <td align="right">7</td>
-<td align="right">649</td>
-<td align="right">-882</td>
-<td align="right">14.0</td>
-<td align="right">-116</td>
-<td align="right">105</td>
-<td align="right">44.0</td>
+<td align="right">275</td>
+<td align="right">-345</td>
+<td align="right">7.0</td>
+<td align="right">102</td>
+<td align="right">-122</td>
+<td align="right">52.5</td>
 <td align="right">-105</td>
-<td align="right">-107</td>
+<td align="right">-115</td>
+<td align="right">0</td>
+<td align="left">closed</td>
+<td align="left">matrixturf</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">00-0036264</td>
+<td align="left">00-0033077</td>
+<td align="left">Jordan Love</td>
+<td align="left">Dak Prescott</td>
+<td align="left">Matt LaFleur</td>
+<td align="left">Mike McCarthy</td>
+<td align="left">Ron Torbert</td>
+<td align="left">DAL00</td>
+<td align="left">AT&amp;T Stadium</td>
+</tr>
+<tr class="even">
+<td align="left">2023_19_LA_DET</td>
+<td align="right">2023</td>
+<td align="left">WC</td>
+<td align="right">19</td>
+<td align="left">2024-01-14</td>
+<td align="left">Sunday</td>
+<td align="left">20:00</td>
+<td align="left">LA</td>
+<td align="right">23</td>
+<td align="left">DET</td>
+<td align="right">24</td>
+<td align="left">Home</td>
 <td align="right">1</td>
+<td align="right">47</td>
+<td align="right">0</td>
+<td align="left">2024011402</td>
+<td align="right">59498</td>
+<td align="left">NA</td>
+<td align="left">202401140det</td>
+<td align="right">NA</td>
+<td align="left">401547753</td>
+<td align="right">NA</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">136</td>
+<td align="right">-162</td>
+<td align="right">3.5</td>
+<td align="right">-122</td>
+<td align="right">102</td>
+<td align="right">52.5</td>
+<td align="right">-102</td>
+<td align="right">-118</td>
+<td align="right">0</td>
+<td align="left">dome</td>
+<td align="left">fieldturf</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">00-0026498</td>
+<td align="left">00-0033106</td>
+<td align="left">Matthew Stafford</td>
+<td align="left">Jared Goff</td>
+<td align="left">Sean McVay</td>
+<td align="left">Dan Campbell</td>
+<td align="left">Craig Wrolstad</td>
+<td align="left">DET00</td>
+<td align="left">Ford Field</td>
+</tr>
+<tr class="odd">
+<td align="left">2023_19_PIT_BUF</td>
+<td align="right">2023</td>
+<td align="left">WC</td>
+<td align="right">19</td>
+<td align="left">2024-01-15</td>
+<td align="left">Monday</td>
+<td align="left">16:30</td>
+<td align="left">PIT</td>
+<td align="right">17</td>
+<td align="left">BUF</td>
+<td align="right">31</td>
+<td align="left">Home</td>
+<td align="right">14</td>
+<td align="right">48</td>
+<td align="right">0</td>
+<td align="left">2024011501</td>
+<td align="right">59496</td>
+<td align="left">NA</td>
+<td align="left">202401150buf</td>
+<td align="right">NA</td>
+<td align="left">401547751</td>
+<td align="right">NA</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">370</td>
+<td align="right">-485</td>
+<td align="right">10.0</td>
+<td align="right">-108</td>
+<td align="right">-112</td>
+<td align="right">39.5</td>
+<td align="right">-115</td>
+<td align="right">-105</td>
+<td align="right">0</td>
 <td align="left">outdoors</td>
 <td align="left">a_turf</td>
-<td align="right">27</td>
-<td align="right">4</td>
-<td align="left">00-0037327</td>
+<td align="right">17</td>
+<td align="right">10</td>
+<td align="left">00-0034771</td>
 <td align="left">00-0034857</td>
-<td align="left">Skylar Thompson</td>
+<td align="left">Mason Rudolph</td>
 <td align="left">Josh Allen</td>
-<td align="left">Mike McDaniel</td>
+<td align="left">Mike Tomlin</td>
 <td align="left">Sean McDermott</td>
-<td align="left">Brad Allen</td>
+<td align="left">Carl Cheffers</td>
 <td align="left">BUF00</td>
 <td align="left">New Era Field</td>
 </tr>
-<tr class="odd">
-<td align="left">2022_19_NYG_MIN</td>
-<td align="right">2022</td>
-<td align="left">WC</td>
-<td align="right">19</td>
-<td align="left">2023-01-15</td>
-<td align="left">Sunday</td>
-<td align="left">16:50</td>
-<td align="left">NYG</td>
-<td align="right">31</td>
-<td align="left">MIN</td>
-<td align="right">24</td>
-<td align="left">Home</td>
-<td align="right">-7</td>
-<td align="right">55</td>
-<td align="right">0</td>
-<td align="left">2023011501</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">202301150min</td>
-<td align="right">NA</td>
-<td align="left">401438001</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">129</td>
-<td align="right">-142</td>
-<td align="right">2.5</td>
-<td align="right">103</td>
-<td align="right">-113</td>
-<td align="right">48.0</td>
-<td align="right">-104</td>
-<td align="right">-108</td>
-<td align="right">0</td>
-<td align="left">dome</td>
-<td align="left">sportturf</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0035710</td>
-<td align="left">00-0029604</td>
-<td align="left">Daniel Jones</td>
-<td align="left">Kirk Cousins</td>
-<td align="left">Brian Daboll</td>
-<td align="left">Kevin O’Connell</td>
-<td align="left">Adrian Hill</td>
-<td align="left">MIN01</td>
-<td align="left">U.S. Bank Stadium</td>
-</tr>
 <tr class="even">
-<td align="left">2022_19_BAL_CIN</td>
-<td align="right">2022</td>
+<td align="left">2023_19_PHI_TB</td>
+<td align="right">2023</td>
 <td align="left">WC</td>
 <td align="right">19</td>
-<td align="left">2023-01-15</td>
-<td align="left">Sunday</td>
-<td align="left">20:15</td>
-<td align="left">BAL</td>
-<td align="right">17</td>
-<td align="left">CIN</td>
-<td align="right">24</td>
+<td align="left">2024-01-15</td>
+<td align="left">Monday</td>
+<td align="left">20:00</td>
+<td align="left">PHI</td>
+<td align="right">9</td>
+<td align="left">TB</td>
+<td align="right">32</td>
 <td align="left">Home</td>
-<td align="right">7</td>
+<td align="right">23</td>
 <td align="right">41</td>
 <td align="right">0</td>
-<td align="left">2023011502</td>
-<td align="right">NA</td>
+<td align="left">2024011500</td>
+<td align="right">59499</td>
 <td align="left">NA</td>
-<td align="left">202301150cin</td>
+<td align="left">202401150tam</td>
 <td align="right">NA</td>
-<td align="left">401437999</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">311</td>
-<td align="right">-370</td>
-<td align="right">7.5</td>
-<td align="right">-104</td>
-<td align="right">-106</td>
-<td align="right">40.0</td>
-<td align="right">-104</td>
-<td align="right">-108</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">fieldturf</td>
-<td align="right">30</td>
-<td align="right">4</td>
-<td align="left">00-0035993</td>
-<td align="left">00-0036442</td>
-<td align="left">Tyler Huntley</td>
-<td align="left">Joe Burrow</td>
-<td align="left">John Harbaugh</td>
-<td align="left">Zac Taylor</td>
-<td align="left">Clay Martin</td>
-<td align="left">CIN00</td>
-<td align="left">Paycor Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2022_19_DAL_TB</td>
-<td align="right">2022</td>
-<td align="left">WC</td>
-<td align="right">19</td>
-<td align="left">2023-01-16</td>
-<td align="left">Monday</td>
-<td align="left">20:15</td>
-<td align="left">DAL</td>
-<td align="right">31</td>
-<td align="left">TB</td>
-<td align="right">14</td>
-<td align="left">Home</td>
-<td align="right">-17</td>
-<td align="right">45</td>
-<td align="right">0</td>
-<td align="left">2023011600</td>
+<td align="left">401547754</td>
 <td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">202301160tam</td>
-<td align="right">NA</td>
-<td align="left">401438003</td>
 <td align="right">8</td>
 <td align="right">8</td>
-<td align="right">-135</td>
-<td align="right">122</td>
+<td align="right">-162</td>
+<td align="right">136</td>
 <td align="right">-2.5</td>
-<td align="right">-108</td>
-<td align="right">-103</td>
-<td align="right">45.5</td>
-<td align="right">-105</td>
-<td align="right">-107</td>
+<td align="right">-125</td>
+<td align="right">105</td>
+<td align="right">43.0</td>
+<td align="right">-102</td>
+<td align="right">-118</td>
 <td align="right">0</td>
 <td align="left">outdoors</td>
 <td align="left">grass</td>
-<td align="right">58</td>
+<td align="right">65</td>
 <td align="right">2</td>
-<td align="left">00-0033077</td>
-<td align="left">00-0019596</td>
-<td align="left">Dak Prescott</td>
-<td align="left">Tom Brady</td>
-<td align="left">Mike McCarthy</td>
+<td align="left">00-0036389</td>
+<td align="left">00-0034855</td>
+<td align="left">Jalen Hurts</td>
+<td align="left">Baker Mayfield</td>
+<td align="left">Nick Sirianni</td>
 <td align="left">Todd Bowles</td>
-<td align="left">Craig Wrolstad</td>
+<td align="left">Adrian Hill</td>
 <td align="left">TAM00</td>
 <td align="left">Raymond James Stadium</td>
 </tr>
-<tr class="even">
-<td align="left">2022_20_JAX_KC</td>
-<td align="right">2022</td>
+<tr class="odd">
+<td align="left">2023_20_HOU_BAL</td>
+<td align="right">2023</td>
 <td align="left">DIV</td>
 <td align="right">20</td>
-<td align="left">2023-01-21</td>
+<td align="left">2024-01-20</td>
 <td align="left">Saturday</td>
 <td align="left">16:30</td>
-<td align="left">JAX</td>
-<td align="right">20</td>
-<td align="left">KC</td>
-<td align="right">27</td>
+<td align="left">HOU</td>
+<td align="right">NA</td>
+<td align="left">BAL</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">7</td>
-<td align="right">47</td>
-<td align="right">0</td>
-<td align="left">2023012100</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2024012001</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202301210kan</td>
+<td align="left">202401200rav</td>
 <td align="right">NA</td>
-<td align="left">401438005</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
 <td align="right">7</td>
 <td align="right">14</td>
-<td align="right">377</td>
-<td align="right">-461</td>
-<td align="right">10.0</td>
-<td align="right">-119</td>
-<td align="right">108</td>
-<td align="right">52.5</td>
-<td align="right">-116</td>
-<td align="right">103</td>
+<td align="right">340</td>
+<td align="right">-440</td>
+<td align="right">9.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">43.5</td>
+<td align="right">-105</td>
+<td align="right">-115</td>
 <td align="right">0</td>
 <td align="left">outdoors</td>
 <td align="left">grass</td>
-<td align="right">36</td>
-<td align="right">6</td>
-<td align="left">00-0036971</td>
-<td align="left">00-0033873</td>
-<td align="left">Trevor Lawrence</td>
-<td align="left">Patrick Mahomes</td>
-<td align="left">Doug Pederson</td>
-<td align="left">Andy Reid</td>
-<td align="left">Shawn Hochuli</td>
-<td align="left">KAN00</td>
-<td align="left">GEHA Field at Arrowhead Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2022_20_NYG_PHI</td>
-<td align="right">2022</td>
-<td align="left">DIV</td>
-<td align="right">20</td>
-<td align="left">2023-01-21</td>
-<td align="left">Saturday</td>
-<td align="left">20:15</td>
-<td align="left">NYG</td>
-<td align="right">7</td>
-<td align="left">PHI</td>
-<td align="right">38</td>
-<td align="left">Home</td>
-<td align="right">31</td>
-<td align="right">45</td>
-<td align="right">0</td>
-<td align="left">2023012101</td>
 <td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">00-0039163</td>
+<td align="left">00-0034796</td>
+<td align="left">C.J. Stroud</td>
+<td align="left">Lamar Jackson</td>
+<td align="left">DeMeco Ryans</td>
+<td align="left">John Harbaugh</td>
 <td align="left">NA</td>
-<td align="left">202301210phi</td>
-<td align="right">NA</td>
-<td align="left">401438004</td>
-<td align="right">6</td>
-<td align="right">13</td>
-<td align="right">304</td>
-<td align="right">-360</td>
-<td align="right">8.0</td>
-<td align="right">101</td>
-<td align="right">-111</td>
-<td align="right">48.0</td>
-<td align="right">-113</td>
-<td align="right">101</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">40</td>
-<td align="right">6</td>
-<td align="left">00-0035710</td>
-<td align="left">00-0036389</td>
-<td align="left">Daniel Jones</td>
-<td align="left">Jalen Hurts</td>
-<td align="left">Brian Daboll</td>
-<td align="left">Nick Sirianni</td>
-<td align="left">Clete Blakeman</td>
-<td align="left">PHI00</td>
-<td align="left">Lincoln Financial Field</td>
+<td align="left">BAL00</td>
+<td align="left">M&amp;T Bank Stadium</td>
 </tr>
 <tr class="even">
-<td align="left">2022_20_CIN_BUF</td>
-<td align="right">2022</td>
+<td align="left">2023_20_GB_SF</td>
+<td align="right">2023</td>
 <td align="left">DIV</td>
 <td align="right">20</td>
-<td align="left">2023-01-22</td>
-<td align="left">Sunday</td>
-<td align="left">15:00</td>
-<td align="left">CIN</td>
-<td align="right">27</td>
-<td align="left">BUF</td>
-<td align="right">10</td>
-<td align="left">Home</td>
-<td align="right">-17</td>
-<td align="right">37</td>
-<td align="right">0</td>
-<td align="left">2023012200</td>
+<td align="left">2024-01-20</td>
+<td align="left">Saturday</td>
+<td align="left">20:15</td>
+<td align="left">GB</td>
 <td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">202301220buf</td>
-<td align="right">NA</td>
-<td align="left">401438007</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">226</td>
-<td align="right">-259</td>
-<td align="right">6.0</td>
-<td align="right">-107</td>
-<td align="right">-103</td>
-<td align="right">48.5</td>
-<td align="right">-107</td>
-<td align="right">-105</td>
-<td align="right">0</td>
-<td align="left">outdoors</td>
-<td align="left">a_turf</td>
-<td align="right">32</td>
-<td align="right">4</td>
-<td align="left">00-0036442</td>
-<td align="left">00-0034857</td>
-<td align="left">Joe Burrow</td>
-<td align="left">Josh Allen</td>
-<td align="left">Zac Taylor</td>
-<td align="left">Sean McDermott</td>
-<td align="left">Carl Cheffers</td>
-<td align="left">BUF00</td>
-<td align="left">New Era Field</td>
-</tr>
-<tr class="odd">
-<td align="left">2022_20_DAL_SF</td>
-<td align="right">2022</td>
-<td align="left">DIV</td>
-<td align="right">20</td>
-<td align="left">2023-01-22</td>
-<td align="left">Sunday</td>
-<td align="left">18:30</td>
-<td align="left">DAL</td>
-<td align="right">12</td>
 <td align="left">SF</td>
-<td align="right">19</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">7</td>
-<td align="right">31</td>
-<td align="right">0</td>
-<td align="left">2023012201</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2024012002</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202301220sfo</td>
+<td align="left">202401200sfo</td>
 <td align="right">NA</td>
-<td align="left">401438006</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
 <td align="right">6</td>
-<td align="right">8</td>
-<td align="right">164</td>
-<td align="right">-183</td>
-<td align="right">3.5</td>
-<td align="right">-107</td>
-<td align="right">-103</td>
-<td align="right">46.5</td>
+<td align="right">13</td>
+<td align="right">370</td>
+<td align="right">-485</td>
+<td align="right">10.0</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">50.5</td>
 <td align="right">-105</td>
-<td align="right">-107</td>
+<td align="right">-115</td>
 <td align="right">0</td>
 <td align="left">outdoors</td>
 <td align="left">grass</td>
-<td align="right">55</td>
-<td align="right">19</td>
-<td align="left">00-0033077</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">00-0036264</td>
 <td align="left">00-0037834</td>
-<td align="left">Dak Prescott</td>
+<td align="left">Jordan Love</td>
 <td align="left">Brock Purdy</td>
-<td align="left">Mike McCarthy</td>
+<td align="left">Matt LaFleur</td>
 <td align="left">Kyle Shanahan</td>
-<td align="left">Bill Vinovich</td>
+<td align="left">NA</td>
 <td align="left">SFO01</td>
 <td align="left">Levi’s Stadium</td>
 </tr>
-<tr class="even">
-<td align="left">2022_21_SF_PHI</td>
-<td align="right">2022</td>
-<td align="left">CON</td>
-<td align="right">21</td>
-<td align="left">2023-01-29</td>
+<tr class="odd">
+<td align="left">2023_20_TB_DET</td>
+<td align="right">2023</td>
+<td align="left">DIV</td>
+<td align="right">20</td>
+<td align="left">2024-01-21</td>
 <td align="left">Sunday</td>
 <td align="left">15:00</td>
-<td align="left">SF</td>
-<td align="right">7</td>
-<td align="left">PHI</td>
-<td align="right">31</td>
+<td align="left">TB</td>
+<td align="right">NA</td>
+<td align="left">DET</td>
+<td align="right">NA</td>
 <td align="left">Home</td>
-<td align="right">24</td>
-<td align="right">38</td>
-<td align="right">0</td>
-<td align="left">2023012900</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2024012101</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202301290phi</td>
-<td align="right">NA</td>
-<td align="left">401438009</td>
-<td align="right">7</td>
-<td align="right">8</td>
-<td align="right">133</td>
-<td align="right">-147</td>
-<td align="right">2.5</td>
-<td align="right">105</td>
-<td align="right">-116</td>
-<td align="right">45.0</td>
-<td align="right">-114</td>
-<td align="right">101</td>
-<td align="right">0</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">52</td>
-<td align="right">14</td>
-<td align="left">00-0037834</td>
-<td align="left">00-0036389</td>
-<td align="left">Brock Purdy</td>
-<td align="left">Jalen Hurts</td>
-<td align="left">Kyle Shanahan</td>
-<td align="left">Nick Sirianni</td>
-<td align="left">John Hussey</td>
-<td align="left">PHI00</td>
-<td align="left">Lincoln Financial Field</td>
-</tr>
-<tr class="odd">
-<td align="left">2022_21_CIN_KC</td>
-<td align="right">2022</td>
-<td align="left">CON</td>
-<td align="right">21</td>
-<td align="left">2023-01-29</td>
-<td align="left">Sunday</td>
-<td align="left">18:30</td>
-<td align="left">CIN</td>
-<td align="right">20</td>
-<td align="left">KC</td>
-<td align="right">23</td>
-<td align="left">Home</td>
-<td align="right">3</td>
-<td align="right">43</td>
-<td align="right">0</td>
-<td align="left">2023012901</td>
+<td align="left">202401210det</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202301290kan</td>
 <td align="right">NA</td>
-<td align="left">401438008</td>
+<td align="right">6</td>
 <td align="right">7</td>
-<td align="right">8</td>
-<td align="right">119</td>
-<td align="right">-131</td>
-<td align="right">2.0</td>
-<td align="right">-103</td>
-<td align="right">-107</td>
-<td align="right">48.5</td>
-<td align="right">-106</td>
-<td align="right">-106</td>
+<td align="right">230</td>
+<td align="right">-285</td>
+<td align="right">6.0</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
+<td align="right">49.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
 <td align="right">0</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">22</td>
-<td align="right">13</td>
-<td align="left">00-0036442</td>
-<td align="left">00-0033873</td>
-<td align="left">Joe Burrow</td>
-<td align="left">Patrick Mahomes</td>
-<td align="left">Zac Taylor</td>
-<td align="left">Andy Reid</td>
-<td align="left">Ron Torbert</td>
-<td align="left">KAN00</td>
-<td align="left">GEHA Field at Arrowhead Stadium</td>
+<td align="left">dome</td>
+<td align="left">fieldturf</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">00-0034855</td>
+<td align="left">00-0033106</td>
+<td align="left">Baker Mayfield</td>
+<td align="left">Jared Goff</td>
+<td align="left">Todd Bowles</td>
+<td align="left">Dan Campbell</td>
+<td align="left">NA</td>
+<td align="left">DET00</td>
+<td align="left">Ford Field</td>
 </tr>
 <tr class="even">
-<td align="left">2022_22_KC_PHI</td>
-<td align="right">2022</td>
-<td align="left">SB</td>
-<td align="right">22</td>
-<td align="left">2023-02-12</td>
+<td align="left">2023_20_KC_BUF</td>
+<td align="right">2023</td>
+<td align="left">DIV</td>
+<td align="right">20</td>
+<td align="left">2024-01-21</td>
 <td align="left">Sunday</td>
 <td align="left">18:30</td>
 <td align="left">KC</td>
-<td align="right">38</td>
-<td align="left">PHI</td>
-<td align="right">35</td>
-<td align="left">Neutral</td>
-<td align="right">-3</td>
-<td align="right">73</td>
-<td align="right">0</td>
-<td align="left">2023021200</td>
+<td align="right">NA</td>
+<td align="left">BUF</td>
+<td align="right">NA</td>
+<td align="left">Home</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">2024012102</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
-<td align="left">202302120phi</td>
+<td align="left">202401210buf</td>
 <td align="right">NA</td>
-<td align="left">401438030</td>
-<td align="right">14</td>
-<td align="right">14</td>
-<td align="right">104</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">8</td>
+<td align="right">6</td>
+<td align="right">120</td>
+<td align="right">-142</td>
+<td align="right">2.5</td>
+<td align="right">-105</td>
 <td align="right">-115</td>
-<td align="right">1.0</td>
-<td align="right">-103</td>
-<td align="right">-107</td>
-<td align="right">51.0</td>
-<td align="right">-104</td>
-<td align="right">-108</td>
+<td align="right">45.5</td>
+<td align="right">-110</td>
+<td align="right">-110</td>
 <td align="right">0</td>
-<td align="left">closed</td>
-<td align="left">grass</td>
+<td align="left">outdoors</td>
+<td align="left"></td>
 <td align="right">NA</td>
 <td align="right">NA</td>
 <td align="left">00-0033873</td>
-<td align="left">00-0036389</td>
+<td align="left">00-0034857</td>
 <td align="left">Patrick Mahomes</td>
-<td align="left">Jalen Hurts</td>
+<td align="left">Josh Allen</td>
 <td align="left">Andy Reid</td>
-<td align="left">Nick Sirianni</td>
-<td align="left">Carl Cheffers</td>
-<td align="left">PHO00</td>
-<td align="left">State Farm Stadium</td>
+<td align="left">Sean McDermott</td>
+<td align="left">NA</td>
+<td align="left">BUF00</td>
+<td align="left">New Era Field</td>
 </tr>
 </tbody>
 </table>
@@ -1260,24 +1282,24 @@ team.</p></li>
 what the function is doing).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">div_standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_division_ranks.html">compute_division_ranks</a></span><span class="op">(</span><span class="va">games</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:57 | Calculating team data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:57 | Calculating head to head</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:57 | Calculating division rank #1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:57 | DIV (2): Head-to-head</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:58 | DIV (2): Division Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:58 | Calculating division rank #2</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:58 | DIV (3): Head-to-head</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:58 | DIV (3): Division Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:58 | DIV (3): Common Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:58 | DIV (2): Head-to-head</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:59 | DIV (2): Division Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:59 | DIV (2): Common Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:59 | DIV (2): Conference Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:59 | Calculating division rank #3</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:59 | DIV (2): Head-to-head</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:59 | DIV (2): Division Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:10:59 | DIV (2): Common Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:00 | Calculating division rank #4</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | Calculating team data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | Calculating head to head</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | Calculating division rank #1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (2): Head-to-head</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (2): Division Record</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | Calculating division rank #2</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (3): Head-to-head</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (3): Division Record</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (3): Common Record</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (2): Head-to-head</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (2): Division Record</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (2): Common Record</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (2): Conference Record</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | Calculating division rank #3</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (2): Head-to-head</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (2): Division Record</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | DIV (2): Common Record</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | Calculating division rank #4</span></span>
 <span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">div_standings</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
 <span><span class="co">#&gt;  $ standings: tibble [64 × 16] (S3: tbl_df/tbl/data.frame)</span></span>
@@ -1851,16 +1873,16 @@ seeds):</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">seeds</span> <span class="op">&lt;-</span> <span class="va">div_standings</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_conference_seeds.html">compute_conference_seeds</a></span><span class="op">(</span>h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, playoff_seeds <span class="op">=</span> <span class="fl">6</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:00 | Calculating seed #1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:00 | CONF (3): Head-to-head Sweep</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:00 | Calculating seed #2</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:00 | CONF (2): Head-to-head Sweep</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:01 | CONF (2): Conference Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:01 | Calculating seed #3</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:01 | Calculating seed #4</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:01 | Calculating seed #5</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:01 | Calculating seed #6</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:01 | CONF (2): Best-in-division reduction</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | Calculating seed #1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | CONF (3): Head-to-head Sweep</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | Calculating seed #2</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | CONF (2): Head-to-head Sweep</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | CONF (2): Conference Record</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:07 | Calculating seed #3</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating seed #4</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating seed #5</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating seed #6</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | CONF (2): Best-in-division reduction</span></span>
 <span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">seeds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
 <span><span class="co">#&gt;  $ standings: tibble [64 × 17] (S3: tbl_df/tbl/data.frame)</span></span>
@@ -2459,42 +2481,42 @@ computed in the above steps:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">draft</span> <span class="op">&lt;-</span> <span class="va">seeds</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_draft_order.html">compute_draft_order</a></span><span class="op">(</span>games <span class="op">=</span> <span class="va">games</span>, h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #32</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #31</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #30</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #29</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #28</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #27</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #26</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #25</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #24</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #23</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #22</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #21</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #20</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #19</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #18</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:02 | Calculating draft order #17</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #16</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #15</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #14</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #13</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #12</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #11</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #10</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | DRAFT: Divisional Rank</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | DRAFT: Conference Rank</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | CONF (2): Best-in-division reduction</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | CONF (2): Head-to-head Sweep</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #9</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #8</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #7</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #6</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #5</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #4</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:03 | Calculating draft order #3</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:04 | Calculating draft order #2</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:11:04 | Calculating draft order #1</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #32</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #31</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #30</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #29</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #28</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #27</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #26</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #25</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #24</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #23</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #22</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #21</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #20</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #19</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #18</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #17</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #16</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #15</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #14</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #13</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #12</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #11</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #10</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | DRAFT: Divisional Rank</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | DRAFT: Conference Rank</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | CONF (2): Best-in-division reduction</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | CONF (2): Head-to-head Sweep</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #9</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:08 | Calculating draft order #8</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:09 | Calculating draft order #7</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:09 | Calculating draft order #6</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:09 | Calculating draft order #5</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:09 | Calculating draft order #4</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:09 | Calculating draft order #3</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:09 | Calculating draft order #2</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:16:09 | Calculating draft order #1</span></span>
 <span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">draft</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 64</span></span>
 <span><span class="co">#&gt; Columns: 18</span></span>
