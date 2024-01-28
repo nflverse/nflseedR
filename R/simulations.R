@@ -289,8 +289,6 @@ nfl_simulations <- function(games,
 
   report("DONE!")
 
-  if (isTRUE(print_summary)) print(overall)
-
   out <- structure(
     list(
       "teams" = tibble::as_tibble(all_teams),
@@ -299,17 +297,12 @@ nfl_simulations <- function(games,
       "team_wins" = tibble::as_tibble(team_wins),
       "game_summary" = tibble::as_tibble(game_summary),
       "sim_params" = list(
-        "nfl_season" = nfl_season,
         "playoff_seeds" = playoff_seeds,
-        "if_ended_today" = if_ended_today,
-        "fresh_season" = fresh_season,
-        "fresh_playoffs" = fresh_playoffs,
         "tiebreaker_depth" = tiebreaker_depth,
         "test_week" = test_week,
         "simulations" = simulations,
-        "sims_per_round" = sims_per_round,
-        ".debug" = .debug,
-        "print_summary" = print_summary,
+        "chunks" = chunks,
+        "verbosity" = verbosity,
         "sim_include" = sim_include,
         "nflseedR_version" = utils::packageVersion("nflseedR"),
         "finished_at" = Sys.time()
