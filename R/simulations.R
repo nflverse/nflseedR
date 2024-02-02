@@ -143,7 +143,7 @@ nfl_simulations <- function(games,
   }
 
   # PREPARE SIMULATIONS -----------------------------------------------------
-  weeks_to_simulate <- games[game_type == "REG" & is.na(result), sort(unique(week))]
+  weeks_to_simulate <- games[is.na(result), unique(week)]
   teams <- data.table::as.data.table(nflseedR::divisions)
   teams <- teams[team %chin% games$away_team | team %chin% games$home_team]
 
@@ -157,20 +157,9 @@ nfl_simulations <- function(games,
   sim_games[, sim := rep(seq_len(simulations), each = game_number)]
   sim_teams[, sim := rep(seq_len(simulations), each = team_number)]
 
-  # This is wip and needs to go into simulate_chunk
-  # standings_list <- furrr::future_map(
-  #   seq_len(chunks),
-  #   function(i, nsims, nchunks, sims){
-  #     g <- sims[data.table::inrange(sim, lower = ceiling(nsims / nchunks)*(i-1) + 1, ceiling(nsims / nchunks) * i)]
-  #     standings <- nflseedR::nfl_standings(g, playoff_seeds = 7L, verbosity = "NONE")
-  #     standings
-  #   }, nsims = simulations, nchunks = chunks, sims = sims, .options = furrr::furrr_options(seed = TRUE)
-  # )
-  # all_standings <- rbindlist(standings_list)
-
   if (chunks > 1 && is_sequential()) {
     cli::cli_inform(c(
-      "i" = "Computation in multiple rounds can be accelerated
+      "i" = "Computation in multiple chunks can be accelerated
             with parallel processing.",
       "i" = "You should consider calling a {.code future::plan()}.
             Please see the function documentation for further information.",

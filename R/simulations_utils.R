@@ -16,6 +16,7 @@ sims_validate_games <- function(games){
     )
   }
   games <- games[, required_vars, with = FALSE]
+  games[, week := fifelse(game_type == "REG", as.character(week), game_type)]
   games
 }
 
