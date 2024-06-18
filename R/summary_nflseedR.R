@@ -131,7 +131,8 @@ summary.nflseedR_simulation <- function(object, ...){
       gt::ends_with("won_conf") ~ gt::px(60),
       gt::ends_with("won_sb") ~   gt::px(60),
       gt::ends_with("draft1") ~   gt::px(60),
-      gt::ends_with("draft5") ~   gt::px(60)
+      gt::ends_with("draft5") ~   gt::px(60),
+      gt::ends_with("team") ~     gt::px(60)
     ) %>%
     gt::cols_align(
       align = "right",

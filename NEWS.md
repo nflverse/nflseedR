@@ -1,6 +1,7 @@
 # nflseedR (development version)
 
 * Fixed error in `simulate_nfl()` where it crashes because the "fake schedule" isn't a tibble. (#43)
+* The `summary` method `summary.nflseedR_simulation()` explicitly sets the columns width of the logo column because those columns are hidden in some unclear scenarios.
 
 # nflseedR 1.2.0
 
