@@ -1,11 +1,23 @@
 #' Simulate an NFL Season
 #'
+#' @description
+#' Simulate NFL games based on a user provided games/schedule object that
+#' holds matchups with and without results. Missing results are computed using
+#' the argument `compute_results` and possible further arguments to `compute_results`
+#' in `...`.
+#' It is possible to let the function calculate playoff participants
+#' and simulate the post-season.
+#' The code is also developed for maximum performance and allows parallel
+#' computation by splitting the number of simulations into chunks and calling the
+#' appropriate \link[future]{plan}.
+#' Progress updates can be activated by calling \link[progressr]{handlers}
+#' before the start of the simulations.
+#' Please see the below given section "Details" for further information.
+#'
 #' @inheritParams nfl_standings
 #' @param compute_results A function to compute results of games. Uses team,
 #'   schedule, and week number as arguments.
 #' @param ... Additional parameters passed on to the function \code{compute_results}.
-#' @param test_week Aborts after the simulator reaches this week and returns the results
-#'   from your process games call.
 #' @param simulations Equals the number of times the given NFL season shall be simulated
 #' @param chunks The number of chunks \code{simulations} should be split into
 #'   multiple rounds and be processed parallel. This parameter controls the number
@@ -18,14 +30,7 @@
 #'   - `"REG"`: Simulate the regular season and compute standings, division ranks, and playoff seeds
 #'   - `"POST"`: Do `"REG"` + simulate the postseason
 #'   - `"DRAFT"` (default): Do `"POST"` + compute draft order
-#' @description This function simulates a given NFL season multiple times using custom functions
-#'   to estimate and simulate game results and computes the outcome of the given
-#'   season including playoffs and draft order.
-#'   It is possible to run the function in parallel processes by calling the
-#'   appropriate \link[future]{plan}.
-#'   Progress updates can be activated by calling \link[progressr]{handlers}
-#'   before the start of the simulations.
-#'   Please see the below given section "Details" for further information.
+#'
 #' @details ## More Speed Using Parallel Processing
 #' We recommend choosing a default parallel processing method and saving it
 #' as an environment variable in the R user profile to make sure all futures
@@ -104,7 +109,6 @@ nfl_simulations <- function(games,
                             compute_results = default_compute_results,
                             ...,
                             playoff_seeds = 7L,
-                            test_week = NULL,
                             simulations = 50000L,
                             chunks = 4L,
                             tiebreaker_depth = c("SOS", "PRE-SOV", "RANDOM"),
@@ -141,9 +145,25 @@ nfl_simulations <- function(games,
   if (!is.function(compute_results)) {
     cli::cli_abort("The {.arg compute_results} argument must be a function!")
   }
+  if (chunks > 1 && is_sequential()) {
+    cli::cli_inform(c(
+      "i" = "Computation in multiple chunks can be accelerated
+            with parallel processing.",
+      "i" = "You should consider calling a {.code future::plan()}.
+            Please see the function documentation for further information.",
+      "i" = "Will go on sequentially..."
+    ), wrap = TRUE
+    )
+  }
 
   # PREPARE SIMULATIONS -----------------------------------------------------
   weeks_to_simulate <- games[is.na(result), unique(week)]
+  if (sim_include == 0L && any(playoff_weeks %chin% weeks_to_simulate)){
+    cli::cli_abort(
+      "Detected post-season games to simulate but you have set \
+      {.arg sim_include} to {.val REG}."
+    )
+  }
   teams <- data.table::as.data.table(nflseedR::divisions)
   teams <- teams[team %chin% games$away_team | team %chin% games$home_team]
 
@@ -156,17 +176,6 @@ nfl_simulations <- function(games,
   # Now add the simulation identifier
   sim_games[, sim := rep(seq_len(simulations), each = game_number)]
   sim_teams[, sim := rep(seq_len(simulations), each = team_number)]
-
-  if (chunks > 1 && is_sequential()) {
-    cli::cli_inform(c(
-      "i" = "Computation in multiple chunks can be accelerated
-            with parallel processing.",
-      "i" = "You should consider calling a {.code future::plan()}.
-            Please see the function documentation for further information.",
-      "i" = "Will go on sequentially..."
-    ), wrap = TRUE
-    )
-  }
 
   # RUN SIMULATIONS ---------------------------------------------------------
   report(

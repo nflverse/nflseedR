@@ -28,26 +28,29 @@ simulate_chunk <- function(chunk,
   ]
 
   # REMAINDER OF REGULAR SEASON ---------------------------------------------
-  if (verbosity > 0){
-    print_n <- switch (verbosity,
-      "1L" = 6L,
-      "2L" = 18L
-    )
-    vec <- cli::cli_vec(weeks_to_simulate, list("vec-trunc" = print_n))
-    report("CHUNK #{.val {chunk}}: Start simulation of regular season weeks {.val {vec}}", wrap = TRUE)
-  }
-  for (week_num in weeks_to_simulate) {
-    if (verbosity > 1L){
-      report("Simulate regular season week {.val {week_num}}")
+  reg_season_weeks <-  base::setdiff(weeks_to_simulate, playoff_weeks)
+  if (length(reg_season_weeks) > 0){
+    if (verbosity > 0){
+      print_n <- switch (verbosity,
+        "1L" = 6L,
+        "2L" = 18L
+      )
+      vec <- cli::cli_vec(reg_season_weeks, list("vec-trunc" = print_n))
+      report("CHUNK #{.val {chunk}}: Start simulation of regular season weeks {.val {vec}}", wrap = TRUE)
     }
-    return_value <- compute_results(
-      teams = teams,
-      games = games,
-      week_num = week_num,
-      ...
-    )
-    teams <- return_value[["teams"]]
-    games <- return_value[["games"]]
+    for (week_num in reg_season_weeks) {
+      if (verbosity > 1L){
+        report("Simulate regular season week {.val {week_num}}")
+      }
+      return_value <- compute_results(
+        teams = teams,
+        games = games,
+        week_num = week_num,
+        ...
+      )
+      teams <- return_value[["teams"]]
+      games <- return_value[["games"]]
+    }
   }
   user_verbosity <- switch (verbosity,
     "0L" = "NONE",

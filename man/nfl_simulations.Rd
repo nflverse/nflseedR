@@ -9,7 +9,6 @@ nfl_simulations(
   compute_results = default_compute_results,
   ...,
   playoff_seeds = 7L,
-  test_week = NULL,
   simulations = 50000L,
   chunks = 4L,
   tiebreaker_depth = c("SOS", "PRE-SOV", "RANDOM"),
@@ -41,9 +40,6 @@ schedule, and week number as arguments.}
 ranks. This means, the function applies conference tiebreakers to all
 conference ranks. For better performance, it is possible to set this to a
 value < 16 to make the function skip tiebreakers of those conference ranks.}
-
-\item{test_week}{Aborts after the simulator reaches this week and returns the results
-from your process games call.}
 
 \item{simulations}{Equals the number of times the given NFL season shall be simulated}
 
@@ -92,10 +88,14 @@ summary statistics across all simulated seasons, and the simulation parameters. 
 please see \href{https://nflseedr.com/articles/articles/nflsim.html#simulation-output}{the package website}.
 }
 \description{
-This function simulates a given NFL season multiple times using custom functions
-to estimate and simulate game results and computes the outcome of the given
-season including playoffs and draft order.
-It is possible to run the function in parallel processes by calling the
+Simulate NFL games based on a user provided games/schedule object that
+holds matchups with and without results. Missing results are computed using
+the argument \code{compute_results} and possible further arguments to \code{compute_results}
+in \code{...}.
+It is possible to let the function calculate playoff participants
+and simulate the post-season.
+The code is also developed for maximum performance and allows parallel
+computation by splitting the number of simulations into chunks and calling the
 appropriate \link[future]{plan}.
 Progress updates can be activated by calling \link[progressr]{handlers}
 before the start of the simulations.

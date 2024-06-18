@@ -1,5 +1,9 @@
+playoff_weeks <- c("WC", "DIV", "CON", "SB")
+
 sims_validate_games <- function(games){
   setDT(games)
+
+  # Check required columns --------------------------------------------------
   games_names <- colnames(games)
   required_vars <- c(
     "game_type", "week", "away_team", "home_team",
@@ -16,8 +20,66 @@ sims_validate_games <- function(games){
     )
   }
   games <- games[, required_vars, with = FALSE]
-  games[, week := fifelse(game_type == "REG", as.character(week), game_type)]
+
+  # Error on too many seasons -----------------------------------------------
+  unique_seasons <- if (uses_sim){
+    data.table::uniqueN(games[["sim"]])
+  } else if (uses_season){
+    data.table::uniqueN(games[["season"]])
+  } else {
+    1L
+  }
+  if (length(unique_seasons) > 1){
+    cli::cli_abort(
+      "The identifiers {.val sim} or {.val season} in your  \\
+      {.arg games} argument consist of the following unique values: \\
+      {.val {unique_seasons}}. {.code nfl_simulations} can only handle one \\
+      unique value."
+    )
+  }
+
   games
+}
+
+sims_compute_playoff_weeks <- function(max_reg_week, playoff_seeds){
+  # Identify the number of the last regular season week
+  # max_reg_week <- standings$max_reg_week[[1]]
+
+  # bye count (per conference)
+  num_byes <- 2^ceiling(log(playoff_seeds, 2)) - playoff_seeds
+
+  n_playoff_games <- c(
+    "WC" = 2^3 - num_byes,
+    "DIV" = 2^2,
+    "CON" = 2^1,
+    "SB" = 2^0
+  )
+
+  playoff_summand <- c(
+    "WC" = 1L,
+    "DIV" = 2L,
+    "CON" = 3L,
+    "SB" = 4L
+  )
+
+  playoff_games <- data.table(
+    "game_type" = c(
+      rep("WC", n_playoff_games[["WC"]]),
+      rep("DIV", n_playoff_games[["DIV"]]),
+      rep("CON", n_playoff_games[["CON"]]),
+      rep("SB", n_playoff_games[["SB"]])
+    ),
+    "max_reg_week" = max_reg_week,
+    "away_team" = NA_character_,
+    "home_team" = NA_character_,
+    "away_rest" = NA_integer_,
+    "home_rest" = NA_integer_,
+    "location" = NA_integer_,
+    "result" = NA_integer_
+  )
+  playoff_games[, week := max_reg_week + playoff_summand[game_type]]
+  playoff_games[, max_reg_week := NULL]
+  playoff_games
 }
 
 default_compute_results <- function(teams, games, week_num, ...) {
