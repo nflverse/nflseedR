@@ -24,7 +24,7 @@
 #'   pick in the draft based off game results. No trades of course.
 #' @param tiebreaker_depth One of `"SOS"`, `"PRE-SOV"`, or `"RANDOM"`. Controls
 #'   which tiebreakers are to be applied. The implemented tiebreakers are
-#'   documented here <https://nflseedr.com/articles/tiebreaker.hmtl>.
+#'   documented here <https://nflseedr.com/articles/tiebreaker.html>.
 #'   The values mean:
 #'   - `"SOS"` (default): Apply all tiebreakers through Strength of Schedule. If there are
 #'   still remaining ties, break them through coin toss.
