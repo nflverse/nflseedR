@@ -26,8 +26,8 @@ fmt_pct_special <- function(x){
   if(!is.vector(x = x, mode = "numeric")){
     cli::cli_abort("Argument {.arg x} has to be a numeric vector")
   }
-  if(any(x > 1, na.rm = TRUE)){
-    cli::cli_abort("One or more values in {.arg x} are >1")
+  if(any(!x[!is.na(x)] %inrange% list(0L,1L))){
+    cli::cli_abort("One or more values in {.arg x} are outside the range between 0 and 1")
   }
   rlang::check_installed("scales", "to format numerical strings.")
   # allocate prefix and accuracy vectors
