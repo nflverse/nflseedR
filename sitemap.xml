@@ -1,66 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://nflseedr.com/404.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/articles/nflseedR.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/articles/nflsim.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/index.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/reference/compute_conference_seeds.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/reference/compute_division_ranks.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/reference/compute_draft_order.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/reference/divisions.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/reference/fmt_pct_special.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/reference/load_schedules.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/reference/nflseedR-package.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/reference/simulate_nfl.html</loc>
-  </url>
-  <url>
-    <loc>https://nflseedr.com/reference/summary.nflseedR_simulation.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://nflseedr.com/404.html</loc></url>
+<url><loc>https://nflseedr.com/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://nflseedr.com/CONTRIBUTING.html</loc></url>
+<url><loc>https://nflseedr.com/LICENSE-text.html</loc></url>
+<url><loc>https://nflseedr.com/LICENSE.html</loc></url>
+<url><loc>https://nflseedr.com/articles/index.html</loc></url>
+<url><loc>https://nflseedr.com/articles/nflseedR.html</loc></url>
+<url><loc>https://nflseedr.com/articles/nflsim.html</loc></url>
+<url><loc>https://nflseedr.com/articles/tiebreaker.html</loc></url>
+<url><loc>https://nflseedr.com/authors.html</loc></url>
+<url><loc>https://nflseedr.com/index.html</loc></url>
+<url><loc>https://nflseedr.com/news/index.html</loc></url>
+<url><loc>https://nflseedr.com/reference/compute_conference_seeds.html</loc></url>
+<url><loc>https://nflseedr.com/reference/compute_division_ranks.html</loc></url>
+<url><loc>https://nflseedr.com/reference/compute_draft_order.html</loc></url>
+<url><loc>https://nflseedr.com/reference/divisions.html</loc></url>
+<url><loc>https://nflseedr.com/reference/fmt_pct_special.html</loc></url>
+<url><loc>https://nflseedr.com/reference/index.html</loc></url>
+<url><loc>https://nflseedr.com/reference/load_schedules.html</loc></url>
+<url><loc>https://nflseedr.com/reference/nfl_standings.html</loc></url>
+<url><loc>https://nflseedr.com/reference/nflseedR-package.html</loc></url>
+<url><loc>https://nflseedr.com/reference/simulate_nfl.html</loc></url>
+<url><loc>https://nflseedr.com/reference/summary.nflseedR_simulation.html</loc></url>
 </urlset>
+

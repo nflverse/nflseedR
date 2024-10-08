@@ -1,11 +1,11 @@
 pandoc: 3.1.11
-pkgdown: 2.0.9
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
-  nflseedR: nflseedR.html
-  nflsim: nflsim.html
-last_built: 2024-06-19T17:55Z
+  articles/nflseedR: nflseedR.html
+  articles/nflsim: nflsim.html
+  articles/tiebreaker: tiebreaker.html
+last_built: 2024-10-08T13:40Z
 urls:
   reference: https://nflseedr.com/reference
   article: https://nflseedr.com/articles
-
