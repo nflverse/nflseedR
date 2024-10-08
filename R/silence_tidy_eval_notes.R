@@ -1,76 +1,112 @@
-conf_rank <-
-  sim <-
-  conf <-
-  tied_teams <-
-  div_winner <-
-  division <-
-  team <-
-  div_best_left <-
-  win_pct <-
-  team_opp <-
-  opp <-
-  sov <-
-  sos <-
-  h2h_played <-
-  new_rank <-
-  div_rank <-
-  conf_pct <-
-  div_pct <-
-  draft_order <-
-  new_do <-
-  playoff_seeds <-
-  game_type <-
-  outcome <-
-  wins <-
-  division_opp <-
-  conf_opp <-
-  div_game <-
-  conf_game <-
-  wins_opp <-
-  games_opp <-
-  h2h_games <-
-  draft_order <-
-  exit <-
-  week <-
-  away_team <-
-  home_team <-
-  result <-
-  seed_num <-
-  value <-
-  tied <-
-  do_num <-
-  seed <-
-  max_reg_week <-
-  season <-
-  . <-
-  round_rank.x <-
-  round_rank.y <-
-  seed.x <-
-  seed.y <-
-  team.x <-
-  team.y <-
-  estimate <-
-  true_wins <-
-  elo <-
-  home_elo <-
-  away_elo <-
-  elo_diff <-
-  home_rest <-
-  away_rest <-
-  elo_input <-
-  elo_mult <-
-  wp <-
-  elo_shift <-
-  problem <-
-  away_wins <-
-  home_wins <-
-  ties <-
-  games_played <-
-  playoff <-
-  afc_division <-
-  nfc_division <-
-  team_abbr <-
-  team_logo_espn <-
-  nfc_team <-
-  losses <-
-  NULL
+# Create with data-raw/silence_tidy_eval_notes_creator.R
+utils::globalVariables(
+  package = "nflseedR",
+  names = c(
+    ".",
+    ".debug",
+    "apply_conf_reduction",
+    "apply_div_reduction",
+    "away_elo",
+    "away_rest",
+    "away_score",
+    "away_team",
+    "away_wins",
+    "common",
+    "common_games",
+    "conf",
+    "conf_game",
+    "conf_opp",
+    "conf_pct",
+    "conf_rank",
+    "conf_rank_counter",
+    "conf_rank_shared_by_one_div",
+    "conf_tie_broken_by",
+    "count",
+    "div_best_left",
+    "div_game",
+    "div_pct",
+    "div_rank",
+    "div_rank_counter",
+    "div_tie_broken_by",
+    "div_winner",
+    "division",
+    "division_opp",
+    "draft_order",
+    "draft_rank",
+    "draft_rank_counter",
+    "draft_rank_shared_by_one_conf",
+    "draft_rank_shared_by_one_div",
+    "draft_tie_broken_by",
+    "elo",
+    "elo_diff",
+    "elo_input",
+    "elo_mult",
+    "elo_shift",
+    "estimate",
+    "exit",
+    "fresh_playoffs",
+    "fresh_season",
+    "game_type",
+    "games",
+    "games_opp",
+    "games_played",
+    "h2h_games",
+    "h2h_played",
+    "h2h_sweep",
+    "h2h_wins",
+    "home_elo",
+    "home_rest",
+    "home_score",
+    "home_team",
+    "home_wins",
+    "if_ended_today",
+    "location",
+    "losses",
+    "max_reg_week",
+    "new_do",
+    "new_rank",
+    "nfc_division",
+    "nfc_team",
+    "nfl_season",
+    "opp",
+    "outcome",
+    "pa",
+    "pd",
+    "pf",
+    "pivot_longer",
+    "playoff",
+    "print_summary",
+    "problem",
+    "result",
+    "round_rank.x",
+    "round_rank.y",
+    "sb_winner",
+    "score",
+    "season",
+    "seed",
+    "seed_num",
+    "seed.x",
+    "seed.y",
+    "sim",
+    "sims_per_round",
+    "simulate_chunk",
+    "sos",
+    "sov",
+    "team",
+    "team_opp",
+    "team.x",
+    "team.y",
+    "tie_loser",
+    "tie_winner",
+    "tied",
+    "tied_for",
+    "tied_teams",
+    "ties",
+    "true_wins",
+    "value",
+    "win_pct",
+    "wins",
+    "wins_opp",
+    "wp"
+  )
+)

@@ -20,11 +20,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Sebastian Carl \email{mrcaseb@gmail.com}
+\strong{Maintainer}: Sebastian Carl \email{mrcaseb@gmail.com} [copyright holder]
 
 Authors:
 \itemize{
-  \item Lee Sharpe [copyright holder]
+  \item Lee Sharpe
 }
 
 }

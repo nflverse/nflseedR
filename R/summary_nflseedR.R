@@ -27,7 +27,10 @@
 #' }
 #' @export
 summary.nflseedR_simulation <- function(object, ...){
-  rlang::check_installed(c("gt", "scales (>= 1.2.0)"), "to compute a summary table.")
+  rlang::check_installed(
+    c("gt", "scales (>= 1.2.0)", "nflplotR (>= 1.2.0)"),
+    "to compute a summary table."
+  )
 
   title <- paste(
     "simulating the",
@@ -43,17 +46,17 @@ summary.nflseedR_simulation <- function(object, ...){
     "simulations using nflseedR"
   )
 
-  data <- object$overall %>%
-    mutate(
-      division = gsub("AFC |NFC ", "", division),
-      division = case_when(
-        division == "East" ~ "E A S T",
-        division == "North" ~ "N O R T H",
-        division == "South" ~ "S O U T H",
-        division == "West" ~ "W E S T",
-        TRUE ~ NA_character_
-      )
+  data <- data.table(object$overall, key = "conf")
+  data[, division := gsub("AFC |NFC ", "", division)]
+  data[,
+    division := fcase(
+      division == "East", "E A S T",
+      division == "North", "N O R T H",
+      division == "South", "S O U T H",
+      division == "West", "W E S T",
+      default = NA_character_
     )
+  ]
 
   # This returns a named vector. Names are column names in `data` and values will
   # be FALSE if any value in the corresponding column is not NA, TRUE otherwise
@@ -62,25 +65,16 @@ summary.nflseedR_simulation <- function(object, ...){
   # Get character vector of columns that hold only NA and hide them
   hide_me <- names(column_is_empty[column_is_empty == FALSE])
 
-  afc <- data %>%
-    filter(conf == "AFC") %>%
-    select(-conf) %>%
-    arrange(division, desc(wins), desc(playoff))
-
+  afc <- data["AFC"][order(division, -wins, -playoff)]
   names(afc) <- paste0("afc_", names(afc))
 
-  nfc <- data %>%
-    filter(conf == "NFC") %>%
-    select(-conf) %>%
-    arrange(division, desc(wins), desc(playoff))
-
+  nfc <- data["NFC"][order(division, -wins, -playoff)]
   names(nfc) <- paste0("nfc_", names(nfc))
 
-  tbl <- bind_cols(afc, nfc)
+  tbl <- cbind(afc, nfc)[,c("afc_conf", "nfc_conf") := NULL]
 
   tbl %>%
-    group_by(afc_division) %>%
-    gt::gt() %>%
+    gt::gt(groupname_col = "afc_division") %>%
     # see below
     table_theme() %>%
     gt::cols_label(
@@ -131,8 +125,7 @@ summary.nflseedR_simulation <- function(object, ...){
       gt::ends_with("won_conf") ~ gt::px(60),
       gt::ends_with("won_sb") ~   gt::px(60),
       gt::ends_with("draft1") ~   gt::px(60),
-      gt::ends_with("draft5") ~   gt::px(60),
-      gt::ends_with("team") ~     gt::px(60)
+      gt::ends_with("draft5") ~   gt::px(60)
     ) %>%
     gt::cols_align(
       align = "right",
@@ -161,19 +154,7 @@ summary.nflseedR_simulation <- function(object, ...){
       ),
       colors = scales::col_numeric(palette = table_colors_negative, domain = c(0, 1))
     ) %>%
-    gt::text_transform(
-      locations = gt::cells_body(gt::ends_with("team")),
-      fn = function(x){
-        url <- data.frame(team_abbr = x) %>%
-          left_join(
-            nflreadr::load_teams() %>%
-              filter(!team_abbr %in% c("LAR", "OAK", "SD", "STL")) %>%
-              select(team_abbr, team_logo_espn),
-            by = "team_abbr"
-          ) %>%
-          pull(team_logo_espn)
-        gt::web_image(url = url, height = 30)
-      }) %>%
+    nflplotR::gt_nfl_logos(locations = gt::cells_body(gt::ends_with("team"))) %>%
     gt::tab_source_note("nflseedR") %>%
     gt::tab_spanner(
       label = gt::html(gt::web_image(
