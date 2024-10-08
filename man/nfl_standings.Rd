@@ -86,5 +86,5 @@ try({#to avoid CRAN test problems
 }
 \seealso{
 For more information on the implemented tiebreakers, see
-\url{https://nflseedr.com/articles/tiebreaker.hmtl}
+\url{https://nflseedr.com/articles/tiebreaker.html}
 }

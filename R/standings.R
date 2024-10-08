@@ -48,7 +48,7 @@
 #' @export
 #'
 #' @seealso For more information on the implemented tiebreakers, see
-#'   <https://nflseedr.com/articles/tiebreaker.hmtl>
+#'   <https://nflseedr.com/articles/tiebreaker.html>
 #'
 #' @examples
 #' \donttest{
