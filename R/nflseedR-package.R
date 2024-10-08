@@ -7,7 +7,7 @@
 #' @import data.table
 #' @import gsubfn
 #' @importFrom dplyr select mutate rename left_join inner_join n arrange group_by
-#' @importFrom dplyr ungroup filter case_when summarize pull right_join everything
+#' @importFrom dplyr ungroup filter case_when summarize summarise pull right_join everything
 #' @importFrom dplyr slice bind_rows row_number distinct
 #' @importFrom cli symbol
 #' @importFrom furrr future_map furrr_options
@@ -18,5 +18,6 @@
 #' @importFrom rlang inform
 #' @importFrom stats rnorm
 #' @importFrom tibble is_tibble tibble
+#' @importFrom tidyr pivot_longer
 ## usethis namespace: end
 NULL
