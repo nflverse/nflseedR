@@ -118,7 +118,7 @@ pick in the draft based off game results. No trades of course.</p></li>
 <dt id="arg-tiebreaker-depth">tiebreaker_depth<a class="anchor" aria-label="anchor" href="#arg-tiebreaker-depth"></a></dt>
 <dd><p>One of <code>"SOS"</code>, <code>"PRE-SOV"</code>, or <code>"RANDOM"</code>. Controls
 which tiebreakers are to be applied. The implemented tiebreakers are
-documented here <a href="https://nflseedr.com/articles/tiebreaker.hmtl">https://nflseedr.com/articles/tiebreaker.hmtl</a>.
+documented here <a href="https://nflseedr.com/articles/tiebreaker.html">https://nflseedr.com/articles/tiebreaker.html</a>.
 The values mean:</p><ul><li><p><code>"SOS"</code> (default): Apply all tiebreakers through Strength of Schedule. If there are
 still remaining ties, break them through coin toss.</p></li>
 <li><p><code>"PRE-SOV"</code>: Apply all tiebreakers before Strength of Victory. If there are
@@ -163,9 +163,9 @@ argument <code>ranks</code></p>
 <span class="r-in"><span>  <span class="va">standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu">nfl_standings</span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">standings</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:57:21 | Initiate Standings &amp; Tiebreaking Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:57:21 | Compute Division Ranks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:57:21 | Compute Conference Ranks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:59:11 | Initiate Standings &amp; Tiebreaking Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:59:11 | Compute Division Ranks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:59:11 | Compute Conference Ranks</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     season   team   conf  division games  wins true_wins losses  ties    pf</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;int&gt; &lt;char&gt; &lt;char&gt;    &lt;char&gt; &lt;int&gt; &lt;num&gt;     &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:   2021    BUF    AFC  AFC East    17  11.0        11      6     0   483</span>
