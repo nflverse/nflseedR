@@ -27,7 +27,7 @@ Imports:
     tibble,
     tidyr
 Suggests: 
-    gt,
+    gt (>= 0.9.0),
     knitr,
     nflplotR (>= 1.2.0), 
     rmarkdown,
