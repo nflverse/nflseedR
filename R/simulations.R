@@ -25,6 +25,8 @@
 #'   locally available cores and calculates the number of simulations per round
 #'   to be equal to half of the available cores (various benchmarks showed this
 #'   results in optimal performance).
+#' @param byes_per_conf The number of teams with a playoff bye week per conference.
+#'   This number influences the number of wildcard games that are simulated.
 #' @param sim_include One of `"REG"`, `"POST"`, `"DRAFT"` (the default).
 #'   Simulation will behave as follows:
 #'   - `"REG"`: Simulate the regular season and compute standings, division ranks, and playoff seeds
@@ -109,8 +111,9 @@ nfl_simulations <- function(games,
                             compute_results = default_compute_results,
                             ...,
                             playoff_seeds = 7L,
-                            simulations = 50000L,
-                            chunks = 4L,
+                            simulations = 10000L,
+                            chunks = 8L,
+                            byes_per_conf = 1L,
                             tiebreaker_depth = c("SOS", "PRE-SOV", "RANDOM"),
                             sim_include = c("DRAFT", "REG", "POST"),
                             verbosity = c("MIN", "MAX", "NONE")) {
@@ -130,18 +133,22 @@ nfl_simulations <- function(games,
     "MAX" = 2L,
     "NONE" = 0L
   )
-  if (!all(
-    is.null(test_week) || is_single_digit_numeric(test_week),
-    is_single_digit_numeric(simulations),
-    is_single_digit_numeric(sims_per_round)
-  )) {
-    cli::cli_abort(
-      "One or more of the parameters \\
-      {.arg test_week}, {.arg simulations} and {.arg sims_per_round} are not \\
-      single digit numeric values!"
-    )
+
+  # No NA results means
+  if (all(!is.na(games$result))){
+
   }
-  if (is.null(compute_results)) compute_results <- default_compute_results
+  # if (!all(
+  #   is.null(test_week) || is_single_digit_numeric(test_week),
+  #   is_single_digit_numeric(simulations),
+  #   is_single_digit_numeric(sims_per_round)
+  # )) {
+  #   cli::cli_abort(
+  #     "One or more of the parameters \\
+  #     {.arg test_week}, {.arg simulations} and {.arg sims_per_round} are not \\
+  #     single digit numeric values!"
+  #   )
+  # }
   if (!is.function(compute_results)) {
     cli::cli_abort("The {.arg compute_results} argument must be a function!")
   }
@@ -158,7 +165,7 @@ nfl_simulations <- function(games,
 
   # PREPARE SIMULATIONS -----------------------------------------------------
   weeks_to_simulate <- games[is.na(result), unique(week)]
-  if (sim_include == 0L && any(playoff_weeks %chin% weeks_to_simulate)){
+  if (sim_include == 0L && any(playoff_weeks() %chin% weeks_to_simulate)){
     cli::cli_abort(
       "Detected post-season games to simulate but you have set \
       {.arg sim_include} to {.val REG}."
@@ -167,28 +174,74 @@ nfl_simulations <- function(games,
   teams <- data.table::as.data.table(nflseedR::divisions)
   teams <- teams[team %chin% games$away_team | team %chin% games$home_team]
 
-  # Repeat games and teams as many times as simulations are required
-  game_number <- nrow(games)
-  sim_games <- games[rep(seq_len(game_number), times = simulations)]
-  team_number <- nrow(teams)
-  sim_teams <- teams[rep(seq_len(team_number), times = simulations)]
+  # User asked for playoff simulation. Append missing playoff weeks to games
+  if (sim_include > 0L){
+    playoff_dummy <- sims_compute_playoff_dummy(num_byes = byes_per_conf)
+    # If games already list some or all playoff weeks, we gotta remove them
+    # from the dummy
+    playoff_dummy <- playoff_dummy[!week %in% games$week]
+    # attach playoff games to games. If the above filter resulted in a empty
+    # table then nothing happens. We use fill = TRUE because the playoff_dummy
+    # doesn't have "old_week"
+    games <- rbind(games, playoff_dummy, fill = TRUE)
+    # Now add old_week numbers by adding playoff summands to the last
+    # reg season week
+    max_reg_week <- games[game_type == "REG", max(old_week)]
+    games[is.na(old_week), old_week := max_reg_week + playoff_summands()[game_type]]
+  }
 
-  # Now add the simulation identifier
-  sim_games[, sim := rep(seq_len(simulations), each = game_number)]
-  sim_teams[, sim := rep(seq_len(simulations), each = team_number)]
+  # Calculate chunk size from the number of simulations and chunks
+  # Check chunk size afterwards to make sure that the requested number of sims
+  # can be evenly distributed over the number of requested chunks
+  # It's probably not absolutely necessary to error if chunk_size * nchunks != nsims
+  # but it's easier to catch this here and force users to provide better inputs.
+  chunk_size <- sims_calculate_chunk_size(nsims = simulations, nchunks = chunks)
+  sims_check_chunk_size(nsims = simulations, nchunks = chunks, chunk_size = chunk_size)
+
+  # What this should do:
+  # create games and teams in the size of one chunk instead of the complete
+  # size. This reduces the size of data spread across sessions in multisession
+  #
+  # pass the vector of sim identifiers to simulate_chunk and extract the
+  # correct part of this vector to put it into the games and teams data that are
+  # in chunk size.
+  #
+  # if postseason shall be simulated, calculate an empty postseason table and
+  # append it to games BEFORE it is used to create the chunk_games data
+  # This means that the complete table of games that are to be simulated
+  # is passed to simulate_chunks. Postseason is missing participating teams tho
+  #
+  # after the remainder of regular season games is simulated, calculate standings,
+  # and fill in missing teams to participate in playoffs. This has to be done in
+  # a loop because we have to figure out winners.
+  #
+  # when preparing chunks we also have to check if there are any regular season
+  # games remaining. If not, we can calc standings and move on with playoffs.
+
+  # Repeat games and teams to fit the chunk size
+  game_number <- nrow(games)
+  sim_games <- games[rep(seq_len(game_number), times = chunk_size)]
+  team_number <- nrow(teams)
+  sim_teams <- teams[rep(seq_len(team_number), times = chunk_size)]
+
+  # Compute vectors of simulation identifiers
+  games_sim_vec <- rep(seq_len(simulations), each = game_number)
+  teams_sim_vec <- rep(seq_len(simulations), each = team_number)
 
   # RUN SIMULATIONS ---------------------------------------------------------
   report(
-    "Start simulation of {.pkg {prettyNum(simulations, big.mark = ' ')}} season{?s} \\
-    in {.val {chunks}} chunk{?s} with a chunk size of \\
-    {.pkg {prettyNum(ceiling(simulations / chunks), big.mark = ' ')}}."
+    "Start simulation of {.pkg {prettyNum(simulations, big.mark = ' ')}} \\
+    {cli::qty(simulations)}season{?s} in {.val {chunks}} chunk{?s} with a chunk \\
+    size of {.pkg {prettyNum(chunk_size, big.mark = ' ')}}."
   )
   p <- progressr::progressor(along = seq_len(chunks))
-  all <- purrr::map(
+  all <- furrr::future_map(
     .x = seq_len(chunks),
     .f = simulate_chunk,
     compute_results = default_compute_results,
     ...,
+    games_sim_vec = games_sim_vec,
+    teams_sim_vec = teams_sim_vec,
     weeks_to_simulate = weeks_to_simulate,
     nsims = simulations,
     nchunks = chunks,
@@ -197,9 +250,10 @@ nfl_simulations <- function(games,
     tiebreaker_depth = tiebreaker_depth,
     verbosity = verbosity,
     playoff_seeds = playoff_seeds,
+    byes_per_conf = byes_per_conf,
     p = p,
-    sim_include = sim_include
-    # .options = furrr::furrr_options(seed = TRUE)
+    sim_include = sim_include,
+    .options = furrr::furrr_options(seed = TRUE)
   )
 
   # POSTPROCESS SIMULATIONS -------------------------------------------------
@@ -216,21 +270,21 @@ nfl_simulations <- function(games,
   # with "exit" because draft_order might not be available depending on the
   # value of `sim_include`. Need to remove NAs here because Exit will be NA
   # for postseason teams
-  sb_exit <- max(all_teams$exit, na.rm = TRUE)
+  # sb_exit <- max(all_teams$exit, na.rm = TRUE)
   # If we simulate regular season only this will be < 20. We don't really simulate
   # postseason then and set sb_exit to NA which result in NA percentages of sb
   # and conf columns
-  if(sb_exit < 20) sb_exit <- NA_real_
+  # if(sb_exit < 20) sb_exit <- NA_real_
 
   overall <- all_teams[, list(
     wins = mean(wins),
-    playoff = mean(!is.na(seed)),
+    playoff = mean(conf_rank <= playoff_seeds),
     div1 = mean(div_rank == 1),
-    seed1 = mean(!is.na(seed) & seed == 1),
-    won_conf = mean(exit >= sb_exit - 1),
-    won_sb = mean(exit == sb_exit),
-    draft1 = mean(draft_order == 1),
-    draft5 = mean(draft_order <= 5)
+    seed1 = mean(!is.na(conf_rank) & conf_rank == 1),
+    won_conf = if (sim_include > 0L) mean(grepl("SB", exit)) else NA_real_,
+    won_sb = if (sim_include > 0L) mean(exit == "SB_WIN") else NA_real_,
+    draft1 = if (sim_include > 1L) mean(draft_order == 1) else NA_real_,
+    draft5 = if (sim_include > 1L) mean(draft_order <= 5) else NA_real_
   ), keyby = c("conf", "division", "team")]
 
   # take all teams and repeat them for each half win and repeat this for each
@@ -285,7 +339,7 @@ nfl_simulations <- function(games,
     home_percentage = (home_wins + 0.5 * ties) / games_played
   )]
 
-  report("DONE!")
+  if (verbosity > 0L) report("DONE!")
 
   out <- structure(
     list(
@@ -297,7 +351,7 @@ nfl_simulations <- function(games,
       "sim_params" = list(
         "playoff_seeds" = playoff_seeds,
         "tiebreaker_depth" = tiebreaker_depth,
-        "test_week" = test_week,
+        # "test_week" = test_week,
         "simulations" = simulations,
         "chunks" = chunks,
         "verbosity" = verbosity,

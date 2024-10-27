@@ -1,4 +1,24 @@
-playoff_weeks <- c("WC", "DIV", "CON", "SB")
+playoff_weeks <- function() c("WC", "DIV", "CON", "SB")
+playoff_summands <- function(){
+  seq_along(playoff_weeks()) |>
+    rlang::set_names(playoff_weeks())
+}
+
+sims_calculate_chunk_size <- function(nsims, nchunks) ceiling(nsims / nchunks)
+
+sims_check_chunk_size <- function(nsims, nchunks, chunk_size){
+  resulting_sims <- nchunks * chunk_size
+  if (resulting_sims != nsims){
+    cli::cli_abort(
+      "Can't simulate {.pkg {prettyNum(nsims, big.mark = ' ')}} \\
+      {cli::qty(nsims)}season{?s} in {.val {nchunks}} equally sized
+      chunk{?s} of size {.pkg {prettyNum(chunk_size, big.mark = ' ')}}. \\
+      Please make sure that the number of seasons can be evenly distributed \\
+      over the number of chunks."
+    )
+  }
+  invisible(NULL)
+}
 
 sims_validate_games <- function(games){
   setDT(games)
@@ -20,6 +40,10 @@ sims_validate_games <- function(games){
     )
   }
   games <- games[, required_vars, with = FALSE]
+  games[, old_week := week]
+  # Make week a factor so we can filter postseason weeks correctly
+  games[, week := fifelse(game_type == "REG", as.character(week), game_type)]
+  games[, week := as.factor(week)]
 
   # Error on too many seasons -----------------------------------------------
   unique_seasons <- if (uses_sim){
@@ -41,44 +65,58 @@ sims_validate_games <- function(games){
   games
 }
 
-sims_compute_playoff_weeks <- function(max_reg_week, playoff_seeds){
-  # Identify the number of the last regular season week
-  # max_reg_week <- standings$max_reg_week[[1]]
-
-  # bye count (per conference)
-  num_byes <- 2^ceiling(log(playoff_seeds, 2)) - playoff_seeds
+sims_compute_playoff_dummy <- function(num_byes){
 
   n_playoff_games <- c(
-    "WC" = 2^3 - num_byes,
+    "WC" = 2^3 - num_byes * 2L,
     "DIV" = 2^2,
     "CON" = 2^1,
     "SB" = 2^0
   )
 
-  playoff_summand <- c(
-    "WC" = 1L,
-    "DIV" = 2L,
-    "CON" = 3L,
-    "SB" = 4L
+  game_type <- c(
+    rep("WC", n_playoff_games[["WC"]]),
+    rep("DIV", n_playoff_games[["DIV"]]),
+    rep("CON", n_playoff_games[["CON"]]),
+    rep("SB", n_playoff_games[["SB"]])
+  )
+
+  conf <- c(
+    rep("AFC", n_playoff_games[["WC"]] / 2),
+    rep("NFC", n_playoff_games[["WC"]] / 2),
+    rep("AFC", n_playoff_games[["DIV"]] / 2),
+    rep("NFC", n_playoff_games[["DIV"]] / 2),
+    rep("AFC", n_playoff_games[["CON"]] / 2),
+    rep("NFC", n_playoff_games[["CON"]] / 2),
+    NA_character_
   )
 
   playoff_games <- data.table(
-    "game_type" = c(
-      rep("WC", n_playoff_games[["WC"]]),
-      rep("DIV", n_playoff_games[["DIV"]]),
-      rep("CON", n_playoff_games[["CON"]]),
-      rep("SB", n_playoff_games[["SB"]])
-    ),
-    "max_reg_week" = max_reg_week,
+    "game_type" = game_type,
+    "week" = as.factor(game_type),
+    "conf" = conf,
     "away_team" = NA_character_,
     "home_team" = NA_character_,
-    "away_rest" = NA_integer_,
-    "home_rest" = NA_integer_,
-    "location" = NA_integer_,
+    "away_rest" = 7L, # only bye teams have 14 days rest in div round
+    "home_rest" = 7L, # only bye teams have 14 days rest in div round
+    "location" = "Home", # we don't expect a neutral site playoff game
     "result" = NA_integer_
   )
-  playoff_games[, week := max_reg_week + playoff_summand[game_type]]
-  playoff_games[, max_reg_week := NULL]
+
+  wc_home_seeds <- seq(1 + num_byes, length.out = n_playoff_games[["WC"]] / 2)
+  wc_away_seeds <- rev(wc_home_seeds + n_playoff_games[["WC"]] / 2)
+
+  # add ids to fill WC games
+  playoff_games["WC", home_round_id := paste(conf, wc_home_seeds, sep = "-"), on = "game_type"]
+  playoff_games["WC", away_round_id := paste(conf, wc_away_seeds, sep = "-"), on = "game_type"]
+
+  # adjust location and rest default values for SB
+  # this means that SB is always simulated as neutral site game although there
+  # is a chance that a team can play a home SB. Doesn't happen too often and the
+  # home field advantage shouldn't be overestimated anyways
+  playoff_games["SB", location := "Neutral", on = "game_type"]
+  playoff_games["SB", away_rest := 14L, on = "game_type"]
+  playoff_games["SB", home_rest := 14L, on = "game_type"]
   playoff_games
 }
 
@@ -129,11 +167,13 @@ default_compute_results <- function(teams, games, week_num, ...) {
   games <- merge(x = games, y = teams[,list(sim, team, away_elo = elo)],
                  by.x = c("sim", "away_team"),
                  by.y = c("sim", "team"),
-                 sort = FALSE)
+                 sort = FALSE,
+                 all.x = TRUE)
   games <- merge(x = games, y = teams[,list(sim, team, home_elo = elo)],
                  by.x = c("sim", "home_team"),
                  by.y = c("sim", "team"),
-                 sort = FALSE)
+                 sort = FALSE,
+                 all.x = TRUE)
 
   # create elo diff
   games[, elo_diff := home_elo - away_elo + (home_rest - away_rest) / 7 * 25]
