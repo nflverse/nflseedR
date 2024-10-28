@@ -69,11 +69,22 @@ simulate_chunk <- function(chunk,
   # for the standings calculation
   standings <- nfl_standings(
     games = sim_games[!is.na(result)],
+    # this is an undocumented feature that make standings return the h2h and
+    # double games tables in the standings attributes. We need those
+    # to add draft order later
+    in_sim = if (sim_include > 1L) TRUE else NULL,
     ranks = "CONF",
     tiebreaker_depth = tiebreaker_depth,
     playoff_seeds = playoff_seeds,
     verbosity = user_verbosity
   )
+
+  # If we need draft order, the above will return h2h and double games tables
+  # in attributes. Extract them here and then remove them from standings.
+  if (sim_include > 1L){
+    h2h <- attr(standings, "h2h") |> data.table::setDT()
+    data.table::setattr(standings, "h2h", NULL)
+  }
 
   standings[is.na(conf_rank) | conf_rank > playoff_seeds, exit := "REG"]
 
@@ -177,33 +188,41 @@ simulate_chunk <- function(chunk,
         by = c("sim", "loser"),
         all.x = TRUE
       )
-      standings[is.na(exit) & (playoff_id %in% round_loser$loser_playoff_id), exit := week_num]
+      standings[
+        is.na(exit) & (playoff_id %in% round_loser$loser_playoff_id),
+        exit := sims_exit_translate_to("INT")[week_num]]
 
       if (week_num == "SB"){
         # Only SB winners remain with no exit value. Set it here
-        standings[is.na(exit), exit := "SB_WIN"]
+        standings[is.na(exit), exit := sims_exit_translate_to("INT")["SB_WIN"]]
       }
     }
-  }
 
   # Remove helper variables
   standings[, playoff_id := NULL]
   sim_games[, c("home_round_id", "away_round_id", "conf") := NULL]
 
+  }
+
+  sim_games[, week := old_week]
+  sim_games[, old_week := NULL]
+
   # DRAFT ORDER -------------------------------------------------------------
   if (sim_include > 1L){
     if (verbosity > 0L) report("Compute Draft Order")
-    a <- add_draft_ranks(
+
+    standings <- add_draft_ranks(
       standings = standings,
       h2h = h2h,
-      dg = dg,
+      dg = NULL,
       tiebreaker_depth = tiebreaker_depth,
-      verbosity = verbosity
+      verbosity = user_verbosity
     )
+    standings <- standings[order(sim, division, div_rank)]
   }
 
 
   # STATUS UPDATE AND RETURN ------------------------------------------------
   p(sprintf("Finished sim chunk %g", chunk))
-  list("teams" = standings, "games" = sim_games)
+  list("standings" = standings, "games" = sim_games)
 }

@@ -4,6 +4,23 @@ playoff_summands <- function(){
     rlang::set_names(playoff_weeks())
 }
 
+sims_exit_translate_to <- function(to = c("INT", "CHAR")){
+  to <- rlang::arg_match(to)
+  translation_vec <- c(
+    "REG"    = 0L,
+    "WC"     = 1L,
+    "DIV"    = 2L,
+    "CON"    = 3L,
+    "SB"     = 4L,
+    "SB_WIN" = 5L
+  )
+  if (to == "INT"){
+    translation_vec
+  } else {
+    setNames(names(translation_vec), translation_vec)
+  }
+}
+
 sims_calculate_chunk_size <- function(nsims, nchunks) ceiling(nsims / nchunks)
 
 sims_check_chunk_size <- function(nsims, nchunks, chunk_size){

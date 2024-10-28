@@ -106,7 +106,13 @@ nfl_standings <- function(games,
     playoff_seeds = playoff_seeds,
     verbosity = verbosity
   )
-  if (ranks == "CONF") return(finalize_standings(standings, games))
+  if (ranks == "CONF"){
+    out <- finalize_standings(standings, games)
+    dots <- list(...)
+    in_sim <- if ("in_sim" %in% names(dots)) dots$in_sim else FALSE
+    if (isTRUE(in_sim)) data.table::setattr(out, "h2h", h2h)
+    return(out)
+  }
 
   # DRAFT ORDER -------------------------------------------------------------
   if (verbosity > 0L) report("Compute Draft Order")

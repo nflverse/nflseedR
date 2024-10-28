@@ -262,50 +262,47 @@ nfl_simulations <- function(games,
   # "teams" and "games". We loop over the list (that's not really bad
   # because the length of the loop only is the number of chunks) and
   # bind with data.table afterwards
-  all_teams <- data.table::rbindlist(lapply(all, function(i) i[["teams"]]))
+  all_standings <- data.table::rbindlist(lapply(all, function(i) i[["standings"]]))
   all_games <- data.table::rbindlist(lapply(all, function(i) i[["games"]]))
 
   if (verbosity > 0L) report("Aggregate across simulations")
   # we need the exit number of the sb winner to compute sb and conf percentages
-  # with "exit" because draft_order might not be available depending on the
-  # value of `sim_include`. Need to remove NAs here because Exit will be NA
-  # for postseason teams
-  # sb_exit <- max(all_teams$exit, na.rm = TRUE)
-  # If we simulate regular season only this will be < 20. We don't really simulate
-  # postseason then and set sb_exit to NA which result in NA percentages of sb
-  # and conf columns
-  # if(sb_exit < 20) sb_exit <- NA_real_
+  # with "exit" because draft_rank might not be available depending on the
+  # value of `sim_include`.
+  sb_exit <- max(sims_exit_translate_to("INT"))
 
-  overall <- all_teams[, list(
+  overall <- all_standings[, list(
     wins = mean(wins),
-    playoff = mean(conf_rank <= playoff_seeds),
+    playoff = mean(!is.na(conf_rank) & conf_rank <= playoff_seeds),
     div1 = mean(div_rank == 1),
     seed1 = mean(!is.na(conf_rank) & conf_rank == 1),
-    won_conf = if (sim_include > 0L) mean(grepl("SB", exit)) else NA_real_,
-    won_sb = if (sim_include > 0L) mean(exit == "SB_WIN") else NA_real_,
-    draft1 = if (sim_include > 1L) mean(draft_order == 1) else NA_real_,
-    draft5 = if (sim_include > 1L) mean(draft_order <= 5) else NA_real_
+    won_conf = if (sim_include > 0L) mean(exit == sb_exit - 1L) else NA_real_,
+    won_sb = if (sim_include > 0L) mean(exit == sb_exit) else NA_real_,
+    draft1 = if (sim_include > 1L) mean(draft_rank == 1) else NA_real_,
+    draft5 = if (sim_include > 1L) mean(draft_rank <= 5) else NA_real_
   ), keyby = c("conf", "division", "team")]
+
+  all_standings[, exit := sims_exit_translate_to("CHAR")[exit]]
 
   # take all teams and repeat them for each half win and repeat this for each
   # simulation. The length of the half win sequence equals 2 * games + 1
   team_vec <- rep(
-    sort(unique(all_teams$team)),
-    each = (max(all_teams$games) * 2 + 1) * length(unique(all_teams$sim))
+    sort(unique(all_standings$team)),
+    each = (max(all_standings$games) * 2 + 1) * length(unique(all_standings$sim))
   )
 
   # Create the win sequence vector and repeat every win for every sim
   # Take this and repeat it for every team
   wins_vec <- rep(
-    seq(0, max(all_teams$games), 0.5),
-    each = length(unique(all_teams$sim))
+    seq(0, max(all_standings$games), 0.5),
+    each = length(unique(all_standings$sim))
   ) %>%
-    rep(length(unique(all_teams$team)))
+    rep(length(unique(all_standings$team)))
 
   # create sequence of sims and repeat it for every half win and for every team
   sims_vec <- rep(
-    sort(unique(all_teams$sim)),
-    (max(all_teams$games) * 2 + 1) * length(unique(all_teams$team))
+    sort(unique(all_standings$sim)),
+    (max(all_standings$games) * 2 + 1) * length(unique(all_standings$team))
   )
 
   team_wins <- data.table(
@@ -315,7 +312,7 @@ nfl_simulations <- function(games,
     key = c("team", "wins")
   ) |>
     merge(
-      all_teams[,list(sim, team, true_wins)],
+      all_standings[,list(sim, team, true_wins)],
       by = c("sim", "team"),
       sort = FALSE
     )
@@ -343,7 +340,7 @@ nfl_simulations <- function(games,
 
   out <- structure(
     list(
-      "teams" = tibble::as_tibble(all_teams),
+      "standings" = tibble::as_tibble(all_standings),
       "games" = tibble::as_tibble(all_games),
       "overall" = tibble::as_tibble(overall),
       "team_wins" = tibble::as_tibble(team_wins),
@@ -351,7 +348,6 @@ nfl_simulations <- function(games,
       "sim_params" = list(
         "playoff_seeds" = playoff_seeds,
         "tiebreaker_depth" = tiebreaker_depth,
-        # "test_week" = test_week,
         "simulations" = simulations,
         "chunks" = chunks,
         "verbosity" = verbosity,

@@ -5,14 +5,21 @@ add_draft_ranks <- function(standings,
                             tiebreaker_depth,
                             playoff_seeds,
                             verbosity){
-  dg[, sb_winner := fifelse(game_type == "SB" & result > 0, 1L, 0L, 0L)]
-  exit <- dg[
-    game_type != "REG",
-    list(exit = max(week) + max(sb_winner) - 1L),
-    by = c("sim", "team")
-  ]
-  standings <- merge(standings, exit, by = c("sim", "team"), all.x = TRUE)
-  standings[is.na(exit), exit := 0L]
+  if (!is.null(dg)){
+    dg[, sb_winner := fifelse(game_type == "SB" & result > 0, 1L, 0L, 0L)]
+    exit <- dg[
+      game_type != "REG",
+      list(exit = max(week) + max(sb_winner) - 1L),
+      by = c("sim", "team")
+    ]
+    standings <- merge(standings, exit, by = c("sim", "team"), all.x = TRUE)
+    standings[is.na(exit), exit := 0L]
+  } else if (is.null(dg)){
+    # We set dg to NULL in season sims. In that case, standings has a "exit"
+    # variable we can use.
+    # exit_factor_to_int <- c("REG" = 0L, playoff_summands(), "SB_WIN" = length(playoff_summands()) + 1L)
+    # standings[, exit := exit_factor_to_int[exit]]
+  }
 
   # Set ranks by exit, win percentage, and sos in ascending order by sim.
   # If ties method is "random", data.table will break all ties randomly
