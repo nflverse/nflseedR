@@ -62,7 +62,7 @@ sims_validate_games <- function(games){
   games[, old_week := week]
   # Make week a factor so we can filter postseason weeks correctly
   games[, week := fifelse(game_type == "REG", as.character(week), game_type)]
-  games[, week := as.factor(week)]
+  games[, week := factor(week, levels = unique(week))]
 
   # Error on too many seasons -----------------------------------------------
   unique_seasons <- if (uses_sim){
