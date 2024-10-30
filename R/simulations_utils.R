@@ -1,7 +1,9 @@
 playoff_weeks <- function() c("WC", "DIV", "CON", "SB")
 playoff_summands <- function(){
-  seq_along(playoff_weeks()) |>
-    rlang::set_names(playoff_weeks())
+  setNames(
+    seq_along(playoff_weeks()),
+    playoff_weeks()
+  )
 }
 
 sims_exit_translate_to <- function(to = c("INT", "CHAR")){
