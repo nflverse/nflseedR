@@ -46,7 +46,7 @@ simulate_chunk <- function(chunk,
   if (length(reg_season_weeks) > 0L) {
     if (verbosity > 0L){
       print_n <- switch (verbosity,
-        "1L" = 6L,
+        "1L" = 4L,
         "2L" = 18L
       )
       vec <- cli::cli_vec(reg_season_weeks, list("vec-trunc" = print_n))
@@ -69,37 +69,38 @@ simulate_chunk <- function(chunk,
 
 
   # STANDINGS AFTER REG SEASON ----------------------------------------------
-  user_verbosity <- switch (verbosity,
-    "0L" = "NONE",
-    "1L" = "MIN",
-    "2L" = "MAX",
+  user_verbosity <- switch (as.character(verbosity),
+    "0" = "NONE",
+    "1" = "MIN",
+    "2" = "MAX"
   )
   # We need conference ranks to identify playoff teams
   # sim_games includes games with missing results, i.e. post season, remove them
   # for the standings calculation
   standings <- nfl_standings(
     games = sim_games[!is.na(result)],
-    # this is an undocumented feature that make standings return the h2h and
-    # double games tables in the standings attributes. We need those
-    # to add draft order later
+    # this is an undocumented feature that make standings return the h2h table
+    # in the standings attributes. We need it to add draft_ranks later
     in_sim = if (sim_include > 1L) TRUE else NULL,
     ranks = "CONF",
     tiebreaker_depth = tiebreaker_depth,
-    playoff_seeds = playoff_seeds,
+    # If user asks for draft_ranks, then we must calculate all conf_ranks in order
+    # to use them for draft_ranks
+    playoff_seeds = if (sim_include > 1L) 16L else playoff_seeds,
     verbosity = user_verbosity
   )
 
-  # If we need draft order, the above will return h2h and double games tables
-  # in attributes. Extract them here and then remove them from standings.
+  # If we need draft ranks, the above will return the h2h table
+  # in attributes. Extract it here and then remove it from standings.
   if (sim_include > 1L){
-    h2h <- attr(standings, "h2h") |> data.table::setDT()
+    h2h <- data.table::setDT(attr(standings, "h2h"))
     data.table::setattr(standings, "h2h", NULL)
   }
 
   standings[is.na(conf_rank) | conf_rank > playoff_seeds, exit := "REG"]
 
   # PLAYOFFS ----------------------------------------------------------------
-  post_season_weeks <- base::setdiff(playoff_weeks(), weeks_to_simulate)
+  post_season_weeks <- base::intersect(playoff_weeks(), weeks_to_simulate)
   if (sim_include > 0L && length(post_season_weeks) > 0L){
     if (verbosity > 0L){
       report(
@@ -123,47 +124,65 @@ simulate_chunk <- function(chunk,
         report("Simulate post season week {.val {week_num}}")
       }
 
-      # Fill participants of current playoff week
-      # make sure to check if they are not already there!!!
-      #
-      if (week_num == "WC"){
-        remaining_teams <- standings[is.na(exit)]
-        sim_games[week_num, home_round_id := paste(sim, home_round_id, sep = "-"), on = "week"]
-        sim_games[week_num, away_round_id := paste(sim, away_round_id, sep = "-"), on = "week"]
+      # It is possible - but unlikely - that the user provided a games table
+      # where some or all playoff matchups are already filled. In that case we
+      # can skip filling participants. That's why we look up all home and away
+      # teams and fill only if one is missing
+      home_teams <- sim_games[week_num, home_team, on = "week"]
+      away_teams <- sim_games[week_num, away_team, on = "week"]
 
-        sim_games[week_num, home_team := playoff_teams[home_round_id], on = "week"]
-        sim_games[week_num, away_team := playoff_teams[away_round_id], on = "week"]
-
-      } else {
+      if (any(is.na(home_teams), is.na(away_teams))) {
+        # Compute vector of teams participating in the playoff round
         # Use standings to identify teams that should play this round
         remaining_teams <- standings[is.na(exit)]
-        # We need an identifier in games data that can be used to fill
-        # names of home and away teams. After the WC round, the identifier can be
-        # defined as "teams 1-N" of that playoff round. The number of games is
-        # predefined.
-        # If we have 1-N as identifier, we need to reassign ranks of the remaining
-        # teams based on their conference rank.
-        remaining_teams[, new_rank := frankv(conf_rank), by = c("sim", "conf")]
-        remaining_teams[, round_id := paste(sim, conf, new_rank, sep = "-")]
 
-        round_teams <- remaining_teams[, setNames(team, round_id)]
+        if (week_num == "WC"){
+          round_teams <- remaining_teams[, setNames(team, playoff_id)]
+        } else {
+          # We need an identifier in games data that can be used to fill
+          # names of home and away teams. After the WC round, the identifier can be
+          # defined as "teams 1-N" of that playoff round. The number of games is
+          # predefined.
+          # If we have 1-N as identifier, we need to reassign ranks of the remaining
+          # teams based on their conference rank.
+          remaining_teams[, new_rank := frankv(conf_rank), by = c("sim", "conf")]
+          remaining_teams[, round_id := paste(sim, conf, new_rank, sep = "-")]
 
-        # We can describe the home_round_id and away_round_id as
-        # "The top .N teams by conf_rank and conference are home teams, and the
-        # top .N + .N teams (in reversed order) are away_teams.
-        # Consider DIV round, this translates to
-        # home_round_id = sim-conf-1/2
-        # away_round_id = sim-conf-4/3
-        sim_games[week_num,
-                  home_round_id := paste(sim, conf, seq_len(.N), sep = "-"),
-                  by = c("sim", "conf"),
-                  on = "week"]
-        sim_games[week_num,
-                  away_round_id := paste(sim, conf, rev(seq_len(.N) + .N), sep = "-"),
-                  by = c("sim", "conf"),
-                  on = "week"]
+          round_teams <- remaining_teams[, setNames(team, round_id)]
+        }
 
-        if (week_num == "SB"){
+        # Prepare Matchup IDs
+        if (week_num == "WC"){
+          # For Wildcard, the playoff games template has prefilled matchup IDs
+          # All we need to do is to prepend the sim number
+          sim_games[week_num, home_round_id := paste(sim, home_round_id, sep = "-"), on = "week"]
+          sim_games[week_num, away_round_id := paste(sim, away_round_id, sep = "-"), on = "week"]
+
+        } else if (week_num != "SB") {
+          # We can describe the home_round_id and away_round_id as
+          # "The top .N teams by conf_rank and conference are home teams, and the
+          # top .N + .N teams (in reversed order) are away_teams.
+          # Consider DIV round, this translates to
+          # home_round_id = sim-conf-1/2
+          # away_round_id = sim-conf-4/3
+          sim_games[week_num,
+                    home_round_id := paste(sim, conf, seq_len(.N), sep = "-"),
+                    by = c("sim", "conf"),
+                    on = "week"]
+          sim_games[week_num,
+                    away_round_id := paste(sim, conf, rev(seq_len(.N) + .N), sep = "-"),
+                    by = c("sim", "conf"),
+                    on = "week"]
+
+          # adjust rest of bye week teams
+          if (week_num == "DIV") {
+            sim_games[week == "DIV" & grepl("AFC-1|NFC-1", home_round_id), home_rest := 14L]
+          }
+
+        } else {
+          # this is SB
+          # AFC always listed as home team. Shouldn't matter anyways as
+          # location defaults to "Neutral"
           sim_games[week_num,
                     home_round_id := paste(sim, "AFC", 1, sep = "-"),
                     on = "week"]
@@ -175,11 +194,6 @@ simulate_chunk <- function(chunk,
         # Use above created IDs to fill the matchups
         sim_games[week_num, home_team := round_teams[home_round_id], on = "week"]
         sim_games[week_num, away_team := round_teams[away_round_id], on = "week"]
-
-        # adjust rest of bye week teams
-        if (week_num == "DIV") {
-          sim_games[week == "DIV" & grepl("AFC-1|NFC-1", home_round_id), home_rest := 14L]
-        }
       }
 
       return_value <- compute_results(
@@ -191,6 +205,10 @@ simulate_chunk <- function(chunk,
       sim_teams <- return_value[["teams"]]
       sim_games <- return_value[["games"]]
 
+      # Each Playoff round, we compute the losing teams and set their "exit" value
+      # to the current round. sim_games doesn't hold unique identifiers across
+      # the complete playoffs (just the current round). That's why we have to
+      # merge the playoff_id to make sure we set the exit value for the right teams
       round_loser <- sim_games[week_num, on = "week"][, loser := fifelse(result < 0, home_team, away_team)]
       round_loser <- merge(
         round_loser,
@@ -198,6 +216,9 @@ simulate_chunk <- function(chunk,
         by = c("sim", "loser"),
         all.x = TRUE
       )
+      # We use current week_num for the exit value, but that's a factor
+      # To be able to calculate draft_ranks later on, we need to make the exit
+      # value an integer. sims_exit_translate_to("INT") does this for us
       standings[
         is.na(exit) & (playoff_id %in% round_loser$loser_playoff_id),
         exit := sims_exit_translate_to("INT")[week_num]]
@@ -208,16 +229,20 @@ simulate_chunk <- function(chunk,
       }
     }
 
-  # Remove helper variables
-  standings[, playoff_id := NULL]
-  sim_games[, c("home_round_id", "away_round_id", "conf") := NULL]
+    # Remove helper variables
+    standings[, playoff_id := NULL]
+    sim_games[, c("home_round_id", "away_round_id", "conf") := NULL]
 
   }
 
+  # Simulation is done at this point. We get rid of the temporarily created
+  # factor variable "week" and replace it with the integer variant we got
+  # from user. We gotta do this anyways and we need week to be a numeric value
+  # in the below draft_ranks function.
   sim_games[, week := old_week]
   sim_games[, old_week := NULL]
 
-  # DRAFT ORDER -------------------------------------------------------------
+  # DRAFT RANKS -------------------------------------------------------------
   if (sim_include > 1L){
     if (verbosity > 0L) report("Compute Draft Order")
 
@@ -226,8 +251,10 @@ simulate_chunk <- function(chunk,
       h2h = h2h,
       dg = NULL,
       tiebreaker_depth = tiebreaker_depth,
-      verbosity = user_verbosity
+      verbosity = verbosity
     )
+    # nfl_standings sorts the output by sim, division and draft rank
+    # let's do this here
     standings <- standings[order(sim, division, div_rank)]
   }
 
