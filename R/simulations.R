@@ -3,28 +3,31 @@
 #' @description
 #' Simulate NFL games based on a user provided games/schedule object that
 #' holds matchups with and without results. Missing results are computed using
-#' the argument `compute_results` and possible further arguments to `compute_results`
-#' in `...`.
+#' the argument `compute_results` and possible further arguments to
+#' `compute_results` in `...` (please see [simulations_verify_fct] for
+#' further information.).
+#'
 #' It is possible to let the function calculate playoff participants
 #' and simulate the post-season.
 #' The code is also developed for maximum performance and allows parallel
 #' computation by splitting the number of simulations into chunks and calling the
-#' appropriate \link[future]{plan}.
-#' Progress updates can be activated by calling \link[progressr]{handlers}
+#' appropriate [future::plan].
+#' Progress updates can be activated by calling [progressr::handlers]
 #' before the start of the simulations.
 #' Please see the below given section "Details" for further information.
 #'
 #' @inheritParams nfl_standings
-#' @param compute_results A function to compute results of games. Uses team,
-#'   schedule, and week number as arguments.
-#' @param ... Additional parameters passed on to the function \code{compute_results}.
+#' @param compute_results Defaults to the nflseedR function `nflseedR_compute_results`.
+#' A function to compute results of games. Uses team, schedule, and week number
+#' as arguments. Please see [simulations_verify_fct] for further information.
+#' @param ... Additional parameters passed on to the function `compute_results`.
 #' @param simulations Equals the number of times the given NFL season shall be simulated
-#' @param chunks The number of chunks \code{simulations} should be split into
-#'   multiple rounds and be processed parallel. This parameter controls the number
-#'   of simulations per round. The default value determines the number of
-#'   locally available cores and calculates the number of simulations per round
-#'   to be equal to half of the available cores (various benchmarks showed this
-#'   results in optimal performance).
+#' @param chunks The number of chunks `simulations` should be split into
+#'   and be processed parallel. This parameter controls the number
+#'   of simulations per chunk. There is no obvious way to determine the ideal
+#'   number of chunks in advance because there are too many dependencies on the
+#'   hardware. Too many chunks can be just as slow as too few. It is therefore
+#'   up to the user to determine the optimum number themselves.
 #' @param byes_per_conf The number of teams with a playoff bye week per conference.
 #'   This number influences the number of wildcard games that are simulated.
 #' @param sim_include One of `"REG"`, `"POST"`, `"DRAFT"` (the default).
@@ -71,11 +74,42 @@
 #' ```
 #' or by piping the function call into [progressr::with_progress()]:
 #' ```
-#' simulate_nfl(2020, fresh_season = TRUE) %>%
+#' nflseedR::nfl_simulations(
+#'   games = nflseedR::sims_games_example,
+#'   simulations = 4,
+#'   chunks = 2
+#' ) |>
 #'   progressr::with_progress()
 #' ```
+#' For more information how to work with progress handlers please see
+#' [progressr::progressr].
 #'
-#' For more information how to work with progress handlers please see [progressr::progressr].
+#' ## Reproducible Random Number Generation (RNG)
+#' It is to be expected that some form of random number generation is required
+#' in the function in argument `compute_results`.
+#' For better performance, nflseedR uses the furrr package to parallelize chunks.
+#' furrr functions are guaranteed to generate the exact same sequence of random
+#' numbers given the same initial seed if, and only if, the initial seed is of
+#' the type "L'Ecuyer-CMRG".
+#' So if you want a consistent seed to be used across all chunks, you must ensure
+#' that the correct type is specified in `set.seed`, e.g. with the following code
+#' ```
+#' set.seed(5, "L'Ecuyer-CMRG")
+#' ```
+#' It is sufficient to set the seed before nfl_simulations is called.
+#' To check that the type has been set correctly, you can use the following code.
+#'
+#' ```
+#' RNGkind()
+#' "L'Ecuyer-CMRG" "Inversion"     "Rejection"
+#'
+#' # Should be a integer vector of length 7
+#' .Random.seed
+#' 10407  1157214768 -1674567567 -1532971138 -1249749529  1302496508  -253670963
+#' ```
+#' For more information, please see the section "Reproducible random number
+#' generation (RNG)" in [furrr::furrr_options].
+#'
 #' @returns An `nflseedR_simulation` object containing a list of 6 data frames
 #'   data frames with the results of all simulated games,
 #'   the final standings in each simulated season (incl. playoffs and draft order),
@@ -94,21 +128,17 @@
 #' # Parallel processing can be activated via the following line
 #' # future::plan("multisession")
 #'
-#' try({#to avoid CRAN test problems
-#' # Simulate the season 4 times in 2 rounds
-#' sim <- nflseedR::simulate_nfl(
-#'   nfl_season = 2020,
-#'   fresh_season = TRUE,
+#' sim <- nflseedR::nfl_simulations(
+#'   games = nflseedR::sims_games_example,
 #'   simulations = 4,
-#'   sims_per_round = 2
+#'   chunks = 2
 #' )
 #'
 #' # Overview output
-#' dplyr::glimpse(sim)
-#' })
+#' str(sim, max.level = 3)
 #' }
 nfl_simulations <- function(games,
-                            compute_results = default_compute_results,
+                            compute_results = nflseedR_compute_results,
                             ...,
                             playoff_seeds = 7L,
                             simulations = 10000L,
@@ -138,28 +168,45 @@ nfl_simulations <- function(games,
   if (all(!is.na(games$result))){
 
   }
-  # if (!all(
-  #   is.null(test_week) || is_single_digit_numeric(test_week),
-  #   is_single_digit_numeric(simulations),
-  #   is_single_digit_numeric(sims_per_round)
-  # )) {
-  #   cli::cli_abort(
-  #     "One or more of the parameters \\
-  #     {.arg test_week}, {.arg simulations} and {.arg sims_per_round} are not \\
-  #     single digit numeric values!"
-  #   )
-  # }
+
   if (!is.function(compute_results)) {
     cli::cli_abort("The {.arg compute_results} argument must be a function!")
   }
-  if (chunks > 1 && is_sequential()) {
+
+  if (!all(
+    is_single_digit_numeric(playoff_seeds),
+    is_single_digit_numeric(simulations),
+    is_single_digit_numeric(chunks),
+    is_single_digit_numeric(byes_per_conf)
+  )) {
+    args <- c("playoff_seeds", "simulations", "chunks", "byes_per_conf")
+    cli::cli_abort(
+      "One or more of the arguments {.arg {args}} are not single digit numeric values!"
+    )
+  }
+
+  # Remind user to validate compute_results
+  if (as.character(substitute(compute_results)) != "nflseedR_compute_results"){
+    cli::cli_inform(c(
+      "i" = "You have provided your own function to {.arg compute_results}, cool!",
+      "i" = "To maximize performance, {.fun nfl_simulations} does not control the output
+      of your function during the simulation. Please use {.fun simulations_verify_fct}
+      in advance to ensure that you do not get any unexpected results or errors."),
+      .frequency = "regularly",
+      .frequency_id = "user_defined_function"
+    )
+  }
+  if (chunks > 1L && is_sequential()) {
     cli::cli_inform(c(
       "i" = "Computation in multiple chunks can be accelerated
             with parallel processing.",
       "i" = "You should consider calling a {.code future::plan()}.
             Please see the function documentation for further information.",
       "i" = "Will go on sequentially..."
-    ), wrap = TRUE
+    ),
+    wrap = TRUE,
+    .frequency = "regularly",
+    .frequency_id = "sequential_sim"
     )
   }
 
@@ -238,7 +285,7 @@ nfl_simulations <- function(games,
   all <- furrr::future_map(
     .x = seq_len(chunks),
     .f = simulate_chunk,
-    compute_results = default_compute_results,
+    compute_results = nflseedR_compute_results,
     ...,
     games_sim_vec = games_sim_vec,
     teams_sim_vec = teams_sim_vec,
@@ -262,8 +309,8 @@ nfl_simulations <- function(games,
   # "teams" and "games". We loop over the list (that's not really bad
   # because the length of the loop only is the number of chunks) and
   # bind with data.table afterwards
-  all_standings <- data.table::rbindlist(lapply(all, function(i) i[["standings"]]))
-  all_games <- data.table::rbindlist(lapply(all, function(i) i[["games"]]))
+  all_standings <- data.table::rbindlist(lapply(all, function(i) i[["standings"]]), fill = TRUE)
+  all_games <- data.table::rbindlist(lapply(all, function(i) i[["games"]]), fill = TRUE)
 
   if (verbosity > 0L) report("Aggregate across simulations")
   # we need the exit number of the sb winner to compute sb and conf percentages
@@ -310,12 +357,14 @@ nfl_simulations <- function(games,
     team = team_vec,
     wins = wins_vec,
     key = c("team", "wins")
-  ) |>
-    merge(
-      all_standings[,list(sim, team, true_wins)],
-      by = c("sim", "team"),
-      sort = FALSE
-    )
+  )
+
+  team_wins <- merge(
+    team_wins,
+    all_standings[,list(sim, team, true_wins)],
+    by = c("sim", "team"),
+    sort = FALSE
+  )
 
   team_wins <- team_wins[,list(
     over_prob = mean(true_wins > wins),
@@ -336,22 +385,21 @@ nfl_simulations <- function(games,
     home_percentage = (home_wins + 0.5 * ties) / games_played
   )]
 
-  if (verbosity > 0L) report("DONE!")
-
   out <- structure(
     list(
-      "standings" = tibble::as_tibble(all_standings),
-      "games" = tibble::as_tibble(all_games),
-      "overall" = tibble::as_tibble(overall),
-      "team_wins" = tibble::as_tibble(team_wins),
-      "game_summary" = tibble::as_tibble(game_summary),
+      "standings" = data.table::setDF(all_standings),
+      "games" = data.table::setDF(all_games),
+      "overall" = data.table::setDF(overall),
+      "team_wins" = data.table::setDF(team_wins),
+      "game_summary" = data.table::setDF(game_summary),
       "sim_params" = list(
         "playoff_seeds" = playoff_seeds,
-        "tiebreaker_depth" = tiebreaker_depth,
         "simulations" = simulations,
         "chunks" = chunks,
-        "verbosity" = verbosity,
+        "byes_per_conf" = byes_per_conf,
+        "tiebreaker_depth" = tiebreaker_depth,
         "sim_include" = sim_include,
+        "verbosity" = verbosity,
         "nflseedR_version" = utils::packageVersion("nflseedR"),
         "finished_at" = Sys.time()
       )
@@ -359,5 +407,6 @@ nfl_simulations <- function(games,
     class = "nflseedR_simulation"
   )
 
+  report("DONE!")
   out
 }
