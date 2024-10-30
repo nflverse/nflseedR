@@ -323,7 +323,7 @@ nfl_simulations <- function(games,
     playoff = mean(!is.na(conf_rank) & conf_rank <= playoff_seeds),
     div1 = mean(div_rank == 1),
     seed1 = mean(!is.na(conf_rank) & conf_rank == 1),
-    won_conf = if (sim_include > 0L) mean(exit == sb_exit - 1L) else NA_real_,
+    won_conf = if (sim_include > 0L) mean(exit >= (sb_exit - 1L)) else NA_real_,
     won_sb = if (sim_include > 0L) mean(exit == sb_exit) else NA_real_,
     draft1 = if (sim_include > 1L) mean(draft_rank == 1) else NA_real_,
     draft5 = if (sim_include > 1L) mean(draft_rank <= 5) else NA_real_
