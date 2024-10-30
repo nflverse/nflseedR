@@ -15,6 +15,17 @@ simulate_chunk <- function(chunk,
                            p,
                            ...){
 
+  # sim_games and sim_teams have no sim identifier yet. Add it here
+  # we have to copy sim_games and sim_teams because otherwise all changes to
+  # those tables in one round would affect the input to the next round.
+  # This happens when running the sims with a sequential future plan which is
+  # the same as running it with purrr::map. We need to make sure that the input
+  # doesn't change. It doesn't happen in non sequential future plans because
+  # in these cases the tables are copied anyways.
+  if (is_sequential()){
+    sim_games <- data.table::copy(sim_games)
+    sim_teams <- data.table::copy(sim_teams)
+  }
   sim_games <- sim_games[,
     sim := games_sim_vec[data.table::inrange(
       games_sim_vec,
@@ -22,7 +33,6 @@ simulate_chunk <- function(chunk,
       upper = ceiling(nsims / nchunks) * chunk
     )]
   ]
-
   sim_teams <- sim_teams[,
     sim := teams_sim_vec[data.table::inrange(
       teams_sim_vec,
