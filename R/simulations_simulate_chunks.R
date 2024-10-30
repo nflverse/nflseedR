@@ -97,7 +97,7 @@ simulate_chunk <- function(chunk,
     data.table::setattr(standings, "h2h", NULL)
   }
 
-  standings[is.na(conf_rank) | conf_rank > playoff_seeds, exit := "REG"]
+  standings[is.na(conf_rank) | conf_rank > playoff_seeds, exit := sims_exit_translate_to("INT")["REG"]]
 
   # PLAYOFFS ----------------------------------------------------------------
   post_season_weeks <- base::intersect(playoff_weeks(), weeks_to_simulate)

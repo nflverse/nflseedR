@@ -329,7 +329,7 @@ nfl_simulations <- function(games,
     draft5 = if (sim_include > 1L) mean(draft_rank <= 5) else NA_real_
   ), keyby = c("conf", "division", "team")]
 
-  all_standings[, exit := sims_exit_translate_to("CHAR")[exit]]
+  all_standings[, exit := sims_exit_translate_to("CHAR")[as.character(exit)]]
 
   # take all teams and repeat them for each half win and repeat this for each
   # simulation. The length of the half win sequence equals 2 * games + 1
