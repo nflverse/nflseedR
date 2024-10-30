@@ -14,11 +14,6 @@ add_draft_ranks <- function(standings,
     ]
     standings <- merge(standings, exit, by = c("sim", "team"), all.x = TRUE)
     standings[is.na(exit), exit := 0L]
-  } else if (is.null(dg)){
-    # We set dg to NULL in season sims. In that case, standings has a "exit"
-    # variable we can use.
-    # exit_factor_to_int <- c("REG" = 0L, playoff_summands(), "SB_WIN" = length(playoff_summands()) + 1L)
-    # standings[, exit := exit_factor_to_int[exit]]
   }
 
   # Set ranks by exit, win percentage, and sos in ascending order by sim.
