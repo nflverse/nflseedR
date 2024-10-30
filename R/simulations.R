@@ -211,16 +211,6 @@ nfl_simulations <- function(games,
   }
 
   # PREPARE SIMULATIONS -----------------------------------------------------
-  weeks_to_simulate <- games[is.na(result), unique(week)]
-  if (sim_include == 0L && any(playoff_weeks() %chin% weeks_to_simulate)){
-    cli::cli_abort(
-      "Detected post-season games to simulate but you have set \
-      {.arg sim_include} to {.val REG}."
-    )
-  }
-  teams <- data.table::as.data.table(nflseedR::divisions)
-  teams <- teams[team %chin% games$away_team | team %chin% games$home_team]
-
   # User asked for playoff simulation. Append missing playoff weeks to games
   if (sim_include > 0L){
     playoff_dummy <- sims_compute_playoff_dummy(num_byes = byes_per_conf)
@@ -236,6 +226,16 @@ nfl_simulations <- function(games,
     max_reg_week <- games[game_type == "REG", max(old_week)]
     games[is.na(old_week), old_week := max_reg_week + playoff_summands()[game_type]]
   }
+
+  weeks_to_simulate <- games[is.na(result), unique(week)]
+  if (sim_include == 0L && any(playoff_weeks() %chin% weeks_to_simulate)){
+    cli::cli_abort(
+      "Detected post-season games to simulate but you have set \
+      {.arg sim_include} to {.val REG}."
+    )
+  }
+  teams <- data.table::as.data.table(nflseedR::divisions)
+  teams <- teams[team %chin% games$away_team | team %chin% games$home_team]
 
   # Calculate chunk size from the number of simulations and chunks
   # Check chunk size afterwards to make sure that the requested number of sims
