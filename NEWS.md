@@ -2,8 +2,13 @@
 
 * Fixed error in `simulate_nfl()` where it crashes because the "fake schedule" isn't a tibble. (#43)
 * The `summary` method `summary.nflseedR_simulation()` explicitly sets the columns width of the logo column because those columns are hidden in some unclear scenarios.
-* New function `nfl_standings()` for high efficient standings calculation. The functions `compute_division_ranks()`, `compute_conference_seeds()`, and `compute_draft_order()` will be deprecated in a future release.
+* New function `nfl_standings()` for high efficient standings calculation. The functions `compute_division_ranks()`, `compute_conference_seeds()`, and `compute_draft_order()` will be deprecated in a future release. (#45)
 * The `summary` method `summary.nflseedR_simulation()` now requires gt version v0.9.0 or higher to avoid warnings about deprecated arguments.
+* New function `nfl_simulations()` for a new, highly efficient approach to season simulations. This is a completely new design of the simulator, 
+with the aim of achieving significantly faster runtimes and eliminating weaknesses in the old approach (in `simulate_nfl()`). 
+The introduction of this function is supplemented by the two new utility functions `nflseedR_compute_results()`, and `simulations_verify_fct()`.
+These functions form the new standard for computing results (if the user does not have their own function for this) 
+respectively allow verification of the functionality of their own functions instead of `nflseedR_compute_results()`. (#47)
 
 # nflseedR 1.2.0
 
