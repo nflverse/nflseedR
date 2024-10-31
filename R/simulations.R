@@ -321,12 +321,12 @@ nfl_simulations <- function(games,
   overall <- all_standings[, list(
     wins = mean(wins),
     playoff = mean(!is.na(conf_rank) & conf_rank <= playoff_seeds),
-    div1 = mean(div_rank == 1),
-    seed1 = mean(!is.na(conf_rank) & conf_rank == 1),
+    div1 = mean(div_rank == 1L),
+    seed1 = mean(!is.na(conf_rank) & conf_rank == 1L),
     won_conf = if (sim_include > 0L) mean(exit >= (sb_exit - 1L)) else NA_real_,
     won_sb = if (sim_include > 0L) mean(exit == sb_exit) else NA_real_,
-    draft1 = if (sim_include > 1L) mean(draft_rank == 1) else NA_real_,
-    draft5 = if (sim_include > 1L) mean(draft_rank <= 5) else NA_real_
+    draft1 = if (sim_include > 1L) mean(draft_rank == 1L) else NA_real_,
+    draft5 = if (sim_include > 1L) mean(draft_rank <= 5L) else NA_real_
   ), keyby = c("conf", "division", "team")]
 
   all_standings[, exit := sims_exit_translate_to("CHAR")[as.character(exit)]]
@@ -335,7 +335,7 @@ nfl_simulations <- function(games,
   # simulation. The length of the half win sequence equals 2 * games + 1
   team_vec <- rep(
     sort(unique(all_standings$team)),
-    each = (max(all_standings$games) * 2 + 1) * length(unique(all_standings$sim))
+    each = (max(all_standings$games) * 2L + 1L) * length(unique(all_standings$sim))
   )
 
   # Create the win sequence vector and repeat every win for every sim
@@ -349,7 +349,7 @@ nfl_simulations <- function(games,
   # create sequence of sims and repeat it for every half win and for every team
   sims_vec <- rep(
     sort(unique(all_standings$sim)),
-    (max(all_standings$games) * 2 + 1) * length(unique(all_standings$team))
+    (max(all_standings$games) * 2L + 1L) * length(unique(all_standings$team))
   )
 
   team_wins <- data.table(
@@ -374,9 +374,9 @@ nfl_simulations <- function(games,
 
   ## Game Summary
   game_summary <- all_games[,list(
-    away_wins = sum(result < 0),
-    home_wins = sum(result > 0),
-    ties = sum(result == 0),
+    away_wins = sum(result < 0L),
+    home_wins = sum(result > 0L),
+    ties = sum(result == 0L),
     result = mean(result)
   ), keyby = c("game_type", "week", "away_team", "home_team")]
   game_summary[, games_played := away_wins + home_wins + ties]
