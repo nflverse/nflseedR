@@ -23,12 +23,12 @@ since 1999:
 \item{game_id}{The ID of the game as assigned by the nflverse. Note that this value matches the \code{game_id} field in nflfastR if you wish to join the data.}
 \item{season}{The year of the NFL season. This represents the whole season, so regular season games that happen in January as well as playoff games will occur in the year after this number.}
 \item{game_type}{What type of game? One of the following values:
-\itemize{
-\item{\code{REG}}{: a regular season game}
-\item{\code{WC}}{: a wildcard playoff game}
-\item{\code{DIV}}{: a divisional round playoff game}
-\item{\code{CON}}{: a conference championship}
-\item{\code{SB}}{: a Super Bowl}
+\describe{
+\item{\code{REG}}{a regular season game}
+\item{\code{WC}}{a wildcard playoff game}
+\item{\code{DIV}}{a divisional round playoff game}
+\item{\code{CON}}{a conference championship}
+\item{\code{SB}}{a Super Bowl}
 }
 }
 \item{week}{The week of the NFL season the game occurs in. Please note that the \code{game_type} will differ for weeks >= 18 because of the season expansion in 2021. Please use \code{game_type} to filter for regular season or postseason.}
@@ -56,11 +56,11 @@ since 1999:
 \item{over_odds}{Odd of the \code{total} being over the \code{total_line}.}
 \item{div_game}{Whether the game was a divisional game (= 1) or not (= 0).}
 \item{roof}{What was the status of the stadium's roof? Will be one of the following values:
-\itemize{
-\item{\code{closed}}{: Stadium has a retractable roof which was closed}
-\item{\code{dome}}{: An indoor stadium}
-\item{\code{open}}{: Stadium has a retractable roof which was open}
-\item{\code{outdoors}}{: An outdoor stadium}
+\describe{
+\item{\code{closed}}{Stadium has a retractable roof which was closed}
+\item{\code{dome}}{An indoor stadium}
+\item{\code{open}}{Stadium has a retractable roof which was open}
+\item{\code{outdoors}}{An outdoor stadium}
 }
 }
 \item{surface}{What type of ground the game was played on.}

@@ -1,3 +1,10 @@
+# nflseedR (development version)
+
+* Fixed error in `simulate_nfl()` where it crashes because the "fake schedule" isn't a tibble. (#43)
+* The `summary` method `summary.nflseedR_simulation()` explicitly sets the columns width of the logo column because those columns are hidden in some unclear scenarios.
+* New function `nfl_standings()` for high efficient standings calculation. The functions `compute_division_ranks()`, `compute_conference_seeds()`, and `compute_draft_order()` will be deprecated in a future release.
+* The `summary` method `summary.nflseedR_simulation()` now requires gt version v0.9.0 or higher to avoid warnings about deprecated arguments.
+
 # nflseedR 1.2.0
 
 * `simulate_nfl()` gained the new argument `sim_include` to allow more access to what is actually being simulated. This makes it possible skip playoff simulation or the (possibly heavy) computation of draft order. (#34)

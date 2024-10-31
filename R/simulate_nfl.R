@@ -183,7 +183,7 @@ simulate_nfl <- function(nfl_season = NULL,
       ".csv?raw=true"
     )
     tryCatch({
-      schedule <- data.table::fread(fn)
+      schedule <- data.table::fread(fn) %>% tibble::as_tibble()
       cli::cli_alert_info("No actual schedule exists for {.val {nfl_season}}, using fake schedule with correct opponents.")
     }, error = function(cond) {
       cli::cli_abort("Unable to locate a schedule for {.val {nfl_season}}")

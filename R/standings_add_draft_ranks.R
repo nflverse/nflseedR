@@ -162,6 +162,7 @@ break_draft_ties_by_division <- function(standings, verbosity){
       by = c("sim", "draft_rank")
     ]
   }
+
   # Remove the helper and update the counter because the tie is broken
   standings[, draft_rank_shared_by_one_div := NULL]
   standings <- draft_count_ranks(standings)
@@ -190,6 +191,7 @@ break_draft_ties_by_conference <- function(standings, verbosity){
       by = c("sim", "draft_rank")
     ]
   }
+
   # Remove the helper and update the counter because the tie is broken
   standings[, draft_rank_shared_by_one_conf := NULL]
   standings <- draft_count_ranks(standings)

@@ -43,7 +43,7 @@ pick in the draft based off game results. No trades of course.
 
 \item{tiebreaker_depth}{One of \code{"SOS"}, \code{"PRE-SOV"}, or \code{"RANDOM"}. Controls
 which tiebreakers are to be applied. The implemented tiebreakers are
-documented here \url{https://nflseedr.com/articles/tiebreaker.hmtl}.
+documented here \url{https://nflseedr.com/articles/tiebreaker.html}.
 The values mean:
 \itemize{
 \item \code{"SOS"} (default): Apply all tiebreakers through Strength of Schedule. If there are
@@ -86,5 +86,5 @@ try({#to avoid CRAN test problems
 }
 \seealso{
 For more information on the implemented tiebreakers, see
-\url{https://nflseedr.com/articles/tiebreaker.hmtl}
+\url{https://nflseedr.com/articles/tiebreaker.html}
 }

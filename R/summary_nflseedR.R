@@ -28,7 +28,7 @@
 #' @export
 summary.nflseedR_simulation <- function(object, ...){
   rlang::check_installed(
-    c("gt", "scales (>= 1.2.0)", "nflplotR (>= 1.2.0)"),
+    c("gt (>= 0.9.0)", "scales (>= 1.2.0)", "nflplotR (>= 1.2.0)"),
     "to compute a summary table."
   )
 
@@ -145,14 +145,14 @@ summary.nflseedR_simulation <- function(object, ...){
         gt::ends_with("won_conf"),
         gt::ends_with("won_sb")
       ),
-      colors = scales::col_numeric(palette = table_colors_positive, domain = c(0, 1))
+      fn = scales::col_numeric(palette = table_colors_positive, domain = c(0, 1))
     ) %>%
     gt::data_color(
       columns = c(
         gt::ends_with("draft1"),
         gt::ends_with("draft5")
       ),
-      colors = scales::col_numeric(palette = table_colors_negative, domain = c(0, 1))
+      fn = scales::col_numeric(palette = table_colors_negative, domain = c(0, 1))
     ) %>%
     nflplotR::gt_nfl_logos(locations = gt::cells_body(gt::ends_with("team"))) %>%
     gt::tab_source_note("nflseedR") %>%
