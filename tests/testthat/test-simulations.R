@@ -26,5 +26,7 @@ test_that("simulations works", {
   expect_snapshot_value(game_summary, style = "json2", variant = "sims")
 
   sim_params <-  sim[["sim_params"]]
+  sim_params[["nflseedR_version"]] <- NULL
+  sim_params[["finished_at"]] <- NULL
   expect_snapshot_value(sim_params, style = "json2", variant = "sims")
 })

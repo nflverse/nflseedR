@@ -406,7 +406,7 @@
         "names": {
           "type": "character",
           "attributes": {},
-          "value": ["nfl_season", "playoff_seeds", "simulations", "chunks", "byes_per_conf", "tiebreaker_depth", "sim_include", "verbosity", "nflseedR_version", "finished_at"]
+          "value": ["nfl_season", "playoff_seeds", "simulations", "chunks", "byes_per_conf", "tiebreaker_depth", "sim_include", "verbosity"]
         }
       },
       "value": [
@@ -449,34 +449,6 @@
           "type": "integer",
           "attributes": {},
           "value": [0]
-        },
-        {
-          "type": "list",
-          "attributes": {
-            "class": {
-              "type": "character",
-              "attributes": {},
-              "value": ["package_version", "numeric_version"]
-            }
-          },
-          "value": [
-            {
-              "type": "integer",
-              "attributes": {},
-              "value": [1, 2, 0, 9902]
-            }
-          ]
-        },
-        {
-          "type": "double",
-          "attributes": {
-            "class": {
-              "type": "character",
-              "attributes": {},
-              "value": ["POSIXct", "POSIXt"]
-            }
-          },
-          "value": [1730388627.43069696]
         }
       ]
     }
