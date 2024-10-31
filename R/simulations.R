@@ -110,7 +110,7 @@
 #' For more information, please see the section "Reproducible random number
 #' generation (RNG)" in [furrr::furrr_options].
 #'
-#' @returns An `nflseedR_simulation` object containing a list of 6 data frames
+#' @returns An `nflseedR_simulation` object containing a list of 6
 #'   data frames with the results of all simulated games,
 #'   the final standings in each simulated season (incl. playoffs and draft order),
 #'   summary statistics across all simulated seasons, and the simulation parameters. For a full list,
@@ -150,6 +150,7 @@ nfl_simulations <- function(games,
 
   # VALIDATE INPUT ----------------------------------------------------------
   games <- sims_validate_games(games)
+  nfl_season <- attr(games, "season")
   tiebreaker_depth <- rlang::arg_match(tiebreaker_depth)
   sim_include <- rlang::arg_match(sim_include)
   sim_include <- switch (sim_include,
@@ -393,6 +394,7 @@ nfl_simulations <- function(games,
       "team_wins" = data.table::setDF(team_wins),
       "game_summary" = data.table::setDF(game_summary),
       "sim_params" = list(
+        "nfl_season" = nfl_season,
         "playoff_seeds" = playoff_seeds,
         "simulations" = simulations,
         "chunks" = chunks,

@@ -48,9 +48,12 @@ sims_validate_games <- function(games){
     "game_type", "week", "away_team", "home_team",
     "away_rest", "home_rest", "location", "result"
   )
-  uses_sim <- all(c("sim", required_vars) %in% games_names)
-  uses_season <- all(c("season", required_vars) %in% games_names)
+  uses_sim <- all(c("sim", required_vars) %chin% games_names)
+  uses_season <- all(c("season", required_vars) %chin% games_names)
   setattr(games, "uses_season", uses_season)
+  # we want the season information in attributes for stuff like summary
+  if (uses_season) setattr(games, "season", unique(games[["season"]]))
+
   if( !any(uses_sim, uses_season) ){
     cli::cli_abort(
       "The {.arg games} argument has to be a table including one of the \\
