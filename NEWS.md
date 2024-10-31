@@ -8,7 +8,8 @@
 with the aim of achieving significantly faster runtimes and eliminating weaknesses in the old approach (in `simulate_nfl()`). 
 The introduction of this function is supplemented by the two new utility functions `nflseedR_compute_results()`, and `simulations_verify_fct()`.
 These functions form the new standard for computing results (if the user does not have their own function for this) 
-respectively allow verification of the functionality of their own functions instead of `nflseedR_compute_results()`. (#47)
+respectively allow verification of the functionality of their own functions instead of `nflseedR_compute_results()`. 
+It is planned that `simulate_nfl()` will be deprecated in a future release so that the dependencies of nflseedR can be significantly reduced. (#47)
 
 # nflseedR 1.2.0
 
