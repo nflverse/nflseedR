@@ -13,7 +13,27 @@
 #' `nflfastR` package. Please see `data-raw/divisions.R` for the code to create
 #' this data.
 #' @examples
-#' \donttest{
-#' divisions
-#' }
+#' str(divisions)
 "divisions"
+
+#' Example Games Data used in NFL Simulations
+#'
+#' @docType data
+#' @format A data frame with 284 rows and 9 variables containing NFL schedule
+#' information.
+#' @details
+#'  Please see `data-raw/sim_examples.R` for the code to create this data.
+#' @examples
+#' str(sims_games_example)
+"sims_games_example"
+
+#' Example Teams Data used in NFL Simulations
+#'
+#' @docType data
+#' @format A data frame with 64 rows and 5 variables containing team name and
+#' division information.
+#' @details
+#'  Please see `data-raw/sim_examples.R` for the code to create this data.
+#' @examples
+#' str(sims_teams_example)
+"sims_teams_example"
