@@ -122,6 +122,8 @@ sims_compute_playoff_dummy <- function(num_byes){
     "result" = NA_integer_
   )
 
+  setindexv(playoff_games, "game_type")
+
   wc_home_seeds <- seq(1 + num_byes, length.out = n_playoff_games[["WC"]] / 2)
   wc_away_seeds <- rev(wc_home_seeds + n_playoff_games[["WC"]] / 2)
 
@@ -159,8 +161,13 @@ nflseedR_compute_results <- function(teams, games, week_num, ...) {
     as.integer(x)
   }
 
-  setDT(games, key = c("sim", "week"))
-  setDT(teams, key = c("sim", "team"))
+  if (!data.table::is.data.table(games)) data.table::setDT(games)
+  if (!data.table::is.data.table(teams)) data.table::setDT(teams)
+
+  games_indices <- data.table::indices(games)
+  if (is.null(games_indices) || !"week" %chin% games_indices){
+    data.table::setindexv(games, c("week", "location", "game_type"))
+  }
 
   # get elo if not in teams data already
   # elo is expected to be a named vector of elo ratings where
@@ -208,13 +215,13 @@ nflseedR_compute_results <- function(teams, games, week_num, ...) {
         result := round_out(rnorm(.N, estimate, 13))]
   # compute elo shift
   games[week_num, `:=`(
-    outcome = fcase(
+    outcome = data.table::fcase(
       is.na(result), NA_real_,
       result > 0, 1,
       result < 0, 0,
       default = 0.5
     ),
-    elo_input = fcase(
+    elo_input = data.table::fcase(
       is.na(result), NA_real_,
       result > 0, elo_diff * 0.001 + 2.2,
       result < 0, -elo_diff * 0.001 + 2.2,
@@ -238,7 +245,7 @@ nflseedR_compute_results <- function(teams, games, week_num, ...) {
   teams[, elo_shift := elo_change[paste(sim, team, sep = "-")]]
   # teams that didn't play that week are missing in elo_change. Their shift
   # value will be NA. We set it to 0 to be able to add the shift for all teams
-  teams[, elo_shift := fifelse(is.na(elo_shift), 0, elo_shift)]
+  teams[, elo_shift := data.table::fifelse(is.na(elo_shift), 0, elo_shift)]
   teams[, elo := elo + elo_shift]
   # remove the shift variable for this round
   teams[, elo_shift := NULL]
