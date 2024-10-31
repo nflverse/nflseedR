@@ -142,8 +142,41 @@ sims_compute_playoff_dummy <- function(num_byes){
 }
 
 
+#' Compute NFL Game Results in Season Simulations
+#'
+#' This is the default nflseedR function to compute game results in season
+#' simulations.
+#'
+#' @inherit simulations_verify_fct
+#' @param week_num The week of a NFL season for which the function should
+#' compute results.
+#' @param ... Additional parameters used in the function. It is possible to pass
+#' the argument `elo` to the function. This must be a named vector in which the
+#' names correspond to the team abbreviations and the values correspond to the
+#' initial elo ratings, which are then updated after each week based on the
+#' results and transported to the next week.
+#'
+#' @details
+#' This function implements a variant of 538's elo model initially coded
+#' by Lee Sharpe (in nflseedR 1.0) and for performance rewritten
+#' by Sebastian Carl (in nflseedR 2.0).
+#'
+#' @return A list of updated `teams` and `games` tables.
 #' @export
-#' @noRd
+#' @keywords internal
+#' @examples
+#' g <- nflseedR::sims_games_example
+#' # The functions expects the variable "sim" instead of "season"
+#' g$sim <- g$season
+#' t <- nflseedR::sims_teams_example
+#'
+#' out <- nflseedR_compute_results(
+#'   teams = t,
+#'   games = g,
+#'   week_num = 5L
+#' )
+#'
+#' str(out, max.level = 2)
 nflseedR_compute_results <- function(teams, games, week_num, ...) {
   # this example estimates at PK/0 and 50%
   # estimate = is the median spread expected (positive = home team favored)
@@ -198,23 +231,23 @@ nflseedR_compute_results <- function(teams, games, week_num, ...) {
   ratings <- teams[, setNames(elo, paste(sim, team, sep = "-"))]
 
   # fill elo values of home and away teams
-  games[week_num, away_elo := ratings[paste(sim, away_team, sep = "-")], on = "week"]
-  games[week_num, home_elo := ratings[paste(sim, home_team, sep = "-")], on = "week"]
+  games[list(week_num), away_elo := ratings[paste(sim, away_team, sep = "-")], on = "week"]
+  games[list(week_num), home_elo := ratings[paste(sim, home_team, sep = "-")], on = "week"]
 
   # create elo diff
-  games[week_num, elo_diff := home_elo - away_elo + (home_rest - away_rest) / 7 * 25, on = "week"]
+  games[list(week_num), elo_diff := home_elo - away_elo + (home_rest - away_rest) / 7 * 25, on = "week"]
   # adjust elo diff for location = HOME
   games[list(week_num, "Home"), elo_diff := elo_diff + 20, on = c("week", "location")]
   # adjust elo_diff for game type = REG
   games[list(week_num, "REG"), elo_diff := elo_diff * 1.2, on = c("week", "game_type")]
   # create wp and estimate
-  games[week_num, `:=`(wp = 1 / (10^(-elo_diff / 400) + 1),
+  games[list(week_num), `:=`(wp = 1 / (10^(-elo_diff / 400) + 1),
                        estimate = elo_diff / 25), on = "week"]
   # adjust result in current week
-  games[week_num == week & is.na(result),
+  games[list(week_num) == week & is.na(result),
         result := round_out(rnorm(.N, estimate, 13))]
   # compute elo shift
-  games[week_num, `:=`(
+  games[list(week_num), `:=`(
     outcome = data.table::fcase(
       is.na(result), NA_real_,
       result > 0, 1,
@@ -228,12 +261,12 @@ nflseedR_compute_results <- function(teams, games, week_num, ...) {
       default = 1.0
     )
   ), on = "week"]
-  games[week_num, elo_mult := log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input, on = "week"]
-  games[week_num, elo_shift := 20 * elo_mult * (outcome - wp), on = "week"]
+  games[list(week_num), elo_mult := log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input, on = "week"]
+  games[list(week_num), elo_shift := 20 * elo_mult * (outcome - wp), on = "week"]
 
   # Build elo_shift vector based on results if home and away teams
-  elo_change_away <- games[week_num, setNames(-elo_shift, paste(sim, away_team, sep = "-")), on = "week"]
-  elo_change_home <- games[week_num, setNames(elo_shift,  paste(sim, home_team, sep = "-")), on = "week"]
+  elo_change_away <- games[list(week_num), setNames(-elo_shift, paste(sim, away_team, sep = "-")), on = "week"]
+  elo_change_home <- games[list(week_num), setNames(elo_shift,  paste(sim, home_team, sep = "-")), on = "week"]
   elo_change <- c(elo_change_away, elo_change_home)
 
   # drop helper columns
