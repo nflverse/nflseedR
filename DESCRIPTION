@@ -19,13 +19,13 @@ Imports:
     furrr,
     future,
     gsubfn,
-    lifecycle,
     magrittr,
     nflreadr (>= 1.1.3),
     progressr,
     purrr,
     rlang,
-    tibble
+    tibble,
+    tidyr
 Suggests: 
     gt (>= 0.9.0),
     knitr,
