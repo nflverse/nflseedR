@@ -112,7 +112,7 @@
 #'
 #' @returns An `nflseedR_simulation` object containing a list of 6
 #'   data frames with the results of all simulated games,
-#'   the final standings in each simulated season (incl. playoffs and draft order),
+#'   the final standings in each simulated season,
 #'   summary statistics across all simulated seasons, and the simulation parameters. For a full list,
 #'   please see [the package website](https://nflseedr.com/articles/articles/nflsim.html#simulation-output).
 #' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflsim.html)
@@ -164,11 +164,6 @@ nfl_simulations <- function(games,
     "MAX" = 2L,
     "NONE" = 0L
   )
-
-  # No NA results means
-  if (all(!is.na(games$result))){
-
-  }
 
   if (!is.function(compute_results)) {
     cli::cli_abort("The {.arg compute_results} argument must be a function!")
@@ -229,6 +224,24 @@ nfl_simulations <- function(games,
   }
 
   weeks_to_simulate <- games[is.na(result), unique(week)]
+  # If there are no weeks to simulate at this point, then games didn't have
+  # any NA results. This only happens if REG season is done but sim_include
+  # isn't set to "POST" or if all games are done.
+  if (length(weeks_to_simulate) == 0){
+    if (sim_include == 0L){
+      cli::cli_abort(
+        "You have set {.arg sim_include} to {.val REG} but there are no \
+        {.val {NA_integer_}} values in the result column of {.arg games}."
+      )
+    } else {
+      cli::cli_abort(
+        "It seems like there are no games left to simulate because there are no \
+        {.val {NA_integer_}} values in the result column of {.arg games}.\
+        Did you pass the wrong season? If you want standings, please see \
+        {.fun nfl_standings}."
+      )
+    }
+  }
   if (sim_include == 0L && any(playoff_weeks() %chin% weeks_to_simulate)){
     cli::cli_abort(
       "Detected post-season games to simulate but you have set \
@@ -245,26 +258,6 @@ nfl_simulations <- function(games,
   # but it's easier to catch this here and force users to provide better inputs.
   chunk_size <- sims_calculate_chunk_size(nsims = simulations, nchunks = chunks)
   sims_check_chunk_size(nsims = simulations, nchunks = chunks, chunk_size = chunk_size)
-
-  # What this should do:
-  # create games and teams in the size of one chunk instead of the complete
-  # size. This reduces the size of data spread across sessions in multisession
-  #
-  # pass the vector of sim identifiers to simulate_chunk and extract the
-  # correct part of this vector to put it into the games and teams data that are
-  # in chunk size.
-  #
-  # if postseason shall be simulated, calculate an empty postseason table and
-  # append it to games BEFORE it is used to create the chunk_games data
-  # This means that the complete table of games that are to be simulated
-  # is passed to simulate_chunks. Postseason is missing participating teams tho
-  #
-  # after the remainder of regular season games is simulated, calculate standings,
-  # and fill in missing teams to participate in playoffs. This has to be done in
-  # a loop because we have to figure out winners.
-  #
-  # when preparing chunks we also have to check if there are any regular season
-  # games remaining. If not, we can calc standings and move on with playoffs.
 
   # Repeat games and teams to fit the chunk size
   game_number <- nrow(games)

@@ -88,7 +88,7 @@ to set the grade of verbosity of status reports. They mean:
 \value{
 An \code{nflseedR_simulation} object containing a list of 6
 data frames with the results of all simulated games,
-the final standings in each simulated season (incl. playoffs and draft order),
+the final standings in each simulated season,
 summary statistics across all simulated seasons, and the simulation parameters. For a full list,
 please see \href{https://nflseedr.com/articles/articles/nflsim.html#simulation-output}{the package website}.
 }
