@@ -242,7 +242,7 @@ nfl_simulations <- function(games,
       )
     }
   }
-  if (sim_include == 0L && any(playoff_weeks() %chin% weeks_to_simulate)){
+  if (sim_include == 0L && any(playoff_weeks() %in% weeks_to_simulate)){
     cli::cli_abort(
       "Detected post-season games to simulate but you have set \
       {.arg sim_include} to {.val REG}."
