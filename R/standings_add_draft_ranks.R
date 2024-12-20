@@ -253,6 +253,9 @@ break_draft_ties_by_h2h <- function(standings, h2h, n_tied){
     )
   ]
   standings[, c("h2h_sweep", "tie_winner", "tie_loser") := NULL]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[draft_rank_counter == n_tied, draft_rank_counter := .N, by = c("sim", "draft_rank")]
   standings
 }
 
@@ -297,6 +300,9 @@ break_draft_ties_by_common_win_pct <- function(standings, h2h, n_tied){
     )
   ]
   standings[, c("common_win_pct", "common_games", "tie_winner", "tie_loser") := NULL]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[draft_rank_counter == n_tied, draft_rank_counter := .N, by = c("sim", "draft_rank")]
   standings
 }
 
@@ -324,6 +330,9 @@ break_draft_ties_by_sov <- function(standings, n_tied){
     )
   ]
   standings[, c("tie_winner", "tie_loser") := NULL]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[draft_rank_counter == n_tied, draft_rank_counter := .N, by = c("sim", "draft_rank")]
   standings
 }
 
