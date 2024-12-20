@@ -251,6 +251,9 @@ break_conf_ties_by_h2h <- function(standings, h2h, n_tied){
     )
   ]
   standings[, `:=`(h2h_sweep = NULL, tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
   standings
 }
 
@@ -278,6 +281,9 @@ break_conf_ties_by_conf_win_pct <- function(standings, n_tied){
     )
   ]
   standings[, `:=`(tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
   standings
 }
 
@@ -322,6 +328,9 @@ break_conf_ties_by_common_win_pct <- function(standings, h2h, n_tied){
     )
   ]
   standings[, `:=`(common_win_pct = NULL, common_games = NULL, tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
   standings
 }
 
@@ -349,6 +358,9 @@ break_conf_ties_by_sov <- function(standings, n_tied){
     )
   ]
   standings[, `:=`(tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
   standings
 }
 
@@ -377,6 +389,9 @@ break_conf_ties_by_sos <- function(standings, n_tied){
     )
   ]
   standings[, `:=`(tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
   standings
 }
 

@@ -24,8 +24,6 @@ divisions
 NFL team names and the conferences and divisions they belong to
 }
 \examples{
-\donttest{
-divisions
-}
+str(divisions)
 }
 \keyword{datasets}
