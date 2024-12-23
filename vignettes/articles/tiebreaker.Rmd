@@ -33,8 +33,8 @@ If, at the end of the regular season, two or more clubs in the same division fin
 1. Best won-lost-tied percentage in games played within the conference.
 1. Strength of victory in all games.
 1. Strength of schedule in all games
-1. Best combined ranking among conference teams in points scored and points allowed in all games.
-1. Best combined ranking among all teams in points scored and points allowed in all games.
+1. Best combined ranking (see [Other Tie-Breaking Procedures]) among conference teams in points scored and points allowed in all games.
+1. Best combined ranking (see [Other Tie-Breaking Procedures]) among all teams in points scored and points allowed in all games.
 1. Best net points in common games.
 1. Best net points in all games.
 1. Best net touchdowns in all games.
@@ -50,8 +50,8 @@ If two clubs remain tied after one or more clubs are eliminated during any step,
 1. Best won-lost-tied percentage in games played within the conference.
 1. Strength of victory in all games.
 1. Strength of schedule in all games.
-1. Best combined ranking among conference teams in points scored and points allowed in all games.
-1. Best combined ranking among all teams in points scored and points allowed in all games.
+1. Best combined ranking (see [Other Tie-Breaking Procedures]) among conference teams in points scored and points allowed in all games.
+1. Best combined ranking (see [Other Tie-Breaking Procedures]) among all teams in points scored and points allowed in all games.
 1. Best net points in common games.
 1. Best net points in all games.
 1. Best net touchdowns in all games.
@@ -86,8 +86,8 @@ If it is necessary to break ties to determine the three Wild Card clubs from eac
 1. Best won-lost-tied percentage in common games, minimum of four.
 1. Strength of victory in all games.
 1. Strength of schedule in all games.
-1. Best combined ranking among conference teams in points scored and points allowed in all games.
-1. Best combined ranking among all teams in points scored and points allowed in all games.
+1. Best combined ranking (see [Other Tie-Breaking Procedures]) among conference teams in points scored and points allowed in all games.
+1. Best combined ranking (see [Other Tie-Breaking Procedures]) among all teams in points scored and points allowed in all games.
 1. Best net points in conference games.
 1. Best net points in all games.
 1. Best net touchdowns in all games.
@@ -105,8 +105,8 @@ When the first Wild Card team has been identified, the procedure is repeated to 
 1. Best won-lost-tied percentage in common games, minimum of four.
 1. Strength of victory in all games.
 1. Strength of schedule in all games.
-1. Best combined ranking among conference teams in points scored and points allowed in all games.
-1. Best combined ranking among all teams in points scored and points allowed in all games.
+1. Best combined ranking (see [Other Tie-Breaking Procedures]) among conference teams in points scored and points allowed in all games.
+1. Best combined ranking (see [Other Tie-Breaking Procedures]) among all teams in points scored and points allowed in all games.
 1. Best net points in conference games.
 1. Best net points in all games.
 1. Best net touchdowns in all games.
@@ -118,7 +118,7 @@ When the first Wild Card team has been identified, the procedure is repeated to 
 1. In comparing records against common opponents among tied teams, the best won-lost-tied percentage is the deciding factor, since teams may have played an unequal number of games.
 1. To determine home field priority among division winners, apply Wild Card tiebreakers.
 1. To determine home field priority for Wild Card qualifiers, apply division tiebreakers (if teams are from the same division) or Wild Card tiebreakers (if teams are from different divisions).
-1. To determine the best combined ranking among conference team's in points scored and points allowed, add a team's position in the two categories, and the lowest score wins. For example, if Team A is first in points scored and second in points allowed, its combined ranking is "3." If Team B is third in points scored and first in points allowed, its combined ranking is "4." Team A then wins the tiebreaker. If two teams are tied for a position, both teams are awarded the ranking as if they held it solely. For example, if Team A and Team B are tied for first in points scored, each team is assigned a ranking of "1" in that category, and if Team C is third, its ranking will still be "3."
+1. To determine the *best combined ranking* among conference team's in points scored and points allowed, add a team's position in the two categories, and the lowest score wins. For example, if Team A is first in points scored and second in points allowed, its combined ranking is "3." If Team B is third in points scored and first in points allowed, its combined ranking is "4." Team A then wins the tiebreaker. If two teams are tied for a position, both teams are awarded the ranking as if they held it solely. For example, if Team A and Team B are tied for first in points scored, each team is assigned a ranking of "1" in that category, and if Team C is third, its ranking will still be "3."
 
 # Break a Tie for the Draft ("Selection Meeting")
 
