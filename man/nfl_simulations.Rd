@@ -55,9 +55,9 @@ up to the user to determine the optimum number themselves.}
 \item{byes_per_conf}{The number of teams with a playoff bye week per conference.
 This number influences the number of wildcard games that are simulated.}
 
-\item{tiebreaker_depth}{One of \code{"SOS"}, \code{"PRE-SOV"}, or \code{"RANDOM"}. Controls
-which tiebreakers are to be applied. The implemented tiebreakers are
-documented here \url{https://nflseedr.com/articles/tiebreaker.html}.
+\item{tiebreaker_depth}{One of \code{"SOS"}, \code{"PRE-SOV"}, \code{"POINTS"} or \code{"RANDOM"}.
+Controls which tiebreakers are to be applied. The implemented tiebreakers
+are documented here \url{https://nflseedr.com/articles/tiebreaker.html}.
 The values mean:
 \itemize{
 \item \code{"SOS"} (default): Apply all tiebreakers through Strength of Schedule. If there are
@@ -65,6 +65,12 @@ still remaining ties, break them through coin toss.
 \item \code{"PRE-SOV"}: Apply all tiebreakers before Strength of Victory. If there are
 still remaining ties, break them through coin toss. Why Pre SOV? It's the
 first tiebreaker that requires knowledge of how OTHER teams played.
+\item \code{"POINTS"}: Apply all tiebreakers through point differential. If there are
+still remaining ties, break them through coin toss. This will go beyond SOS
+and requires knowledge of points scored and points allowed. As this is not
+usually part of season simulations, caution is advised in this case.
+These tiebreakers should only be used if the scores are real or are
+deliberately simulated.
 \item \code{"RANDOM"}: Breaks all tiebreakers with a coin toss. I don't really know,
 why I allow this...
 }}
