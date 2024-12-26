@@ -22,15 +22,21 @@
 #'   the function skip tiebreakers of irrelevant conference ranks.
 #'   - `"DRAFT"`: `"CONF"` + the draft variable `draft_rank`. This is the actual
 #'   pick in the draft based off game results. No trades of course.
-#' @param tiebreaker_depth One of `"SOS"`, `"PRE-SOV"`, or `"RANDOM"`. Controls
-#'   which tiebreakers are to be applied. The implemented tiebreakers are
-#'   documented here <https://nflseedr.com/articles/tiebreaker.html>.
+#' @param tiebreaker_depth One of `"SOS"`, `"PRE-SOV"`, `"POINTS"` or `"RANDOM"`.
+#'   Controls which tiebreakers are to be applied. The implemented tiebreakers
+#'   are documented here <https://nflseedr.com/articles/tiebreaker.html>.
 #'   The values mean:
 #'   - `"SOS"` (default): Apply all tiebreakers through Strength of Schedule. If there are
 #'   still remaining ties, break them through coin toss.
 #'   - `"PRE-SOV"`: Apply all tiebreakers before Strength of Victory. If there are
 #'   still remaining ties, break them through coin toss. Why Pre SOV? It's the
 #'   first tiebreaker that requires knowledge of how OTHER teams played.
+#'   - `"POINTS"`: Apply all tiebreakers through point differential. If there are
+#'   still remaining ties, break them through coin toss. This will go beyond SOS
+#'   and requires knowledge of points scored and points allowed. As this is not
+#'   usually part of season simulations, caution is advised in this case.
+#'   These tiebreakers should only be used if the scores are real or are
+#'   deliberately simulated.
 #'   - `"RANDOM"`: Breaks all tiebreakers with a coin toss. I don't really know,
 #'   why I allow this...
 #' @param playoff_seeds If `NULL` (the default), will compute all 16 conference
@@ -61,7 +67,7 @@
 nfl_standings <- function(games,
                           ...,
                           ranks = c("CONF", "DIV", "DRAFT", "NONE"),
-                          tiebreaker_depth = c("SOS", "PRE-SOV", "RANDOM"),
+                          tiebreaker_depth = c("SOS", "PRE-SOV", "POINTS", "RANDOM"),
                           playoff_seeds = NULL,
                           verbosity = c("MIN", "MAX", "NONE")){
 
@@ -69,6 +75,12 @@ nfl_standings <- function(games,
   games <- standings_validate_games(games)
   ranks <- rlang::arg_match(ranks)
   tiebreaker_depth <- rlang::arg_match(tiebreaker_depth)
+  tiebreaker_depth <- switch (tiebreaker_depth,
+    "RANDOM" = 0L,
+    "PRE-SOV" = 1L,
+    "SOS" = 2L,
+    "POINTS" = 3L
+  )
   verbosity <- rlang::arg_match(verbosity)
   verbosity <- switch (verbosity,
     "MIN" = 1L,
