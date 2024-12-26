@@ -128,8 +128,6 @@ break_div_ties_by_h2h <- function(standings, h2h, n_tied){
 }
 
 break_div_ties_by_div_win_pct <- function(standings, n_tied){
-  ties <- div_compute_tied_teams(standings, n_tied)
-
   standings[
     div_rank_counter == n_tied,
     div_rank := min(div_rank) - 1 + frank(list(div_rank, -div_pct), ties.method = "min"),
@@ -179,8 +177,6 @@ break_div_ties_by_common_win_pct <- function(standings, h2h, n_tied){
 }
 
 break_div_ties_by_conf_win_pct <- function(standings, n_tied){
-  ties <- div_compute_tied_teams(standings, n_tied)
-
   standings[
     div_rank_counter == n_tied,
     div_rank := min(div_rank) - 1 + frank(list(div_rank, -conf_pct), ties.method = "min"),
@@ -196,8 +192,6 @@ break_div_ties_by_conf_win_pct <- function(standings, n_tied){
 }
 
 break_div_ties_by_sov <- function(standings, n_tied){
-  ties <- div_compute_tied_teams(standings, n_tied)
-
   standings[
     div_rank_counter == n_tied,
     div_rank := min(div_rank) - 1 + frank(list(div_rank, -sov), ties.method = "min"),
@@ -213,8 +207,6 @@ break_div_ties_by_sov <- function(standings, n_tied){
 }
 
 break_div_ties_by_sos <- function(standings, n_tied){
-  ties <- div_compute_tied_teams(standings, n_tied)
-
   standings[
     div_rank_counter == n_tied,
     div_rank := min(div_rank) - 1 + frank(list(div_rank, -sos), ties.method = "min"),
