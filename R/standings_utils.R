@@ -26,7 +26,8 @@ standings_h2h <- function(gd, verbosity){
     "REG",
     list(
       h2h_games = .N,
-      h2h_wins = sum(outcome)
+      h2h_wins = sum(outcome),
+      h2h_pd = sum(result)
     ),
     by = c("sim", "team", "opp"),
     on = "game_type"
