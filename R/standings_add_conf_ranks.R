@@ -7,7 +7,7 @@ add_conf_ranks <- function(standings,
   # Set ranks by win percentage in descending order by sim and conference.
   # If ties method is "random", data.table will break all ties randomly
   # and we won't need any further tie-breaking methods
-  dt_ties_method <- if (tiebreaker_depth == "RANDOM") "random" else "min"
+  dt_ties_method <- if (tiebreaker_depth == 0L) "random" else "min"
   setindexv(standings, "div_rank")
   standings[
     div_rank == 1,
@@ -22,7 +22,7 @@ add_conf_ranks <- function(standings,
 
   # If tiebreaker_depth == "RANDOM", all ties are broken at this stage. We add
   # tiebreaker information to the tied teams.
-  if (tiebreaker_depth == "RANDOM") {
+  if (tiebreaker_depth == 0L) {
     standings[, conf_rank_counter := .N, by = c("sim", "conf", "win_pct")]
     standings[
       conf_rank_counter > 1,
@@ -121,7 +121,7 @@ add_conf_ranks <- function(standings,
         standings <- break_conf_ties_by_common_win_pct(standings = standings, h2h = h2h, n_tied = tied_teams)
         if (conf_tie_break_done(standings, tied_teams)) next
 
-        if (tiebreaker_depth == "SOS"){
+        if (tiebreaker_depth >= 2L){
 
           # SOV ---------------------------------------------------------------------
           if (verbosity == 2L) report("CONF ({tied_teams}): Strength of Victory")

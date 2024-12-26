@@ -19,7 +19,7 @@ add_draft_ranks <- function(standings,
   # Set ranks by exit, win percentage, and sos in ascending order by sim.
   # If ties method is "random", data.table will break all ties randomly
   # and we won't need any further tie-breaking methods
-  dt_ties_method <- if (tiebreaker_depth == "RANDOM") "random" else "min"
+  dt_ties_method <- if (tiebreaker_depth == 0L) "random" else "min"
   standings[,
     draft_rank := frank(list(exit, win_pct, sos), ties.method = dt_ties_method),
     by = c("sim")
@@ -27,7 +27,7 @@ add_draft_ranks <- function(standings,
 
   # If tiebreaker_depth == "RANDOM", all ties are broken at this stage. We add
   # tiebreaker information to the tied teams.
-  if (tiebreaker_depth == "RANDOM") {
+  if (tiebreaker_depth == 0L) {
     standings[, draft_rank_counter := .N, by = c("sim", "exit", "win_pct", "sos")]
     standings[
       draft_rank_counter > 1,
