@@ -97,7 +97,21 @@ simulate_chunk <- function(chunk,
     data.table::setattr(standings, "h2h", NULL)
   }
 
+  # We use the exit variable to identify teams playing playoffs.
   standings[is.na(conf_rank) | conf_rank > playoff_seeds, exit := sims_exit_translate_to("INT")["REG"]]
+
+  # If sims_games includes already finished playoff games, then we have to fill
+  # the exit variable of the losers. Otherwise the wrong teams could be filled
+  # in the matchups.
+  po_results <- sim_games[week %in% playoff_weeks() & !is.na(result)]
+
+  if (nrow(po_results) > 0){
+    # identify losers and create a lookup vector of the playoff round they lost
+    po_results[, loser := fifelse(result > 0, away_team, home_team)]
+    po_losers <- po_results[, setNames(game_type, paste(sim, loser, sep = "-"))]
+    # use the lookup vector to set the exit of playoff losers
+    standings[is.na(exit), exit := sims_exit_translate_to("INT")[unname(po_losers[paste(sim, team, sep = "-")])]]
+  }
 
   # PLAYOFFS ----------------------------------------------------------------
   post_season_weeks <- base::intersect(playoff_weeks(), weeks_to_simulate)
