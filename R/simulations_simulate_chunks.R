@@ -77,6 +77,11 @@ simulate_chunk <- function(chunk,
   # We need conference ranks to identify playoff teams
   # sim_games includes games with missing results, i.e. post season, remove them
   # for the standings calculation
+  # NOTE: in case all regular season games are done before we enter the sims,
+  # we could calculate standings based on one season only and replicate it like
+  # we do with sim_games. However, we would have to pass standings, and h2h and
+  # write a bunch of code to handle that situation. Yes, it would be faster to
+  # simulate postseason only, but the speed increase isn't really worth the effort.
   standings <- nfl_standings(
     games = sim_games[!is.na(result)],
     # this is an undocumented feature that make standings return the h2h table
