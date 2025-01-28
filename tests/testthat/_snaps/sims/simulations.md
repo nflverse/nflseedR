@@ -113,12 +113,12 @@
         {
           "type": "character",
           "attributes": {},
-          "value": ["WC", "REG", "REG", "REG", "SB_WIN", "WC", "SB_WIN", "REG", "SB_WIN", "REG", "REG", "REG", "SB_WIN", "WC", "REG", "REG", "SB", "SB_WIN", "SB_WIN", "REG", "WC", "REG", "REG", "REG", "WC", "REG", "REG", "REG", "SB_WIN", "WC", "REG", "REG", "SB_WIN", "SB_WIN", "REG", "REG", "SB_WIN", "WC", "REG", "REG", "SB_WIN", "REG", "REG", "REG", "SB", "WC", "REG", "REG", "SB_WIN", "SB_WIN", "SB_WIN", "REG", "WC", "REG", "REG", "REG", "WC", "REG", "REG", "REG", "SB_WIN", "WC", "REG", "REG", "WC", "REG", "REG", "REG", "SB_WIN", "WC", "SB_WIN", "REG", "SB_WIN", "REG", "REG", "REG", "SB", "WC", "REG", "REG", "SB_WIN", "SB_WIN", "SB_WIN", "REG", "WC", "REG", "REG", "REG", "WC", "REG", "REG", "REG", "SB_WIN", "WC", "REG", "REG", "SB_WIN", "SB_WIN", "REG", "REG", "SB_WIN", "WC", "REG", "REG", "SB_WIN", "REG", "REG", "REG", "SB_WIN", "WC", "REG", "REG", "SB", "SB_WIN", "SB_WIN", "REG", "WC", "REG", "REG", "REG", "WC", "REG", "REG", "REG", "SB_WIN", "WC", "REG", "REG"]
+          "value": ["DIV", "REG", "REG", "REG", "CON", "WC", "SB_WIN", "REG", "DIV", "REG", "REG", "REG", "SB_WIN", "WC", "REG", "REG", "SB", "DIV", "DIV", "REG", "WC", "REG", "REG", "REG", "WC", "REG", "REG", "REG", "CON", "WC", "REG", "REG", "DIV", "SB_WIN", "REG", "REG", "CON", "WC", "REG", "REG", "DIV", "REG", "REG", "REG", "SB", "WC", "REG", "REG", "SB_WIN", "DIV", "DIV", "REG", "WC", "REG", "REG", "REG", "WC", "REG", "REG", "REG", "CON", "WC", "REG", "REG", "DIV", "REG", "REG", "REG", "CON", "WC", "SB_WIN", "REG", "DIV", "REG", "REG", "REG", "SB", "WC", "REG", "REG", "SB_WIN", "DIV", "DIV", "REG", "WC", "REG", "REG", "REG", "WC", "REG", "REG", "REG", "CON", "WC", "REG", "REG", "DIV", "SB_WIN", "REG", "REG", "CON", "WC", "REG", "REG", "DIV", "REG", "REG", "REG", "SB_WIN", "WC", "REG", "REG", "SB", "DIV", "DIV", "REG", "WC", "REG", "REG", "REG", "WC", "REG", "REG", "REG", "CON", "WC", "REG", "REG"]
         },
         {
           "type": "integer",
           "attributes": {},
-          "value": [20, 15, 12, 11, 29, 23, 26, 14, 28, 13, 4, 5, 32, 21, 6, 2, 25, 30, 27, 17, 24, 18, 16, 1, 19, 9, 8, 7, 31, 22, 10, 3, 28, 27, 15, 9, 29, 22, 17, 13, 25, 16, 5, 2, 24, 21, 6, 3, 32, 31, 26, 12, 23, 18, 14, 1, 20, 11, 10, 8, 30, 19, 7, 4, 23, 13, 16, 12, 31, 20, 26, 15, 28, 14, 4, 2, 25, 21, 8, 3, 32, 30, 27, 17, 24, 18, 11, 1, 19, 9, 10, 7, 29, 22, 6, 5, 28, 25, 16, 8, 31, 22, 17, 13, 26, 11, 3, 4, 32, 21, 6, 5, 24, 30, 27, 15, 23, 18, 14, 2, 19, 10, 12, 9, 29, 20, 7, 1]
+          "value": [25, 15, 12, 11, 28, 22, 31, 14, 26, 13, 4, 5, 32, 20, 6, 2, 30, 27, 24, 17, 23, 18, 16, 1, 19, 9, 8, 7, 29, 21, 10, 3, 26, 31, 15, 9, 28, 22, 17, 13, 24, 16, 5, 2, 30, 21, 6, 3, 32, 27, 25, 12, 23, 18, 14, 1, 20, 11, 10, 8, 29, 19, 7, 4, 27, 13, 16, 12, 29, 20, 31, 15, 25, 14, 4, 2, 30, 21, 8, 3, 32, 26, 24, 17, 23, 18, 11, 1, 19, 9, 10, 7, 28, 22, 6, 5, 26, 31, 16, 8, 29, 22, 17, 13, 24, 11, 3, 4, 32, 21, 6, 5, 30, 27, 25, 15, 23, 18, 14, 2, 19, 10, 12, 9, 28, 20, 7, 1]
         }
       ]
     }
@@ -253,12 +253,12 @@
         {
           "type": "double",
           "attributes": {},
-          "value": [0.5, 0, 0.25, 0.25, 0, 1, 0, 0.5, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+          "value": [0, 0, 0.25, 0.25, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
           "type": "double",
           "attributes": {},
-          "value": [0.5, 0, 0.25, 0.25, 0, 1, 0, 0.5, 0, 0, 1, 0, 0, 0.5, 0, 0, 1, 1, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+          "value": [0, 0, 0.25, 0.25, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
           "type": "double",
