@@ -77,5 +77,7 @@ finalize_standings <- function(standings, games){
   if (attributes(games)[["uses_season"]]){
     colnames(standings)[colnames(standings) == "sim"] <- "season"
   }
+  # Conference Point Differential is a deep tiebreaker. We don't need to return it
+  standings[, conf_pd := NULL]
   standings
 }

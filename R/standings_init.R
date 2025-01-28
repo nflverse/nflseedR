@@ -30,6 +30,10 @@ standings_init <- function(games_doubled, verbosity){
       conf_pct = fifelse(
         sum(conf_game) == 0, 0,
         sum(conf_game * outcome) / sum(conf_game)
+      ),
+      conf_pd = fifelse(
+        sum(conf_game) == 0, NA_integer_,
+        sum(conf_game * result)
       )
     ),
     by = c("sim", "team"),
@@ -61,12 +65,12 @@ standings_init <- function(games_doubled, verbosity){
     standings[,pd := pf - pa]
     standings <- standings[,list(
       sim, conf, division, team, games, wins, true_wins, losses, ties, pf, pa, pd,
-      win_pct, div_pct, conf_pct, sov, sos
+      win_pct, div_pct, conf_pct, sov, sos, conf_pd
     )]
   } else {
     standings <- standings[,list(
       sim, conf, division, team, games, wins, true_wins, losses, ties, win_pct,
-      div_pct, conf_pct, sov, sos
+      div_pct, conf_pct, sov, sos, conf_pd
     )]
   }
 
