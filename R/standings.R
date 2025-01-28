@@ -60,9 +60,9 @@
 #' \donttest{
 #' try({#to avoid CRAN test problems
 #'   games <- nflreadr::load_schedules(2021:2022)
-#'   standings <- nflseedR::nfl_standings(games)
-#'   print(standings, digits = 3)
 #' })
+#' standings <- nflseedR::nfl_standings(games)
+#' print(standings, digits = 3)
 #' }
 nfl_standings <- function(games,
                           ...,
