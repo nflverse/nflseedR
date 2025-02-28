@@ -46,7 +46,7 @@ value < 16 to make the function skip tiebreakers of those conference ranks.}
 \item{simulations}{Equals the number of times the given NFL season shall be simulated}
 
 \item{chunks}{The number of chunks \code{simulations} should be split into
-and be processed parallel. This parameter controls the number
+and potentially be processed parallel. This parameter controls the number
 of simulations per chunk. There is no obvious way to determine the ideal
 number of chunks in advance because there are too many dependencies on the
 hardware. Too many chunks can be just as slow as too few. It is therefore

@@ -23,7 +23,7 @@
 #' @param ... Additional parameters passed on to the function `compute_results`.
 #' @param simulations Equals the number of times the given NFL season shall be simulated
 #' @param chunks The number of chunks `simulations` should be split into
-#'   and be processed parallel. This parameter controls the number
+#'   and potentially be processed parallel. This parameter controls the number
 #'   of simulations per chunk. There is no obvious way to determine the ideal
 #'   number of chunks in advance because there are too many dependencies on the
 #'   hardware. Too many chunks can be just as slow as too few. It is therefore
