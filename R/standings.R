@@ -1,9 +1,10 @@
 #' Compute NFL Standings
 #'
-#' @param games A data frame containing real or simulated game scores. The
-#' following variables are required:
+#' @param games A data frame containing real or simulated game scores. Outside
+#' of simulations, this is simply the output of [nflreadr::load_schedules].
+#' The following variables are required as a minimum:
 #' \describe{
-#'  \item{sim or season}{A simulation ID. Normally 1 - n simulated seasons.}
+#'  \item{sim or season}{A season or simulation ID. Normally 1 - n simulated seasons.}
 #'  \item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a
 #'     game was a regular season game or one of the playoff rounds.}
 #'  \item{week}{The week of the corresponding NFL season.}
@@ -13,7 +14,11 @@
 #'    \code{\link{divisions}} for valid team abbreviations).}
 #'  \item{result}{Equals home score - away score.}
 #' }
+#' If tiebreakers beyond SOS are to be used, then the actual scores of the
+#' home (`home_score`) and away (`away_score`) teams must also be available.
+#'
 #' @param ... currently not used
+#'
 #' @param ranks One of `"DIV"`, `"CONF"`, `"DRAFT"`, or `"NONE"` to specify
 #'   which ranks - and thus the associated tiebreakers - are to be determined.
 #'   - `"DIV"`: Adds the division ranking variable `div_rank`
@@ -22,6 +27,7 @@
 #'   the function skip tiebreakers of irrelevant conference ranks.
 #'   - `"DRAFT"`: `"CONF"` + the draft variable `draft_rank`. This is the actual
 #'   pick in the draft based off game results. No trades of course.
+#'
 #' @param tiebreaker_depth One of `"SOS"`, `"PRE-SOV"`, `"POINTS"` or `"RANDOM"`.
 #'   Controls which tiebreakers are to be applied. The implemented tiebreakers
 #'   are documented here <https://nflseedr.com/articles/tiebreaker.html>.
@@ -52,6 +58,14 @@
 #' @return A data.table of NFL standings including the ranks selected in the
 #'   argument `ranks`
 #' @export
+#'
+#' @details
+#' nflseedR does not support all levels of tie-breakers at the moment. The
+#' deepest tie-breaker before currently is "best net points in all games".
+#' After that, the decision is made at random. However, the need for
+#' the last level ("best net touchdowns in all games") is extremely unlikely
+#' in practice. Deeper levels than strength of schedule have never actually been
+#' needed to resolve season-end standings since the NFL expanded to 32 teams.
 #'
 #' @seealso For more information on the implemented tiebreakers, see
 #'   <https://nflseedr.com/articles/tiebreaker.html>

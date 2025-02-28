@@ -14,10 +14,11 @@ nfl_standings(
 )
 }
 \arguments{
-\item{games}{A data frame containing real or simulated game scores. The
-following variables are required:
+\item{games}{A data frame containing real or simulated game scores. Outside
+of simulations, this is simply the output of \link[nflreadr:load_schedules]{nflreadr::load_schedules}.
+The following variables are required as a minimum:
 \describe{
-\item{sim or season}{A simulation ID. Normally 1 - n simulated seasons.}
+\item{sim or season}{A season or simulation ID. Normally 1 - n simulated seasons.}
 \item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a
 game was a regular season game or one of the playoff rounds.}
 \item{week}{The week of the corresponding NFL season.}
@@ -26,7 +27,9 @@ game was a regular season game or one of the playoff rounds.}
 \item{home_team}{Team abbreviation of the home team (please see
 \code{\link{divisions}} for valid team abbreviations).}
 \item{result}{Equals home score - away score.}
-}}
+}
+If tiebreakers beyond SOS are to be used, then the actual scores of the
+home (\code{home_score}) and away (\code{away_score}) teams must also be available.}
 
 \item{...}{currently not used}
 
@@ -80,6 +83,14 @@ argument \code{ranks}
 }
 \description{
 Compute NFL Standings
+}
+\details{
+nflseedR does not support all levels of tie-breakers at the moment. The
+deepest tie-breaker before currently is "best net points in all games".
+After that, the decision is made at random. However, the need for
+the last level ("best net touchdowns in all games") is extremely unlikely
+in practice. Deeper levels than strength of schedule have never actually been
+needed to resolve season-end standings since the NFL expanded to 32 teams.
 }
 \examples{
 \donttest{

@@ -18,10 +18,11 @@ nfl_simulations(
 )
 }
 \arguments{
-\item{games}{A data frame containing real or simulated game scores. The
-following variables are required:
+\item{games}{A data frame containing real or simulated game scores. Outside
+of simulations, this is simply the output of \link[nflreadr:load_schedules]{nflreadr::load_schedules}.
+The following variables are required as a minimum:
 \describe{
-\item{sim or season}{A simulation ID. Normally 1 - n simulated seasons.}
+\item{sim or season}{A season or simulation ID. Normally 1 - n simulated seasons.}
 \item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a
 game was a regular season game or one of the playoff rounds.}
 \item{week}{The week of the corresponding NFL season.}
@@ -30,7 +31,9 @@ game was a regular season game or one of the playoff rounds.}
 \item{home_team}{Team abbreviation of the home team (please see
 \code{\link{divisions}} for valid team abbreviations).}
 \item{result}{Equals home score - away score.}
-}}
+}
+If tiebreakers beyond SOS are to be used, then the actual scores of the
+home (\code{home_score}) and away (\code{away_score}) teams must also be available.}
 
 \item{compute_results}{Defaults to the nflseedR function \code{nflseedR_compute_results}.
 A function to compute results of games. Uses team, schedule, and week number
