@@ -98,14 +98,6 @@
 #' \item{stadium}{Name of the stadium.}
 #' }
 #' @export
-#' @name load_sharpe_games
-load_schedules <- function(...){
-  lifecycle::deprecate_warn("2.0.0", "load_schedules()", "nflreadr::load_schedules()")
-  nflreadr::load_schedules(...)
-}
-
-#' @export
-#' @rdname load_sharpe_games
 load_sharpe_games <- function(...){
   lifecycle::deprecate_warn("2.0.0", "load_sharpe_games()", "nflreadr::load_schedules()")
   nflreadr::load_schedules(...)

@@ -2,11 +2,8 @@
 % Please edit documentation in R/load_sharpe_games.R
 \name{load_sharpe_games}
 \alias{load_sharpe_games}
-\alias{load_schedules}
 \title{Load Lee Sharpe's Games File}
 \usage{
-load_schedules(...)
-
 load_sharpe_games(...)
 }
 \arguments{
