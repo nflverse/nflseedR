@@ -153,12 +153,14 @@ nfl_simulations <- function(games,
   nfl_season <- attr(games, "season")
   tiebreaker_depth <- rlang::arg_match(tiebreaker_depth)
   sim_include <- rlang::arg_match(sim_include)
+  sim_include_out <- sim_include
   sim_include <- switch (sim_include,
     "REG" = 0L,
     "POST" = 1L,
     "DRAFT" = 2L
   )
   verbosity <- rlang::arg_match(verbosity)
+  verbosity_out <- verbosity
   verbosity <- switch (verbosity,
     "MIN" = 1L,
     "MAX" = 2L,
@@ -393,8 +395,8 @@ nfl_simulations <- function(games,
         "chunks" = chunks,
         "byes_per_conf" = byes_per_conf,
         "tiebreaker_depth" = tiebreaker_depth,
-        "sim_include" = sim_include,
-        "verbosity" = verbosity,
+        "sim_include" = sim_include_out,
+        "verbosity" = verbosity_out,
         "nflseedR_version" = utils::packageVersion("nflseedR"),
         "finished_at" = Sys.time()
       )
