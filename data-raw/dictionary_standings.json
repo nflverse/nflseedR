@@ -1,0 +1,86 @@
+[
+  {
+    "variable": "sim",
+    "description": "The ID number of the simulation. All rows with the same value of `sim` refer to the same simulated season."
+  },
+  {
+    "variable": "team",
+    "description": "The abbreviation representing the team"
+  },
+  {
+    "variable": "conf",
+    "description": "The conference the team is in (such as `AFC`)"
+  },
+  {
+    "variable": "division",
+    "description": "The division the team is in (such as `-string NFC West`)"
+  },
+  {
+    "variable": "games",
+    "description": "How many regular season games the team has played"
+  },
+  {
+    "variable": "wins",
+    "description": "The number of games the team has won, counting ties as 0.5 wins"
+  },
+  {
+    "variable": "true_wins",
+    "description": "The number of games the team has won, ignoring ties."
+  },
+  {
+    "variable": "losses",
+    "description": "The number of games the team has lost."
+  },
+  {
+    "variable": "ties",
+    "description": "The number of games that ended in a tie."
+  },
+  {
+    "variable": "win_pct",
+    "description": "The win rate of the team. Equal to `wins / games`."
+  },
+  {
+    "variable": "div_pct",
+    "description": "The win rate of the teams in games played against teams in the same division."
+  },
+  {
+    "variable": "conf_pct",
+    "description": "The win rate of the teams in games played against teams in the same conference."
+  },
+  {
+    "variable": "sov",
+    "description": "Strength of Victory. The combined win rate of teams this team has beaten."
+  },
+  {
+    "variable": "sos",
+    "description": "Strength of Schedule. The combined win rate of teams this team has played."
+  },
+  {
+    "variable": "div_rank",
+    "description": "What place the team finished in its division."
+  },
+  {
+    "variable": "div_tie_broken_by",
+    "description": "If the team obtained its division rank through a tiebreaker, the tiebreaker used and how many teams were tied at that time is shown here."
+  },
+  {
+    "variable": "conf_rank",
+    "description": "What place the team finished in its conference."
+  },
+  {
+    "variable": "conf_tie_broken_by",
+    "description": "If the team obtained its conference rank through a tiebreaker, the tiebreaker used and how many teams were tied at that time is shown here."
+  },
+  {
+    "variable": "exit",
+    "description": "The game_type of the team's last game. Super Bowl winners will be 'SB_WIN'"
+  },
+  {
+    "variable": "draft_rank",
+    "description": "Which pick the team earned in the following NFL Draft. Note that this value is before any trades, forfeits, or other modifications to draft picks."
+  },
+  {
+    "variable": "draft_tie_broken_by",
+    "description": "If the team obtained its draft rank through a tiebreaker, the tiebreaker used and how many teams were tied at that time is shown here."
+  }
+]
