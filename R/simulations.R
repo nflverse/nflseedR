@@ -281,7 +281,7 @@ nfl_simulations <- function(games,
   all <- furrr::future_map(
     .x = seq_len(chunks),
     .f = simulate_chunk,
-    compute_results = nflseedR_compute_results,
+    compute_results = compute_results,
     ...,
     games_sim_vec = games_sim_vec,
     teams_sim_vec = teams_sim_vec,
