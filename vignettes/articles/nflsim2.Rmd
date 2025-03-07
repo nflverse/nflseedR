@@ -351,9 +351,9 @@ biased_games_model <- function(teams, games, week_num, ...) {
         away_team == best | home_team == worst ~ -3,
         away_team == worst | home_team == best ~ 3,
         away_team < home_team ~
-          sample(c(-3, 3), n(), prob = c(0.9, 0.1), replace = TRUE),
+          sample(c(-3, 3), dplyr::n(), prob = c(0.9, 0.1), replace = TRUE),
         away_team > home_team ~
-          sample(c(-3, 3), n(), prob = c(0.1, 0.9), replace = TRUE),
+          sample(c(-3, 3), dplyr::n(), prob = c(0.1, 0.9), replace = TRUE),
         TRUE ~ 0
       )
     )
