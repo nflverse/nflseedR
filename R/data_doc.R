@@ -37,3 +37,38 @@
 #' @examples
 #' str(sims_teams_example)
 "sims_teams_example"
+
+#' Data Dictionary: Simulations | Standings
+#'
+#' A dataframe containing the data dictionary of the simulation output table "standings"
+#'
+#' @seealso <https://nflseedr.com/articles/articles/nflsim2.html#simulation-output>
+"dictionary_standings"
+
+#' Data Dictionary: Simulations | Games
+#'
+#' A dataframe containing the data dictionary of the simulation output table "games"
+#'
+#' @seealso <https://nflseedr.com/articles/articles/nflsim2.html#simulation-output>
+"dictionary_games"
+
+#' Data Dictionary: Simulations | Overall
+#'
+#' A dataframe containing the data dictionary of the simulation output table "overall"
+#'
+#' @seealso <https://nflseedr.com/articles/articles/nflsim2.html#simulation-output>
+"dictionary_overall"
+
+#' Data Dictionary: Simulations | Team Wins
+#'
+#' A dataframe containing the data dictionary of the simulation output table "team_wins"
+#'
+#' @seealso <https://nflseedr.com/articles/articles/nflsim2.html#simulation-output>
+"dictionary_team_wins"
+
+#' Data Dictionary: Simulations | Game Summary
+#'
+#' A dataframe containing the data dictionary of the simulation output table "game_summary"
+#'
+#' @seealso <https://nflseedr.com/articles/articles/nflsim2.html#simulation-output>
+"dictionary_game_summary"

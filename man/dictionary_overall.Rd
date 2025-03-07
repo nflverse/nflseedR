@@ -13,4 +13,7 @@ dictionary_overall
 \description{
 A dataframe containing the data dictionary of the simulation output table "overall"
 }
+\seealso{
+\url{https://nflseedr.com/articles/articles/nflsim2.html#simulation-output}
+}
 \keyword{datasets}

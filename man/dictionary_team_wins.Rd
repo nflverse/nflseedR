@@ -13,4 +13,7 @@ dictionary_team_wins
 \description{
 A dataframe containing the data dictionary of the simulation output table "team_wins"
 }
+\seealso{
+\url{https://nflseedr.com/articles/articles/nflsim2.html#simulation-output}
+}
 \keyword{datasets}

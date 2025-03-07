@@ -13,4 +13,7 @@ dictionary_game_summary
 \description{
 A dataframe containing the data dictionary of the simulation output table "game_summary"
 }
+\seealso{
+\url{https://nflseedr.com/articles/articles/nflsim2.html#simulation-output}
+}
 \keyword{datasets}

@@ -99,7 +99,7 @@ An \code{nflseedR_simulation} object containing a list of 6
 data frames with the results of all simulated games,
 the final standings in each simulated season,
 summary statistics across all simulated seasons, and the simulation parameters. For a full list,
-please see \href{https://nflseedr.com/articles/articles/nflsim.html#simulation-output}{the package website}.
+please see \href{https://nflseedr.com/articles/articles/nflsim2.html#simulation-output}{the package website}.
 }
 \description{
 Simulate NFL games based on a user provided games/schedule object that
@@ -224,7 +224,7 @@ str(sim, max.level = 3)
 }
 }
 \seealso{
-The examples \href{https://nflseedr.com/articles/articles/nflsim.html}{on the package website}
+The examples \href{https://nflseedr.com/articles/articles/nflsim2.html}{on the package website}
 
 The method \code{\link[=summary.nflseedR_simulation]{summary.nflseedR_simulation()}} that creates a pretty html summary table.
 }

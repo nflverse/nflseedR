@@ -114,8 +114,8 @@
 #'   data frames with the results of all simulated games,
 #'   the final standings in each simulated season,
 #'   summary statistics across all simulated seasons, and the simulation parameters. For a full list,
-#'   please see [the package website](https://nflseedr.com/articles/articles/nflsim.html#simulation-output).
-#' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflsim.html)
+#'   please see [the package website](https://nflseedr.com/articles/articles/nflsim2.html#simulation-output).
+#' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflsim2.html)
 #' @seealso The method [nflseedR::summary.nflseedR_simulation()] that creates a pretty html summary table.
 #' @export
 #' @examples

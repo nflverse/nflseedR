@@ -13,4 +13,7 @@ dictionary_standings
 \description{
 A dataframe containing the data dictionary of the simulation output table "standings"
 }
+\seealso{
+\url{https://nflseedr.com/articles/articles/nflsim2.html#simulation-output}
+}
 \keyword{datasets}
