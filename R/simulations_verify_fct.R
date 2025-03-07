@@ -211,7 +211,7 @@ simulations_verify_fct <- function(compute_results,
     }
   }
 
-  if (interactive()) cli::cli_alert_success("No problems found!")
+  if (interactive() || identical(Sys.getenv("IN_PKGDOWN"), "true")) cli::cli_alert_success("No problems found!")
 
   invisible(TRUE)
 }
