@@ -1,6 +1,4 @@
 test_that("season simulator works", {
-  g <- load_sharpe_games()
-  skip_if_not(nrow(g) > 0, message = NULL)
   # dplyr v1.1.1 introduced a warning about many-to-many relationships
   # that completely explodes in Lee's code
   # for the moment, we skip tests if that version of dplyr is installed

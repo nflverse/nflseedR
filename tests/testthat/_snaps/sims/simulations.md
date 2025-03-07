@@ -441,14 +441,14 @@
           "value": ["SOS"]
         },
         {
-          "type": "integer",
+          "type": "character",
           "attributes": {},
-          "value": [2]
+          "value": ["DRAFT"]
         },
         {
-          "type": "integer",
+          "type": "character",
           "attributes": {},
-          "value": [0]
+          "value": ["NONE"]
         }
       ]
     }
