@@ -100,6 +100,9 @@ simulations_verify_fct <- function(compute_results,
   old_teams <- data.table::copy(teams)
   old_games <- data.table::copy(games)
 
+  # convert games to data.frame to avoid data.table warnings regarding shallow copies
+  games <- setDF(games)
+
   # Simulate a couple of weeks, and check data structure and results each week
   # Errors, if anything problematic happens
   for (week_num in weeks_to_simulate) {
@@ -145,18 +148,18 @@ simulations_verify_fct <- function(compute_results,
         i <- i + 1
         problems[i] <- "`games` was not in the returned list"
       } else {
-        games <- return_value$games
-        if (nrow(games) != nrow(old_games)) {
+        out_games <- return_value$games
+        if (nrow(out_games) != nrow(old_games)) {
           i <- i + 1
           problems[i] <- paste(
             "`games` changed from", nrow(old_games), "to",
-            nrow(games), "rows",
+            nrow(out_games), "rows",
             collapse = " "
           )
         }
-        if ( any( !colnames(old_games) %chin% colnames(games) ) ){
+        if ( any( !colnames(old_games) %chin% colnames(out_games) ) ){
           i <- i + 1
-          removed_names <- colnames(old_games)[!colnames(old_games) %chin% colnames(games)]
+          removed_names <- colnames(old_games)[!colnames(old_games) %chin% colnames(out_games)]
           problems[i] <- paste0(
             "`games` column(s) ", paste0("`", removed_names, "`", collapse = ", "), " removed"
           )
@@ -175,9 +178,12 @@ simulations_verify_fct <- function(compute_results,
       ))
     }
 
+    # convert out_games to dt for further computations
+    setDT(out_games)
+
     # If the above didn't fail, we need to make sure that results are OK
     # identify improper results values
-    games[, problem := fcase(
+    out_games[, problem := fcase(
       week == week_num & is.na(result),
       "a result from the current week is missing",
       week != week_num & !is.na(.old_result) & is.na(result),
@@ -191,7 +197,7 @@ simulations_verify_fct <- function(compute_results,
       default = NA_character_
     )]
 
-    problems <- games[!is.na(problem), unique(problem)]
+    problems <- out_games[!is.na(problem), unique(problem)]
     names(problems) <- rep("x", length(problems))
     # report result value problems
     if (length(problems)) {
