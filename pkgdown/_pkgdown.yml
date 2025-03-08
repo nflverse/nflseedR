@@ -18,10 +18,10 @@ template:
       card: summary_large_image
 
 authors:
-  Lee Sharpe:
-    href: https://twitter.com/LeeSharpeNFL
   Sebastian Carl:
     href: https://bsky.app/profile/mrcaseb.nflverse.com
+  Lee Sharpe:
+    href: https://twitter.com/LeeSharpeNFL
 
 navbar:
   type: dark
