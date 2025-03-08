@@ -13,7 +13,6 @@
 #' @importFrom furrr future_map furrr_options
 #' @importFrom future plan
 #' @importFrom lifecycle deprecated
-#' @importFrom magrittr %>%
 #' @importFrom progressr progressor
 #' @importFrom purrr pluck
 #' @importFrom rlang inform

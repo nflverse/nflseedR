@@ -9,14 +9,14 @@ report <- function(msg,
 
 # this makes it so there's two rows per game (one/team)
 double_games <- function(g) {
-  g1 <- g %>%
-    select(sim, game_type, week, away_team, home_team, result) %>%
-    rename(team = away_team, opp = home_team) %>%
+  g1 <- g |>
+    select(sim, game_type, week, away_team, home_team, result) |>
+    rename(team = away_team, opp = home_team) |>
     mutate(result = -1 * result)
-  g2 <- g %>%
-    select(sim, game_type, week, away_team, home_team, result) %>%
+  g2 <- g |>
+    select(sim, game_type, week, away_team, home_team, result) |>
     rename(team = home_team, opp = away_team)
-  g <- bind_rows(g1, g2) %>%
+  g <- bind_rows(g1, g2) |>
     mutate(outcome = case_when(
       result > 0 ~ 1,
       result < 0 ~ 0,
@@ -38,4 +38,14 @@ strip_nflverse_attributes <- function(df){
   input_remove <- input_attrs[grepl("nflverse|.internal.selfref", input_attrs)]
   attributes(df)[input_remove] <- NULL
   df
+}
+
+release_bullets <- function() {
+  c(
+    '`devtools::check_mac_release()`',
+    '`rhub::rhub_check(platforms = rhub::rhub_platforms()$name[rhub::rhub_platforms()$name != "rchk"])`',
+    '`pkgdown::check_pkgdown()`',
+    '`usethis::use_tidy_thanks()`',
+    NULL
+  )
 }

@@ -100,8 +100,10 @@ simulations_verify_fct <- function(compute_results,
   old_teams <- data.table::copy(teams)
   old_games <- data.table::copy(games)
 
-  # convert games to data.frame to avoid data.table warnings regarding shallow copies
-  games <- setDF(games)
+  if (as.character(substitute(compute_results)) != "nflseedR_compute_results"){
+    # convert games to data.frame to avoid data.table warnings regarding shallow copies
+    games <- setDF(games)
+  }
 
   # Simulate a couple of weeks, and check data structure and results each week
   # Errors, if anything problematic happens

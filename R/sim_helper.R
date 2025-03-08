@@ -20,23 +20,23 @@ simulate_round <- function(sim_round,
 
   # games have copies per sim
   sched_rows <- nrow(schedule)
-  games <- schedule[rep(seq_len(sched_rows), each = iter_sims_num), ] %>%
-    mutate(sim = rep(iter_sims, sched_rows)) %>%
+  games <- schedule[rep(seq_len(sched_rows), each = iter_sims_num), ] |>
+    mutate(sim = rep(iter_sims, sched_rows)) |>
     select(sim, everything())
 
   # teams starts as divisions data
-  teams <- nflseedR::divisions %>%
+  teams <- nflseedR::divisions |>
     filter(team %in% schedule$away_team | team %in% schedule$home_team)
-  teams <- teams[rep(seq_len(nrow(teams)), iter_sims_num), ] %>%
-    mutate(sim = rep(iter_sims, each = nrow(teams))) %>%
+  teams <- teams[rep(seq_len(nrow(teams)), iter_sims_num), ] |>
+    mutate(sim = rep(iter_sims, each = nrow(teams))) |>
     select(sim, everything())
 
   # playoff seeds bounds checking
-  max_seeds <- teams %>%
-    group_by(sim, conf) %>%
-    summarize(count=n()) %>%
-    ungroup() %>%
-    pull(count) %>%
+  max_seeds <- teams |>
+    group_by(sim, conf) |>
+    summarize(count=n()) |>
+    ungroup() |>
+    pull(count) |>
     min()
   if (playoff_seeds < 1 || playoff_seeds > max_seeds) {
     stop("`playoff_seeds` must be between 1 and ",max_seeds)
@@ -47,7 +47,7 @@ simulate_round <- function(sim_round,
 
     # recall old data for comparison
     old_teams <- teams
-    old_games <- games %>%
+    old_games <- games |>
       rename(.old_result = result)
 
     # estimate and simulate games
@@ -121,8 +121,8 @@ simulate_round <- function(sim_round,
     }
 
     # identify improper results values
-    problems <- old_games %>%
-      inner_join(games, by = intersect(colnames(old_games), colnames(games))) %>%
+    problems <- old_games |>
+      inner_join(games, by = intersect(colnames(old_games), colnames(games))) |>
       mutate(problem = case_when(
         week == week_num & is.na(result) ~
         "a result from the current week is missing",
@@ -137,10 +137,10 @@ simulate_round <- function(sim_round,
         !is.na(result) & result == 0 & game_type != "REG" ~
         "a playoff game resulted in a tie (had result == 0)",
         TRUE ~ NA_character_
-      )) %>%
-      filter(!is.na(problem)) %>%
-      pull(problem) %>%
-      unique() %>%
+      )) |>
+      filter(!is.na(problem)) |>
+      pull(problem) |>
+      unique() |>
       paste(collapse = ", ")
 
     # report result value problems
@@ -168,19 +168,20 @@ simulate_round <- function(sim_round,
 
   #### FIND DIVISIONAL STANDINGS AND PLAYOFF SEEDINGS ####
 
-  standings_and_h2h <- games %>%
+  standings_and_h2h <- games |>
     compute_division_ranks(
       tiebreaker_depth = tiebreaker_depth,
       .debug = .debug
-    ) %>%
+    )
+  standings_and_h2h <- standings_and_h2h |>
     compute_conference_seeds(
-      h2h = .$h2h,
+      h2h = standings_and_h2h$h2h,
       tiebreaker_depth = tiebreaker_depth,
       .debug = .debug,
       playoff_seeds = playoff_seeds
     )
 
-  teams <- teams %>%
+  teams <- teams |>
     inner_join(standings_and_h2h$standings,
       by = intersect(colnames(teams), colnames(standings_and_h2h$standings))
     )
@@ -190,22 +191,22 @@ simulate_round <- function(sim_round,
   if (sim_include != "REG"){# sim_include allows us to skip playoff simulation
 
     # week tracker
-    week_num <- games %>%
-      filter(game_type == "REG") %>%
-      pull(week) %>%
+    week_num <- games |>
+      filter(game_type == "REG") |>
+      pull(week) |>
       max()
 
     # identify playoff teams
-    playoff_teams <- teams %>%
-      filter(!is.na(seed)) %>%
-      select(sim, conf, seed, team) %>%
+    playoff_teams <- teams |>
+      filter(!is.na(seed)) |>
+      select(sim, conf, seed, team) |>
       arrange(sim, conf, seed)
 
     # num teams tracker
-    num_teams <- playoff_teams %>%
-      group_by(sim, conf) %>%
-      summarize(count = n()) %>%
-      pull(count) %>%
+    num_teams <- playoff_teams |>
+      group_by(sim, conf) |>
+      summarize(count = n()) |>
+      pull(count) |>
       max()
 
     # bye count (per conference)
@@ -225,18 +226,18 @@ simulate_round <- function(sim_round,
       # seed_numeate games if they don't already exist
       if (!any(games$week == week_num)) {
         # teams playing this round
-        add_teams <- playoff_teams %>%
-          group_by(sim, conf) %>%
-          slice((2^ceiling(log(num_teams, 2)) - num_teams + 1):num_teams) %>%
-          mutate(round_rank = row_number()) %>%
+        add_teams <- playoff_teams |>
+          group_by(sim, conf) |>
+          slice((2^ceiling(log(num_teams, 2)) - num_teams + 1):num_teams) |>
+          mutate(round_rank = row_number()) |>
           ungroup()
 
         # games to seed_numeate
-        add_games <- add_teams %>%
-          inner_join(add_teams, by = c("sim", "conf")) %>%
-          filter(round_rank.x > round_rank.y) %>%
-          filter(round_rank.x + round_rank.y == max(round_rank.x) + 1) %>%
-          rename(away_team = team.x, home_team = team.y) %>%
+        add_games <- add_teams |>
+          inner_join(add_teams, by = c("sim", "conf")) |>
+          filter(round_rank.x > round_rank.y) |>
+          filter(round_rank.x + round_rank.y == max(round_rank.x) + 1) |>
+          rename(away_team = team.x, home_team = team.y) |>
           mutate(
             week = week_num,
             game_type = case_when(
@@ -257,7 +258,7 @@ simulate_round <- function(sim_round,
               TRUE ~ 7
             ),
             location = ifelse(conf == "SB", "Neutral", "Home")
-          ) %>%
+          ) |>
           select(-conf, -seed.x, -seed.y, -round_rank.x, -round_rank.y)
 
         # add to games
@@ -273,47 +274,47 @@ simulate_round <- function(sim_round,
       list[teams, games] <- return_value
 
       # record losers
-      teams <- games %>%
-        filter(week == week_num) %>%
-        double_games() %>%
-        filter(outcome == 0) %>%
-        select(sim, team, outcome) %>%
-        right_join(teams, by = c("sim", "team")) %>%
-        mutate(exit = ifelse(!is.na(outcome), week_num, exit)) %>%
+      teams <- games |>
+        filter(week == week_num) |>
+        double_games() |>
+        filter(outcome == 0) |>
+        select(sim, team, outcome) |>
+        right_join(teams, by = c("sim", "team")) |>
+        mutate(exit = ifelse(!is.na(outcome), week_num, exit)) |>
         select(-outcome)
 
       # if super bowl, record winner
       if (any(playoff_teams$conf == "SB")) {
         # super bowl winner exit is +1 to SB week
-        teams <- games %>%
-          filter(week == week_num) %>%
-          double_games() %>%
-          filter(outcome == 1) %>%
-          select(sim, team, outcome) %>%
-          right_join(teams, by = c("sim", "team")) %>%
-          mutate(exit = ifelse(!is.na(outcome), week_num + 1, exit)) %>%
+        teams <- games |>
+          filter(week == week_num) |>
+          double_games() |>
+          filter(outcome == 1) |>
+          select(sim, team, outcome) |>
+          right_join(teams, by = c("sim", "team")) |>
+          mutate(exit = ifelse(!is.na(outcome), week_num + 1, exit)) |>
           select(-outcome)
       }
 
       # filter to winners or byes
-      playoff_teams <- games %>%
-        filter(week == week_num) %>%
-        double_games() %>%
-        right_join(playoff_teams, by = c("sim", "team")) %>%
-        filter(is.na(result) | result > 0) %>%
-        select(sim, conf, seed, team) %>%
+      playoff_teams <- games |>
+        filter(week == week_num) |>
+        double_games() |>
+        right_join(playoff_teams, by = c("sim", "team")) |>
+        filter(is.na(result) | result > 0) |>
+        select(sim, conf, seed, team) |>
         arrange(sim, conf, seed)
 
       # update number of teams
-      num_teams <- playoff_teams %>%
-        group_by(sim, conf) %>%
-        summarize(count = n()) %>%
-        pull(count) %>%
+      num_teams <- playoff_teams |>
+        group_by(sim, conf) |>
+        summarize(count = n()) |>
+        pull(count) |>
         max()
 
       # if at one team per conf, loop once more for the super bowl
       if (num_teams == 1 && !any(playoff_teams$conf == "SB")) {
-        playoff_teams <- playoff_teams %>%
+        playoff_teams <- playoff_teams |>
           mutate(conf = "SB", seed = 1)
         num_teams <- 2
       }
@@ -322,7 +323,7 @@ simulate_round <- function(sim_round,
 
   #### DRAFT ORDER ####
   if (sim_include == "DRAFT"){
-    teams <- standings_and_h2h %>%
+    teams <- standings_and_h2h |>
       compute_draft_order(
         games = games,
         h2h = h2h_df,
@@ -332,7 +333,7 @@ simulate_round <- function(sim_round,
   } else {
     if (!is_tibble(teams)) teams <- teams$standings
     teams$draft_order <- NA_real_
-    teams <- teams %>%
+    teams <- teams |>
       dplyr::select(
         dplyr::any_of(c(
           "sim", "team", "conf", "division", "games",

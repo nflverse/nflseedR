@@ -40,23 +40,23 @@ results from each game of each simulation. For example, let's look at the overal
 results for the Bears:
 
 ```{r}
-sims$overall %>% dplyr::filter(team == "CHI") %>% knitr::kable()
+sims$overall |> dplyr::filter(team == "CHI") |> knitr::kable()
 ```
 
 We can see the Bears got 10.8 wins on average. They made the playoffs 87% of simulations, won the division in 39%, won the Super Bowl in 4%, and only in 1% did they receive a top five draft pick. The `teams` section of the output will show how a team did in each simulated season. 
 
 ```{r}
-sims$teams %>%
-  dplyr::filter(team == "CHI") %>%
-  dplyr::select(sim, team, wins, seed, draft_order) %>% 
-  utils::head(6) %>%
+sims$teams |>
+  dplyr::filter(team == "CHI") |>
+  dplyr::select(sim, team, wins, seed, draft_order) |> 
+  utils::head(6) |>
   knitr::kable()
 ```
 
 Let's check out the playoff games from the first simulation, where the Bears went 10-6 and got the 6th seed.
 
 ```{r}
-sims$games %>% dplyr::filter(sim == 1, game_type != "REG") %>% knitr::kable()
+sims$games |> dplyr::filter(sim == 1, game_type != "REG") |> knitr::kable()
 ```
 
 In this simulation, the Bears beat the Rams in a wildcard game by 26 points, then
@@ -80,7 +80,7 @@ the time.
 ```{r}
 stupid_games_model <- function(teams, games, week_num, ...) {
   # make the earlier alphabetical team win 90% of the time
-  games <- games %>%
+  games <- games |>
     dplyr::mutate(
       result = dplyr::case_when(
         !is.na(result) | week != week_num ~ result,
@@ -126,8 +126,8 @@ sims2 <- simulate_nfl(
   simulations = 100
 )
 
-sims2$overall %>% dplyr::arrange(team) %>% utils::head() %>% knitr::kable()
-sims2$overall %>% dplyr::arrange(team) %>% utils::tail() %>% knitr::kable()
+sims2$overall |> dplyr::arrange(team) |> utils::head() |> knitr::kable()
+sims2$overall |> dplyr::arrange(team) |> utils::tail() |> knitr::kable()
 ```
 
 As you might expect, the earliest alphabetical teams win a lot. The Cardinals
@@ -170,7 +170,7 @@ biased_games_model <- function(teams, games, week_num, ...) {
 
   # make the best team always win and the worst team always lose
   # otherwise, make the earlier alphabetical team win 90% of the time
-  games <- games %>%
+  games <- games |>
     dplyr::mutate(
       result = dplyr::case_when(
         !is.na(result) | week != week_num ~ result,
@@ -264,8 +264,8 @@ elo_model <- function(teams, games, week_num, ...) {
     args <- list(...)
     if ("elo" %in% names(args)) {
       # pull the elo info from custom arguments
-      teams <- teams %>%
-        dplyr::inner_join(args$elo %>% dplyr::select(team, elo), by = c("team" = "team"))
+      teams <- teams |>
+        dplyr::inner_join(args$elo |> dplyr::select(team, elo), by = c("team" = "team"))
     } else {
       # error with a friendly error message if no elo data is passed in
       stop("Pass in a tibble `elo` as an argument to `simulate_nfl()`")
@@ -274,18 +274,18 @@ elo_model <- function(teams, games, week_num, ...) {
 
   # isolate the ratings data by sim and by team only
   # we will want to join to the games data later and don't want excess columns
-  ratings <- teams %>% dplyr::select(sim, team, elo)
+  ratings <- teams |> dplyr::select(sim, team, elo)
 
   # simulate game outcomes
-  games <- games %>%
+  games <- games |>
     # add in the away team's elo to the game data
     # note we join on both `sim` and the team
     # always join on `sim` to make sure each sim cares about only its data
-    dplyr::inner_join(ratings, by = c("sim" = "sim", "away_team" = "team")) %>%
-    dplyr::rename(away_elo = elo) %>%
+    dplyr::inner_join(ratings, by = c("sim" = "sim", "away_team" = "team")) |>
+    dplyr::rename(away_elo = elo) |>
     # repeat for the home team as well
-    dplyr::inner_join(ratings, by = c("sim" = "sim", "home_team" = "team")) %>%
-    dplyr::rename(home_elo = elo) %>%
+    dplyr::inner_join(ratings, by = c("sim" = "sim", "home_team" = "team")) |>
+    dplyr::rename(home_elo = elo) |>
     dplyr::mutate(
       # calculate the elo difference
       elo_diff = home_elo - away_elo,
@@ -324,7 +324,7 @@ elo_model <- function(teams, games, week_num, ...) {
       ),
       elo_mult = log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input,
       elo_shift = 20 * elo_mult * (outcome - wp)
-    ) %>%
+    ) |>
     # we don't want these columns in `games` any more
     # remove any columns you don't need when you're done
     # otherwise the next week they'll get joined as `col.x` and `col.y`
@@ -335,32 +335,32 @@ elo_model <- function(teams, games, week_num, ...) {
     )
 
   # apply elo shifts
-  teams <- teams %>%
+  teams <- teams |>
     # join games results from this week to away teams (within same sim!)
     # note this is a LEFT join, we don't want to remove any teams rows
-    dplyr::left_join(games %>%
-        dplyr::filter(week == week_num) %>%
+    dplyr::left_join(games |>
+        dplyr::filter(week == week_num) |>
         dplyr::select(sim, away_team, elo_shift),
       by = c("sim" = "sim", "team" = "away_team")
-    ) %>%
+    ) |>
     # away team's elo gets subtracted by elo amount
     # if the team wasn't an away team, do nothing
-    dplyr::mutate(elo = elo - ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
+    dplyr::mutate(elo = elo - ifelse(!is.na(elo_shift), elo_shift, 0)) |>
     # we don't want to keep `elo_shift` in `teams` either, remove it
-    dplyr::select(-elo_shift) %>%
+    dplyr::select(-elo_shift) |>
     # repeat the above except now do it for the home team
-    dplyr::left_join(games %>%
-        dplyr::filter(week == week_num) %>%
+    dplyr::left_join(games |>
+        dplyr::filter(week == week_num) |>
         dplyr::select(sim, home_team, elo_shift),
       by = c("sim" = "sim", "team" = "home_team")
-    ) %>%
+    ) |>
     # note that a team on a bye will have `elo_shift` as NA for both joins
     # this means it won't change, which is what we want
-    dplyr::mutate(elo = elo + ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
+    dplyr::mutate(elo = elo + ifelse(!is.na(elo_shift), elo_shift, 0)) |>
     dplyr::select(-elo_shift)
 
   # we need to keep `elo_shift` out of `games` too and we're done with it
-  games <- games %>%
+  games <- games |>
     dplyr::select(-elo_shift)
 
   # return the updated teams and games information
@@ -394,9 +394,9 @@ test <- simulate_nfl(
 Let's look at the Bears' Elo after Week 3 in the top handful of simulations:
 
 ```{r}
-test$teams %>%
-  dplyr::filter(team == "CHI") %>%
-  utils::head() %>%
+test$teams |>
+  dplyr::filter(team == "CHI") |>
+  utils::head() |>
   knitr::kable()
 ```
 
@@ -406,8 +406,8 @@ the simulated seasons had different results for the games, and the Elos were adj
 Let's examine the Bears' games in that first simulation:
 
 ```{r}
-test$games %>%
-  filter(sim == 1) %>%
+test$games |>
+  filter(sim == 1) |>
   filter(away_team == "CHI" | home_team == "CHI")
 ```
 

@@ -18,10 +18,10 @@ template:
       card: summary_large_image
 
 authors:
-  Lee Sharpe:
-    href: https://twitter.com/LeeSharpeNFL
   Sebastian Carl:
     href: https://bsky.app/profile/mrcaseb.nflverse.com
+  Lee Sharpe:
+    href: https://twitter.com/LeeSharpeNFL
 
 navbar:
   type: dark
@@ -63,3 +63,40 @@ navbar:
         - text: ffverse
         - text: "ffverse.com"
           href: https://www.ffverse.com
+
+reference:
+
+- title: Main Functions
+  desc: >
+    Calculate NFL standings (incl. deep tiebreakers) and simulate NFL seasons.
+  contents:
+  - nfl_standings
+  - nfl_simulations
+
+- title: Utilities
+  desc: >
+    Various helper functions.
+  contents:
+  - simulations_verify_fct
+  - summary.nflseedR_simulation
+  - fmt_pct_special
+
+- title: Superseeded
+  desc: >
+    Seeding and simulation functionality of the nflseedR 1.x series.
+  contents:
+  - starts_with("compute_")
+  - simulate_nfl
+
+- title: Simulation Output Dictionaries
+  desc: >
+    Access dictionaries to look up the output of the simulations.
+  contents:
+  - starts_with("dictionary_")
+
+- title: Simulation Data Examples
+  desc: >
+    Access example data for simulations.
+  contents:
+  - ends_with("_example")
+  - divisions
