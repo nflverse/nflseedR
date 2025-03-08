@@ -172,9 +172,10 @@ simulate_round <- function(sim_round,
     compute_division_ranks(
       tiebreaker_depth = tiebreaker_depth,
       .debug = .debug
-    ) |>
+    )
+  standings_and_h2h <- standings_and_h2h |>
     compute_conference_seeds(
-      h2h = .$h2h,
+      h2h = standings_and_h2h$h2h,
       tiebreaker_depth = tiebreaker_depth,
       .debug = .debug,
       playoff_seeds = playoff_seeds

@@ -23,11 +23,11 @@
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' try({#to avoid CRAN test problems
-#' nflseedR::load_sharpe_games() |>
+#' s <- nflseedR::load_sharpe_games() |>
 #'   dplyr::filter(season %in% 2019:2020) |>
 #'   dplyr::select(sim = season, game_type, week, away_team, home_team, result) |>
-#'   nflseedR::compute_division_ranks() |>
-#'   nflseedR::compute_conference_seeds(h2h = .$h2h) |>
+#'   nflseedR::compute_division_ranks()
+#'   nflseedR::compute_conference_seeds(s, h2h = s$h2h) |>
 #'   purrr::pluck("standings")
 #' })
 #'
