@@ -39,3 +39,13 @@ strip_nflverse_attributes <- function(df){
   attributes(df)[input_remove] <- NULL
   df
 }
+
+release_bullets <- function() {
+  c(
+    '`devtools::check_mac_release()`',
+    '`rhub::rhub_check(platforms = rhub::rhub_platforms()$name[rhub::rhub_platforms()$name != "rchk"])`',
+    '`pkgdown::check_pkgdown()`',
+    '`usethis::use_tidy_thanks()`',
+    NULL
+  )
+}
