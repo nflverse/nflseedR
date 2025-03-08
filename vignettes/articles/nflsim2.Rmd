@@ -13,7 +13,7 @@ options(digits = 3)
 options(nflreadr.verbose = FALSE)
 ```
 
-nflseedR 2.0 introduced a new approach to nfl season simulations with the new function `nfl_simulations()`. It is a new approach with a different api and a significant performance boost compared to `simulate_nfl()`.
+nflseedR 2.0 introduced a new approach to NFL season simulations with the new function `nfl_simulations()`. It is a new approach with a different api and a significant performance boost compared to `simulate_nfl()`.
 
 The general idea is that the user only passes a table with NFL schedule data to the function. Then all missing results are simulated. It is possible to limit the simulations to the regular season or to simulate playoffs afterwards. You can also switch on the determination of the draft order if required.
 
@@ -164,7 +164,7 @@ games <- nflreadr::load_schedules(2024) |>
   )
 ```
 
-Now we need the team ratings. The following table shows market implied team spreads. These are from August 2024 and are based on all look-ahead point spreads from various sportsbooks at that time just before the 2024 season started. The number represents the points the corresponding team would be favored by against an average team on a neutral field.
+Now we need the team ratings. The following table shows market implied team spreads. These are from August 2024 and are based on all look-ahead point spreads from various sports books at that time just before the 2024 season started. The number represents the points the corresponding team would be favored by against an average team on a neutral field.
 
 ```{r echo=FALSE}
 team_ratings <- tibble::tribble(
