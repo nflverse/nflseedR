@@ -1,0 +1,38 @@
+[
+  {
+    "variable": "sim",
+    "description": "The ID number of the simulation. All rows with the same value of `sim` refer to the same simulated season."
+  },
+  {
+    "variable": "game_type",
+    "description": "What type of game this is. `REG` - A regular season game. `WC` - A wildcard playoff game. `DIV` - A divisional playoff game. `CON` - A conference championship game. `SB` - A Super Bowl."
+  },
+  {
+    "variable": "week",
+    "description": "The numerical week the game takes place in. Continues incrementing after the regular season to each playoff round."
+  },
+  {
+    "variable": "away_team",
+    "description": "The abbreviation of the away team in the game."
+  },
+  {
+    "variable": "home_team",
+    "description": "The abbreviation of the home team in the game."
+  },
+  {
+    "variable": "away_rest",
+    "description": "The number of days since the away team's last game. Is `7` for the team's first game of the season."
+  },
+  {
+    "variable": "home_rest",
+    "description": "The number of days since the home team's last game. Is `7` for the team's first game of the season."
+  },
+  {
+    "variable": "location",
+    "description": "Either `Home` if played at the home team's stadium, or `Neutral` for a game played elsewhere."
+  },
+  {
+    "variable": "result",
+    "description": "The amount of points the home team won by (or lost by if negative). Is `0` for tied games."
+  }
+]

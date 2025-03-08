@@ -8,16 +8,17 @@ nfl_standings(
   games,
   ...,
   ranks = c("CONF", "DIV", "DRAFT", "NONE"),
-  tiebreaker_depth = c("SOS", "PRE-SOV", "RANDOM"),
+  tiebreaker_depth = c("SOS", "PRE-SOV", "POINTS", "RANDOM"),
   playoff_seeds = NULL,
   verbosity = c("MIN", "MAX", "NONE")
 )
 }
 \arguments{
-\item{games}{A data frame containing real or simulated game scores. The
-following variables are required:
+\item{games}{A data frame containing real or simulated game scores. Outside
+of simulations, this is simply the output of \link[nflreadr:load_schedules]{nflreadr::load_schedules}.
+The following variables are required as a minimum:
 \describe{
-\item{sim or season}{A simulation ID. Normally 1 - n simulated seasons.}
+\item{sim or season}{A season or simulation ID. Normally 1 - n simulated seasons.}
 \item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a
 game was a regular season game or one of the playoff rounds.}
 \item{week}{The week of the corresponding NFL season.}
@@ -26,7 +27,9 @@ game was a regular season game or one of the playoff rounds.}
 \item{home_team}{Team abbreviation of the home team (please see
 \code{\link{divisions}} for valid team abbreviations).}
 \item{result}{Equals home score - away score.}
-}}
+}
+If tiebreakers beyond SOS are to be used, then the actual scores of the
+home (\code{home_score}) and away (\code{away_score}) teams must also be available.}
 
 \item{...}{currently not used}
 
@@ -41,9 +44,9 @@ the function skip tiebreakers of irrelevant conference ranks.
 pick in the draft based off game results. No trades of course.
 }}
 
-\item{tiebreaker_depth}{One of \code{"SOS"}, \code{"PRE-SOV"}, or \code{"RANDOM"}. Controls
-which tiebreakers are to be applied. The implemented tiebreakers are
-documented here \url{https://nflseedr.com/articles/tiebreaker.html}.
+\item{tiebreaker_depth}{One of \code{"SOS"}, \code{"PRE-SOV"}, \code{"POINTS"} or \code{"RANDOM"}.
+Controls which tiebreakers are to be applied. The implemented tiebreakers
+are documented here \url{https://nflseedr.com/articles/tiebreaker.html}.
 The values mean:
 \itemize{
 \item \code{"SOS"} (default): Apply all tiebreakers through Strength of Schedule. If there are
@@ -51,6 +54,12 @@ still remaining ties, break them through coin toss.
 \item \code{"PRE-SOV"}: Apply all tiebreakers before Strength of Victory. If there are
 still remaining ties, break them through coin toss. Why Pre SOV? It's the
 first tiebreaker that requires knowledge of how OTHER teams played.
+\item \code{"POINTS"}: Apply all tiebreakers through point differential. If there are
+still remaining ties, break them through coin toss. This will go beyond SOS
+and requires knowledge of points scored and points allowed. As this is not
+usually part of season simulations, caution is advised in this case.
+These tiebreakers should only be used if the scores are real or are
+deliberately simulated.
 \item \code{"RANDOM"}: Breaks all tiebreakers with a coin toss. I don't really know,
 why I allow this...
 }}
@@ -75,13 +84,21 @@ argument \code{ranks}
 \description{
 Compute NFL Standings
 }
+\details{
+nflseedR does not support all levels of tie-breakers at the moment. The
+deepest tie-breaker currently is "best net points in all games".
+After that, the decision is made at random. However, the need for
+the last level ("best net touchdowns in all games") is extremely unlikely
+in practice. Deeper levels than strength of schedule have never actually been
+needed to resolve season-end standings since the NFL expanded to 32 teams.
+}
 \examples{
 \donttest{
 try({#to avoid CRAN test problems
   games <- nflreadr::load_schedules(2021:2022)
-  standings <- nflseedR::nfl_standings(games)
-  print(standings, digits = 3)
 })
+standings <- nflseedR::nfl_standings(games)
+print(standings, digits = 3)
 }
 }
 \seealso{

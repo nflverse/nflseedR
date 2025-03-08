@@ -157,19 +157,14 @@ summary.nflseedR_simulation <- function(object, ...){
     nflplotR::gt_nfl_logos(locations = gt::cells_body(gt::ends_with("team"))) %>%
     gt::tab_source_note("nflseedR") %>%
     gt::tab_spanner(
-      label = gt::html(gt::web_image(
-        "https://github.com/nflverse/nflfastR-data/raw/master/AFC.png",
-        height = 25
-      )),
+      label = "AFC",
       columns = gt::starts_with("afc")
     ) %>%
     gt::tab_spanner(
-      label = gt::html(gt::web_image(
-        "https://github.com/nflverse/nflfastR-data/raw/master/NFC.png",
-        height = 25
-      )),
+      label = "NFC",
       columns = gt::starts_with("nfc")
     ) %>%
+    nflplotR::gt_nfl_logos(locations = gt::cells_column_spanners()) %>%
     gt::tab_style(
       locations = list(gt::cells_body(nfc_team), gt::cells_column_labels(nfc_team)),
       style = gt::cell_borders("left", weight = gt::px(2))

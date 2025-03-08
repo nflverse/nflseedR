@@ -2,8 +2,17 @@
 
 * Fixed error in `simulate_nfl()` where it crashes because the "fake schedule" isn't a tibble. (#43)
 * The `summary` method `summary.nflseedR_simulation()` explicitly sets the columns width of the logo column because those columns are hidden in some unclear scenarios.
-* New function `nfl_standings()` for high efficient standings calculation. The functions `compute_division_ranks()`, `compute_conference_seeds()`, and `compute_draft_order()` will be deprecated in a future release.
+* New function `nfl_standings()` for high efficient standings calculation. The functions `compute_division_ranks()`, `compute_conference_seeds()`, and `compute_draft_order()` will be deprecated in a future release. (#45)
 * The `summary` method `summary.nflseedR_simulation()` now requires gt version v0.9.0 or higher to avoid warnings about deprecated arguments.
+* New function `nfl_simulations()` for a new, highly efficient approach to season simulations. This is a completely new design of the simulator, 
+with the aim of achieving significantly faster run times and eliminating weaknesses in the old approach (in `simulate_nfl()`). 
+The introduction of this function is supplemented by the two new utility functions `nflseedR_compute_results()`, and `simulations_verify_fct()`.
+These functions form the new standard for computing results (if the user does not have their own function for this) 
+respectively allow verification of the functionality of their own functions instead of `nflseedR_compute_results()`. 
+It is planned that `simulate_nfl()` will be deprecated in a future release so that the dependencies of nflseedR can be significantly reduced. (#47)
+* Fixed a bug in `nfl_standings()` where the tie breaking procedure didn't restart correctly after some teams were eliminated while some others remained tied. (#47)
+* `nfl_standings()` now supports `tiebreaker_depth = "POINTS"` which breaks ties using combined point ranks and point differentials. This means that all tiebreakers except net touchdowns are now implemented. (#47)
+* The function `load_sharpe_games` has been deprecated. It was replaced a fairly long time ago by `nflreadr::load_schedules()`. (#47)
 
 # nflseedR 1.2.0
 

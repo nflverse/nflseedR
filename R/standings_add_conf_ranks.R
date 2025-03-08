@@ -7,7 +7,7 @@ add_conf_ranks <- function(standings,
   # Set ranks by win percentage in descending order by sim and conference.
   # If ties method is "random", data.table will break all ties randomly
   # and we won't need any further tie-breaking methods
-  dt_ties_method <- if (tiebreaker_depth == "RANDOM") "random" else "min"
+  dt_ties_method <- if (tiebreaker_depth == 0L) "random" else "min"
   setindexv(standings, "div_rank")
   standings[
     div_rank == 1,
@@ -22,7 +22,7 @@ add_conf_ranks <- function(standings,
 
   # If tiebreaker_depth == "RANDOM", all ties are broken at this stage. We add
   # tiebreaker information to the tied teams.
-  if (tiebreaker_depth == "RANDOM") {
+  if (tiebreaker_depth == 0L) {
     standings[, conf_rank_counter := .N, by = c("sim", "conf", "win_pct")]
     standings[
       conf_rank_counter > 1,
@@ -121,7 +121,7 @@ add_conf_ranks <- function(standings,
         standings <- break_conf_ties_by_common_win_pct(standings = standings, h2h = h2h, n_tied = tied_teams)
         if (conf_tie_break_done(standings, tied_teams)) next
 
-        if (tiebreaker_depth == "SOS"){
+        if (tiebreaker_depth >= 2L){
 
           # SOV ---------------------------------------------------------------------
           if (verbosity == 2L) report("CONF ({tied_teams}): Strength of Victory")
@@ -133,6 +133,29 @@ add_conf_ranks <- function(standings,
           standings <- break_conf_ties_by_sos(standings = standings, n_tied = tied_teams)
           if (conf_tie_break_done(standings, tied_teams)) next
 
+        }
+
+        if (tiebreaker_depth >= 3L){
+
+          # Combined Point Ranking (Conference) -------------------------------------
+          if (verbosity == 2L) report("CONF ({tied_teams}): Combined Point Ranking (Conference)")
+          standings <- break_conf_ties_by_point_ranks(standings = standings, n_tied = tied_teams, type = "conf")
+          if (conf_tie_break_done(standings, tied_teams)) next
+
+          # Combined Point Ranking (League) -----------------------------------------
+          if (verbosity == 2L) report("CONF ({tied_teams}): Combined Point Ranking (League)")
+          standings <- break_conf_ties_by_point_ranks(standings = standings, n_tied = tied_teams, type = "league")
+          if (conf_tie_break_done(standings, tied_teams)) next
+
+          # Conference Point Differential -------------------------------------------
+          if (verbosity == 2L) report("CONF ({tied_teams}): Point Differential (Conference)")
+          standings <- break_conf_ties_by_conf_point_differential(standings = standings, n_tied = tied_teams)
+          if (conf_tie_break_done(standings, tied_teams)) next
+
+          # Point Differential ------------------------------------------------------
+          if (verbosity == 2L) report("CONF ({tied_teams}): Point Differential (League)")
+          standings <- break_conf_ties_by_league_point_differential(standings = standings, n_tied = tied_teams)
+          if (conf_tie_break_done(standings, tied_teams)) next
         }
 
         # Coin Flip ---------------------------------------------------------------
@@ -251,6 +274,9 @@ break_conf_ties_by_h2h <- function(standings, h2h, n_tied){
     )
   ]
   standings[, `:=`(h2h_sweep = NULL, tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
   standings
 }
 
@@ -278,6 +304,9 @@ break_conf_ties_by_conf_win_pct <- function(standings, n_tied){
     )
   ]
   standings[, `:=`(tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
   standings
 }
 
@@ -322,6 +351,9 @@ break_conf_ties_by_common_win_pct <- function(standings, h2h, n_tied){
     )
   ]
   standings[, `:=`(common_win_pct = NULL, common_games = NULL, tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
   standings
 }
 
@@ -349,6 +381,9 @@ break_conf_ties_by_sov <- function(standings, n_tied){
     )
   ]
   standings[, `:=`(tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
   standings
 }
 
@@ -377,6 +412,112 @@ break_conf_ties_by_sos <- function(standings, n_tied){
     )
   ]
   standings[, `:=`(tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
+  standings
+}
+
+break_conf_ties_by_point_ranks <- function(standings, n_tied, type = c("conf", "league")){
+  type <- match.arg(type)
+  sum_by <- if (type == "conf") c("sim", "conf") else c("sim")
+  standings[,
+    combined_rank := frank(-pf, ties.method = "min") + frank(pa, ties.method = "min"),
+    by = sum_by
+  ]
+  standings[
+    conf_rank_counter == n_tied,
+    `:=`(
+      tie_winner = frankv(combined_rank, ties.method = "max") == 1,
+      tie_loser = frankv(combined_rank, ties.method = "dense") != 1
+    ),
+    by = "tied_for"
+  ]
+  standings[
+    tie_loser == TRUE,
+    `:=`(
+      conf_rank_counter = NA_integer_,
+      conf_rank = conf_rank + 1
+    ),
+    by = "tied_for"
+  ]
+  standings[
+    tie_winner == TRUE,
+    `:=`(
+      conf_rank_counter = 1L,
+      conf_tie_broken_by = paste0(
+        if (type == "conf") "Conference" else "League",
+        " Points Rank (",
+        n_tied, ")"
+      )
+    )
+  ]
+  standings[, `:=`(tie_winner = NULL, tie_loser = NULL, combined_rank = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
+  standings
+}
+
+break_conf_ties_by_conf_point_differential <- function(standings, n_tied){
+  standings[
+    conf_rank_counter == n_tied,
+    `:=`(
+      tie_winner = frankv(-conf_pd, ties.method = "max") == 1,
+      tie_loser = frankv(-conf_pd, ties.method = "dense") != 1
+    ),
+    by = "tied_for"
+  ]
+  standings[
+    tie_loser == TRUE,
+    `:=`(
+      conf_rank_counter = NA_integer_,
+      conf_rank = conf_rank + 1
+    ),
+    by = "tied_for"
+  ]
+  standings[
+    tie_winner == TRUE,
+    `:=`(
+      conf_rank_counter = 1L,
+      conf_tie_broken_by = paste0("Conference Point Differential (", n_tied, ")")
+    )
+  ]
+  standings[, `:=`(tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
+  standings
+}
+
+break_conf_ties_by_league_point_differential <- function(standings, n_tied){
+  standings[
+    conf_rank_counter == n_tied,
+    `:=`(
+      tie_winner = frankv(-pd, ties.method = "max") == 1,
+      tie_loser = frankv(-pd, ties.method = "dense") != 1
+    ),
+    by = "tied_for"
+  ]
+  standings[
+    tie_loser == TRUE,
+    `:=`(
+      conf_rank_counter = NA_integer_,
+      conf_rank = conf_rank + 1
+    ),
+    by = "tied_for"
+  ]
+  standings[
+    tie_winner == TRUE,
+    `:=`(
+      conf_rank_counter = 1L,
+      conf_tie_broken_by = paste0("League Point Differential (", n_tied, ")")
+    )
+  ]
+  standings[, `:=`(tie_winner = NULL, tie_loser = NULL)]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[conf_rank_counter == n_tied, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
   standings
 }
 

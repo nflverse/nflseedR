@@ -1,0 +1,46 @@
+[
+  {
+    "variable": "conf",
+    "description": "The conference the team is in (such as `AFC`)."
+  },
+  {
+    "variable": "division",
+    "description": "The division the team is in (such as `NFC West`)."
+  },
+  {
+    "variable": "team",
+    "description": "The abbreviation representing the team."
+  },
+  {
+    "variable": "wins",
+    "description": "The mean (average) number of games won across the simulations, counting ties as 0.5 wins."
+  },
+  {
+    "variable": "playoff",
+    "description": "The rate this team made the playoffs across simulations."
+  },
+  {
+    "variable": "div1",
+    "description": "The rate this team won the division across simulations."
+  },
+  {
+    "variable": "seed1",
+    "description": "The rate this team had the first playoff seed across simulations."
+  },
+  {
+    "variable": "won_conf",
+    "description": "The rate this team won its conference across simulations."
+  },
+  {
+    "variable": "won_sb",
+    "description": "The rate this team won the Super Bowl across simulations."
+  },
+  {
+    "variable": "draft1",
+    "description": "The rate this team received the first pick in the next draft across simulations."
+  },
+  {
+    "variable": "draft5",
+    "description": "The rate this team received a top five pick in the next draft across simulations."
+  }
+]

@@ -5,19 +5,21 @@ add_draft_ranks <- function(standings,
                             tiebreaker_depth,
                             playoff_seeds,
                             verbosity){
-  dg[, sb_winner := fifelse(game_type == "SB" & result > 0, 1L, 0L, 0L)]
-  exit <- dg[
-    game_type != "REG",
-    list(exit = max(week) + max(sb_winner) - 1L),
-    by = c("sim", "team")
-  ]
-  standings <- merge(standings, exit, by = c("sim", "team"), all.x = TRUE)
-  standings[is.na(exit), exit := 0L]
+  if (!is.null(dg)){
+    dg[, sb_winner := fifelse(game_type == "SB" & result > 0, 1L, 0L, 0L)]
+    exit <- dg[
+      game_type != "REG",
+      list(exit = max(week) + max(sb_winner) - 1L),
+      by = c("sim", "team")
+    ]
+    standings <- merge(standings, exit, by = c("sim", "team"), all.x = TRUE)
+    standings[is.na(exit), exit := 0L]
+  }
 
   # Set ranks by exit, win percentage, and sos in ascending order by sim.
   # If ties method is "random", data.table will break all ties randomly
   # and we won't need any further tie-breaking methods
-  dt_ties_method <- if (tiebreaker_depth == "RANDOM") "random" else "min"
+  dt_ties_method <- if (tiebreaker_depth == 0L) "random" else "min"
   standings[,
     draft_rank := frank(list(exit, win_pct, sos), ties.method = dt_ties_method),
     by = c("sim")
@@ -25,7 +27,7 @@ add_draft_ranks <- function(standings,
 
   # If tiebreaker_depth == "RANDOM", all ties are broken at this stage. We add
   # tiebreaker information to the tied teams.
-  if (tiebreaker_depth == "RANDOM") {
+  if (tiebreaker_depth == 0L) {
     standings[, draft_rank_counter := .N, by = c("sim", "exit", "win_pct", "sos")]
     standings[
       draft_rank_counter > 1,
@@ -147,19 +149,20 @@ break_draft_ties_by_division <- function(standings, verbosity){
     by = c("sim", "draft_rank")
   ]
 
-  if (any(standings$draft_rank_shared_by_one_div, na.rm = TRUE) & verbosity == 2L){
-    report("DRAFT    : Division Rank")
+  if (any(standings$draft_rank_shared_by_one_div, na.rm = TRUE)) {
+    if (verbosity == 2L) report("DRAFT    : Division Rank")
+    # In this case, we can break the tie by ranking them through div_rank
+    # lower div_rank wins higher draft_rank!
+    standings[
+      draft_rank_counter > 1 & draft_rank_shared_by_one_div == TRUE,
+      `:=`(
+        draft_rank = min(draft_rank) - 1 + frankv(div_rank, order = -1L, ties.method = "min"),
+        draft_tie_broken_by = "Division Tiebreaker"
+      ),
+      by = c("sim", "draft_rank")
+    ]
   }
-  # In this case, we can break the tie by ranking them through div_rank
-  # lower div_rank wins higher draft_rank!
-  standings[
-    draft_rank_counter > 1 & draft_rank_shared_by_one_div == TRUE,
-    `:=`(
-      draft_rank = min(draft_rank) - 1 + frankv(div_rank, order = -1L, ties.method = "min"),
-      draft_tie_broken_by = "Division Tiebreaker"
-    ),
-    by = c("sim", "draft_rank")
-  ]
+
   # Remove the helper and update the counter because the tie is broken
   standings[, draft_rank_shared_by_one_div := NULL]
   standings <- draft_count_ranks(standings)
@@ -175,19 +178,20 @@ break_draft_ties_by_conference <- function(standings, verbosity){
     by = c("sim", "draft_rank")
   ]
 
-  if (any(standings$draft_rank_shared_by_one_conf, na.rm = TRUE) & verbosity == 2L){
-    report("DRAFT    : Conference Rank")
+  if (any(standings$draft_rank_shared_by_one_conf, na.rm = TRUE)) {
+    if (verbosity == 2L) report("DRAFT    : Conference Rank")
+    # In this case, we can break the tie by ranking them through conf_rank
+    # lower conf_rank wins higher draft_rank!
+    standings[
+      draft_rank_counter > 1 & draft_rank_shared_by_one_conf == TRUE,
+      `:=`(
+        draft_rank = min(draft_rank) - 1 + frankv(conf_rank, order = -1L, ties.method = "min"),
+        draft_tie_broken_by = "Conference Tiebreaker"
+      ),
+      by = c("sim", "draft_rank")
+    ]
   }
-  # In this case, we can break the tie by ranking them through conf_rank
-  # lower conf_rank wins higher draft_rank!
-  standings[
-    draft_rank_counter > 1 & draft_rank_shared_by_one_conf == TRUE,
-    `:=`(
-      draft_rank = min(draft_rank) - 1 + frankv(conf_rank, order = -1L, ties.method = "min"),
-      draft_tie_broken_by = "Conference Tiebreaker"
-    ),
-    by = c("sim", "draft_rank")
-  ]
+
   # Remove the helper and update the counter because the tie is broken
   standings[, draft_rank_shared_by_one_conf := NULL]
   standings <- draft_count_ranks(standings)
@@ -249,6 +253,9 @@ break_draft_ties_by_h2h <- function(standings, h2h, n_tied){
     )
   ]
   standings[, c("h2h_sweep", "tie_winner", "tie_loser") := NULL]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[draft_rank_counter == n_tied, draft_rank_counter := .N, by = c("sim", "draft_rank")]
   standings
 }
 
@@ -293,6 +300,9 @@ break_draft_ties_by_common_win_pct <- function(standings, h2h, n_tied){
     )
   ]
   standings[, c("common_win_pct", "common_games", "tie_winner", "tie_loser") := NULL]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[draft_rank_counter == n_tied, draft_rank_counter := .N, by = c("sim", "draft_rank")]
   standings
 }
 
@@ -320,6 +330,9 @@ break_draft_ties_by_sov <- function(standings, n_tied){
     )
   ]
   standings[, c("tie_winner", "tie_loser") := NULL]
+  # Recount ranks. That's required to ensure a restart after some teams are eliminated
+  # but some remain tied
+  standings[draft_rank_counter == n_tied, draft_rank_counter := .N, by = c("sim", "draft_rank")]
   standings
 }
 

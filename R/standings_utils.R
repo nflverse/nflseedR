@@ -26,7 +26,8 @@ standings_h2h <- function(gd, verbosity){
     "REG",
     list(
       h2h_games = .N,
-      h2h_wins = sum(outcome)
+      h2h_wins = sum(outcome),
+      h2h_pd = sum(result)
     ),
     by = c("sim", "team", "opp"),
     on = "game_type"
@@ -76,5 +77,7 @@ finalize_standings <- function(standings, games){
   if (attributes(games)[["uses_season"]]){
     colnames(standings)[colnames(standings) == "sim"] <- "season"
   }
+  # Conference Point Differential is a deep tiebreaker. We don't need to return it
+  standings[, conf_pd := NULL]
   standings
 }

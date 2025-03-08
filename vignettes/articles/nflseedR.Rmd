@@ -8,131 +8,42 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+options(knitr.kable.NA = '-')
 ```
 
 # Preface
 
-nflseedR is designed to efficiently take over the sophisticated and complex rule set of the NFL regarding division ranks, postseason seeding and draft order. It is intended to be used for NFL season simulations to help modelers focus on their models rather than tie-breaking procedures. The NFL's official procedures for breaking ties for postseason playoffs may be found [here](https://operations.nfl.com/the-rules/nfl-tie-breaking-procedures/), and [this site](https://operations.nfl.com/journey-to-the-nfl/the-nfl-draft/the-rules-of-the-draft/) explains the assignment of draft pick order. 
+nflseedR essentially performs two tasks:
 
-nflseedR does not support all levels of tie-breakers at the moment. The deepest tie-breaker currently is strength of schedule. After that, the decision is made at random. However, the need for additional levels is extremely unlikely in practice and deeper levels have never actually been needed to resolve season-end standings since the NFL expanded to 32 teams.
+1. Calculation of NFL standings with `nfl_standings()` based on game results of one or more seasons, especially taking into account the comprehensive and sometimes complicated tie-breaking procedures for division ranks, conference seeds and the draft order. Read [this article](https://nflseedr.com/articles/tiebreaker.html) for further information on the implemented tie-breakers.
+2. Running thousands of simulations (Monte Carlo style) of an NFL season with `nfl_simulations()`. The standings from point 1 and especially the conference seeds are needed to determine playoff participants. Basically, the first point only exists because we need it to carry out the simulations.
 
-# Using In-Simulation Functions
+The actual core of a simulation is the generation of game results based on any information that the user deems important. This is why nflseedR is virtually extensible. By default, a simple ELO model is implemented that works with initial starting ELO values and updates them from week to week based on game results. However, the user can write their own function for calculating game results and pass it to nflseedR together with any additional data that may be required.
 
-You can get NFL game data from this function:
+# Usage
 
-* `load_sharpe_games()` to collect game information and results
+## Standings
 
-If preferred, one can obtain or generate any set of game outcomes and let nflseedR
-handle all of the NFL seeding and tiebreaker math for you with three in-simulation
-functions (each can handle thousands of seasons at once):
+We need real or simulated match data to determine standings. The required variables are specified in the documentation of the function `nfl_standings()`.
 
-* `compute_division_ranks()` to find all division winners,
-* `compute_conference_seeds()` to get the playoff participants, and
-* `compute_draft_order()` to find the resulting draft pick for each team.
-
-The following sections will demonstrate how to use them and what input is required.
-
-Loading the package is obligatory, so it is done first (along with `dplyr` for data wrangling and the `pipe`):
-
-```{r setup}
-library(nflseedR)
-library(dplyr, warn.conflicts = FALSE)
-options(digits = 3)
-options(warn = -1)
-```
-
-## Load Sharpe Games
+Here are games data from the 2021 and 2022 seasons.
 
 ```{r}
-games <- nflseedR::load_sharpe_games()
-games %>% dplyr::slice_tail(n = 20) %>% knitr::kable()
+games <- nflreadr::load_schedules(2021:2022)
 ```
 
-This pulls game information from the games.rds file (equivalent to the games.csv file) from
-[Lee Sharpe's NFL Data Github](https://github.com/nflverse/nfldata/tree/master/data).
-
-## Find Division Ranks
-
-This function computes division ranks based on a data frame containing game results of one or more NFL seasons. So let's load some game data first (this example uses the game data of the 2012 and 2019 seasons):
+We can pass this data directly to nflseedR and calculate standings. It defaults to compute division ranks as well as conference ranks for all teams and it applies tiebreakers through strength of schedule.
 
 ```{r}
-games <- nflseedR::load_sharpe_games() %>%
-  dplyr::filter(season %in% c(2012, 2019)) %>%
-  dplyr::select(sim = season, game_type, week, away_team, home_team, result)
-
-dplyr::glimpse(games)
+standings <- nflseedR::nfl_standings(games)
+knitr::kable(standings, digits = 3)
 ```
 
-Please note the required column names:
+## Simulations
 
-* `sim` : A simulation ID. Normally 1 - n simulated seasons or (like in this case) just the year.
+With nflseedR 2.0, we have rethought and implemented the execution of simulations from scratch. Particular attention was paid to flexibility and performance. As the usage of the new function `nfl_simulations()` differs from the old function `simulate_nfl()`, we will keep both variants for the time being and maintain two separate articles explaining how to use them.
 
-* `game_type` : One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.
+It is strongly recommended to switch to `nfl_simulations()` because it is far superior to the old implementation in practically every respect, especially in terms of performance.
 
-* `week` : The week of the corresponding NFL season.
-
-* `away_team` : Team abbreviation of the away team.
-
-* `home_team` : Team abbreviation of the home team.
-
-* `result` : Equals home score - away score.
-
-Now the games data frame can be used to compute the division ranks (the parameter `.debug` is set to `TRUE` to show what the function is doing). 
-
-```{r}
-div_standings <- nflseedR::compute_division_ranks(games, .debug = TRUE)
-dplyr::glimpse(div_standings)
-```
-
-Please note that the function outputs a list of data frames, the actual division standings, and a data frame named `h2h`. The latter is an important input in the other functions (as it is used to break head-to-head ties) and can only be computed with `compute_division_ranks()`.
-
-Here is the resulting division standings data frame for the 2012 season:
-
-```{r}
-div_standings %>% 
-  purrr::pluck("standings") %>% 
-  dplyr::filter(sim == 2012) %>% 
-  dplyr::select(division:div_rank) %>% 
-  knitr::kable()
-```
-
-In that season, the second-place finish in the NFC South required a three way tie-breaker between the Panthers, Saints and Bucs. It was broken with the three-way Conference Record. This can be seen in the above given console output: `...DIV (3): Common Record` for the division rank number 2. The Bucs lost this tie-breaker with a 0.333 win percentage in the conference and the tie-breaking procedure goes forward with a 2-way head-to-head comparison.
-
-## Find Conference Seedings
-
-This function computes conference seedings based on the above computed division standings data frame. For efficiency, reasons the `h2h` data frame computed above has to be passed to the function. The easiest way is to pass the list of data frames that is computed in the first step. For example (please note the number of playoff seeds):
-
-```{r}
-seeds <- div_standings %>% 
-  nflseedR::compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6, .debug = TRUE)
-dplyr::glimpse(seeds)
-```
-
-Just like `compute_division_ranks()`, this function returns a list of two data frames so we can use it within a pipe. The resulting seeds for the 2012 season are given below.
-
-```{r}
-seeds %>% 
-  purrr::pluck("standings") %>% 
-  dplyr::filter(sim == 2012) %>% 
-  dplyr::select(division:seed) %>% 
-  knitr::kable()
-```
-
-## Find Draft Order
-
-This function computes the draft order based on playoff outcomes and the regular season games. It requires all playoff results in the `games` data frame and the `game_type` of the Super Bowl has to be `"SB"`. For efficiency reasons, the `h2h` data frame computed above has to be passed to the function as well. The easiest way is to pass the list of data frames that is computed in the above steps:
-
-```{r}
-draft <- seeds %>% 
-  nflseedR::compute_draft_order(games = games, h2h = .$h2h, .debug = TRUE)
-dplyr::glimpse(draft)
-```
-
-As this is the final step, the function `compute_draft_order` does not output `h2h` again. Instead it directly outputs the final standings including the draft order and the variable `exit` which indicates the week number of each team's final game (the Super Bowl Winner's `exit` equals 22):
-
-```{r}
-draft %>% 
-  dplyr::filter(sim == 2012) %>% 
-  dplyr::select(division:draft_order) %>% 
-  knitr::kable()
-```
+- Go to [this article](https://nflseedr.com/articles/nflsim2.html) for a detailed explanation of how to use `nfl_simulations()`
+- Go to [this article](https://nflseedr.com/articles/nflsim.html) for a detailed explanation of how to use `simulate_nfl()`

@@ -21,7 +21,7 @@ authors:
   Lee Sharpe:
     href: https://twitter.com/LeeSharpeNFL
   Sebastian Carl:
-    href: https://twitter.com/mrcaseb
+    href: https://bsky.app/profile/mrcaseb.nflverse.com
 
 navbar:
   type: dark
@@ -33,6 +33,7 @@ navbar:
     discord:
       icon: "fab fa-discord fa-lg"
       href: https://discord.com/invite/5Er2FBnnQa
+      aria-label: Join Community Discord Server
     reference:
       text: "Functions"
       href: reference/index.html

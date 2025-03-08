@@ -1,12 +1,16 @@
 #' Load Lee Sharpe's Games File
 #'
-#' @description Lee Sharpe maintains an important data set that contains
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' Lee Sharpe maintains an important data set that contains
 #' broadly used information on games in the National Football League. This
 #' function is a convenient helper to download the file into memory without
 #' having to remember the correct url.
 #'
 #' @inheritDotParams nflreadr::load_schedules
 #' @seealso The internally called function [nflreadr::load_schedules()]
+#' @keywords internal
 #' @examples
 #' \donttest{
 #' try({#to avoid CRAN test problems
@@ -94,8 +98,7 @@
 #' \item{stadium}{Name of the stadium.}
 #' }
 #' @export
-load_schedules <- function(...) nflreadr::load_schedules(...)
-
-#' @export
-#' @rdname load_schedules
-load_sharpe_games <- load_schedules
+load_sharpe_games <- function(...){
+  lifecycle::deprecate_warn("2.0.0", "load_sharpe_games()", "nflreadr::load_schedules()")
+  nflreadr::load_schedules(...)
+}
