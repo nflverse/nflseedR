@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9902</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9903</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,6 +64,7 @@
 <li>
 <code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> now supports <code>tiebreaker_depth = "POINTS"</code> which breaks ties using combined point ranks and point differentials. This means that all tiebreakers except net touchdowns are now implemented. (<a href="https://github.com/nflverse/nflseedR/issues/47" class="external-link">#47</a>)</li>
 <li>The function <code>load_sharpe_games</code> has been deprecated. It was replaced a fairly long time ago by <code><a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">nflreadr::load_schedules()</a></code>. (<a href="https://github.com/nflverse/nflseedR/issues/47" class="external-link">#47</a>)</li>
+<li>nflseedR now requires R 4.1 to allow the package to use R’s native pipe <code>|&gt;</code> operator. This follows the <a href="https://www.tidyverse.org/blog/2019/04/r-version-support/" class="external-link">Tidyverse R version support rules</a>. (<a href="https://github.com/nflverse/nflseedR/issues/48" class="external-link">#48</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="nflseedr-120">nflseedR 1.2.0<a class="anchor" aria-label="anchor" href="#nflseedr-120"></a></h2><p class="text-muted">CRAN release: 2023-01-05</p>
@@ -100,7 +101,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>, <a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">Sebastian Carl</a>.</p>
+  <p>Developed by <a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">Sebastian Carl</a>, <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

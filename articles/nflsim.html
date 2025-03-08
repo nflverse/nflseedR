@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9902</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9903</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -118,16 +118,16 @@ wouldn’t do these things.</em></p>
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:11:41 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:11:41 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:11:55 | Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:11:55 | Aggregating across simulations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:11:55 | DONE!</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:04:46 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:04:46 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:04:59 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:04:59 | Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:04:59 | DONE!</span></span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as
 the individual results from each game of each simulation. For example,
 let’s look at the overall results for the Bears:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sims</span><span class="op">$</span><span class="va">overall</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="6%">
@@ -175,10 +175,10 @@ and only in 1% did they receive a top five draft pick. The
 <code>teams</code> section of the output will show how a team did in
 each simulated season.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sims</span><span class="op">$</span><span class="va">teams</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">sim</span>, <span class="va">team</span>, <span class="va">wins</span>, <span class="va">seed</span>, <span class="va">draft_order</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">sims</span><span class="op">$</span><span class="va">teams</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">sim</span>, <span class="va">team</span>, <span class="va">wins</span>, <span class="va">seed</span>, <span class="va">draft_order</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -236,7 +236,7 @@ each simulated season.</p>
 <p>Let’s check out the playoff games from the first simulation, where
 the Bears went 10-6 and got the 6th seed.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sims</span><span class="op">$</span><span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">game_type</span> <span class="op">!=</span> <span class="st">"REG"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sims</span><span class="op">$</span><span class="va">games</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">game_type</span> <span class="op">!=</span> <span class="st">"REG"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="5%">
@@ -427,7 +427,7 @@ time.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stupid_games_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">teams</span>, <span class="va">games</span>, <span class="va">week_num</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># make the earlier alphabetical team win 90% of the time</span></span>
-<span>  <span class="va">games</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="va">games</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>      result <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
 <span>        <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">|</span> <span class="va">week</span> <span class="op">!=</span> <span class="va">week_num</span> <span class="op">~</span> <span class="va">result</span>,</span>
@@ -470,13 +470,13 @@ what happens:</p>
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:11:55 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:11:55 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:12:07 | Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:12:07 | Aggregating across simulations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:12:07 | DONE!</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:00 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:00 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:12 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:12 | Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:12 | DONE!</span></span>
 <span></span>
-<span><span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="6%">
@@ -586,7 +586,7 @@ what happens:</p>
 </tbody>
 </table>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="6%">
@@ -735,7 +735,7 @@ these on to <em>your</em> function that processes games.</p>
 <span></span>
 <span>  <span class="co"># make the best team always win and the worst team always lose</span></span>
 <span>  <span class="co"># otherwise, make the earlier alphabetical team win 90% of the time</span></span>
-<span>  <span class="va">games</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="va">games</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>      result <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
 <span>        <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">|</span> <span class="va">week</span> <span class="op">!=</span> <span class="va">week_num</span> <span class="op">~</span> <span class="va">result</span>,</span>
@@ -766,11 +766,11 @@ data type.</p>
 <span>  best <span class="op">=</span> <span class="st">"CHI"</span>, </span>
 <span>  worst <span class="op">=</span> <span class="st">"GB"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:12:07 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:12:07 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:12:19 | Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:12:19 | Aggregating across simulations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:12:19 | DONE!</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:12 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:12 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:24 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:24 | Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:24 | DONE!</span></span></code></pre></div>
 <p>Now let nflseedR summarize the simulation for you by using
 <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> with the nflseedR simulation object. This will
 print a gt table.</p>
@@ -1687,8 +1687,8 @@ week being simulated.</li>
 <span>    <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="st">"elo"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>      <span class="co"># pull the elo info from custom arguments</span></span>
-<span>      <span class="va">teams</span> <span class="op">&lt;-</span> <span class="va">teams</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">args</span><span class="op">$</span><span class="va">elo</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">team</span>, <span class="va">elo</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"team"</span> <span class="op">=</span> <span class="st">"team"</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="va">teams</span> <span class="op">&lt;-</span> <span class="va">teams</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">args</span><span class="op">$</span><span class="va">elo</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">team</span>, <span class="va">elo</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"team"</span> <span class="op">=</span> <span class="st">"team"</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>      <span class="co"># error with a friendly error message if no elo data is passed in</span></span>
 <span>      <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"Pass in a tibble `elo` as an argument to `simulate_nfl()`"</span><span class="op">)</span></span>
@@ -1697,18 +1697,18 @@ week being simulated.</li>
 <span></span>
 <span>  <span class="co"># isolate the ratings data by sim and by team only</span></span>
 <span>  <span class="co"># we will want to join to the games data later and don't want excess columns</span></span>
-<span>  <span class="va">ratings</span> <span class="op">&lt;-</span> <span class="va">teams</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">sim</span>, <span class="va">team</span>, <span class="va">elo</span><span class="op">)</span></span>
+<span>  <span class="va">ratings</span> <span class="op">&lt;-</span> <span class="va">teams</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">sim</span>, <span class="va">team</span>, <span class="va">elo</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># simulate game outcomes</span></span>
-<span>  <span class="va">games</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="va">games</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># add in the away team's elo to the game data</span></span>
 <span>    <span class="co"># note we join on both `sim` and the team</span></span>
 <span>    <span class="co"># always join on `sim` to make sure each sim cares about only its data</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">ratings</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sim"</span> <span class="op">=</span> <span class="st">"sim"</span>, <span class="st">"away_team"</span> <span class="op">=</span> <span class="st">"team"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>away_elo <span class="op">=</span> <span class="va">elo</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">ratings</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sim"</span> <span class="op">=</span> <span class="st">"sim"</span>, <span class="st">"away_team"</span> <span class="op">=</span> <span class="st">"team"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>away_elo <span class="op">=</span> <span class="va">elo</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># repeat for the home team as well</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">ratings</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sim"</span> <span class="op">=</span> <span class="st">"sim"</span>, <span class="st">"home_team"</span> <span class="op">=</span> <span class="st">"team"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>home_elo <span class="op">=</span> <span class="va">elo</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">ratings</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sim"</span> <span class="op">=</span> <span class="st">"sim"</span>, <span class="st">"home_team"</span> <span class="op">=</span> <span class="st">"team"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>home_elo <span class="op">=</span> <span class="va">elo</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>      <span class="co"># calculate the elo difference</span></span>
 <span>      elo_diff <span class="op">=</span> <span class="va">home_elo</span> <span class="op">-</span> <span class="va">away_elo</span>,</span>
@@ -1747,7 +1747,7 @@ week being simulated.</li>
 <span>      <span class="op">)</span>,</span>
 <span>      elo_mult <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1.0</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2.2</span> <span class="op">/</span> <span class="va">elo_input</span>,</span>
 <span>      elo_shift <span class="op">=</span> <span class="fl">20</span> <span class="op">*</span> <span class="va">elo_mult</span> <span class="op">*</span> <span class="op">(</span><span class="va">outcome</span> <span class="op">-</span> <span class="va">wp</span><span class="op">)</span></span>
-<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># we don't want these columns in `games` any more</span></span>
 <span>    <span class="co"># remove any columns you don't need when you're done</span></span>
 <span>    <span class="co"># otherwise the next week they'll get joined as `col.x` and `col.y`</span></span>
@@ -1758,32 +1758,32 @@ week being simulated.</li>
 <span>    <span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># apply elo shifts</span></span>
-<span>  <span class="va">teams</span> <span class="op">&lt;-</span> <span class="va">teams</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="va">teams</span> <span class="op">&lt;-</span> <span class="va">teams</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># join games results from this week to away teams (within same sim!)</span></span>
 <span>    <span class="co"># note this is a LEFT join, we don't want to remove any teams rows</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">week</span> <span class="op">==</span> <span class="va">week_num</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">games</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">week</span> <span class="op">==</span> <span class="va">week_num</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">sim</span>, <span class="va">away_team</span>, <span class="va">elo_shift</span><span class="op">)</span>,</span>
 <span>      by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sim"</span> <span class="op">=</span> <span class="st">"sim"</span>, <span class="st">"team"</span> <span class="op">=</span> <span class="st">"away_team"</span><span class="op">)</span></span>
-<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># away team's elo gets subtracted by elo amount</span></span>
 <span>    <span class="co"># if the team wasn't an away team, do nothing</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>elo <span class="op">=</span> <span class="va">elo</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">elo_shift</span><span class="op">)</span>, <span class="va">elo_shift</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>elo <span class="op">=</span> <span class="va">elo</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">elo_shift</span><span class="op">)</span>, <span class="va">elo_shift</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># we don't want to keep `elo_shift` in `teams` either, remove it</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">elo_shift</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">elo_shift</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># repeat the above except now do it for the home team</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">week</span> <span class="op">==</span> <span class="va">week_num</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">games</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">week</span> <span class="op">==</span> <span class="va">week_num</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">sim</span>, <span class="va">home_team</span>, <span class="va">elo_shift</span><span class="op">)</span>,</span>
 <span>      by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sim"</span> <span class="op">=</span> <span class="st">"sim"</span>, <span class="st">"team"</span> <span class="op">=</span> <span class="st">"home_team"</span><span class="op">)</span></span>
-<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># note that a team on a bye will have `elo_shift` as NA for both joins</span></span>
 <span>    <span class="co"># this means it won't change, which is what we want</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>elo <span class="op">=</span> <span class="va">elo</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">elo_shift</span><span class="op">)</span>, <span class="va">elo_shift</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>elo <span class="op">=</span> <span class="va">elo</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">elo_shift</span><span class="op">)</span>, <span class="va">elo_shift</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">elo_shift</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># we need to keep `elo_shift` out of `games` too and we're done with it</span></span>
-<span>  <span class="va">games</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="va">games</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">elo_shift</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># return the updated teams and games information</span></span>
@@ -1810,16 +1810,16 @@ function.</p>
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  test_week <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:12:20 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:12:20 | Beginning simulation of <span style="color: #0000BB;">1000</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:12:21 | Aborting and returning your `process_games` function's results</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:25 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:25 | Beginning simulation of <span style="color: #0000BB;">1000</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 12:05:27 | Aborting and returning your `process_games` function's results</span></span>
 <span><span class="co">#&gt; from Week 3</span></span></code></pre></div>
 <p>Let’s look at the Bears’ Elo after Week 3 in the top handful of
 simulations:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">test</span><span class="op">$</span><span class="va">teams</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -1886,11 +1886,11 @@ the Bears, as the simulated seasons had different results for the games,
 and the Elos were adjusted accordingly.</p>
 <p>Let’s examine the Bears’ games in that first simulation:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">test</span><span class="op">$</span><span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">test</span><span class="op">$</span><span class="va">games</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">away_team</span> <span class="op">==</span> <span class="st">"CHI"</span> <span class="op">|</span> <span class="va">home_team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-03-08 11:12:20 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-03-08 12:05:25 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 9</span></span></span>
 <span><span class="co">#&gt;      sim game_type  week away_team home_team away_rest home_rest location result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -2272,7 +2272,7 @@ described in <code>?simulate_nfl()</code>:
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>, <a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">Sebastian Carl</a>.</p>
+  <p>Developed by <a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">Sebastian Carl</a>, <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
