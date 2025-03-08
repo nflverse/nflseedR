@@ -61,7 +61,7 @@
 #'
 #' @details
 #' nflseedR does not support all levels of tie-breakers at the moment. The
-#' deepest tie-breaker before currently is "best net points in all games".
+#' deepest tie-breaker currently is "best net points in all games".
 #' After that, the decision is made at random. However, the need for
 #' the last level ("best net touchdowns in all games") is extremely unlikely
 #' in practice. Deeper levels than strength of schedule have never actually been
