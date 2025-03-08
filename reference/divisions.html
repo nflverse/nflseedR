@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9901</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9902</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,11 +19,12 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/nflsim.html">Simulating NFL seasons using nflseedR</a></li>
+    <li><a class="dropdown-item" href="../articles/nflsim2.html">Simulating NFL seasons using nflseedR 2.0</a></li>
     <li><a class="dropdown-item" href="../articles/tiebreaker.html">NFL Tiebreaking Procedures</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
-      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://discord.com/invite/5Er2FBnnQa"><span class="fa fab fa-discord fa-lg"></span></a></li>
+      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://discord.com/invite/5Er2FBnnQa" aria-label="Join Community Discord Server"><span class="fa fab fa-discord fa-lg"></span></a></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/nflverse/nflseedR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-packages-more" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Packages &amp; More</button>
@@ -85,23 +86,12 @@ this data.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="va">divisions</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 36 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    team  conf  division  sdiv </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ARI   NFC   NFC West  NFCW </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ATL   NFC   NFC South NFCS </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> BAL   AFC   AFC North AFCN </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> BUF   AFC   AFC East  AFCE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> CAR   NFC   NFC South NFCS </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> CHI   NFC   NFC North NFCN </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> CIN   AFC   AFC North AFCN </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> CLE   AFC   AFC North AFCN </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> DAL   NFC   NFC East  NFCE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> DEN   AFC   AFC West  AFCW </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more rows</span></span>
-<span class="r-in"><span><span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">divisions</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tibble [36 × 4] (S3: tbl_df/tbl/data.frame)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ team    : chr [1:36] "ARI" "ATL" "BAL" "BUF" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ conf    : chr [1:36] "NFC" "NFC" "AFC" "AFC" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ division: chr [1:36] "NFC West" "NFC South" "AFC North" "AFC East" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ sdiv    : chr [1:36] "NFCW" "NFCS" "AFCN" "AFCE" ...</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -109,7 +99,7 @@ this data.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>, <a href="https://twitter.com/mrcaseb" class="external-link">Sebastian Carl</a>.</p>
+  <p>Developed by <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>, <a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">Sebastian Carl</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

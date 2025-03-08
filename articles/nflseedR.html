@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9901</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9902</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,6 +44,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/nflsim.html">Simulating NFL seasons using nflseedR</a></li>
+    <li><a class="dropdown-item" href="../articles/nflsim2.html">Simulating NFL seasons using nflseedR 2.0</a></li>
     <li><a class="dropdown-item" href="../articles/tiebreaker.html">NFL Tiebreaking Procedures</a></li>
   </ul>
 </li>
@@ -51,7 +52,7 @@
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
-<li class="nav-item"><a class="external-link nav-link" href="https://discord.com/invite/5Er2FBnnQa"><span class="fa fab fa-discord fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://discord.com/invite/5Er2FBnnQa" aria-label="Join Community Discord Server"><span class="fa fab fa-discord fa-lg"></span></a></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/nflverse/nflseedR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-packages-more" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Packages &amp; More</button>
@@ -97,3016 +98,1594 @@ and Lee Sharpe</h4>
 <div class="section level2">
 <h2 id="preface">Preface<a class="anchor" aria-label="anchor" href="#preface"></a>
 </h2>
-<p>nflseedR is designed to efficiently take over the sophisticated and
-complex rule set of the NFL regarding division ranks, postseason seeding
-and draft order. It is intended to be used for NFL season simulations to
-help modelers focus on their models rather than tie-breaking procedures.
-The NFL’s official procedures for breaking ties for postseason playoffs
-may be found <a href="https://operations.nfl.com/the-rules/nfl-tie-breaking-procedures/" class="external-link">here</a>,
-and <a href="https://operations.nfl.com/journey-to-the-nfl/the-nfl-draft/the-rules-of-the-draft/" class="external-link">this
-site</a> explains the assignment of draft pick order.</p>
-<p>nflseedR does not support all levels of tie-breakers at the moment.
-The deepest tie-breaker currently is strength of schedule. After that,
-the decision is made at random. However, the need for additional levels
-is extremely unlikely in practice and deeper levels have never actually
-been needed to resolve season-end standings since the NFL expanded to 32
-teams.</p>
+<p>nflseedR essentially performs two tasks:</p>
+<ol style="list-style-type: decimal">
+<li>Calculation of NFL standings with <code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> based
+on game results of one or more seasons, especially taking into account
+the comprehensive and sometimes complicated tie-breaking procedures for
+division ranks, conference seeds and the draft order. Read <a href="https://nflseedr.com/articles/tiebreaker.html">this article</a>
+for further information on the implemented tie-breakers.</li>
+<li>Running thousands of simulations (Monte Carlo style) of an NFL
+season with <code><a href="../reference/nfl_simulations.html">nfl_simulations()</a></code>. The standings from point 1
+and especially the conference seeds are needed to determine playoff
+participants. Basically, the first point only exists because we need it
+to carry out the simulations.</li>
+</ol>
+<p>The actual core of a simulation is the generation of game results
+based on any information that the user deems important. This is why
+nflseedR is virtually extensible. By default, a simple ELO model is
+implemented that works with initial starting ELO values and updates them
+from week to week based on game results. However, the user can write
+their own function for calculating game results and pass it to nflseedR
+together with any additional data that may be required.</p>
 </div>
 <div class="section level2">
-<h2 id="using-in-simulation-functions">Using In-Simulation Functions<a class="anchor" aria-label="anchor" href="#using-in-simulation-functions"></a>
+<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>You can get NFL game data from this function:</p>
-<ul>
-<li>
-<code><a href="../reference/load_schedules.html">load_sharpe_games()</a></code> to collect game information and
-results</li>
-</ul>
-<p>If preferred, one can obtain or generate any set of game outcomes and
-let nflseedR handle all of the NFL seeding and tiebreaker math for you
-with three in-simulation functions (each can handle thousands of seasons
-at once):</p>
-<ul>
-<li>
-<code><a href="../reference/compute_division_ranks.html">compute_division_ranks()</a></code> to find all division
-winners,</li>
-<li>
-<code><a href="../reference/compute_conference_seeds.html">compute_conference_seeds()</a></code> to get the playoff
-participants, and</li>
-<li>
-<code><a href="../reference/compute_draft_order.html">compute_draft_order()</a></code> to find the resulting draft pick
-for each team.</li>
-</ul>
-<p>The following sections will demonstrate how to use them and what
-input is required.</p>
-<p>Loading the package is obligatory, so it is done first (along with
-<code>dplyr</code> for data wrangling and the <code>pipe</code>):</p>
+<div class="section level3">
+<h3 id="standings">Standings<a class="anchor" aria-label="anchor" href="#standings"></a>
+</h3>
+<p>We need real or simulated match data to determine standings. The
+required variables are specified in the documentation of the function
+<code><a href="../reference/nfl_standings.html">nfl_standings()</a></code>.</p>
+<p>Here are games data from the 2021 and 2022 seasons.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nflseedr.com">nflseedR</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>warn <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<div class="section level3">
-<h3 id="load-sharpe-games">Load Sharpe Games<a class="anchor" aria-label="anchor" href="#load-sharpe-games"></a>
-</h3>
+<code class="sourceCode R"><span><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">load_schedules</a></span><span class="op">(</span><span class="fl">2021</span><span class="op">:</span><span class="fl">2022</span><span class="op">)</span></span></code></pre></div>
+<p>We can pass this data directly to nflseedR and calculate standings.
+It defaults to compute division ranks as well as conference ranks for
+all teams and it applies tiebreakers through strength of schedule.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_schedules.html">load_sharpe_games</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_tail</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/nfl_standings.html">nfl_standings</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:11:38 | Initiate Standings &amp; Tiebreaking Data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:11:38 | Compute Division Ranks</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 11:11:38 | Compute Conference Ranks</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">standings</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>
 <col width="3%">
-<col width="1%">
-<col width="1%">
-<col width="0%">
 <col width="2%">
-<col width="1%">
-<col width="1%">
-<col width="1%">
-<col width="2%">
-<col width="1%">
-<col width="2%">
-<col width="1%">
-<col width="1%">
-<col width="1%">
-<col width="1%">
-<col width="2%">
-<col width="1%">
-<col width="2%">
-<col width="2%">
-<col width="0%">
-<col width="1%">
-<col width="0%">
-<col width="1%">
-<col width="1%">
-<col width="2%">
-<col width="2%">
-<col width="2%">
-<col width="3%">
-<col width="3%">
-<col width="2%">
-<col width="2%">
-<col width="1%">
-<col width="1%">
-<col width="1%">
-<col width="2%">
-<col width="0%">
-<col width="0%">
-<col width="2%">
-<col width="2%">
-<col width="3%">
-<col width="2%">
-<col width="3%">
-<col width="3%">
-<col width="1%">
 <col width="2%">
 <col width="5%">
+<col width="3%">
+<col width="2%">
+<col width="5%">
+<col width="3%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="4%">
+<col width="4%">
+<col width="5%">
+<col width="3%">
+<col width="3%">
+<col width="5%">
+<col width="13%">
+<col width="5%">
+<col width="13%">
 </colgroup>
 <thead><tr class="header">
-<th align="left">game_id</th>
 <th align="right">season</th>
-<th align="left">game_type</th>
-<th align="right">week</th>
-<th align="left">gameday</th>
-<th align="left">weekday</th>
-<th align="left">gametime</th>
-<th align="left">away_team</th>
-<th align="right">away_score</th>
-<th align="left">home_team</th>
-<th align="right">home_score</th>
-<th align="left">location</th>
-<th align="right">result</th>
-<th align="right">total</th>
-<th align="right">overtime</th>
-<th align="left">old_game_id</th>
-<th align="right">gsis</th>
-<th align="left">nfl_detail_id</th>
-<th align="left">pfr</th>
-<th align="right">pff</th>
-<th align="left">espn</th>
-<th align="right">ftn</th>
-<th align="right">away_rest</th>
-<th align="right">home_rest</th>
-<th align="right">away_moneyline</th>
-<th align="right">home_moneyline</th>
-<th align="right">spread_line</th>
-<th align="right">away_spread_odds</th>
-<th align="right">home_spread_odds</th>
-<th align="right">total_line</th>
-<th align="right">under_odds</th>
-<th align="right">over_odds</th>
-<th align="right">div_game</th>
-<th align="left">roof</th>
-<th align="left">surface</th>
-<th align="right">temp</th>
-<th align="right">wind</th>
-<th align="left">away_qb_id</th>
-<th align="left">home_qb_id</th>
-<th align="left">away_qb_name</th>
-<th align="left">home_qb_name</th>
-<th align="left">away_coach</th>
-<th align="left">home_coach</th>
-<th align="left">referee</th>
-<th align="left">stadium_id</th>
-<th align="left">stadium</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">2024_17_MIA_CLE</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">17</td>
-<td align="left">2024-12-29</td>
-<td align="left">Sunday</td>
-<td align="left">16:05</td>
-<td align="left">MIA</td>
-<td align="right">NA</td>
-<td align="left">CLE</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2024122911</td>
-<td align="right">59762</td>
-<td align="left">NA</td>
-<td align="left">202412290cle</td>
-<td align="right">NA</td>
-<td align="left">401671877</td>
-<td align="right">6703</td>
-<td align="right">7</td>
-<td align="right">10</td>
-<td align="right">-250</td>
-<td align="right">205</td>
-<td align="right">-5.5</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">40.5</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">0</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0036212</td>
-<td align="left">00-0031503</td>
-<td align="left">Tua Tagovailoa</td>
-<td align="left">Jameis Winston</td>
-<td align="left">Mike McDaniel</td>
-<td align="left">Kevin Stefanski</td>
-<td align="left">NA</td>
-<td align="left">CLE00</td>
-<td align="left">FirstEnergy Stadium</td>
-</tr>
-<tr class="even">
-<td align="left">2024_17_DAL_PHI</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">17</td>
-<td align="left">2024-12-29</td>
-<td align="left">Sunday</td>
-<td align="left">16:25</td>
-<td align="left">DAL</td>
-<td align="right">NA</td>
-<td align="left">PHI</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2024122910</td>
-<td align="right">59761</td>
-<td align="left">NA</td>
-<td align="left">202412290phi</td>
-<td align="right">NA</td>
-<td align="left">401671765</td>
-<td align="right">6702</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">270</td>
-<td align="right">-340</td>
-<td align="right">7.0</td>
-<td align="right">-105</td>
-<td align="right">-115</td>
-<td align="right">42.5</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0033662</td>
-<td align="left">00-0036389</td>
-<td align="left">Cooper Rush</td>
-<td align="left">Jalen Hurts</td>
-<td align="left">Mike McCarthy</td>
-<td align="left">Nick Sirianni</td>
-<td align="left">NA</td>
-<td align="left">PHI00</td>
-<td align="left">Lincoln Financial Field</td>
-</tr>
-<tr class="odd">
-<td align="left">2024_17_ATL_WAS</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">17</td>
-<td align="left">2024-12-29</td>
-<td align="left">Sunday</td>
-<td align="left">20:20</td>
-<td align="left">ATL</td>
-<td align="right">NA</td>
-<td align="left">WAS</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2024122904</td>
-<td align="right">59755</td>
-<td align="left">NA</td>
-<td align="left">202412290was</td>
-<td align="right">NA</td>
-<td align="left">401671842</td>
-<td align="right">6696</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">170</td>
-<td align="right">-205</td>
-<td align="right">5.0</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">47.0</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">0</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0039917</td>
-<td align="left">00-0039910</td>
-<td align="left">Michael Penix Jr.</td>
-<td align="left">Jayden Daniels</td>
-<td align="left">Raheem Morris</td>
-<td align="left">Dan Quinn</td>
-<td align="left">NA</td>
-<td align="left">WAS00</td>
-<td align="left">FedExField</td>
-</tr>
-<tr class="even">
-<td align="left">2024_17_DET_SF</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">17</td>
-<td align="left">2024-12-30</td>
-<td align="left">Monday</td>
-<td align="left">20:15</td>
-<td align="left">DET</td>
-<td align="right">NA</td>
-<td align="left">SF</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2024123000</td>
-<td align="right">59763</td>
-<td align="left">NA</td>
-<td align="left">202412300sfo</td>
-<td align="right">NA</td>
-<td align="left">401671698</td>
-<td align="right">6704</td>
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">-198</td>
-<td align="right">164</td>
-<td align="right">-4.0</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">51.5</td>
-<td align="right">-110</td>
-<td align="right">-110</td>
-<td align="right">0</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">00-0033106</td>
-<td align="left">00-0037834</td>
-<td align="left">Jared Goff</td>
-<td align="left">Brock Purdy</td>
-<td align="left">Dan Campbell</td>
-<td align="left">Kyle Shanahan</td>
-<td align="left">NA</td>
-<td align="left">SFO01</td>
-<td align="left">Levi’s Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2024_18_SF_ARI</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">SF</td>
-<td align="right">NA</td>
-<td align="left">ARI</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010500</td>
-<td align="right">59764</td>
-<td align="left">NA</td>
-<td align="left">202501050crd</td>
-<td align="right">NA</td>
-<td align="left">401671845</td>
-<td align="right">6705</td>
-<td align="right">6</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">closed</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Kyle Shanahan</td>
-<td align="left">Jonathan Gannon</td>
-<td align="left">NA</td>
-<td align="left">PHO00</td>
-<td align="left">State Farm Stadium</td>
-</tr>
-<tr class="even">
-<td align="left">2024_18_CAR_ATL</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">CAR</td>
-<td align="right">NA</td>
-<td align="left">ATL</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010501</td>
-<td align="right">59765</td>
-<td align="left">NA</td>
-<td align="left">202501050atl</td>
-<td align="right">NA</td>
-<td align="left">401671827</td>
-<td align="right">6706</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">closed</td>
-<td align="left">fieldturf</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Dave Canales</td>
-<td align="left">Raheem Morris</td>
-<td align="left">NA</td>
-<td align="left">ATL97</td>
-<td align="left">Mercedes-Benz Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2024_18_CLE_BAL</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">CLE</td>
-<td align="right">NA</td>
-<td align="left">BAL</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010502</td>
-<td align="right">59766</td>
-<td align="left">NA</td>
-<td align="left">202501050rav</td>
-<td align="right">NA</td>
-<td align="left">401671834</td>
-<td align="right">6707</td>
-<td align="right">7</td>
-<td align="right">11</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Kevin Stefanski</td>
-<td align="left">John Harbaugh</td>
-<td align="left">NA</td>
-<td align="left">BAL00</td>
-<td align="left">M&amp;T Bank Stadium</td>
-</tr>
-<tr class="even">
-<td align="left">2024_18_WAS_DAL</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">WAS</td>
-<td align="right">NA</td>
-<td align="left">DAL</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010503</td>
-<td align="right">59767</td>
-<td align="left">NA</td>
-<td align="left">202501050dal</td>
-<td align="right">NA</td>
-<td align="left">401671840</td>
-<td align="right">6708</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">closed</td>
-<td align="left">matrixturf</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Dan Quinn</td>
-<td align="left">Mike McCarthy</td>
-<td align="left">NA</td>
-<td align="left">DAL00</td>
-<td align="left">AT&amp;T Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2024_18_KC_DEN</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">KC</td>
-<td align="right">NA</td>
-<td align="left">DEN</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010504</td>
-<td align="right">59768</td>
-<td align="left">NA</td>
-<td align="left">202501050den</td>
-<td align="right">NA</td>
-<td align="left">401671838</td>
-<td align="right">6709</td>
-<td align="right">11</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Andy Reid</td>
-<td align="left">Sean Payton</td>
-<td align="left">NA</td>
-<td align="left">DEN00</td>
-<td align="left">Empower Field at Mile High</td>
-</tr>
-<tr class="even">
-<td align="left">2024_18_MIN_DET</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">MIN</td>
-<td align="right">NA</td>
-<td align="left">DET</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010505</td>
-<td align="right">59769</td>
-<td align="left">NA</td>
-<td align="left">202501050det</td>
-<td align="right">NA</td>
-<td align="left">401671843</td>
-<td align="right">6710</td>
-<td align="right">7</td>
-<td align="right">6</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">dome</td>
-<td align="left">fieldturf</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Kevin O’Connell</td>
-<td align="left">Dan Campbell</td>
-<td align="left">NA</td>
-<td align="left">DET00</td>
-<td align="left">Ford Field</td>
-</tr>
-<tr class="odd">
-<td align="left">2024_18_CHI_GB</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">CHI</td>
-<td align="right">NA</td>
-<td align="left">GB</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010506</td>
-<td align="right">59770</td>
-<td align="left">NA</td>
-<td align="left">202501050gnb</td>
-<td align="right">NA</td>
-<td align="left">401671844</td>
-<td align="right">6711</td>
-<td align="right">10</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Matt Eberflus</td>
-<td align="left">Matt LaFleur</td>
-<td align="left">NA</td>
-<td align="left">GNB00</td>
-<td align="left">Lambeau Field</td>
-</tr>
-<tr class="even">
-<td align="left">2024_18_JAX_IND</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">JAX</td>
-<td align="right">NA</td>
-<td align="left">IND</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010507</td>
-<td align="right">59771</td>
-<td align="left">NA</td>
-<td align="left">202501050clt</td>
-<td align="right">NA</td>
-<td align="left">401671837</td>
-<td align="right">6712</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">closed</td>
-<td align="left">fieldturf</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Doug Pederson</td>
-<td align="left">Shane Steichen</td>
-<td align="left">NA</td>
-<td align="left">IND00</td>
-<td align="left">Lucas Oil Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2024_18_SEA_LA</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">SEA</td>
-<td align="right">NA</td>
-<td align="left">LA</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010508</td>
-<td align="right">59772</td>
-<td align="left">NA</td>
-<td align="left">202501050ram</td>
-<td align="right">NA</td>
-<td align="left">401671830</td>
-<td align="right">6713</td>
-<td align="right">10</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">dome</td>
-<td align="left">matrixturf</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Mike Macdonald</td>
-<td align="left">Sean McVay</td>
-<td align="left">NA</td>
-<td align="left">LAX01</td>
-<td align="left">SoFi Stadium</td>
-</tr>
-<tr class="even">
-<td align="left">2024_18_LAC_LV</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">LAC</td>
-<td align="right">NA</td>
-<td align="left">LV</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010509</td>
-<td align="right">59773</td>
-<td align="left">NA</td>
-<td align="left">202501050rai</td>
-<td align="right">NA</td>
-<td align="left">401671839</td>
-<td align="right">6714</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">dome</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Jim Harbaugh</td>
-<td align="left">Antonio Pierce</td>
-<td align="left">NA</td>
-<td align="left">VEG00</td>
-<td align="left">Allegiant Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2024_18_BUF_NE</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">BUF</td>
-<td align="right">NA</td>
-<td align="left">NE</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010510</td>
-<td align="right">59774</td>
-<td align="left">NA</td>
-<td align="left">202501050nwe</td>
-<td align="right">NA</td>
-<td align="left">401671831</td>
-<td align="right">6715</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">fieldturf</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Sean McDermott</td>
-<td align="left">Jerod Mayo</td>
-<td align="left">NA</td>
-<td align="left">BOS00</td>
-<td align="left">Gillette Stadium</td>
-</tr>
-<tr class="even">
-<td align="left">2024_18_MIA_NYJ</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">MIA</td>
-<td align="right">NA</td>
-<td align="left">NYJ</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010511</td>
-<td align="right">59775</td>
-<td align="left">NA</td>
-<td align="left">202501050nyj</td>
-<td align="right">NA</td>
-<td align="left">401671833</td>
-<td align="right">6716</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">fieldturf</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Mike McDaniel</td>
-<td align="left">Robert Saleh</td>
-<td align="left">NA</td>
-<td align="left">NYC01</td>
-<td align="left">MetLife Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2024_18_NYG_PHI</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">NYG</td>
-<td align="right">NA</td>
-<td align="left">PHI</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010512</td>
-<td align="right">59776</td>
-<td align="left">NA</td>
-<td align="left">202501050phi</td>
-<td align="right">NA</td>
-<td align="left">401671841</td>
-<td align="right">6717</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Brian Daboll</td>
-<td align="left">Nick Sirianni</td>
-<td align="left">NA</td>
-<td align="left">PHI00</td>
-<td align="left">Lincoln Financial Field</td>
-</tr>
-<tr class="even">
-<td align="left">2024_18_CIN_PIT</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">CIN</td>
-<td align="right">NA</td>
-<td align="left">PIT</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010513</td>
-<td align="right">59777</td>
-<td align="left">NA</td>
-<td align="left">202501050pit</td>
-<td align="right">NA</td>
-<td align="left">401671836</td>
-<td align="right">6718</td>
-<td align="right">7</td>
-<td align="right">11</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Zac Taylor</td>
-<td align="left">Mike Tomlin</td>
-<td align="left">NA</td>
-<td align="left">PIT00</td>
-<td align="left">Acrisure Stadium</td>
-</tr>
-<tr class="odd">
-<td align="left">2024_18_NO_TB</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">NO</td>
-<td align="right">NA</td>
-<td align="left">TB</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010514</td>
-<td align="right">59778</td>
-<td align="left">NA</td>
-<td align="left">202501050tam</td>
-<td align="right">NA</td>
-<td align="left">401671828</td>
-<td align="right">6719</td>
-<td align="right">7</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">Dennis Allen</td>
-<td align="left">Todd Bowles</td>
-<td align="left">NA</td>
-<td align="left">TAM00</td>
-<td align="left">Raymond James Stadium</td>
-</tr>
-<tr class="even">
-<td align="left">2024_18_HOU_TEN</td>
-<td align="right">2024</td>
-<td align="left">REG</td>
-<td align="right">18</td>
-<td align="left">2025-01-05</td>
-<td align="left">Sunday</td>
-<td align="left">13:00</td>
-<td align="left">HOU</td>
-<td align="right">NA</td>
-<td align="left">TEN</td>
-<td align="right">NA</td>
-<td align="left">Home</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">2025010515</td>
-<td align="right">59779</td>
-<td align="left">NA</td>
-<td align="left">202501050oti</td>
-<td align="right">NA</td>
-<td align="left">401671826</td>
-<td align="right">6720</td>
-<td align="right">11</td>
-<td align="right">7</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="left">outdoors</td>
-<td align="left">grass</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">DeMeco Ryans</td>
-<td align="left">Brian Callahan</td>
-<td align="left">NA</td>
-<td align="left">NAS00</td>
-<td align="left">Nissan Stadium</td>
-</tr>
-</tbody>
-</table>
-<p>This pulls game information from the games.rds file (equivalent to
-the games.csv file) from <a href="https://github.com/nflverse/nfldata/tree/master/data" class="external-link">Lee Sharpe’s
-NFL Data Github</a>.</p>
-</div>
-<div class="section level3">
-<h3 id="find-division-ranks">Find Division Ranks<a class="anchor" aria-label="anchor" href="#find-division-ranks"></a>
-</h3>
-<p>This function computes division ranks based on a data frame
-containing game results of one or more NFL seasons. So let’s load some
-game data first (this example uses the game data of the 2012 and 2019
-seasons):</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_schedules.html">load_sharpe_games</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2012</span>, <span class="fl">2019</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>sim <span class="op">=</span> <span class="va">season</span>, <span class="va">game_type</span>, <span class="va">week</span>, <span class="va">away_team</span>, <span class="va">home_team</span>, <span class="va">result</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 534</span></span>
-<span><span class="co">#&gt; Columns: 6</span></span>
-<span><span class="co">#&gt; $ sim       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, …</span></span>
-<span><span class="co">#&gt; $ game_type <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "REG", "REG", "REG", "REG", "REG", "REG", "REG", "REG", "REG…</span></span>
-<span><span class="co">#&gt; $ week      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, …</span></span>
-<span><span class="co">#&gt; $ away_team <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "DAL", "IND", "PHI", "STL", "MIA", "ATL", "JAX", "WAS", "BUF…</span></span>
-<span><span class="co">#&gt; $ home_team <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "NYG", "CHI", "CLE", "DET", "HOU", "KC", "MIN", "NO", "NYJ",…</span></span>
-<span><span class="co">#&gt; $ result    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> -7, 20, -1, 4, 20, -16, 3, -8, 20, -21, 4, -8, 6, 12, 31, -8…</span></span></code></pre></div>
-<p>Please note the required column names:</p>
-<ul>
-<li><p><code>sim</code> : A simulation ID. Normally 1 - n simulated
-seasons or (like in this case) just the year.</p></li>
-<li><p><code>game_type</code> : One of ‘REG’, ‘WC’, ‘DIV’, ‘CON’, ‘SB’
-indicating if a game was a regular season game or one of the playoff
-rounds.</p></li>
-<li><p><code>week</code> : The week of the corresponding NFL
-season.</p></li>
-<li><p><code>away_team</code> : Team abbreviation of the away
-team.</p></li>
-<li><p><code>home_team</code> : Team abbreviation of the home
-team.</p></li>
-<li><p><code>result</code> : Equals home score - away score.</p></li>
-</ul>
-<p>Now the games data frame can be used to compute the division ranks
-(the parameter <code>.debug</code> is set to <code>TRUE</code> to show
-what the function is doing).</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">div_standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_division_ranks.html">compute_division_ranks</a></span><span class="op">(</span><span class="va">games</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:28 | Calculating team data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:28 | Calculating head to head</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:28 | Calculating division rank #1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:28 | DIV (2): Head-to-head</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:28 | DIV (2): Division Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:28 | Calculating division rank #2</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:28 | DIV (3): Head-to-head</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:28 | DIV (3): Division Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:28 | DIV (3): Common Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:28 | DIV (2): Head-to-head</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | DIV (2): Division Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | DIV (2): Common Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | DIV (2): Conference Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | Calculating division rank #3</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | DIV (2): Head-to-head</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | DIV (2): Division Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | DIV (2): Common Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | Calculating division rank #4</span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">div_standings</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 2</span></span>
-<span><span class="co">#&gt;  $ standings: tibble [64 × 16] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   ..$ sim         : int [1:64] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span></span>
-<span><span class="co">#&gt;   ..$ conf        : chr [1:64] "AFC" "AFC" "AFC" "AFC" ...</span></span>
-<span><span class="co">#&gt;   ..$ division    : chr [1:64] "AFC East" "AFC East" "AFC East" "AFC East" ...</span></span>
-<span><span class="co">#&gt;   ..$ team        : chr [1:64] "BUF" "MIA" "NE" "NYJ" ...</span></span>
-<span><span class="co">#&gt;   ..$ games       : int [1:64] 16 16 16 16 16 16 16 16 16 16 ...</span></span>
-<span><span class="co">#&gt;   ..$ wins        : num [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span></span>
-<span><span class="co">#&gt;   ..$ true_wins   : int [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span></span>
-<span><span class="co">#&gt;   ..$ losses      : int [1:64] 10 9 4 10 6 6 11 8 4 5 ...</span></span>
-<span><span class="co">#&gt;   ..$ ties        : int [1:64] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;   ..$ win_pct     : num [1:64] 0.375 0.438 0.75 0.375 0.625 ...</span></span>
-<span><span class="co">#&gt;   ..$ div_pct     : num [1:64] 0.333 0.333 1 0.333 0.667 ...</span></span>
-<span><span class="co">#&gt;   ..$ conf_pct    : num [1:64] 0.417 0.417 0.917 0.333 0.667 ...</span></span>
-<span><span class="co">#&gt;   ..$ sov         : num [1:64] 0.281 0.415 0.466 0.401 0.438 ...</span></span>
-<span><span class="co">#&gt;   ..$ sos         : num [1:64] 0.48 0.5 0.496 0.512 0.496 ...</span></span>
-<span><span class="co">#&gt;   ..$ div_rank    : num [1:64] 4 2 1 3 1 2 4 3 1 2 ...</span></span>
-<span><span class="co">#&gt;   ..$ max_reg_week: int [1:64] 17 17 17 17 17 17 17 17 17 17 ...</span></span>
-<span><span class="co">#&gt;  $ h2h      : tibble [2,048 × 6] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   ..$ sim       : int [1:2048] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span></span>
-<span><span class="co">#&gt;   ..$ team      : chr [1:2048] "ARI" "ARI" "ARI" "ARI" ...</span></span>
-<span><span class="co">#&gt;   ..$ opp       : chr [1:2048] "ARI" "ATL" "BAL" "BUF" ...</span></span>
-<span><span class="co">#&gt;   ..$ h2h_games : int [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;   ..$ h2h_wins  : num [1:2048] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;   ..$ h2h_played: num [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></span></code></pre></div>
-<p>Please note that the function outputs a list of data frames, the
-actual division standings, and a data frame named <code>h2h</code>. The
-latter is an important input in the other functions (as it is used to
-break head-to-head ties) and can only be computed with
-<code><a href="../reference/compute_division_ranks.html">compute_division_ranks()</a></code>.</p>
-<p>Here is the resulting division standings data frame for the 2012
-season:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">div_standings</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"standings"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">division</span><span class="op">:</span><span class="va">div_rank</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
-<colgroup>
-<col width="10%">
-<col width="5%">
-<col width="6%">
-<col width="5%">
-<col width="10%">
-<col width="7%">
-<col width="5%">
-<col width="8%">
-<col width="8%">
-<col width="9%">
-<col width="6%">
-<col width="6%">
-<col width="9%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">division</th>
 <th align="left">team</th>
-<th align="right">games</th>
-<th align="right">wins</th>
-<th align="right">true_wins</th>
-<th align="right">losses</th>
-<th align="right">ties</th>
-<th align="right">win_pct</th>
-<th align="right">div_pct</th>
-<th align="right">conf_pct</th>
-<th align="right">sov</th>
-<th align="right">sos</th>
-<th align="right">div_rank</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">AFC East</td>
-<td align="left">BUF</td>
-<td align="right">16</td>
-<td align="right">6.0</td>
-<td align="right">6</td>
-<td align="right">10</td>
-<td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.333</td>
-<td align="right">0.417</td>
-<td align="right">0.281</td>
-<td align="right">0.480</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="left">AFC East</td>
-<td align="left">MIA</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.333</td>
-<td align="right">0.417</td>
-<td align="right">0.415</td>
-<td align="right">0.500</td>
-<td align="right">2</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC East</td>
-<td align="left">NE</td>
-<td align="right">16</td>
-<td align="right">12.0</td>
-<td align="right">12</td>
-<td align="right">4</td>
-<td align="right">0</td>
-<td align="right">0.750</td>
-<td align="right">1.000</td>
-<td align="right">0.917</td>
-<td align="right">0.466</td>
-<td align="right">0.496</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">AFC East</td>
-<td align="left">NYJ</td>
-<td align="right">16</td>
-<td align="right">6.0</td>
-<td align="right">6</td>
-<td align="right">10</td>
-<td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.333</td>
-<td align="right">0.333</td>
-<td align="right">0.401</td>
-<td align="right">0.512</td>
-<td align="right">3</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC North</td>
-<td align="left">BAL</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.667</td>
-<td align="right">0.667</td>
-<td align="right">0.438</td>
-<td align="right">0.496</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">AFC North</td>
-<td align="left">CIN</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.500</td>
-<td align="right">0.583</td>
-<td align="right">0.381</td>
-<td align="right">0.438</td>
-<td align="right">2</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC North</td>
-<td align="left">CLE</td>
-<td align="right">16</td>
-<td align="right">5.0</td>
-<td align="right">5</td>
-<td align="right">11</td>
-<td align="right">0</td>
-<td align="right">0.312</td>
-<td align="right">0.333</td>
-<td align="right">0.417</td>
-<td align="right">0.388</td>
-<td align="right">0.508</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="left">AFC North</td>
-<td align="left">PIT</td>
-<td align="right">16</td>
-<td align="right">8.0</td>
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">0.500</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.438</td>
-<td align="right">0.465</td>
-<td align="right">3</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC South</td>
-<td align="left">HOU</td>
-<td align="right">16</td>
-<td align="right">12.0</td>
-<td align="right">12</td>
-<td align="right">4</td>
-<td align="right">0</td>
-<td align="right">0.750</td>
-<td align="right">0.833</td>
-<td align="right">0.833</td>
-<td align="right">0.432</td>
-<td align="right">0.496</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">AFC South</td>
-<td align="left">IND</td>
-<td align="right">16</td>
-<td align="right">11.0</td>
-<td align="right">11</td>
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">0.688</td>
-<td align="right">0.667</td>
-<td align="right">0.667</td>
-<td align="right">0.403</td>
-<td align="right">0.441</td>
-<td align="right">2</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC South</td>
-<td align="left">JAX</td>
-<td align="right">16</td>
-<td align="right">2.0</td>
-<td align="right">2</td>
-<td align="right">14</td>
-<td align="right">0</td>
-<td align="right">0.125</td>
-<td align="right">0.333</td>
-<td align="right">0.167</td>
-<td align="right">0.531</td>
-<td align="right">0.539</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="left">AFC South</td>
-<td align="left">TEN</td>
-<td align="right">16</td>
-<td align="right">6.0</td>
-<td align="right">6</td>
-<td align="right">10</td>
-<td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.167</td>
-<td align="right">0.417</td>
-<td align="right">0.344</td>
-<td align="right">0.512</td>
-<td align="right">3</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC West</td>
-<td align="left">DEN</td>
-<td align="right">16</td>
-<td align="right">13.0</td>
-<td align="right">13</td>
-<td align="right">3</td>
-<td align="right">0</td>
-<td align="right">0.812</td>
-<td align="right">1.000</td>
-<td align="right">0.833</td>
-<td align="right">0.385</td>
-<td align="right">0.457</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">AFC West</td>
-<td align="left">KC</td>
-<td align="right">16</td>
-<td align="right">2.0</td>
-<td align="right">2</td>
-<td align="right">14</td>
-<td align="right">0</td>
-<td align="right">0.125</td>
-<td align="right">0.000</td>
-<td align="right">0.000</td>
-<td align="right">0.438</td>
-<td align="right">0.516</td>
-<td align="right">4</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC West</td>
-<td align="left">OAK</td>
-<td align="right">16</td>
-<td align="right">4.0</td>
-<td align="right">4</td>
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.333</td>
-<td align="right">0.333</td>
-<td align="right">0.219</td>
-<td align="right">0.469</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="left">AFC West</td>
-<td align="left">SD</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.667</td>
-<td align="right">0.583</td>
-<td align="right">0.286</td>
-<td align="right">0.457</td>
-<td align="right">2</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC East</td>
-<td align="left">DAL</td>
-<td align="right">16</td>
-<td align="right">8.0</td>
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">0.500</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.422</td>
-<td align="right">0.523</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="left">NFC East</td>
-<td align="left">NYG</td>
-<td align="right">16</td>
-<td align="right">9.0</td>
-<td align="right">9</td>
-<td align="right">7</td>
-<td align="right">0</td>
-<td align="right">0.562</td>
-<td align="right">0.500</td>
-<td align="right">0.667</td>
-<td align="right">0.490</td>
-<td align="right">0.521</td>
-<td align="right">2</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC East</td>
-<td align="left">PHI</td>
-<td align="right">16</td>
-<td align="right">4.0</td>
-<td align="right">4</td>
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.167</td>
-<td align="right">0.167</td>
-<td align="right">0.484</td>
-<td align="right">0.508</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="left">NFC East</td>
-<td align="left">WAS</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.833</td>
-<td align="right">0.667</td>
-<td align="right">0.450</td>
-<td align="right">0.494</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC North</td>
-<td align="left">CHI</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.500</td>
-<td align="right">0.583</td>
-<td align="right">0.403</td>
-<td align="right">0.512</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="left">NFC North</td>
-<td align="left">DET</td>
-<td align="right">16</td>
-<td align="right">4.0</td>
-<td align="right">4</td>
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.000</td>
-<td align="right">0.250</td>
-<td align="right">0.383</td>
-<td align="right">0.566</td>
-<td align="right">4</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC North</td>
-<td align="left">GB</td>
-<td align="right">16</td>
-<td align="right">11.0</td>
-<td align="right">11</td>
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">0.688</td>
-<td align="right">0.833</td>
-<td align="right">0.667</td>
-<td align="right">0.440</td>
-<td align="right">0.508</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">NFC North</td>
-<td align="left">MIN</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.667</td>
-<td align="right">0.583</td>
-<td align="right">0.456</td>
-<td align="right">0.520</td>
-<td align="right">2</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC South</td>
-<td align="left">ATL</td>
-<td align="right">16</td>
-<td align="right">13.0</td>
-<td align="right">13</td>
-<td align="right">3</td>
-<td align="right">0</td>
-<td align="right">0.812</td>
-<td align="right">0.500</td>
-<td align="right">0.750</td>
-<td align="right">0.418</td>
-<td align="right">0.422</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">NFC South</td>
-<td align="left">CAR</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.464</td>
-<td align="right">0.516</td>
-<td align="right">2</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC South</td>
-<td align="left">NO</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.446</td>
-<td align="right">0.521</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="left">NFC South</td>
-<td align="left">TB</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.500</td>
-<td align="right">0.333</td>
-<td align="right">0.446</td>
-<td align="right">0.502</td>
-<td align="right">4</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC West</td>
-<td align="left">ARI</td>
-<td align="right">16</td>
-<td align="right">5.0</td>
-<td align="right">5</td>
-<td align="right">11</td>
-<td align="right">0</td>
-<td align="right">0.312</td>
-<td align="right">0.167</td>
-<td align="right">0.250</td>
-<td align="right">0.475</td>
-<td align="right">0.559</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="left">NFC West</td>
-<td align="left">SEA</td>
-<td align="right">16</td>
-<td align="right">11.0</td>
-<td align="right">11</td>
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">0.688</td>
-<td align="right">0.500</td>
-<td align="right">0.667</td>
-<td align="right">0.534</td>
-<td align="right">0.504</td>
-<td align="right">2</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC West</td>
-<td align="left">SF</td>
-<td align="right">16</td>
-<td align="right">11.5</td>
-<td align="right">11</td>
-<td align="right">4</td>
-<td align="right">1</td>
-<td align="right">0.719</td>
-<td align="right">0.583</td>
-<td align="right">0.625</td>
-<td align="right">0.477</td>
-<td align="right">0.504</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">NFC West</td>
-<td align="left">STL</td>
-<td align="right">16</td>
-<td align="right">7.5</td>
-<td align="right">7</td>
-<td align="right">8</td>
-<td align="right">1</td>
-<td align="right">0.469</td>
-<td align="right">0.750</td>
-<td align="right">0.542</td>
-<td align="right">0.496</td>
-<td align="right">0.539</td>
-<td align="right">3</td>
-</tr>
-</tbody>
-</table>
-<p>In that season, the second-place finish in the NFC South required a
-three way tie-breaker between the Panthers, Saints and Bucs. It was
-broken with the three-way Conference Record. This can be seen in the
-above given console output: <code>...DIV (3): Common Record</code> for
-the division rank number 2. The Bucs lost this tie-breaker with a 0.333
-win percentage in the conference and the tie-breaking procedure goes
-forward with a 2-way head-to-head comparison.</p>
-</div>
-<div class="section level3">
-<h3 id="find-conference-seedings">Find Conference Seedings<a class="anchor" aria-label="anchor" href="#find-conference-seedings"></a>
-</h3>
-<p>This function computes conference seedings based on the above
-computed division standings data frame. For efficiency, reasons the
-<code>h2h</code> data frame computed above has to be passed to the
-function. The easiest way is to pass the list of data frames that is
-computed in the first step. For example (please note the number of
-playoff seeds):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">seeds</span> <span class="op">&lt;-</span> <span class="va">div_standings</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_conference_seeds.html">compute_conference_seeds</a></span><span class="op">(</span>h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, playoff_seeds <span class="op">=</span> <span class="fl">6</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | Calculating seed #1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | CONF (3): Head-to-head Sweep</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | Calculating seed #2</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | CONF (2): Head-to-head Sweep</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | CONF (2): Conference Record</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | Calculating seed #3</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | Calculating seed #4</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | Calculating seed #5</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | Calculating seed #6</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:29 | CONF (2): Best-in-division reduction</span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">seeds</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 2</span></span>
-<span><span class="co">#&gt;  $ standings: tibble [64 × 17] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   ..$ sim      : int [1:64] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span></span>
-<span><span class="co">#&gt;   ..$ conf     : chr [1:64] "AFC" "AFC" "AFC" "AFC" ...</span></span>
-<span><span class="co">#&gt;   ..$ division : chr [1:64] "AFC East" "AFC East" "AFC East" "AFC East" ...</span></span>
-<span><span class="co">#&gt;   ..$ team     : chr [1:64] "BUF" "MIA" "NE" "NYJ" ...</span></span>
-<span><span class="co">#&gt;   ..$ games    : int [1:64] 16 16 16 16 16 16 16 16 16 16 ...</span></span>
-<span><span class="co">#&gt;   ..$ wins     : num [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span></span>
-<span><span class="co">#&gt;   ..$ true_wins: int [1:64] 6 7 12 6 10 10 5 8 12 11 ...</span></span>
-<span><span class="co">#&gt;   ..$ losses   : int [1:64] 10 9 4 10 6 6 11 8 4 5 ...</span></span>
-<span><span class="co">#&gt;   ..$ ties     : int [1:64] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;   ..$ win_pct  : num [1:64] 0.375 0.438 0.75 0.375 0.625 ...</span></span>
-<span><span class="co">#&gt;   ..$ div_pct  : num [1:64] 0.333 0.333 1 0.333 0.667 ...</span></span>
-<span><span class="co">#&gt;   ..$ conf_pct : num [1:64] 0.417 0.417 0.917 0.333 0.667 ...</span></span>
-<span><span class="co">#&gt;   ..$ sov      : num [1:64] 0.281 0.415 0.466 0.401 0.438 ...</span></span>
-<span><span class="co">#&gt;   ..$ sos      : num [1:64] 0.48 0.5 0.496 0.512 0.496 ...</span></span>
-<span><span class="co">#&gt;   ..$ div_rank : num [1:64] 4 2 1 3 1 2 4 3 1 2 ...</span></span>
-<span><span class="co">#&gt;   ..$ seed     : num [1:64] NA NA 2 NA 4 6 NA NA 3 5 ...</span></span>
-<span><span class="co">#&gt;   ..$ exit     : num [1:64] 17 17 NA 17 NA NA 17 17 NA NA ...</span></span>
-<span><span class="co">#&gt;  $ h2h      : tibble [2,048 × 6] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   ..$ sim       : int [1:2048] 2012 2012 2012 2012 2012 2012 2012 2012 2012 2012 ...</span></span>
-<span><span class="co">#&gt;   ..$ team      : chr [1:2048] "ARI" "ARI" "ARI" "ARI" ...</span></span>
-<span><span class="co">#&gt;   ..$ opp       : chr [1:2048] "ARI" "ATL" "BAL" "BUF" ...</span></span>
-<span><span class="co">#&gt;   ..$ h2h_games : int [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;   ..$ h2h_wins  : num [1:2048] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;   ..$ h2h_played: num [1:2048] 0 1 0 1 0 1 0 0 0 0 ...</span></span></code></pre></div>
-<p>Just like <code><a href="../reference/compute_division_ranks.html">compute_division_ranks()</a></code>, this function
-returns a list of two data frames so we can use it within a pipe. The
-resulting seeds for the 2012 season are given below.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">seeds</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"standings"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">division</span><span class="op">:</span><span class="va">seed</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="10%">
-<col width="5%">
-<col width="6%">
-<col width="5%">
-<col width="10%">
-<col width="7%">
-<col width="5%">
-<col width="8%">
-<col width="8%">
-<col width="9%">
-<col width="6%">
-<col width="6%">
-<col width="9%">
-<col width="5%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">division</th>
-<th align="left">team</th>
-<th align="right">games</th>
-<th align="right">wins</th>
-<th align="right">true_wins</th>
-<th align="right">losses</th>
-<th align="right">ties</th>
-<th align="right">win_pct</th>
-<th align="right">div_pct</th>
-<th align="right">conf_pct</th>
-<th align="right">sov</th>
-<th align="right">sos</th>
-<th align="right">div_rank</th>
-<th align="right">seed</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">AFC East</td>
-<td align="left">BUF</td>
-<td align="right">16</td>
-<td align="right">6.0</td>
-<td align="right">6</td>
-<td align="right">10</td>
-<td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.333</td>
-<td align="right">0.417</td>
-<td align="right">0.281</td>
-<td align="right">0.480</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">AFC East</td>
-<td align="left">MIA</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.333</td>
-<td align="right">0.417</td>
-<td align="right">0.415</td>
-<td align="right">0.500</td>
-<td align="right">2</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC East</td>
-<td align="left">NE</td>
-<td align="right">16</td>
-<td align="right">12.0</td>
-<td align="right">12</td>
-<td align="right">4</td>
-<td align="right">0</td>
-<td align="right">0.750</td>
-<td align="right">1.000</td>
-<td align="right">0.917</td>
-<td align="right">0.466</td>
-<td align="right">0.496</td>
-<td align="right">1</td>
-<td align="right">2</td>
-</tr>
-<tr class="even">
-<td align="left">AFC East</td>
-<td align="left">NYJ</td>
-<td align="right">16</td>
-<td align="right">6.0</td>
-<td align="right">6</td>
-<td align="right">10</td>
-<td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.333</td>
-<td align="right">0.333</td>
-<td align="right">0.401</td>
-<td align="right">0.512</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC North</td>
-<td align="left">BAL</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.667</td>
-<td align="right">0.667</td>
-<td align="right">0.438</td>
-<td align="right">0.496</td>
-<td align="right">1</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="left">AFC North</td>
-<td align="left">CIN</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.500</td>
-<td align="right">0.583</td>
-<td align="right">0.381</td>
-<td align="right">0.438</td>
-<td align="right">2</td>
-<td align="right">6</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC North</td>
-<td align="left">CLE</td>
-<td align="right">16</td>
-<td align="right">5.0</td>
-<td align="right">5</td>
-<td align="right">11</td>
-<td align="right">0</td>
-<td align="right">0.312</td>
-<td align="right">0.333</td>
-<td align="right">0.417</td>
-<td align="right">0.388</td>
-<td align="right">0.508</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">AFC North</td>
-<td align="left">PIT</td>
-<td align="right">16</td>
-<td align="right">8.0</td>
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">0.500</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.438</td>
-<td align="right">0.465</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC South</td>
-<td align="left">HOU</td>
-<td align="right">16</td>
-<td align="right">12.0</td>
-<td align="right">12</td>
-<td align="right">4</td>
-<td align="right">0</td>
-<td align="right">0.750</td>
-<td align="right">0.833</td>
-<td align="right">0.833</td>
-<td align="right">0.432</td>
-<td align="right">0.496</td>
-<td align="right">1</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="left">AFC South</td>
-<td align="left">IND</td>
-<td align="right">16</td>
-<td align="right">11.0</td>
-<td align="right">11</td>
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">0.688</td>
-<td align="right">0.667</td>
-<td align="right">0.667</td>
-<td align="right">0.403</td>
-<td align="right">0.441</td>
-<td align="right">2</td>
-<td align="right">5</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC South</td>
-<td align="left">JAX</td>
-<td align="right">16</td>
-<td align="right">2.0</td>
-<td align="right">2</td>
-<td align="right">14</td>
-<td align="right">0</td>
-<td align="right">0.125</td>
-<td align="right">0.333</td>
-<td align="right">0.167</td>
-<td align="right">0.531</td>
-<td align="right">0.539</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">AFC South</td>
-<td align="left">TEN</td>
-<td align="right">16</td>
-<td align="right">6.0</td>
-<td align="right">6</td>
-<td align="right">10</td>
-<td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.167</td>
-<td align="right">0.417</td>
-<td align="right">0.344</td>
-<td align="right">0.512</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC West</td>
-<td align="left">DEN</td>
-<td align="right">16</td>
-<td align="right">13.0</td>
-<td align="right">13</td>
-<td align="right">3</td>
-<td align="right">0</td>
-<td align="right">0.812</td>
-<td align="right">1.000</td>
-<td align="right">0.833</td>
-<td align="right">0.385</td>
-<td align="right">0.457</td>
-<td align="right">1</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">AFC West</td>
-<td align="left">KC</td>
-<td align="right">16</td>
-<td align="right">2.0</td>
-<td align="right">2</td>
-<td align="right">14</td>
-<td align="right">0</td>
-<td align="right">0.125</td>
-<td align="right">0.000</td>
-<td align="right">0.000</td>
-<td align="right">0.438</td>
-<td align="right">0.516</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC West</td>
-<td align="left">OAK</td>
-<td align="right">16</td>
-<td align="right">4.0</td>
-<td align="right">4</td>
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.333</td>
-<td align="right">0.333</td>
-<td align="right">0.219</td>
-<td align="right">0.469</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">AFC West</td>
-<td align="left">SD</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.667</td>
-<td align="right">0.583</td>
-<td align="right">0.286</td>
-<td align="right">0.457</td>
-<td align="right">2</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC East</td>
-<td align="left">DAL</td>
-<td align="right">16</td>
-<td align="right">8.0</td>
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">0.500</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.422</td>
-<td align="right">0.523</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">NFC East</td>
-<td align="left">NYG</td>
-<td align="right">16</td>
-<td align="right">9.0</td>
-<td align="right">9</td>
-<td align="right">7</td>
-<td align="right">0</td>
-<td align="right">0.562</td>
-<td align="right">0.500</td>
-<td align="right">0.667</td>
-<td align="right">0.490</td>
-<td align="right">0.521</td>
-<td align="right">2</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC East</td>
-<td align="left">PHI</td>
-<td align="right">16</td>
-<td align="right">4.0</td>
-<td align="right">4</td>
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.167</td>
-<td align="right">0.167</td>
-<td align="right">0.484</td>
-<td align="right">0.508</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">NFC East</td>
-<td align="left">WAS</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.833</td>
-<td align="right">0.667</td>
-<td align="right">0.450</td>
-<td align="right">0.494</td>
-<td align="right">1</td>
-<td align="right">4</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC North</td>
-<td align="left">CHI</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.500</td>
-<td align="right">0.583</td>
-<td align="right">0.403</td>
-<td align="right">0.512</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">NFC North</td>
-<td align="left">DET</td>
-<td align="right">16</td>
-<td align="right">4.0</td>
-<td align="right">4</td>
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.000</td>
-<td align="right">0.250</td>
-<td align="right">0.383</td>
-<td align="right">0.566</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC North</td>
-<td align="left">GB</td>
-<td align="right">16</td>
-<td align="right">11.0</td>
-<td align="right">11</td>
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">0.688</td>
-<td align="right">0.833</td>
-<td align="right">0.667</td>
-<td align="right">0.440</td>
-<td align="right">0.508</td>
-<td align="right">1</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="left">NFC North</td>
-<td align="left">MIN</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.667</td>
-<td align="right">0.583</td>
-<td align="right">0.456</td>
-<td align="right">0.520</td>
-<td align="right">2</td>
-<td align="right">6</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC South</td>
-<td align="left">ATL</td>
-<td align="right">16</td>
-<td align="right">13.0</td>
-<td align="right">13</td>
-<td align="right">3</td>
-<td align="right">0</td>
-<td align="right">0.812</td>
-<td align="right">0.500</td>
-<td align="right">0.750</td>
-<td align="right">0.418</td>
-<td align="right">0.422</td>
-<td align="right">1</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">NFC South</td>
-<td align="left">CAR</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.464</td>
-<td align="right">0.516</td>
-<td align="right">2</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC South</td>
-<td align="left">NO</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.446</td>
-<td align="right">0.521</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">NFC South</td>
-<td align="left">TB</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.500</td>
-<td align="right">0.333</td>
-<td align="right">0.446</td>
-<td align="right">0.502</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC West</td>
-<td align="left">ARI</td>
-<td align="right">16</td>
-<td align="right">5.0</td>
-<td align="right">5</td>
-<td align="right">11</td>
-<td align="right">0</td>
-<td align="right">0.312</td>
-<td align="right">0.167</td>
-<td align="right">0.250</td>
-<td align="right">0.475</td>
-<td align="right">0.559</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">NFC West</td>
-<td align="left">SEA</td>
-<td align="right">16</td>
-<td align="right">11.0</td>
-<td align="right">11</td>
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">0.688</td>
-<td align="right">0.500</td>
-<td align="right">0.667</td>
-<td align="right">0.534</td>
-<td align="right">0.504</td>
-<td align="right">2</td>
-<td align="right">5</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC West</td>
-<td align="left">SF</td>
-<td align="right">16</td>
-<td align="right">11.5</td>
-<td align="right">11</td>
-<td align="right">4</td>
-<td align="right">1</td>
-<td align="right">0.719</td>
-<td align="right">0.583</td>
-<td align="right">0.625</td>
-<td align="right">0.477</td>
-<td align="right">0.504</td>
-<td align="right">1</td>
-<td align="right">2</td>
-</tr>
-<tr class="even">
-<td align="left">NFC West</td>
-<td align="left">STL</td>
-<td align="right">16</td>
-<td align="right">7.5</td>
-<td align="right">7</td>
-<td align="right">8</td>
-<td align="right">1</td>
-<td align="right">0.469</td>
-<td align="right">0.750</td>
-<td align="right">0.542</td>
-<td align="right">0.496</td>
-<td align="right">0.539</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level3">
-<h3 id="find-draft-order">Find Draft Order<a class="anchor" aria-label="anchor" href="#find-draft-order"></a>
-</h3>
-<p>This function computes the draft order based on playoff outcomes and
-the regular season games. It requires all playoff results in the
-<code>games</code> data frame and the <code>game_type</code> of the
-Super Bowl has to be <code>"SB"</code>. For efficiency reasons, the
-<code>h2h</code> data frame computed above has to be passed to the
-function as well. The easiest way is to pass the list of data frames
-that is computed in the above steps:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">draft</span> <span class="op">&lt;-</span> <span class="va">seeds</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_draft_order.html">compute_draft_order</a></span><span class="op">(</span>games <span class="op">=</span> <span class="va">games</span>, h2h <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">h2h</span>, .debug <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #32</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #31</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #30</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #29</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #28</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #27</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #26</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #25</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #24</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #23</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #22</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #21</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #20</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #19</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #18</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #17</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #16</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #15</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #14</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #13</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #12</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #11</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #10</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | DRAFT: Divisional Rank</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | DRAFT: Conference Rank</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | CONF (2): Best-in-division reduction</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | CONF (2): Head-to-head Sweep</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #9</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #8</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #7</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #6</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #5</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #4</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #3</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #2</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 14:58:30 | Calculating draft order #1</span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">draft</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 64</span></span>
-<span><span class="co">#&gt; Columns: 18</span></span>
-<span><span class="co">#&gt; $ sim         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012…</span></span>
-<span><span class="co">#&gt; $ team        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "BUF", "MIA", "NE", "NYJ", "BAL", "CIN", "CLE", "PIT", "HO…</span></span>
-<span><span class="co">#&gt; $ conf        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "A…</span></span>
-<span><span class="co">#&gt; $ division    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "AFC East", "AFC East", "AFC East", "AFC East", "AFC North…</span></span>
-<span><span class="co">#&gt; $ games       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16…</span></span>
-<span><span class="co">#&gt; $ wins        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 6, 7, 12, 6, 10, 10, 5, 8, 12, 11, 2, 6, 13, 2, 4, 7, 8, 9…</span></span>
-<span><span class="co">#&gt; $ true_wins   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 6, 7, 12, 6, 10, 10, 5, 8, 12, 11, 2, 6, 13, 2, 4, 7, 8, 9…</span></span>
-<span><span class="co">#&gt; $ losses      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 10, 9, 4, 10, 6, 6, 11, 8, 4, 5, 14, 10, 3, 14, 12, 9, 8, …</span></span>
-<span><span class="co">#&gt; $ ties        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</span></span>
-<span><span class="co">#&gt; $ win_pct     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.375, 0.438, 0.750, 0.375, 0.625, 0.625, 0.312, 0.500, 0.…</span></span>
-<span><span class="co">#&gt; $ div_pct     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.333, 0.333, 1.000, 0.333, 0.667, 0.500, 0.333, 0.500, 0.…</span></span>
-<span><span class="co">#&gt; $ conf_pct    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.417, 0.417, 0.917, 0.333, 0.667, 0.583, 0.417, 0.417, 0.…</span></span>
-<span><span class="co">#&gt; $ sov         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.281, 0.415, 0.466, 0.401, 0.438, 0.381, 0.388, 0.438, 0.…</span></span>
-<span><span class="co">#&gt; $ sos         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.480, 0.500, 0.496, 0.512, 0.496, 0.438, 0.508, 0.465, 0.…</span></span>
-<span><span class="co">#&gt; $ div_rank    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 4, 2, 1, 3, 1, 2, 4, 3, 1, 2, 4, 3, 1, 4, 3, 2, 3, 2, 4, 1…</span></span>
-<span><span class="co">#&gt; $ seed        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #BB0000;">NA</span>, <span style="color: #BB0000;">NA</span>, 2, <span style="color: #BB0000;">NA</span>, 4, 6, <span style="color: #BB0000;">NA</span>, <span style="color: #BB0000;">NA</span>, 3, 5, <span style="color: #BB0000;">NA</span>, <span style="color: #BB0000;">NA</span>, 1, <span style="color: #BB0000;">NA</span>, <span style="color: #BB0000;">NA</span>, <span style="color: #BB0000;">NA</span>, …</span></span>
-<span><span class="co">#&gt; $ exit        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 17, 17, 20, 17, 22, 18, 17, 17, 19, 18, 17, 17, 19, 17, 17…</span></span>
-<span><span class="co">#&gt; $ draft_order <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 8, 12, 29, 9, 32, 21, 6, 17, 27, 24, 2, 10, 28, 1, 3, 11, …</span></span></code></pre></div>
-<p>As this is the final step, the function
-<code>compute_draft_order</code> does not output <code>h2h</code> again.
-Instead it directly outputs the final standings including the draft
-order and the variable <code>exit</code> which indicates the week number
-of each team’s final game (the Super Bowl Winner’s <code>exit</code>
-equals 22):</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">draft</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">2012</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">division</span><span class="op">:</span><span class="va">draft_order</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="9%">
-<col width="5%">
-<col width="4%">
-<col width="9%">
-<col width="6%">
-<col width="4%">
-<col width="7%">
-<col width="7%">
-<col width="8%">
-<col width="5%">
-<col width="5%">
-<col width="8%">
-<col width="4%">
-<col width="4%">
-<col width="10%">
-</colgroup>
-<thead><tr class="header">
+<th align="left">conf</th>
 <th align="left">division</th>
 <th align="right">games</th>
 <th align="right">wins</th>
 <th align="right">true_wins</th>
 <th align="right">losses</th>
 <th align="right">ties</th>
+<th align="right">pf</th>
+<th align="right">pa</th>
+<th align="right">pd</th>
 <th align="right">win_pct</th>
 <th align="right">div_pct</th>
 <th align="right">conf_pct</th>
 <th align="right">sov</th>
 <th align="right">sos</th>
 <th align="right">div_rank</th>
-<th align="right">seed</th>
-<th align="right">exit</th>
-<th align="right">draft_order</th>
+<th align="left">div_tie_broken_by</th>
+<th align="right">conf_rank</th>
+<th align="left">conf_tie_broken_by</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td align="right">2021</td>
+<td align="left">BUF</td>
+<td align="left">AFC</td>
 <td align="left">AFC East</td>
-<td align="right">16</td>
-<td align="right">6.0</td>
-<td align="right">6</td>
-<td align="right">10</td>
-<td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.333</td>
-<td align="right">0.417</td>
-<td align="right">0.281</td>
-<td align="right">0.480</td>
-<td align="right">4</td>
-<td align="right">NA</td>
 <td align="right">17</td>
-<td align="right">8</td>
-</tr>
-<tr class="even">
-<td align="left">AFC East</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.333</td>
-<td align="right">0.417</td>
-<td align="right">0.415</td>
-<td align="right">0.500</td>
-<td align="right">2</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">12</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC East</td>
-<td align="right">16</td>
-<td align="right">12.0</td>
-<td align="right">12</td>
-<td align="right">4</td>
-<td align="right">0</td>
-<td align="right">0.750</td>
-<td align="right">1.000</td>
-<td align="right">0.917</td>
-<td align="right">0.466</td>
-<td align="right">0.496</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">20</td>
-<td align="right">29</td>
-</tr>
-<tr class="even">
-<td align="left">AFC East</td>
-<td align="right">16</td>
-<td align="right">6.0</td>
-<td align="right">6</td>
-<td align="right">10</td>
-<td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.333</td>
-<td align="right">0.333</td>
-<td align="right">0.401</td>
-<td align="right">0.512</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">9</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC North</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.667</td>
-<td align="right">0.667</td>
-<td align="right">0.438</td>
-<td align="right">0.496</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">22</td>
-<td align="right">32</td>
-</tr>
-<tr class="even">
-<td align="left">AFC North</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.500</td>
-<td align="right">0.583</td>
-<td align="right">0.381</td>
-<td align="right">0.438</td>
-<td align="right">2</td>
-<td align="right">6</td>
-<td align="right">18</td>
-<td align="right">21</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC North</td>
-<td align="right">16</td>
-<td align="right">5.0</td>
-<td align="right">5</td>
-<td align="right">11</td>
-<td align="right">0</td>
-<td align="right">0.312</td>
-<td align="right">0.333</td>
-<td align="right">0.417</td>
-<td align="right">0.388</td>
-<td align="right">0.508</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">6</td>
-</tr>
-<tr class="even">
-<td align="left">AFC North</td>
-<td align="right">16</td>
-<td align="right">8.0</td>
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">0.500</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.438</td>
-<td align="right">0.465</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">17</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC South</td>
-<td align="right">16</td>
-<td align="right">12.0</td>
-<td align="right">12</td>
-<td align="right">4</td>
-<td align="right">0</td>
-<td align="right">0.750</td>
-<td align="right">0.833</td>
-<td align="right">0.833</td>
-<td align="right">0.432</td>
-<td align="right">0.496</td>
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">19</td>
-<td align="right">27</td>
-</tr>
-<tr class="even">
-<td align="left">AFC South</td>
-<td align="right">16</td>
 <td align="right">11.0</td>
 <td align="right">11</td>
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">0.688</td>
-<td align="right">0.667</td>
-<td align="right">0.667</td>
-<td align="right">0.403</td>
-<td align="right">0.441</td>
-<td align="right">2</td>
-<td align="right">5</td>
-<td align="right">18</td>
-<td align="right">24</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC South</td>
-<td align="right">16</td>
-<td align="right">2.0</td>
-<td align="right">2</td>
-<td align="right">14</td>
-<td align="right">0</td>
-<td align="right">0.125</td>
-<td align="right">0.333</td>
-<td align="right">0.167</td>
-<td align="right">0.531</td>
-<td align="right">0.539</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">2</td>
-</tr>
-<tr class="even">
-<td align="left">AFC South</td>
-<td align="right">16</td>
-<td align="right">6.0</td>
 <td align="right">6</td>
-<td align="right">10</td>
 <td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.167</td>
-<td align="right">0.417</td>
-<td align="right">0.344</td>
-<td align="right">0.512</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC West</td>
-<td align="right">16</td>
-<td align="right">13.0</td>
-<td align="right">13</td>
-<td align="right">3</td>
-<td align="right">0</td>
-<td align="right">0.812</td>
-<td align="right">1.000</td>
+<td align="right">483</td>
+<td align="right">289</td>
+<td align="right">194</td>
+<td align="right">0.647</td>
 <td align="right">0.833</td>
-<td align="right">0.385</td>
-<td align="right">0.457</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">19</td>
-<td align="right">28</td>
-</tr>
-<tr class="even">
-<td align="left">AFC West</td>
-<td align="right">16</td>
-<td align="right">2.0</td>
-<td align="right">2</td>
-<td align="right">14</td>
-<td align="right">0</td>
-<td align="right">0.125</td>
-<td align="right">0.000</td>
-<td align="right">0.000</td>
-<td align="right">0.438</td>
-<td align="right">0.516</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">AFC West</td>
-<td align="right">16</td>
-<td align="right">4.0</td>
-<td align="right">4</td>
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.333</td>
-<td align="right">0.333</td>
-<td align="right">0.219</td>
-<td align="right">0.469</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="left">AFC West</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.667</td>
 <td align="right">0.583</td>
-<td align="right">0.286</td>
-<td align="right">0.457</td>
-<td align="right">2</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">11</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC East</td>
-<td align="right">16</td>
-<td align="right">8.0</td>
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">0.500</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.422</td>
-<td align="right">0.523</td>
+<td align="right">0.428</td>
+<td align="right">0.472</td>
+<td align="right">1</td>
+<td align="left">-</td>
 <td align="right">3</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">18</td>
+<td align="left">-</td>
 </tr>
 <tr class="even">
-<td align="left">NFC East</td>
-<td align="right">16</td>
+<td align="right">2021</td>
+<td align="left">NE</td>
+<td align="left">AFC</td>
+<td align="left">AFC East</td>
+<td align="right">17</td>
+<td align="right">10.0</td>
+<td align="right">10</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">462</td>
+<td align="right">303</td>
+<td align="right">159</td>
+<td align="right">0.588</td>
+<td align="right">0.500</td>
+<td align="right">0.667</td>
+<td align="right">0.394</td>
+<td align="right">0.481</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">6</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">MIA</td>
+<td align="left">AFC</td>
+<td align="left">AFC East</td>
+<td align="right">17</td>
 <td align="right">9.0</td>
 <td align="right">9</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">341</td>
+<td align="right">373</td>
+<td align="right">-32</td>
+<td align="right">0.529</td>
+<td align="right">0.667</td>
+<td align="right">0.500</td>
+<td align="right">0.379</td>
+<td align="right">0.464</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">9</td>
+<td align="left">Common Games Win PCT (2)</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">NYJ</td>
+<td align="left">AFC</td>
+<td align="left">AFC East</td>
+<td align="right">17</td>
+<td align="right">4.0</td>
+<td align="right">4</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">310</td>
+<td align="right">504</td>
+<td align="right">-194</td>
+<td align="right">0.235</td>
+<td align="right">0.000</td>
+<td align="right">0.333</td>
+<td align="right">0.426</td>
+<td align="right">0.512</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">14</td>
+<td align="left">Head-To-Head Sweep (2)</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">CIN</td>
+<td align="left">AFC</td>
+<td align="left">AFC North</td>
+<td align="right">17</td>
+<td align="right">10.0</td>
+<td align="right">10</td>
 <td align="right">7</td>
 <td align="right">0</td>
-<td align="right">0.562</td>
-<td align="right">0.500</td>
+<td align="right">460</td>
+<td align="right">376</td>
+<td align="right">84</td>
+<td align="right">0.588</td>
 <td align="right">0.667</td>
+<td align="right">0.667</td>
+<td align="right">0.462</td>
+<td align="right">0.472</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">4</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">PIT</td>
+<td align="left">AFC</td>
+<td align="left">AFC North</td>
+<td align="right">17</td>
+<td align="right">9.5</td>
+<td align="right">9</td>
+<td align="right">7</td>
+<td align="right">1</td>
+<td align="right">343</td>
+<td align="right">398</td>
+<td align="right">-55</td>
+<td align="right">0.559</td>
+<td align="right">0.667</td>
+<td align="right">0.583</td>
 <td align="right">0.490</td>
 <td align="right">0.521</td>
 <td align="right">2</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">19</td>
+<td align="left">-</td>
+<td align="right">7</td>
+<td align="left">-</td>
 </tr>
 <tr class="odd">
-<td align="left">NFC East</td>
-<td align="right">16</td>
-<td align="right">4.0</td>
-<td align="right">4</td>
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.167</td>
-<td align="right">0.167</td>
-<td align="right">0.484</td>
-<td align="right">0.508</td>
-<td align="right">4</td>
-<td align="right">NA</td>
+<td align="right">2021</td>
+<td align="left">CLE</td>
+<td align="left">AFC</td>
+<td align="left">AFC North</td>
 <td align="right">17</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="left">NFC East</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
+<td align="right">8.0</td>
+<td align="right">8</td>
+<td align="right">9</td>
 <td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.833</td>
-<td align="right">0.667</td>
-<td align="right">0.450</td>
-<td align="right">0.494</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">18</td>
-<td align="right">22</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0.625</td>
+<td align="right">349</td>
+<td align="right">371</td>
+<td align="right">-22</td>
+<td align="right">0.471</td>
 <td align="right">0.500</td>
-<td align="right">0.583</td>
-<td align="right">0.403</td>
-<td align="right">0.512</td>
+<td align="right">0.417</td>
+<td align="right">0.415</td>
+<td align="right">0.514</td>
 <td align="right">3</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">20</td>
-</tr>
-<tr class="even">
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">4.0</td>
-<td align="right">4</td>
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.000</td>
-<td align="right">0.250</td>
-<td align="right">0.383</td>
-<td align="right">0.566</td>
-<td align="right">4</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">5</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">11.0</td>
+<td align="left">Division Win PCT (2)</td>
 <td align="right">11</td>
+<td align="left">Division Tiebreaker</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">BAL</td>
+<td align="left">AFC</td>
+<td align="left">AFC North</td>
+<td align="right">17</td>
+<td align="right">8.0</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">387</td>
+<td align="right">392</td>
+<td align="right">-5</td>
+<td align="right">0.471</td>
+<td align="right">0.167</td>
+<td align="right">0.417</td>
+<td align="right">0.460</td>
+<td align="right">0.531</td>
+<td align="right">4</td>
+<td align="left">Division Win PCT (2)</td>
+<td align="right">12</td>
+<td align="left">Division Tiebreaker</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">TEN</td>
+<td align="left">AFC</td>
+<td align="left">AFC South</td>
+<td align="right">17</td>
+<td align="right">12.0</td>
+<td align="right">12</td>
 <td align="right">5</td>
 <td align="right">0</td>
-<td align="right">0.688</td>
+<td align="right">419</td>
+<td align="right">354</td>
+<td align="right">65</td>
+<td align="right">0.706</td>
 <td align="right">0.833</td>
 <td align="right">0.667</td>
-<td align="right">0.440</td>
-<td align="right">0.508</td>
+<td align="right">0.480</td>
+<td align="right">0.472</td>
 <td align="right">1</td>
-<td align="right">3</td>
-<td align="right">19</td>
-<td align="right">26</td>
+<td align="left">-</td>
+<td align="right">1</td>
+<td align="left">Head-To-Head Sweep (2)</td>
 </tr>
 <tr class="even">
-<td align="left">NFC North</td>
-<td align="right">16</td>
-<td align="right">10.0</td>
-<td align="right">10</td>
-<td align="right">6</td>
+<td align="right">2021</td>
+<td align="left">IND</td>
+<td align="left">AFC</td>
+<td align="left">AFC South</td>
+<td align="right">17</td>
+<td align="right">9.0</td>
+<td align="right">9</td>
+<td align="right">8</td>
 <td align="right">0</td>
-<td align="right">0.625</td>
-<td align="right">0.667</td>
+<td align="right">451</td>
+<td align="right">365</td>
+<td align="right">86</td>
+<td align="right">0.529</td>
+<td align="right">0.500</td>
 <td align="right">0.583</td>
-<td align="right">0.456</td>
-<td align="right">0.520</td>
+<td align="right">0.431</td>
+<td align="right">0.495</td>
 <td align="right">2</td>
-<td align="right">6</td>
-<td align="right">18</td>
-<td align="right">23</td>
+<td align="left">-</td>
+<td align="right">8</td>
+<td align="left">Conference Win PCT (3)</td>
 </tr>
 <tr class="odd">
-<td align="left">NFC South</td>
-<td align="right">16</td>
-<td align="right">13.0</td>
+<td align="right">2021</td>
+<td align="left">HOU</td>
+<td align="left">AFC</td>
+<td align="left">AFC South</td>
+<td align="right">17</td>
+<td align="right">4.0</td>
+<td align="right">4</td>
 <td align="right">13</td>
+<td align="right">0</td>
+<td align="right">280</td>
+<td align="right">452</td>
+<td align="right">-172</td>
+<td align="right">0.235</td>
+<td align="right">0.500</td>
+<td align="right">0.333</td>
+<td align="right">0.397</td>
+<td align="right">0.498</td>
 <td align="right">3</td>
-<td align="right">0</td>
-<td align="right">0.812</td>
-<td align="right">0.500</td>
-<td align="right">0.750</td>
-<td align="right">0.418</td>
-<td align="right">0.422</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">20</td>
-<td align="right">30</td>
-</tr>
-<tr class="even">
-<td align="left">NFC South</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.464</td>
-<td align="right">0.516</td>
-<td align="right">2</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">14</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC South</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.500</td>
-<td align="right">0.417</td>
-<td align="right">0.446</td>
-<td align="right">0.521</td>
-<td align="right">3</td>
-<td align="right">NA</td>
-<td align="right">17</td>
+<td align="left">-</td>
 <td align="right">15</td>
+<td align="left">-</td>
 </tr>
 <tr class="even">
-<td align="left">NFC South</td>
-<td align="right">16</td>
-<td align="right">7.0</td>
-<td align="right">7</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.438</td>
-<td align="right">0.500</td>
-<td align="right">0.333</td>
-<td align="right">0.446</td>
-<td align="right">0.502</td>
-<td align="right">4</td>
-<td align="right">NA</td>
+<td align="right">2021</td>
+<td align="left">JAX</td>
+<td align="left">AFC</td>
+<td align="left">AFC South</td>
 <td align="right">17</td>
-<td align="right">13</td>
-</tr>
-<tr class="odd">
-<td align="left">NFC West</td>
-<td align="right">16</td>
-<td align="right">5.0</td>
-<td align="right">5</td>
-<td align="right">11</td>
+<td align="right">3.0</td>
+<td align="right">3</td>
+<td align="right">14</td>
 <td align="right">0</td>
-<td align="right">0.312</td>
+<td align="right">253</td>
+<td align="right">457</td>
+<td align="right">-204</td>
+<td align="right">0.176</td>
 <td align="right">0.167</td>
 <td align="right">0.250</td>
-<td align="right">0.475</td>
-<td align="right">0.559</td>
+<td align="right">0.569</td>
+<td align="right">0.512</td>
 <td align="right">4</td>
-<td align="right">NA</td>
-<td align="right">17</td>
-<td align="right">7</td>
-</tr>
-<tr class="even">
-<td align="left">NFC West</td>
+<td align="left">-</td>
 <td align="right">16</td>
-<td align="right">11.0</td>
-<td align="right">11</td>
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">0.688</td>
-<td align="right">0.500</td>
-<td align="right">0.667</td>
-<td align="right">0.534</td>
-<td align="right">0.504</td>
-<td align="right">2</td>
-<td align="right">5</td>
-<td align="right">19</td>
-<td align="right">25</td>
+<td align="left">-</td>
 </tr>
 <tr class="odd">
-<td align="left">NFC West</td>
-<td align="right">16</td>
-<td align="right">11.5</td>
-<td align="right">11</td>
-<td align="right">4</td>
-<td align="right">1</td>
-<td align="right">0.719</td>
+<td align="right">2021</td>
+<td align="left">KC</td>
+<td align="left">AFC</td>
+<td align="left">AFC West</td>
+<td align="right">17</td>
+<td align="right">12.0</td>
+<td align="right">12</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">480</td>
+<td align="right">364</td>
+<td align="right">116</td>
+<td align="right">0.706</td>
+<td align="right">0.833</td>
 <td align="right">0.583</td>
-<td align="right">0.625</td>
-<td align="right">0.477</td>
-<td align="right">0.504</td>
+<td align="right">0.517</td>
+<td align="right">0.538</td>
 <td align="right">1</td>
+<td align="left">-</td>
 <td align="right">2</td>
-<td align="right">21</td>
-<td align="right">31</td>
+<td align="left">-</td>
 </tr>
 <tr class="even">
-<td align="left">NFC West</td>
-<td align="right">16</td>
-<td align="right">7.5</td>
+<td align="right">2021</td>
+<td align="left">LV</td>
+<td align="left">AFC</td>
+<td align="left">AFC West</td>
+<td align="right">17</td>
+<td align="right">10.0</td>
+<td align="right">10</td>
 <td align="right">7</td>
+<td align="right">0</td>
+<td align="right">374</td>
+<td align="right">439</td>
+<td align="right">-65</td>
+<td align="right">0.588</td>
+<td align="right">0.500</td>
+<td align="right">0.667</td>
+<td align="right">0.515</td>
+<td align="right">0.510</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">5</td>
+<td align="left">Common Games Win PCT (2)</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">LAC</td>
+<td align="left">AFC</td>
+<td align="left">AFC West</td>
+<td align="right">17</td>
+<td align="right">9.0</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">474</td>
+<td align="right">459</td>
+<td align="right">15</td>
+<td align="right">0.529</td>
+<td align="right">0.500</td>
+<td align="right">0.500</td>
+<td align="right">0.500</td>
+<td align="right">0.510</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">10</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">DEN</td>
+<td align="left">AFC</td>
+<td align="left">AFC West</td>
+<td align="right">17</td>
+<td align="right">7.0</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">335</td>
+<td align="right">322</td>
+<td align="right">13</td>
+<td align="right">0.412</td>
+<td align="right">0.167</td>
+<td align="right">0.250</td>
+<td align="right">0.357</td>
+<td align="right">0.484</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">13</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">DAL</td>
+<td align="left">NFC</td>
+<td align="left">NFC East</td>
+<td align="right">17</td>
+<td align="right">12.0</td>
+<td align="right">12</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">530</td>
+<td align="right">358</td>
+<td align="right">172</td>
+<td align="right">0.706</td>
+<td align="right">1.000</td>
+<td align="right">0.833</td>
+<td align="right">0.431</td>
+<td align="right">0.488</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">3</td>
+<td align="left">Conference Win PCT (2)</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">PHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC East</td>
+<td align="right">17</td>
+<td align="right">9.0</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">444</td>
+<td align="right">385</td>
+<td align="right">59</td>
+<td align="right">0.529</td>
+<td align="right">0.500</td>
+<td align="right">0.583</td>
+<td align="right">0.350</td>
+<td align="right">0.469</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">7</td>
+<td align="left">Head-To-Head Sweep (2)</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">WAS</td>
+<td align="left">NFC</td>
+<td align="left">NFC East</td>
+<td align="right">17</td>
+<td align="right">7.0</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">335</td>
+<td align="right">434</td>
+<td align="right">-99</td>
+<td align="right">0.412</td>
+<td align="right">0.333</td>
+<td align="right">0.500</td>
+<td align="right">0.420</td>
+<td align="right">0.529</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">10</td>
+<td align="left">Head-To-Head Sweep (3)</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">NYG</td>
+<td align="left">NFC</td>
+<td align="left">NFC East</td>
+<td align="right">17</td>
+<td align="right">4.0</td>
+<td align="right">4</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">258</td>
+<td align="right">416</td>
+<td align="right">-158</td>
+<td align="right">0.235</td>
+<td align="right">0.167</td>
+<td align="right">0.250</td>
+<td align="right">0.485</td>
+<td align="right">0.536</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">15</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">GB</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">17</td>
+<td align="right">13.0</td>
+<td align="right">13</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">450</td>
+<td align="right">371</td>
+<td align="right">79</td>
+<td align="right">0.765</td>
+<td align="right">0.667</td>
+<td align="right">0.750</td>
+<td align="right">0.480</td>
+<td align="right">0.479</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">1</td>
+<td align="left">Conference Win PCT (2)</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">MIN</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">17</td>
+<td align="right">8.0</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">425</td>
+<td align="right">426</td>
+<td align="right">-1</td>
+<td align="right">0.471</td>
+<td align="right">0.667</td>
+<td align="right">0.500</td>
+<td align="right">0.434</td>
+<td align="right">0.507</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">9</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">17</td>
+<td align="right">6.0</td>
+<td align="right">6</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">311</td>
+<td align="right">407</td>
+<td align="right">-96</td>
+<td align="right">0.353</td>
+<td align="right">0.333</td>
+<td align="right">0.333</td>
+<td align="right">0.373</td>
+<td align="right">0.524</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">13</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">DET</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">17</td>
+<td align="right">3.5</td>
+<td align="right">3</td>
+<td align="right">13</td>
+<td align="right">1</td>
+<td align="right">325</td>
+<td align="right">467</td>
+<td align="right">-142</td>
+<td align="right">0.206</td>
+<td align="right">0.333</td>
+<td align="right">0.250</td>
+<td align="right">0.627</td>
+<td align="right">0.528</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">16</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">TB</td>
+<td align="left">NFC</td>
+<td align="left">NFC South</td>
+<td align="right">17</td>
+<td align="right">13.0</td>
+<td align="right">13</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">511</td>
+<td align="right">353</td>
+<td align="right">158</td>
+<td align="right">0.765</td>
+<td align="right">0.667</td>
+<td align="right">0.667</td>
+<td align="right">0.443</td>
+<td align="right">0.467</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">2</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">NO</td>
+<td align="left">NFC</td>
+<td align="left">NFC South</td>
+<td align="right">17</td>
+<td align="right">9.0</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">364</td>
+<td align="right">335</td>
+<td align="right">29</td>
+<td align="right">0.529</td>
+<td align="right">0.667</td>
+<td align="right">0.583</td>
+<td align="right">0.516</td>
+<td align="right">0.512</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">8</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">ATL</td>
+<td align="left">NFC</td>
+<td align="left">NFC South</td>
+<td align="right">17</td>
+<td align="right">7.0</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">313</td>
+<td align="right">459</td>
+<td align="right">-146</td>
+<td align="right">0.412</td>
+<td align="right">0.333</td>
+<td align="right">0.333</td>
+<td align="right">0.315</td>
+<td align="right">0.472</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">12</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">CAR</td>
+<td align="left">NFC</td>
+<td align="left">NFC South</td>
+<td align="right">17</td>
+<td align="right">5.0</td>
+<td align="right">5</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">304</td>
+<td align="right">404</td>
+<td align="right">-100</td>
+<td align="right">0.294</td>
+<td align="right">0.333</td>
+<td align="right">0.250</td>
+<td align="right">0.412</td>
+<td align="right">0.509</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">14</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">LA</td>
+<td align="left">NFC</td>
+<td align="left">NFC West</td>
+<td align="right">17</td>
+<td align="right">12.0</td>
+<td align="right">12</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">460</td>
+<td align="right">372</td>
+<td align="right">88</td>
+<td align="right">0.706</td>
+<td align="right">0.500</td>
+<td align="right">0.667</td>
+<td align="right">0.409</td>
+<td align="right">0.483</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">4</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">ARI</td>
+<td align="left">NFC</td>
+<td align="left">NFC West</td>
+<td align="right">17</td>
+<td align="right">11.0</td>
+<td align="right">11</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">449</td>
+<td align="right">366</td>
+<td align="right">83</td>
+<td align="right">0.647</td>
+<td align="right">0.667</td>
+<td align="right">0.583</td>
+<td align="right">0.492</td>
+<td align="right">0.490</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">5</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="left">SF</td>
+<td align="left">NFC</td>
+<td align="left">NFC West</td>
+<td align="right">17</td>
+<td align="right">10.0</td>
+<td align="right">10</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">427</td>
+<td align="right">365</td>
+<td align="right">62</td>
+<td align="right">0.588</td>
+<td align="right">0.333</td>
+<td align="right">0.583</td>
+<td align="right">0.438</td>
+<td align="right">0.500</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">6</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2021</td>
+<td align="left">SEA</td>
+<td align="left">NFC</td>
+<td align="left">NFC West</td>
+<td align="right">17</td>
+<td align="right">7.0</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">395</td>
+<td align="right">366</td>
+<td align="right">29</td>
+<td align="right">0.412</td>
+<td align="right">0.500</td>
+<td align="right">0.333</td>
+<td align="right">0.424</td>
+<td align="right">0.519</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">11</td>
+<td align="left">Common Games Win PCT (2)</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">BUF</td>
+<td align="left">AFC</td>
+<td align="left">AFC East</td>
+<td align="right">16</td>
+<td align="right">13.0</td>
+<td align="right">13</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">455</td>
+<td align="right">286</td>
+<td align="right">169</td>
+<td align="right">0.812</td>
+<td align="right">0.667</td>
+<td align="right">0.818</td>
+<td align="right">0.471</td>
+<td align="right">0.489</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">2</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">MIA</td>
+<td align="left">AFC</td>
+<td align="left">AFC East</td>
+<td align="right">17</td>
+<td align="right">9.0</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">397</td>
+<td align="right">399</td>
+<td align="right">-2</td>
+<td align="right">0.529</td>
+<td align="right">0.500</td>
+<td align="right">0.583</td>
+<td align="right">0.457</td>
+<td align="right">0.537</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">7</td>
+<td align="left">Head-To-Head Sweep (2)</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">NE</td>
+<td align="left">AFC</td>
+<td align="left">AFC East</td>
+<td align="right">17</td>
+<td align="right">8.0</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">364</td>
+<td align="right">347</td>
+<td align="right">17</td>
+<td align="right">0.471</td>
+<td align="right">0.500</td>
+<td align="right">0.500</td>
+<td align="right">0.415</td>
+<td align="right">0.502</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">9</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">NYJ</td>
+<td align="left">AFC</td>
+<td align="left">AFC East</td>
+<td align="right">17</td>
+<td align="right">7.0</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">296</td>
+<td align="right">316</td>
+<td align="right">-20</td>
+<td align="right">0.412</td>
+<td align="right">0.333</td>
+<td align="right">0.417</td>
+<td align="right">0.458</td>
+<td align="right">0.538</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">10</td>
+<td align="left">Common Games Win PCT (2)</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">CIN</td>
+<td align="left">AFC</td>
+<td align="left">AFC North</td>
+<td align="right">16</td>
+<td align="right">12.0</td>
+<td align="right">12</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">418</td>
+<td align="right">322</td>
+<td align="right">96</td>
+<td align="right">0.750</td>
+<td align="right">0.500</td>
+<td align="right">0.727</td>
+<td align="right">0.490</td>
+<td align="right">0.507</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">3</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">BAL</td>
+<td align="left">AFC</td>
+<td align="left">AFC North</td>
+<td align="right">17</td>
+<td align="right">10.0</td>
+<td align="right">10</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">350</td>
+<td align="right">315</td>
+<td align="right">35</td>
+<td align="right">0.588</td>
+<td align="right">0.500</td>
+<td align="right">0.500</td>
+<td align="right">0.456</td>
+<td align="right">0.509</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">6</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">PIT</td>
+<td align="left">AFC</td>
+<td align="left">AFC North</td>
+<td align="right">17</td>
+<td align="right">9.0</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">308</td>
+<td align="right">346</td>
+<td align="right">-38</td>
+<td align="right">0.529</td>
+<td align="right">0.500</td>
+<td align="right">0.417</td>
+<td align="right">0.451</td>
+<td align="right">0.519</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">8</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">CLE</td>
+<td align="left">AFC</td>
+<td align="left">AFC North</td>
+<td align="right">17</td>
+<td align="right">7.0</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">361</td>
+<td align="right">381</td>
+<td align="right">-20</td>
+<td align="right">0.412</td>
+<td align="right">0.500</td>
+<td align="right">0.333</td>
+<td align="right">0.492</td>
+<td align="right">0.524</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">12</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">JAX</td>
+<td align="left">AFC</td>
+<td align="left">AFC South</td>
+<td align="right">17</td>
+<td align="right">9.0</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">404</td>
+<td align="right">350</td>
+<td align="right">54</td>
+<td align="right">0.529</td>
+<td align="right">0.667</td>
+<td align="right">0.667</td>
+<td align="right">0.438</td>
+<td align="right">0.467</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">4</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">TEN</td>
+<td align="left">AFC</td>
+<td align="left">AFC South</td>
+<td align="right">17</td>
+<td align="right">7.0</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">298</td>
+<td align="right">359</td>
+<td align="right">-61</td>
+<td align="right">0.412</td>
+<td align="right">0.500</td>
+<td align="right">0.417</td>
+<td align="right">0.336</td>
+<td align="right">0.509</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">11</td>
+<td align="left">Conference Win PCT (2)</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">IND</td>
+<td align="left">AFC</td>
+<td align="left">AFC South</td>
+<td align="right">17</td>
+<td align="right">4.5</td>
+<td align="right">4</td>
+<td align="right">12</td>
+<td align="right">1</td>
+<td align="right">289</td>
+<td align="right">427</td>
+<td align="right">-138</td>
+<td align="right">0.265</td>
+<td align="right">0.250</td>
+<td align="right">0.375</td>
+<td align="right">0.500</td>
+<td align="right">0.512</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">15</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">HOU</td>
+<td align="left">AFC</td>
+<td align="left">AFC South</td>
+<td align="right">17</td>
+<td align="right">3.5</td>
+<td align="right">3</td>
+<td align="right">13</td>
+<td align="right">1</td>
+<td align="right">289</td>
+<td align="right">420</td>
+<td align="right">-131</td>
+<td align="right">0.206</td>
+<td align="right">0.583</td>
+<td align="right">0.292</td>
+<td align="right">0.402</td>
+<td align="right">0.481</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">16</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">KC</td>
+<td align="left">AFC</td>
+<td align="left">AFC West</td>
+<td align="right">17</td>
+<td align="right">14.0</td>
+<td align="right">14</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">496</td>
+<td align="right">369</td>
+<td align="right">127</td>
+<td align="right">0.824</td>
+<td align="right">1.000</td>
+<td align="right">0.750</td>
+<td align="right">0.422</td>
+<td align="right">0.453</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">1</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">LAC</td>
+<td align="left">AFC</td>
+<td align="left">AFC West</td>
+<td align="right">17</td>
+<td align="right">10.0</td>
+<td align="right">10</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">391</td>
+<td align="right">384</td>
+<td align="right">7</td>
+<td align="right">0.588</td>
+<td align="right">0.333</td>
+<td align="right">0.583</td>
+<td align="right">0.341</td>
+<td align="right">0.443</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">5</td>
+<td align="left">Conference Win PCT (2)</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">LV</td>
+<td align="left">AFC</td>
+<td align="left">AFC West</td>
+<td align="right">17</td>
+<td align="right">6.0</td>
+<td align="right">6</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">395</td>
+<td align="right">418</td>
+<td align="right">-23</td>
+<td align="right">0.353</td>
+<td align="right">0.500</td>
+<td align="right">0.417</td>
+<td align="right">0.397</td>
+<td align="right">0.474</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">13</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">DEN</td>
+<td align="left">AFC</td>
+<td align="left">AFC West</td>
+<td align="right">17</td>
+<td align="right">5.0</td>
+<td align="right">5</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">287</td>
+<td align="right">359</td>
+<td align="right">-72</td>
+<td align="right">0.294</td>
+<td align="right">0.167</td>
+<td align="right">0.250</td>
+<td align="right">0.465</td>
+<td align="right">0.481</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">14</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">PHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC East</td>
+<td align="right">17</td>
+<td align="right">14.0</td>
+<td align="right">14</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">477</td>
+<td align="right">344</td>
+<td align="right">133</td>
+<td align="right">0.824</td>
+<td align="right">0.667</td>
+<td align="right">0.750</td>
+<td align="right">0.460</td>
+<td align="right">0.474</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">1</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">DAL</td>
+<td align="left">NFC</td>
+<td align="left">NFC East</td>
+<td align="right">17</td>
+<td align="right">12.0</td>
+<td align="right">12</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">467</td>
+<td align="right">342</td>
+<td align="right">125</td>
+<td align="right">0.706</td>
+<td align="right">0.667</td>
+<td align="right">0.667</td>
+<td align="right">0.485</td>
+<td align="right">0.507</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">5</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">NYG</td>
+<td align="left">NFC</td>
+<td align="left">NFC East</td>
+<td align="right">17</td>
+<td align="right">9.5</td>
+<td align="right">9</td>
+<td align="right">7</td>
+<td align="right">1</td>
+<td align="right">365</td>
+<td align="right">371</td>
+<td align="right">-6</td>
+<td align="right">0.559</td>
+<td align="right">0.250</td>
+<td align="right">0.375</td>
+<td align="right">0.395</td>
+<td align="right">0.526</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">6</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">WAS</td>
+<td align="left">NFC</td>
+<td align="left">NFC East</td>
+<td align="right">17</td>
+<td align="right">8.5</td>
+<td align="right">8</td>
 <td align="right">8</td>
 <td align="right">1</td>
-<td align="right">0.469</td>
-<td align="right">0.750</td>
-<td align="right">0.542</td>
-<td align="right">0.496</td>
-<td align="right">0.539</td>
-<td align="right">3</td>
-<td align="right">NA</td>
+<td align="right">321</td>
+<td align="right">343</td>
+<td align="right">-22</td>
+<td align="right">0.500</td>
+<td align="right">0.417</td>
+<td align="right">0.458</td>
+<td align="right">0.449</td>
+<td align="right">0.536</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">9</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">MIN</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
 <td align="right">17</td>
+<td align="right">13.0</td>
+<td align="right">13</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">424</td>
+<td align="right">427</td>
+<td align="right">-3</td>
+<td align="right">0.765</td>
+<td align="right">0.667</td>
+<td align="right">0.667</td>
+<td align="right">0.425</td>
+<td align="right">0.474</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">3</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">DET</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">17</td>
+<td align="right">9.0</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">453</td>
+<td align="right">427</td>
+<td align="right">26</td>
+<td align="right">0.529</td>
+<td align="right">0.833</td>
+<td align="right">0.583</td>
+<td align="right">0.451</td>
+<td align="right">0.535</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">8</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">GB</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">17</td>
+<td align="right">8.0</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">370</td>
+<td align="right">371</td>
+<td align="right">-1</td>
+<td align="right">0.471</td>
+<td align="right">0.500</td>
+<td align="right">0.500</td>
+<td align="right">0.449</td>
+<td align="right">0.524</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">10</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">CHI</td>
+<td align="left">NFC</td>
+<td align="left">NFC North</td>
+<td align="right">17</td>
+<td align="right">3.0</td>
+<td align="right">3</td>
+<td align="right">14</td>
+<td align="right">0</td>
+<td align="right">326</td>
+<td align="right">463</td>
+<td align="right">-137</td>
+<td align="right">0.176</td>
+<td align="right">0.000</td>
+<td align="right">0.083</td>
+<td align="right">0.480</td>
+<td align="right">0.571</td>
+<td align="right">4</td>
+<td align="left">-</td>
 <td align="right">16</td>
+<td align="left">-</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">TB</td>
+<td align="left">NFC</td>
+<td align="left">NFC South</td>
+<td align="right">17</td>
+<td align="right">8.0</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">313</td>
+<td align="right">358</td>
+<td align="right">-45</td>
+<td align="right">0.471</td>
+<td align="right">0.667</td>
+<td align="right">0.667</td>
+<td align="right">0.426</td>
+<td align="right">0.503</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">4</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">CAR</td>
+<td align="left">NFC</td>
+<td align="left">NFC South</td>
+<td align="right">17</td>
+<td align="right">7.0</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">347</td>
+<td align="right">374</td>
+<td align="right">-27</td>
+<td align="right">0.412</td>
+<td align="right">0.667</td>
+<td align="right">0.500</td>
+<td align="right">0.437</td>
+<td align="right">0.474</td>
+<td align="right">2</td>
+<td align="left">Head-To-Head Win PCT (3)</td>
+<td align="right">11</td>
+<td align="left">Division Tiebreaker</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">NO</td>
+<td align="left">NFC</td>
+<td align="left">NFC South</td>
+<td align="right">17</td>
+<td align="right">7.0</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">330</td>
+<td align="right">345</td>
+<td align="right">-15</td>
+<td align="right">0.412</td>
+<td align="right">0.333</td>
+<td align="right">0.417</td>
+<td align="right">0.462</td>
+<td align="right">0.507</td>
+<td align="right">3</td>
+<td align="left">Head-To-Head Win PCT (3)</td>
+<td align="right">12</td>
+<td align="left">Division Tiebreaker</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">ATL</td>
+<td align="left">NFC</td>
+<td align="left">NFC South</td>
+<td align="right">17</td>
+<td align="right">7.0</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">365</td>
+<td align="right">386</td>
+<td align="right">-21</td>
+<td align="right">0.412</td>
+<td align="right">0.333</td>
+<td align="right">0.500</td>
+<td align="right">0.429</td>
+<td align="right">0.467</td>
+<td align="right">4</td>
+<td align="left">Head-To-Head Win PCT (3)</td>
+<td align="right">13</td>
+<td align="left">Division Tiebreaker</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">SF</td>
+<td align="left">NFC</td>
+<td align="left">NFC West</td>
+<td align="right">17</td>
+<td align="right">13.0</td>
+<td align="right">13</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">450</td>
+<td align="right">277</td>
+<td align="right">173</td>
+<td align="right">0.765</td>
+<td align="right">1.000</td>
+<td align="right">0.833</td>
+<td align="right">0.414</td>
+<td align="right">0.417</td>
+<td align="right">1</td>
+<td align="left">-</td>
+<td align="right">2</td>
+<td align="left">Conference Win PCT (2)</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">SEA</td>
+<td align="left">NFC</td>
+<td align="left">NFC West</td>
+<td align="right">17</td>
+<td align="right">9.0</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">407</td>
+<td align="right">401</td>
+<td align="right">6</td>
+<td align="right">0.529</td>
+<td align="right">0.667</td>
+<td align="right">0.500</td>
+<td align="right">0.382</td>
+<td align="right">0.462</td>
+<td align="right">2</td>
+<td align="left">-</td>
+<td align="right">7</td>
+<td align="left">Head-To-Head Sweep (2)</td>
+</tr>
+<tr class="odd">
+<td align="right">2022</td>
+<td align="left">LA</td>
+<td align="left">NFC</td>
+<td align="left">NFC West</td>
+<td align="right">17</td>
+<td align="right">5.0</td>
+<td align="right">5</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">307</td>
+<td align="right">384</td>
+<td align="right">-77</td>
+<td align="right">0.294</td>
+<td align="right">0.167</td>
+<td align="right">0.250</td>
+<td align="right">0.341</td>
+<td align="right">0.517</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="right">14</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="left">ARI</td>
+<td align="left">NFC</td>
+<td align="left">NFC West</td>
+<td align="right">17</td>
+<td align="right">4.0</td>
+<td align="right">4</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">340</td>
+<td align="right">449</td>
+<td align="right">-109</td>
+<td align="right">0.235</td>
+<td align="right">0.167</td>
+<td align="right">0.250</td>
+<td align="right">0.368</td>
+<td align="right">0.529</td>
+<td align="right">4</td>
+<td align="left">-</td>
+<td align="right">15</td>
+<td align="left">-</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section level3">
+<h3 id="simulations">Simulations<a class="anchor" aria-label="anchor" href="#simulations"></a>
+</h3>
+<p>With nflseedR 2.0, we have rethought and implemented the execution of
+simulations from scratch. Particular attention was paid to flexibility
+and performance. As the usage of the new function
+<code><a href="../reference/nfl_simulations.html">nfl_simulations()</a></code> differs from the old function
+<code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code>, we will keep both variants for the time
+being and maintain two separate articles explaining how to use them.</p>
+<p>It is strongly recommended to switch to
+<code><a href="../reference/nfl_simulations.html">nfl_simulations()</a></code> because it is far superior to the old
+implementation in practically every respect, especially in terms of
+performance.</p>
+<ul>
+<li>Go to <a href="https://nflseedr.com/articles/nflsim2.html">this
+article</a> for a detailed explanation of how to use
+<code><a href="../reference/nfl_simulations.html">nfl_simulations()</a></code>
+</li>
+<li>Go to <a href="https://nflseedr.com/articles/nflsim.html">this
+article</a> for a detailed explanation of how to use
+<code><a href="../reference/simulate_nfl.html">simulate_nfl()</a></code>
+</li>
+</ul>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -3116,7 +1695,7 @@ equals 22):</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>, <a href="https://twitter.com/mrcaseb" class="external-link">Sebastian Carl</a>.</p>
+  <p>Developed by <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>, <a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">Sebastian Carl</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

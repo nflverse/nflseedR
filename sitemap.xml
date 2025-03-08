@@ -7,6 +7,7 @@
 <url><loc>https://nflseedr.com/articles/index.html</loc></url>
 <url><loc>https://nflseedr.com/articles/nflseedR.html</loc></url>
 <url><loc>https://nflseedr.com/articles/nflsim.html</loc></url>
+<url><loc>https://nflseedr.com/articles/nflsim2.html</loc></url>
 <url><loc>https://nflseedr.com/articles/tiebreaker.html</loc></url>
 <url><loc>https://nflseedr.com/authors.html</loc></url>
 <url><loc>https://nflseedr.com/index.html</loc></url>
@@ -14,13 +15,24 @@
 <url><loc>https://nflseedr.com/reference/compute_conference_seeds.html</loc></url>
 <url><loc>https://nflseedr.com/reference/compute_division_ranks.html</loc></url>
 <url><loc>https://nflseedr.com/reference/compute_draft_order.html</loc></url>
+<url><loc>https://nflseedr.com/reference/dictionary_game_summary.html</loc></url>
+<url><loc>https://nflseedr.com/reference/dictionary_games.html</loc></url>
+<url><loc>https://nflseedr.com/reference/dictionary_overall.html</loc></url>
+<url><loc>https://nflseedr.com/reference/dictionary_standings.html</loc></url>
+<url><loc>https://nflseedr.com/reference/dictionary_team_wins.html</loc></url>
 <url><loc>https://nflseedr.com/reference/divisions.html</loc></url>
 <url><loc>https://nflseedr.com/reference/fmt_pct_special.html</loc></url>
 <url><loc>https://nflseedr.com/reference/index.html</loc></url>
-<url><loc>https://nflseedr.com/reference/load_schedules.html</loc></url>
+<url><loc>https://nflseedr.com/reference/load_sharpe_games.html</loc></url>
+<url><loc>https://nflseedr.com/reference/nfl_simulations.html</loc></url>
 <url><loc>https://nflseedr.com/reference/nfl_standings.html</loc></url>
 <url><loc>https://nflseedr.com/reference/nflseedR-package.html</loc></url>
+<url><loc>https://nflseedr.com/reference/nflseedR_compute_results.html</loc></url>
+<url><loc>https://nflseedr.com/reference/reexports.html</loc></url>
+<url><loc>https://nflseedr.com/reference/sims_games_example.html</loc></url>
+<url><loc>https://nflseedr.com/reference/sims_teams_example.html</loc></url>
 <url><loc>https://nflseedr.com/reference/simulate_nfl.html</loc></url>
+<url><loc>https://nflseedr.com/reference/simulations_verify_fct.html</loc></url>
 <url><loc>https://nflseedr.com/reference/summary.nflseedR_simulation.html</loc></url>
 </urlset>
 

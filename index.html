@@ -37,7 +37,7 @@
 
     <a class="navbar-brand me-2" href="index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9901</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9902</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,6 +51,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/nflsim.html">Simulating NFL seasons using nflseedR</a></li>
+    <li><a class="dropdown-item" href="articles/nflsim2.html">Simulating NFL seasons using nflseedR 2.0</a></li>
     <li><a class="dropdown-item" href="articles/tiebreaker.html">NFL Tiebreaking Procedures</a></li>
   </ul>
 </li>
@@ -58,7 +59,7 @@
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
-<li class="nav-item"><a class="external-link nav-link" href="https://discord.com/invite/5Er2FBnnQa"><span class="fa fab fa-discord fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://discord.com/invite/5Er2FBnnQa" aria-label="Join Community Discord Server"><span class="fa fab fa-discord fa-lg"></span></a></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/nflverse/nflseedR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-packages-more" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Packages &amp; More</button>
@@ -97,9 +98,10 @@
 <h2 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
 </h2>
 <p>The goal of nflseedR is to allow NFL modelers to simulate NFL seasons using their models, and taking off their plate the work of tracking the schedule, navigating the complex rules for division ranking, playoff seeding, and draft order. This can also aid in sports betting, such as betting on futures or win totals.</p>
-<p>The package can run thousands of Monte Carlo style simulations of the NFL regular season, based on a model you input. Within each simulated season, it will calculate the division standings and playoff seedings for you. It will also the generate the playoff games and simulate these as well, and calculate the order for next year’s NFL draft. These can be used to examine the probability of team making the playoffs or winning the Super Bowl, based on your model.</p>
-<p>The season simulations will take all completed games into account already, and only simulate from there forward, including if run during the playoffs. It can also be run as a fresh season, wiping away results and simulating from scratch.</p>
-<p>The season simulation code for nflseedR was developed by Lee Sharpe (<a href="https://twitter.com/leesharpenfl" class="external-link">@LeeSharpeNFL</a>) and building it as package was developed by Sebastian Carl (<a href="https://twitter.com/mrcaseb" class="external-link">@mrcaseb</a>). New high efficient standings code was developed by Sebastian Carl (<a href="https://twitter.com/mrcaseb" class="external-link">@mrcaseb</a>)</p>
+<p>The package can run thousands of Monte Carlo style simulations of the NFL regular season, based on a model you input. Within each simulated season, it will calculate the division standings and playoff seedings for you. It will also generate the playoff games and simulate these as well, and calculate the order for next year’s NFL draft. These can be used to examine the probability of team making the playoffs or winning the Super Bowl, based on your model.</p>
+<p>The season simulations will take all completed games into account already, and only simulate from there forward, including if run during the playoffs.</p>
+<p>The season simulation code for nflseedR 1.x was developed by Lee Sharpe (<a href="https://twitter.com/leesharpenfl" class="external-link">@LeeSharpeNFL</a>) and building it as package was developed by Sebastian Carl (<a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">@mrcaseb</a>).</p>
+<p>nflseedR 2.0 introduced high efficient standings and simulation functionality which was developed by Sebastian Carl (<a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">@mrcaseb</a>)</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -109,7 +111,7 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"nflseedR"</span><span class="op">)</span></span></code></pre></div>
 <p>To get a bug fix or to use a feature from the development version, you can install the development version of nflseedR either from <a href="https://github.com/nflverse/nflseedR" class="external-link">GitHub</a> with</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://pak.r-lib.org/" class="external-link">"pak"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"nflverse/nflseedR"</span><span class="op">)</span></span></code></pre></div>
 <p>or prebuilt from the <a href="https://nflverse.r-universe.dev" class="external-link">development repo</a> with:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -118,7 +120,12 @@
 <div class="section level2">
 <h2 id="get-started">Get Started<a class="anchor" aria-label="anchor" href="#get-started"></a>
 </h2>
-<p>With nflseedR it’s possible to <a href="https://nflseedr.com/articles/articles/nflsim.html">simulate complete seasons</a> or use it’s <a href="https://nflseedr.com/articles/articles/nflseedR.html">seeding functions</a> in custom simulations.</p>
+<p>With nflseedR it’s possible to</p>
+<ul>
+<li>calculate NFL standings including deep tie breakers and to</li>
+<li>simulate complete NFL seasons.</li>
+</ul>
+<p>For more info, please see <strong><a href="https://nflseedr.com/articles/nflseedR.html">“Getting started with nflseedR”</a></strong></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -159,7 +166,7 @@
 <li>
 <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a> <br><small class="roles"> Author </small>  </li>
 <li>
-<a href="https://twitter.com/mrcaseb" class="external-link">Sebastian Carl</a> <br><small class="roles"> Maintainer, author, copyright holder </small>  </li>
+<a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">Sebastian Carl</a> <br><small class="roles"> Maintainer, author, copyright holder </small>  </li>
 </ul>
 </div>
 
@@ -180,7 +187,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>, <a href="https://twitter.com/mrcaseb" class="external-link">Sebastian Carl</a>.</p>
+  <p>Developed by <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>, <a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">Sebastian Carl</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

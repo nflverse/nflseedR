@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9901</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9902</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,11 +19,12 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/nflsim.html">Simulating NFL seasons using nflseedR</a></li>
+    <li><a class="dropdown-item" href="../articles/nflsim2.html">Simulating NFL seasons using nflseedR 2.0</a></li>
     <li><a class="dropdown-item" href="../articles/tiebreaker.html">NFL Tiebreaking Procedures</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
-      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://discord.com/invite/5Er2FBnnQa"><span class="fa fab fa-discord fa-lg"></span></a></li>
+      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://discord.com/invite/5Er2FBnnQa" aria-label="Join Community Discord Server"><span class="fa fab fa-discord fa-lg"></span></a></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/nflverse/nflseedR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-packages-more" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Packages &amp; More</button>
@@ -63,7 +64,7 @@
 <span>  <span class="va">games</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  ranks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CONF"</span>, <span class="st">"DIV"</span>, <span class="st">"DRAFT"</span>, <span class="st">"NONE"</span><span class="op">)</span>,</span>
-<span>  tiebreaker_depth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SOS"</span>, <span class="st">"PRE-SOV"</span>, <span class="st">"RANDOM"</span><span class="op">)</span>,</span>
+<span>  tiebreaker_depth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SOS"</span>, <span class="st">"PRE-SOV"</span>, <span class="st">"POINTS"</span>, <span class="st">"RANDOM"</span><span class="op">)</span>,</span>
 <span>  playoff_seeds <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbosity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MIN"</span>, <span class="st">"MAX"</span>, <span class="st">"NONE"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -74,9 +75,10 @@
 
 
 <dl><dt id="arg-games">games<a class="anchor" aria-label="anchor" href="#arg-games"></a></dt>
-<dd><p>A data frame containing real or simulated game scores. The
-following variables are required:</p><dl><dt>sim or season</dt>
-<dd><p>A simulation ID. Normally 1 - n simulated seasons.</p></dd>
+<dd><p>A data frame containing real or simulated game scores. Outside
+of simulations, this is simply the output of <a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">nflreadr::load_schedules</a>.
+The following variables are required as a minimum:</p><dl><dt>sim or season</dt>
+<dd><p>A season or simulation ID. Normally 1 - n simulated seasons.</p></dd>
 
 <dt>game_type</dt>
 <dd><p>One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a
@@ -97,7 +99,8 @@ game was a regular season game or one of the playoff rounds.</p></dd>
 <dd><p>Equals home score - away score.</p></dd>
 
 
-</dl></dd>
+</dl><p>If tiebreakers beyond SOS are to be used, then the actual scores of the
+home (<code>home_score</code>) and away (<code>away_score</code>) teams must also be available.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -116,14 +119,20 @@ pick in the draft based off game results. No trades of course.</p></li>
 
 
 <dt id="arg-tiebreaker-depth">tiebreaker_depth<a class="anchor" aria-label="anchor" href="#arg-tiebreaker-depth"></a></dt>
-<dd><p>One of <code>"SOS"</code>, <code>"PRE-SOV"</code>, or <code>"RANDOM"</code>. Controls
-which tiebreakers are to be applied. The implemented tiebreakers are
-documented here <a href="https://nflseedr.com/articles/tiebreaker.html">https://nflseedr.com/articles/tiebreaker.html</a>.
+<dd><p>One of <code>"SOS"</code>, <code>"PRE-SOV"</code>, <code>"POINTS"</code> or <code>"RANDOM"</code>.
+Controls which tiebreakers are to be applied. The implemented tiebreakers
+are documented here <a href="https://nflseedr.com/articles/tiebreaker.html">https://nflseedr.com/articles/tiebreaker.html</a>.
 The values mean:</p><ul><li><p><code>"SOS"</code> (default): Apply all tiebreakers through Strength of Schedule. If there are
 still remaining ties, break them through coin toss.</p></li>
 <li><p><code>"PRE-SOV"</code>: Apply all tiebreakers before Strength of Victory. If there are
 still remaining ties, break them through coin toss. Why Pre SOV? It's the
 first tiebreaker that requires knowledge of how OTHER teams played.</p></li>
+<li><p><code>"POINTS"</code>: Apply all tiebreakers through point differential. If there are
+still remaining ties, break them through coin toss. This will go beyond SOS
+and requires knowledge of points scored and points allowed. As this is not
+usually part of season simulations, caution is advised in this case.
+These tiebreakers should only be used if the scores are real or are
+deliberately simulated.</p></li>
 <li><p><code>"RANDOM"</code>: Breaks all tiebreakers with a coin toss. I don't really know,
 why I allow this...</p></li>
 </ul></dd>
@@ -150,6 +159,15 @@ to set the grade of verbosity of status reports. They mean:</p><ul><li><p><code>
 argument <code>ranks</code></p>
     </div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>nflseedR does not support all levels of tie-breakers at the moment. The
+deepest tie-breaker currently is "best net points in all games".
+After that, the decision is made at random. However, the need for
+the last level ("best net touchdowns in all games") is extremely unlikely
+in practice. Deeper levels than strength of schedule have never actually been
+needed to resolve season-end standings since the NFL expanded to 32 teams.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>For more information on the implemented tiebreakers, see
 <a href="https://nflseedr.com/articles/tiebreaker.html">https://nflseedr.com/articles/tiebreaker.html</a></p></div>
@@ -160,12 +178,12 @@ argument <code>ranks</code></p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="op">{</span><span class="co">#to avoid CRAN test problems</span></span></span>
 <span class="r-in"><span>  <span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">load_schedules</a></span><span class="op">(</span><span class="fl">2021</span><span class="op">:</span><span class="fl">2022</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu">nfl_standings</span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">standings</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:58:12 | Initiate Standings &amp; Tiebreaking Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:58:12 | Compute Division Ranks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:58:12 | Compute Conference Ranks</span>
+<span class="r-in"><span><span class="va">standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu">nfl_standings</span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:11:22 | Initiate Standings &amp; Tiebreaking Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:11:22 | Compute Division Ranks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:11:22 | Compute Conference Ranks</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">standings</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     season   team   conf  division games  wins true_wins losses  ties    pf</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;int&gt; &lt;char&gt; &lt;char&gt;    &lt;char&gt; &lt;int&gt; &lt;num&gt;     &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:   2021    BUF    AFC  AFC East    17  11.0        11      6     0   483</span>
@@ -337,7 +355,7 @@ argument <code>ranks</code></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 33:                     &lt;NA&gt;         2                     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34:                     &lt;NA&gt;         7   Head-To-Head Sweep (2)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 35:                     &lt;NA&gt;         9                     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36:                     &lt;NA&gt;        10                  SOV (3)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36:                     &lt;NA&gt;        10 Common Games Win PCT (2)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 37:                     &lt;NA&gt;         3                     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 38:                     &lt;NA&gt;         6                     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 39:                     &lt;NA&gt;         8                     &lt;NA&gt;</span>
@@ -375,7 +393,7 @@ argument <code>ranks</code></p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>, <a href="https://twitter.com/mrcaseb" class="external-link">Sebastian Carl</a>.</p>
+  <p>Developed by <a href="https://twitter.com/LeeSharpeNFL" class="external-link">Lee Sharpe</a>, <a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">Sebastian Carl</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
