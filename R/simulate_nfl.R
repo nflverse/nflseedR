@@ -76,7 +76,7 @@
 #' ```
 #' or by piping the function call into [progressr::with_progress()]:
 #' ```
-#' simulate_nfl(2020, fresh_season = TRUE) %>%
+#' simulate_nfl(2020, fresh_season = TRUE) |>
 #'   progressr::with_progress()
 #' ```
 #'
@@ -156,28 +156,28 @@ simulate_nfl <- function(nfl_season = NULL,
         args <- list(...)
         if ("elo" %in% names(args)) {
           # pull from custom arguments
-          teams <- teams %>%
-            dplyr::inner_join(args$elo %>% select(team, elo), by = c("team" = "team"))
+          teams <- teams |>
+            dplyr::inner_join(args$elo |> select(team, elo), by = c("team" = "team"))
         } else {
           # start everyone at a random default elo
           ratings <- tibble(
             team = unique(teams$team),
             elo = rnorm(length(unique(team)), 1500, 150)
           )
-          teams <- teams %>%
+          teams <- teams |>
             dplyr::inner_join(ratings, by = "team")
         }
       }
 
       # pull ratings from teams data
-      ratings <- teams %>% select(sim, team, elo)
+      ratings <- teams |> select(sim, team, elo)
 
       # mark estimate, wp, and result for games
-      games <- games %>%
-        dplyr::inner_join(ratings, by = c("sim" = "sim", "away_team" = "team")) %>%
-        dplyr::rename(away_elo = elo) %>%
-        dplyr::inner_join(ratings, by = c("sim" = "sim", "home_team" = "team")) %>%
-        dplyr::rename(home_elo = elo) %>%
+      games <- games |>
+        dplyr::inner_join(ratings, by = c("sim" = "sim", "away_team" = "team")) |>
+        dplyr::rename(away_elo = elo) |>
+        dplyr::inner_join(ratings, by = c("sim" = "sim", "home_team" = "team")) |>
+        dplyr::rename(home_elo = elo) |>
         dplyr::mutate(
           elo_diff = home_elo - away_elo,
           elo_diff = elo_diff + ifelse(location == "Home", 20, 0),
@@ -204,31 +204,31 @@ simulate_nfl <- function(nfl_season = NULL,
           ),
           elo_mult = log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input,
           elo_shift = 20 * elo_mult * (outcome - wp)
-        ) %>%
+        ) |>
         dplyr::select(
           -away_elo, -home_elo, -elo_diff, -wp, -estimate,
           -outcome, -elo_input, -elo_mult
         )
 
       # apply elo shifts
-      teams <- teams %>%
-        dplyr::left_join(games %>%
-          filter(week == week_num) %>%
+      teams <- teams |>
+        dplyr::left_join(games |>
+          filter(week == week_num) |>
           select(sim, away_team, elo_shift),
         by = c("sim" = "sim", "team" = "away_team")
-        ) %>%
-        dplyr::mutate(elo = elo - ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
-        dplyr::select(-elo_shift) %>%
-        dplyr::left_join(games %>%
-          filter(week == week_num) %>%
+        ) |>
+        dplyr::mutate(elo = elo - ifelse(!is.na(elo_shift), elo_shift, 0)) |>
+        dplyr::select(-elo_shift) |>
+        dplyr::left_join(games |>
+          filter(week == week_num) |>
           select(sim, home_team, elo_shift),
         by = c("sim" = "sim", "team" = "home_team")
-        ) %>%
-        dplyr::mutate(elo = elo + ifelse(!is.na(elo_shift), elo_shift, 0)) %>%
+        ) |>
+        dplyr::mutate(elo = elo + ifelse(!is.na(elo_shift), elo_shift, 0)) |>
         dplyr::select(-elo_shift)
 
       # remove elo shift
-      games <- games %>%
+      games <- games |>
         dplyr::select(-elo_shift)
 
       return(list(teams = teams, games = games))
@@ -263,7 +263,7 @@ simulate_nfl <- function(nfl_season = NULL,
 
   # load games data
   report("Loading games data")
-  schedule <- nflreadr::load_schedules() %>%
+  schedule <- nflreadr::load_schedules() |>
     select(
       season, game_type, week, away_team, home_team,
       away_rest, home_rest, location, result
@@ -273,8 +273,8 @@ simulate_nfl <- function(nfl_season = NULL,
     nfl_season <- max(schedule$season)
   }
 
-  schedule <- schedule %>%
-    filter(season == nfl_season) %>%
+  schedule <- schedule |>
+    filter(season == nfl_season) |>
     select(-season)
 
   if (nrow(schedule) == 0)
@@ -285,7 +285,7 @@ simulate_nfl <- function(nfl_season = NULL,
       ".csv?raw=true"
     )
     tryCatch({
-      schedule <- data.table::fread(fn) %>% tibble::as_tibble()
+      schedule <- data.table::fread(fn) |> tibble::as_tibble()
       cli::cli_alert_info("No actual schedule exists for {.val {nfl_season}}, using fake schedule with correct opponents.")
     }, error = function(cond) {
       cli::cli_abort("Unable to locate a schedule for {.val {nfl_season}}")
@@ -296,30 +296,30 @@ simulate_nfl <- function(nfl_season = NULL,
 
   # if simulating fresh season, clear out all results and playoff games
   if (isTRUE(fresh_season)) {
-    schedule <- schedule %>%
-      filter(game_type == "REG") %>%
+    schedule <- schedule |>
+      filter(game_type == "REG") |>
       mutate(result = NA_real_)
   }
 
   # if simulating fresh playoffs, clear out playoff games
   if (isTRUE(fresh_playoffs)) {
-    schedule <- schedule %>%
+    schedule <- schedule |>
       filter(game_type == "REG")
   }
 
   # if ended today just needs one simulation
   if (isTRUE(if_ended_today)) {
-    schedule <- schedule %>%
+    schedule <- schedule |>
       filter(!is.na(result))
     simulations <- 1
   }
 
   # weeks to sim
-  weeks_to_sim <- schedule %>%
-    filter(game_type == "REG") %>%
-    filter(is.na(result)) %>%
-    pull(week) %>%
-    unique() %>%
+  weeks_to_sim <- schedule |>
+    filter(game_type == "REG") |>
+    filter(is.na(result)) |>
+    pull(week) |>
+    unique() |>
     sort()
 
   #### SET UP SIMULATIONS ####
@@ -401,8 +401,8 @@ simulate_nfl <- function(nfl_season = NULL,
   # and conf columns
   if(sb_exit < 20) sb_exit <- NA_real_
 
-  overall <- all_teams %>%
-    group_by(conf, division, team) %>%
+  overall <- all_teams |>
+    group_by(conf, division, team) |>
     summarize(
       wins = mean(wins),
       playoff = mean(!is.na(seed)),
@@ -412,28 +412,28 @@ simulate_nfl <- function(nfl_season = NULL,
       won_sb = mean(exit == sb_exit),
       draft1 = mean(draft_order == 1),
       draft5 = mean(draft_order <= 5)
-    ) %>%
+    ) |>
     ungroup()
 
   team_wins <-
     tibble(
       team = rep(sort(unique(all_teams$team)), each = max(all_teams$games) * 2 + 1),
       wins = rep(seq(0, max(all_teams$games), 0.5), length(unique(all_teams$team)))
-    ) %>%
+    ) |>
     inner_join(
-      all_teams %>% select(team, true_wins),
+      all_teams |> select(team, true_wins),
       by = c("team")
-    ) %>%
-    group_by(team, wins) %>%
+    ) |>
+    group_by(team, wins) |>
     summarize(
       over_prob = mean(true_wins > wins),
       under_prob = mean(true_wins < wins)
-    ) %>%
+    ) |>
     ungroup()
 
   game_summary <-
-    all_games %>%
-    group_by(game_type, week, away_team, home_team) %>%
+    all_games |>
+    group_by(game_type, week, away_team, home_team) |>
     summarise(
       away_wins = sum(result < 0),
       home_wins = sum(result > 0),
@@ -443,8 +443,8 @@ simulate_nfl <- function(nfl_season = NULL,
       games_played = away_wins + home_wins + ties,
       away_percentage = (away_wins + 0.5 * ties) / games_played,
       home_percentage = (home_wins + 0.5 * ties) / games_played
-    ) %>%
-    ungroup() %>%
+    ) |>
+    ungroup() |>
     arrange(week)
 
   report("DONE!")

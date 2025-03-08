@@ -10,7 +10,7 @@ font_add_google("Audiowide", "seb")
 showtext_auto()
 
 p <-
-  tibble(x = 1:7, y = c(6, 5, 3, 2, 4, 1, 7)) %>%
+  tibble(x = 1:7, y = c(6, 5, 3, 2, 4, 1, 7)) |>
   ggplot(aes(x = x, y = y)) +
   geom_col(color = "white", width = 0.85) +
   theme_void() +

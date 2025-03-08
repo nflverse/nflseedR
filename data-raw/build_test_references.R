@@ -1,22 +1,22 @@
 library(dplyr, warn.conflicts = FALSE)
 
 games <-
-  nflseedR::load_sharpe_games() %>%
-  dplyr::filter(season %in% 2014:2019) %>%
+  nflseedR::load_sharpe_games() |>
+  dplyr::filter(season %in% 2014:2019) |>
   dplyr::select(sim = season, game_type, week, away_team, home_team, result)
 
-div_ranks <- games %>%
-  nflseedR::compute_division_ranks() %>%
+div_ranks <- games |>
+  nflseedR::compute_division_ranks() |>
   purrr::pluck("standings")
 
-conf_seeds <- games %>%
-  nflseedR::compute_division_ranks() %>%
-  nflseedR::compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6) %>%
+conf_seeds <- games |>
+  nflseedR::compute_division_ranks() |>
+  nflseedR::compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6) |>
   purrr::pluck("standings")
 
-draft_order <- games %>%
-  nflseedR::compute_division_ranks() %>%
-  nflseedR::compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6) %>%
+draft_order <- games |>
+  nflseedR::compute_division_ranks() |>
+  nflseedR::compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6) |>
   nflseedR::compute_draft_order(games = games, h2h = .$h2h)
 
 saveRDS(div_ranks,   "tests/testthat/reference_div_ranks.rds")

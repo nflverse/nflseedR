@@ -339,7 +339,7 @@ nfl_simulations <- function(games,
   wins_vec <- rep(
     seq(0, max(all_standings$games), 0.5),
     each = length(unique(all_standings$sim))
-  ) %>%
+  ) |>
     rep(length(unique(all_standings$team)))
 
   # create sequence of sims and repeat it for every half win and for every team

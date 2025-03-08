@@ -23,11 +23,11 @@
 #' library(dplyr, warn.conflicts = FALSE)
 #'
 #' try({#to avoid CRAN test problems
-#' nflseedR::load_sharpe_games() %>%
-#'   dplyr::filter(season %in% 2019:2020) %>%
-#'   dplyr::select(sim = season, game_type, week, away_team, home_team, result) %>%
-#'   nflseedR::compute_division_ranks() %>%
-#'   nflseedR::compute_conference_seeds(h2h = .$h2h) %>%
+#' nflseedR::load_sharpe_games() |>
+#'   dplyr::filter(season %in% 2019:2020) |>
+#'   dplyr::select(sim = season, game_type, week, away_team, home_team, result) |>
+#'   nflseedR::compute_division_ranks() |>
+#'   nflseedR::compute_conference_seeds(h2h = .$h2h) |>
 #'   purrr::pluck("standings")
 #' })
 #'
@@ -64,7 +64,7 @@ compute_conference_seeds <- function(teams,
     )
   }
 
-  teams <- teams %>%
+  teams <- teams |>
     mutate(conf_rank = NA_real_)
 
   # seed loop
@@ -73,30 +73,30 @@ compute_conference_seeds <- function(teams,
     report("Calculating seed #{seed_num}")
 
     # find teams at this seed
-    update <- teams %>%
-      filter(is.na(conf_rank)) %>%
-      mutate(div_winner = (div_rank == 1)) %>%
-      group_by(sim, conf) %>%
-      filter(div_winner == max(div_winner)) %>%
-      filter(win_pct == max(win_pct)) %>%
-      mutate(conf_rank = ifelse(n() == 1, as.numeric(seed_num), conf_rank)) %>%
-      ungroup() %>%
-      group_by(sim, conf, division) %>%
-      mutate(div_best_left = (div_rank == min(div_rank))) %>%
-      ungroup() %>%
+    update <- teams |>
+      filter(is.na(conf_rank)) |>
+      mutate(div_winner = (div_rank == 1)) |>
+      group_by(sim, conf) |>
+      filter(div_winner == max(div_winner)) |>
+      filter(win_pct == max(win_pct)) |>
+      mutate(conf_rank = ifelse(n() == 1, as.numeric(seed_num), conf_rank)) |>
+      ungroup() |>
+      group_by(sim, conf, division) |>
+      mutate(div_best_left = (div_rank == min(div_rank))) |>
+      ungroup() |>
       break_conference_ties(seed_num, h2h = h2h, tb_depth = tiebreaker_depth, .debug = .debug)
 
     # store updates
-    teams <- teams %>%
-      left_join(update, by = c("sim", "team")) %>%
-      mutate(conf_rank = ifelse(!is.na(new_rank), new_rank, conf_rank)) %>%
+    teams <- teams |>
+      left_join(update, by = c("sim", "team")) |>
+      mutate(conf_rank = ifelse(!is.na(new_rank), new_rank, conf_rank)) |>
       select(-new_rank)
   } # end conference rank loop
 
   # rename conference rank to seed
-  teams <- teams %>%
-    rename(seed = conf_rank) %>%
-    mutate(exit = ifelse(is.na(seed), max_reg_week, NA_real_)) %>%
+  teams <- teams |>
+    rename(seed = conf_rank) |>
+    mutate(exit = ifelse(is.na(seed), max_reg_week, NA_real_)) |>
     select(-max_reg_week)
 
   list(

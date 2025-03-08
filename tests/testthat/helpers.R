@@ -3,6 +3,6 @@ load_test_games <- function(){
 
   if (!nrow(g) > 0) return(tibble::tibble())
 
-  g %>%
+  g |>
     dplyr::select(sim = season, game_type, week, away_team, home_team, result)
 }
