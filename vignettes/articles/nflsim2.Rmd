@@ -11,6 +11,11 @@ knitr::opts_chunk$set(
 library(nflseedR)
 options(digits = 3)
 options(nflreadr.verbose = FALSE)
+if (future::supportsMulticore()){
+  future::plan("multicore")
+} else {
+  future::plan("multisession")
+}
 ```
 
 nflseedR 2.0 introduced a new approach to NFL season simulations with the new function `nfl_simulations()`. It is a new approach with a different api and a significant performance boost compared to `simulate_nfl()`.
