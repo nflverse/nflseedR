@@ -247,7 +247,7 @@ cli::cat_line("This is the source code of `nflseedR_compute_results`.
 Note that it is written in data.table for maximum performance and 
 consistency with the rest of the simulation code. 
 You are not required to write your own function in data.table.")
-cli::cli_code(format(nflseedR::nflseedR_compute_results))
+cli::cli_code(deparse(nflseedR::nflseedR_compute_results, control = "all"))
 ```
 
 The output contains a lot of pre-aggregated information, as well as the individual results from each game of each simulation. For example, let's look at the overall results of the Chargers:
