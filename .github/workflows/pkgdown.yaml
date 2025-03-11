@@ -21,6 +21,7 @@ jobs:
       group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
     permissions:
       contents: write
     steps:
@@ -34,7 +35,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, local::., any::DT
+          extra-packages: any::pkgdown, local::., any::DT, nflverse/nflplotR
           needs: website
 
       - name: Build site
