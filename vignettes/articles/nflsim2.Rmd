@@ -11,6 +11,7 @@ knitr::opts_chunk$set(
 library(nflseedR)
 options(digits = 3)
 options(nflreadr.verbose = FALSE)
+options(keep.source = TRUE)
 if (future::supportsMulticore()){
   future::plan("multicore")
 } else {
