@@ -79,6 +79,7 @@ reference:
   contents:
   - simulations_verify_fct
   - summary.nflseedR_simulation
+  - nfl_standings_prettify
   - fmt_pct_special
 
 - title: Superseeded
