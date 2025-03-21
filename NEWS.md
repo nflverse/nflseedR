@@ -14,6 +14,7 @@ It is planned that `simulate_nfl()` will be deprecated in a future release so th
 * `nfl_standings()` now supports `tiebreaker_depth = "POINTS"` which breaks ties using combined point ranks and point differentials. This means that all tiebreakers except net touchdowns are now implemented. (#47)
 * The function `load_sharpe_games` has been deprecated. It was replaced a fairly long time ago by `nflreadr::load_schedules()`. (#47)
 * nflseedR now requires R 4.1 to allow the package to use R's native pipe `|>` operator. This follows the [Tidyverse R version support rules](https://www.tidyverse.org/blog/2019/04/r-version-support/). (#48)
+* New function `nfl_standings_prettify()` computes a `gt()` table of the output created with `nfl_standings()`. (#49)
 
 # nflseedR 1.2.0
 
