@@ -141,7 +141,7 @@ progress updates globally (for the current session) with
 
 or by piping the function call into \code{\link[progressr:with_progress]{progressr::with_progress()}}:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{simulate_nfl(2020, fresh_season = TRUE) \%>\%
+\if{html}{\out{<div class="sourceCode">}}\preformatted{simulate_nfl(2020, fresh_season = TRUE) |>
   progressr::with_progress()
 }\if{html}{\out{</div>}}
 
