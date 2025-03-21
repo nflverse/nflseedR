@@ -35,9 +35,29 @@ games <- nflreadr::load_schedules(2021:2022)
 We can pass this data directly to nflseedR and calculate standings. It defaults to compute division ranks as well as conference ranks for all teams and it applies tiebreakers through strength of schedule.
 
 ```{r}
-standings <- nflseedR::nfl_standings(games)
-knitr::kable(standings, digits = 3)
+standings <- nflseedR::nfl_standings(games, ranks = "DRAFT")
+# Let's view the structure of the output
+str(standings, max.level = 1, width = 50, strict.width = "cut")
 ```
+
+nflseedR also provides functionality to create a "pretty" html table using the `{gt}` package. Use `nfl_standings_prettify()` with the output of `nfl_standings()` to create the table. It allows grouping by division, conference or overall and it can sort by division rank, conference rank (seed), and draft rank.
+
+The default groups by division and sorts by division rank.
+
+```{r}
+# It doesn't allow more than one season
+s <- standings[season == 2022]
+nflseedR::nfl_standings_prettify(s)
+```
+
+But we can also do things like ordering the complete league by draft rank.
+
+```{r}
+# It doesn't allow more than one season
+nflseedR::nfl_standings_prettify(s, grp_by = "nfl", order_by = "draft_rank")
+```
+
+Please note that `nfl_standings_prettify()` returns a `gt()` table so you can change it according to your own preferences.
 
 ## Simulations
 
