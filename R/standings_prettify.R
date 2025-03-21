@@ -129,7 +129,7 @@ nfl_standings_prettify <- function(
       )
     ) |>
     gt::tab_header(
-      glue::glue("{unique(standings$season)} NFL Standings")
+      paste(unique(standings$season), "NFL Standings")
     ) |>
     gt::opt_css(
       css = "
