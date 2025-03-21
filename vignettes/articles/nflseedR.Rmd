@@ -26,10 +26,10 @@ The actual core of a simulation is the generation of game results based on any i
 
 We need real or simulated match data to determine standings. The required variables are specified in the documentation of the function `nfl_standings()`.
 
-Here are games data from the 2021 and 2022 seasons.
+Here are games data from the 2023 and 2024 seasons.
 
 ```{r}
-games <- nflreadr::load_schedules(2021:2022)
+games <- nflreadr::load_schedules(2023:2024)
 ```
 
 We can pass this data directly to nflseedR and calculate standings. It defaults to compute division ranks as well as conference ranks for all teams and it applies tiebreakers through strength of schedule.
@@ -46,14 +46,13 @@ The default groups by division and sorts by division rank.
 
 ```{r}
 # It doesn't allow more than one season
-s <- standings[season == 2022]
+s <- standings[season == 2024]
 nflseedR::nfl_standings_prettify(s)
 ```
 
 But we can also do things like ordering the complete league by draft rank.
 
 ```{r}
-# It doesn't allow more than one season
 nflseedR::nfl_standings_prettify(s, grp_by = "nfl", order_by = "draft_rank")
 ```
 
