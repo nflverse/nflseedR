@@ -15,7 +15,7 @@
 #' @importFrom lifecycle deprecated
 #' @importFrom progressr progressor
 #' @importFrom purrr pluck
-#' @importFrom rlang inform
+#' @importFrom rlang inform %||%
 #' @importFrom stats rnorm setNames
 #' @importFrom tibble is_tibble tibble
 #' @importFrom tidyr pivot_longer
