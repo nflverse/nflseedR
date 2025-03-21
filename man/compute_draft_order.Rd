@@ -63,14 +63,13 @@ library(dplyr, warn.conflicts = FALSE)
 
 try({#to avoid CRAN test problems
 games <-
-  nflseedR::load_sharpe_games() \%>\%
-  dplyr::filter(season \%in\% 2018:2019) \%>\%
+  nflseedR::load_sharpe_games() |>
+  dplyr::filter(season \%in\% 2018:2019) |>
   dplyr::select(sim = season, game_type, week, away_team, home_team, result)
 
-games \%>\%
-  nflseedR::compute_division_ranks() \%>\%
-  nflseedR::compute_conference_seeds(h2h = .$h2h, playoff_seeds = 6) \%>\%
-  nflseedR::compute_draft_order(games = games, h2h = .$h2h)
+s <- games |> nflseedR::compute_division_ranks()
+s <- nflseedR::compute_conference_seeds(s, h2h = s$h2h, playoff_seeds = 6)
+nflseedR::compute_draft_order(s, games = games, h2h = s$h2h)
 })
 
 # Restore old options
