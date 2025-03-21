@@ -21,7 +21,7 @@ Please see the below given section "Details" for further information.'><meta pro
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9903</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9904</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -243,7 +243,7 @@ called. There are at least two basic ways to do this by either activating
 progress updates globally (for the current session) with</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>progressr<span class="sc">::</span><span class="fu">handlers</span>(<span class="at">global =</span> <span class="cn">TRUE</span>)</span></code></pre><p></p></div>
 <p>or by piping the function call into <code><a href="https://progressr.futureverse.org/reference/with_progress.html" class="external-link">progressr::with_progress()</a></code>:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">simulate_nfl</span>(<span class="dv">2020</span>, <span class="at">fresh_season =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">simulate_nfl</span>(<span class="dv">2020</span>, <span class="at">fresh_season =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  progressr<span class="sc">::</span><span class="fu">with_progress</span>()</span></code></pre><p></p></div>
 <p>For more information how to work with progress handlers please see <a href="https://progressr.futureverse.org/reference/progressr.html" class="external-link">progressr::progressr</a>.</p>
 </div>
@@ -278,15 +278,15 @@ progress updates globally (for the current session) with</p>
 <span class="r-in"><span><span class="co"># Overview output</span></span></span>
 <span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:41:36 | Loading games data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 12:35:07 | Loading games data</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Computation in multiple rounds can be accelerated with parallel processing.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> You should consider calling a `future::plan()`. Please see the function</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   documentation for further information.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Will go on sequentially...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:41:36 | Beginning simulation of <span style="color: #0000BB;">4</span> seasons in <span style="color: #0000BB;">2</span> rounds</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:41:42 | Combining simulation data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:41:42 | Aggregating across simulations</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:41:42 | DONE!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 12:35:07 | Beginning simulation of <span style="color: #0000BB;">4</span> seasons in <span style="color: #0000BB;">2</span> rounds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 12:35:13 | Combining simulation data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 12:35:13 | Aggregating across simulations</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 12:35:13 | DONE!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ teams       :Classes ‘data.table’ and 'data.frame':	128 obs. of  18 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim        : num [1:128] 1 1 1 1 1 1 1 1 1 1 ...</span>
@@ -362,8 +362,8 @@ progress updates globally (for the current session) with</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ print_summary   : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim_include     : chr "DRAFT"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : int [1:4] 1 2 0 9903</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ finished_at     : POSIXct[1:1], format: "2025-03-11 13:41:42"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : int [1:4] 1 2 0 9904</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ finished_at     : POSIXct[1:1], format: "2025-03-21 12:35:13"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr "nflseedR_simulation"</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
