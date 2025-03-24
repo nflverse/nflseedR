@@ -14,3 +14,5 @@
 ^man/figures/caption\.png$
 ^CRAN-SUBMISSION$
 ^revdep$
+^vignettes/articles/\.quarto$
+^vignettes/articles/*_files$
