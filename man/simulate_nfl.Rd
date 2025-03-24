@@ -126,7 +126,7 @@ will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and
 }\if{html}{\out{</div>}}
 
 For more information on possible plans please see
-\href{https://github.com/HenrikBengtsson/future/blob/develop/README.md}{the future package Readme}.
+\href{https://github.com/futureverse/future/blob/develop/README.md}{the future package Readme}.
 }
 
 \subsection{Get Progress Updates while Functions are Running}{
