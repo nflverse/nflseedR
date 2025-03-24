@@ -31,7 +31,7 @@ Please see the below given section "Details" for further information.'><meta pro
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9904</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -246,7 +246,7 @@ default non-sequential <code><a href="https://future.futureverse.org/reference/p
 will behave like they were called with <code><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">purrr::map()</a></code> and <strong>NOT</strong> in multisession.</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">inherits</span>(future<span class="sc">::</span><span class="fu">plan</span>(), <span class="st">"sequential"</span>)</span></code></pre><p></p></div>
 <p>For more information on possible plans please see
-<a href="https://github.com/HenrikBengtsson/future/blob/develop/README.md" class="external-link">the future package Readme</a>.</p>
+<a href="https://github.com/futureverse/future/blob/develop/README.md" class="external-link">the future package Readme</a>.</p>
 </div>
 
 <div class="section">
@@ -322,24 +322,24 @@ generation (RNG)" in <a href="https://furrr.futureverse.org/reference/furrr_opti
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   documentation for further information.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Will go on sequentially...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #555555;">This message is displayed once every 8 hours.</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | Start simulation of <span style="color: #0000BB;">4</span> seasons in <span style="color: #0000BB;">2</span> chunks with a chunk size of <span style="color: #0000BB;">2</span>.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:48 | Start simulation of <span style="color: #0000BB;">4</span> seasons in <span style="color: #0000BB;">2</span> chunks with a chunk size of <span style="color: #0000BB;">2</span>.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:48 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> …, <span style="color: #0000BB;">"17"</span>, and <span style="color: #0000BB;">"18"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | Initiate Standings &amp; Tiebreaking Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | Compute Division Ranks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | Compute Conference Ranks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | Compute Draft Order</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:48 | Initiate Standings &amp; Tiebreaking Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:48 | Compute Division Ranks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:48 | Compute Conference Ranks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:48 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:48 | Compute Draft Order</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:48 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> …, <span style="color: #0000BB;">"17"</span>, and <span style="color: #0000BB;">"18"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | Initiate Standings &amp; Tiebreaking Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | Compute Division Ranks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | Compute Conference Ranks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | Compute Draft Order</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | Combine simulation data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | Aggregate across simulations</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 13:17:52 | DONE!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:49 | Initiate Standings &amp; Tiebreaking Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:49 | Compute Division Ranks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:49 | Compute Conference Ranks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:49 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:49 | Compute Draft Order</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:49 | Combine simulation data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:49 | Aggregate across simulations</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 16:12:49 | DONE!</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Overview output</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">sim</span>, max.level <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
@@ -414,8 +414,8 @@ generation (RNG)" in <a href="https://furrr.futureverse.org/reference/furrr_opti
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim_include     : chr "DRAFT"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ verbosity       : chr "MIN"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : int [1:4] 1 2 0 9904</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ finished_at     : POSIXct[1:1], format: "2025-03-24 13:17:52"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : int [1:3] 2 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ finished_at     : POSIXct[1:1], format: "2025-03-24 16:12:49"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr "nflseedR_simulation"</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
