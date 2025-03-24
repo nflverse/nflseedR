@@ -56,7 +56,7 @@ But we can also do things like ordering the complete league by draft rank.
 nflseedR::nfl_standings_prettify(s, grp_by = "nfl", order_by = "draft_rank")
 ```
 
-Please note that `nfl_standings_prettify()` returns a `gt()` table so you can change it according to your own preferences.
+Please note that `nfl_standings_prettify()` returns a `gt::gt()` table so you can change it according to your own preferences.
 
 ## Simulations
 
