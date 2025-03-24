@@ -1,4 +1,4 @@
-# nflseedR (development version)
+# nflseedR 2.0.0
 
 This is a major release that introduces a new generation of high efficient standings and simulation code
 
