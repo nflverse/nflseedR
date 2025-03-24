@@ -43,9 +43,52 @@ strip_nflverse_attributes <- function(df){
 release_bullets <- function() {
   c(
     '`devtools::check_mac_release()`',
-    '`rhub::rhub_check(platforms = rhub::rhub_platforms()$name[rhub::rhub_platforms()$name != "rchk"])`',
+    '`rhub::rhub_check(platforms = nflseedR:::rhub_check_platforms())`',
     '`pkgdown::check_pkgdown()`',
     '`usethis::use_tidy_thanks()`',
     NULL
   )
+}
+
+rhub_check_platforms <- function(){
+  # plts created with
+  # out <- paste0('"', rhub::rhub_platforms()$name, '"', collapse = ",\n")
+  # cli::cli_code(paste0(
+  #   "plts <- c(\n", out, "\n)"
+  # ))
+
+  plts <- c(
+    "linux",
+    "m1-san",
+    "macos",
+    "macos-arm64",
+    "windows",
+    "atlas",
+    "c23",
+    "clang-asan",
+    "clang-ubsan",
+    "clang16",
+    "clang17",
+    "clang18",
+    "clang19",
+    "clang20",
+    "donttest",
+    "gcc-asan",
+    "gcc13",
+    "gcc14",
+    "gcc15",
+    "intel",
+    "mkl",
+    "nold",
+    "noremap",
+    "nosuggests",
+    "rchk",
+    "ubuntu-clang",
+    "ubuntu-gcc12",
+    "ubuntu-next",
+    "ubuntu-release",
+    "valgrind"
+  )
+  exclude <- c("rchk", "nosuggests", "valgrind")
+  plts[!plts %in% exclude]
 }
