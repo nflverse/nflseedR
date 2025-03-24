@@ -1,6 +1,6 @@
 ## Release summary
 
-This a minor release improving some functions.
+This a major release introducing new functions.
 
 ## R CMD check results
 
