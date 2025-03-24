@@ -1,13 +1,13 @@
 ---
 title: "Get started with nflseedR"
 author: "Sebastian Carl and Lee Sharpe"
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
 options(knitr.kable.NA = '-')
 ```
 

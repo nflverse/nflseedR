@@ -1,15 +1,11 @@
 ---
 title: "Simulating NFL seasons using nflseedR"
 author: "Lee Sharpe & Sebastian Carl"
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
 ---
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-# ifelse(future::supportsMulticore(), future::plan("multicore"), future::plan("multisession"))
-```
 
 # Running a Simulation
 

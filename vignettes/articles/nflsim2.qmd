@@ -1,13 +1,13 @@
 ---
 title: "Simulating NFL seasons using nflseedR 2.0"
 author: "Sebastian Carl & Lee Sharpe"
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
 library(nflseedR)
 options(digits = 3)
 options(nflreadr.verbose = FALSE)

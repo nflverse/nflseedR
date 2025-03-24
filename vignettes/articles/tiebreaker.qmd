@@ -2,14 +2,11 @@
 title: "NFL Tiebreaking Procedures"
 author: "Sebastian Carl & NFL"
 date: "2023-12-20"
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
 ---
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
 
 NFL tiebreaking procedures for division ranks and conference seeds are documented [on the NFL.com website](https://www.nfl.com/standings/tie-breaking-procedures) and [on the NFL Football Operations website](https://operations.nfl.com/the-rules/nfl-tie-breaking-procedures/). They are mostly identical, but not exactly[^waitwhat]. 
 
