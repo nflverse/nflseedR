@@ -4,7 +4,7 @@ author: "Sebastian Carl & NFL"
 date: "2023-12-20"
 opengraph:
   image:
-    src: man/figures/gh_preview.png
+    src: https://github.com/nflverse/nflseedR/blob/master/man/figures/gh_preview.png?raw=true
     alt: "nflseedR social preview card"
 ---
 

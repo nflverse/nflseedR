@@ -3,7 +3,7 @@ title: "Get started with nflseedR"
 author: "Sebastian Carl and Lee Sharpe"
 opengraph:
   image:
-    src: man/figures/gh_preview.png
+    src: https://github.com/nflverse/nflseedR/blob/master/man/figures/gh_preview.png?raw=true
     alt: "nflseedR social preview card"
 ---
 
