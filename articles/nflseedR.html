@@ -144,10 +144,10 @@ It defaults to compute division ranks as well as conference ranks for
 all teams and it applies tiebreakers through strength of schedule.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/nfl_standings.html">nfl_standings</a></span><span class="op">(</span><span class="va">games</span>, ranks <span class="op">=</span> <span class="st">"DRAFT"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:32:16 | Initiate Standings &amp; Tiebreaking Data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:32:16 | Compute Division Ranks</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:32:16 | Compute Conference Ranks</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:32:16 | Compute Draft Order</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 20:32:10 | Initiate Standings &amp; Tiebreaking Data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 20:32:10 | Compute Division Ranks</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 20:32:11 | Compute Conference Ranks</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 20:32:11 | Compute Draft Order</span></span>
 <span><span class="co"># Let's view the structure of the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">standings</span>, max.level <span class="op">=</span> <span class="fl">1</span>, width <span class="op">=</span> <span class="fl">50</span>, strict.width <span class="op">=</span> <span class="st">"cut"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   64 obs. of  24 variables:</span></span>
@@ -172,7 +172,7 @@ all teams and it applies tiebreakers through strength of schedule.</p>
 <span><span class="co">#&gt;  $ div_tie_broken_by  : chr  "Head-To-Head Win "..</span></span>
 <span><span class="co">#&gt;  $ conf_rank          : int  2 6 13 16 1 5 7 8 4..</span></span>
 <span><span class="co">#&gt;  $ conf_tie_broken_by : chr  "Head-To-Head Swee"..</span></span>
-<span><span class="co">#&gt;  $ exit               : int  19 18 0 0 20 18 18 ..</span></span>
+<span><span class="co">#&gt;  $ exit               : chr  "DIV" "WC" "REG" ""..</span></span>
 <span><span class="co">#&gt;  $ draft_rank         : int  28 21 10 3 30 23 20..</span></span>
 <span><span class="co">#&gt;  $ draft_tie_broken_by: chr  NA NA NA NA ...</span></span>
 <span><span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt;</span></span></code></pre></div>
@@ -674,10 +674,11 @@ div#nflseedR_standings {
 <col>
 <col>
 <col>
+<col>
 </colgroup>
 <thead>
 <tr class="gt_heading">
-<td colspan="19" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="font-family: 'Prosto One', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-weight: bold;">2024 NFL Standings</td>
+<td colspan="20" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="font-family: 'Prosto One', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-weight: bold;">2024 NFL Standings</td>
     </tr>
 <tr class="gt_col_headings">
 <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="div_rank"><div title="Division Rank after application of division tiebreakers">Div<br>Rank</div></th>
@@ -694,6 +695,7 @@ div#nflseedR_standings {
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="conf_pct"><div title="Win Percentage Against Conference Opponents">Conf<br>PCT</div></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="sov"><div title="Strength of Victory (combined win percentage of beaten opponents)">sov</div></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="sos"><div title="Strength of Schedule (combined win percentage of all opponents)">sos</div></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="exit"><div title="The game type of the team's last game. One of 'REG', 'WC', 'DIV', 'CON', 'SB', 'SB_WIN'">exit</div></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="div_tie_broken_by"><div title="Tiebreaker used to break a tie with number of teams included">Division Tie<br>broken by</div></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="conf_rank"><div title="Conference Rank (Seed) after application of conference tiebreakers">Conf<br>Rank</div></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="conf_tie_broken_by"><div title="Tiebreaker used to break a tie with number of teams included">Conference Tie<br>broken by</div></th>
@@ -703,7 +705,7 @@ div#nflseedR_standings {
 </thead>
 <tbody class="gt_table_body">
 <tr class="gt_group_heading_row">
-<th colspan="19" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="AFC East">AFC East</th>
+<th colspan="20" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="AFC East">AFC East</th>
     </tr>
 <tr class="gt_row_group_first">
 <td headers="AFC East  div_rank" class="gt_row gt_right">1</td>
@@ -720,6 +722,7 @@ div#nflseedR_standings {
 <td headers="AFC East  conf_pct" class="gt_row gt_right">0.750</td>
 <td headers="AFC East  sov" class="gt_row gt_right">0.448</td>
 <td headers="AFC East  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.467</td>
+<td headers="AFC East  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">CON</td>
 <td headers="AFC East  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC East  conf_rank" class="gt_row gt_right">2</td>
 <td headers="AFC East  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -741,6 +744,7 @@ div#nflseedR_standings {
 <td headers="AFC East  conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="AFC East  sov" class="gt_row gt_right">0.294</td>
 <td headers="AFC East  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.419</td>
+<td headers="AFC East  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="AFC East  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC East  conf_rank" class="gt_row gt_right">10</td>
 <td headers="AFC East  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -762,6 +766,7 @@ div#nflseedR_standings {
 <td headers="AFC East  conf_pct" class="gt_row gt_right">0.417</td>
 <td headers="AFC East  sov" class="gt_row gt_right">0.341</td>
 <td headers="AFC East  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.495</td>
+<td headers="AFC East  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="AFC East  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC East  conf_rank" class="gt_row gt_right">11</td>
 <td headers="AFC East  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -783,6 +788,7 @@ div#nflseedR_standings {
 <td headers="AFC East  conf_pct" class="gt_row gt_right">0.250</td>
 <td headers="AFC East  sov" class="gt_row gt_right">0.471</td>
 <td headers="AFC East  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.471</td>
+<td headers="AFC East  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="AFC East  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC East  conf_rank" class="gt_row gt_right">13</td>
 <td headers="AFC East  conf_tie_broken_by" class="gt_row gt_left">SOV (2)</td>
@@ -790,7 +796,7 @@ div#nflseedR_standings {
 <td headers="AFC East  draft_tie_broken_by" class="gt_row gt_left">—</td>
 </tr>
 <tr class="gt_group_heading_row">
-<th colspan="19" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="AFC North">AFC North</th>
+<th colspan="20" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="AFC North">AFC North</th>
     </tr>
 <tr class="gt_row_group_first">
 <td headers="AFC North  div_rank" class="gt_row gt_right">1</td>
@@ -807,6 +813,7 @@ div#nflseedR_standings {
 <td headers="AFC North  conf_pct" class="gt_row gt_right">0.667</td>
 <td headers="AFC North  sov" class="gt_row gt_right">0.525</td>
 <td headers="AFC North  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.529</td>
+<td headers="AFC North  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">DIV</td>
 <td headers="AFC North  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC North  conf_rank" class="gt_row gt_right">3</td>
 <td headers="AFC North  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -828,6 +835,7 @@ div#nflseedR_standings {
 <td headers="AFC North  conf_pct" class="gt_row gt_right">0.583</td>
 <td headers="AFC North  sov" class="gt_row gt_right">0.453</td>
 <td headers="AFC North  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.502</td>
+<td headers="AFC North  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="AFC North  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC North  conf_rank" class="gt_row gt_right">6</td>
 <td headers="AFC North  conf_tie_broken_by" class="gt_row gt_left">Head-To-Head Sweep (2)</td>
@@ -849,6 +857,7 @@ div#nflseedR_standings {
 <td headers="AFC North  conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="AFC North  sov" class="gt_row gt_right">0.314</td>
 <td headers="AFC North  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.478</td>
+<td headers="AFC North  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="AFC North  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC North  conf_rank" class="gt_row gt_right">8</td>
 <td headers="AFC North  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -870,6 +879,7 @@ div#nflseedR_standings {
 <td headers="AFC North  conf_pct" class="gt_row gt_right">0.250</td>
 <td headers="AFC North  sov" class="gt_row gt_right">0.510</td>
 <td headers="AFC North  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.536</td>
+<td headers="AFC North  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="AFC North  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC North  conf_rank" class="gt_row gt_right">15</td>
 <td headers="AFC North  conf_tie_broken_by" class="gt_row gt_left">SOV (2)</td>
@@ -877,7 +887,7 @@ div#nflseedR_standings {
 <td headers="AFC North  draft_tie_broken_by" class="gt_row gt_left">—</td>
 </tr>
 <tr class="gt_group_heading_row">
-<th colspan="19" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="AFC South">AFC South</th>
+<th colspan="20" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="AFC South">AFC South</th>
     </tr>
 <tr class="gt_row_group_first">
 <td headers="AFC South  div_rank" class="gt_row gt_right">1</td>
@@ -894,6 +904,7 @@ div#nflseedR_standings {
 <td headers="AFC South  conf_pct" class="gt_row gt_right">0.667</td>
 <td headers="AFC South  sov" class="gt_row gt_right">0.376</td>
 <td headers="AFC South  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.481</td>
+<td headers="AFC South  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">DIV</td>
 <td headers="AFC South  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC South  conf_rank" class="gt_row gt_right">4</td>
 <td headers="AFC South  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -915,6 +926,7 @@ div#nflseedR_standings {
 <td headers="AFC South  conf_pct" class="gt_row gt_right">0.583</td>
 <td headers="AFC South  sov" class="gt_row gt_right">0.309</td>
 <td headers="AFC South  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.457</td>
+<td headers="AFC South  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="AFC South  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC South  conf_rank" class="gt_row gt_right">9</td>
 <td headers="AFC South  conf_tie_broken_by" class="gt_row gt_left">Head-To-Head Sweep (2)</td>
@@ -936,6 +948,7 @@ div#nflseedR_standings {
 <td headers="AFC South  conf_pct" class="gt_row gt_right">0.333</td>
 <td headers="AFC South  sov" class="gt_row gt_right">0.265</td>
 <td headers="AFC South  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.478</td>
+<td headers="AFC South  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="AFC South  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC South  conf_rank" class="gt_row gt_right">12</td>
 <td headers="AFC South  conf_tie_broken_by" class="gt_row gt_left">Conference Win PCT (3)</td>
@@ -957,6 +970,7 @@ div#nflseedR_standings {
 <td headers="AFC South  conf_pct" class="gt_row gt_right">0.250</td>
 <td headers="AFC South  sov" class="gt_row gt_right">0.431</td>
 <td headers="AFC South  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.522</td>
+<td headers="AFC South  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="AFC South  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC South  conf_rank" class="gt_row gt_right">16</td>
 <td headers="AFC South  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -964,7 +978,7 @@ div#nflseedR_standings {
 <td headers="AFC South  draft_tie_broken_by" class="gt_row gt_left">—</td>
 </tr>
 <tr class="gt_group_heading_row">
-<th colspan="19" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="AFC West">AFC West</th>
+<th colspan="20" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="AFC West">AFC West</th>
     </tr>
 <tr class="gt_row_group_first">
 <td headers="AFC West  div_rank" class="gt_row gt_right">1</td>
@@ -981,6 +995,7 @@ div#nflseedR_standings {
 <td headers="AFC West  conf_pct" class="gt_row gt_right">0.833</td>
 <td headers="AFC West  sov" class="gt_row gt_right">0.463</td>
 <td headers="AFC West  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.488</td>
+<td headers="AFC West  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">SB</td>
 <td headers="AFC West  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC West  conf_rank" class="gt_row gt_right">1</td>
 <td headers="AFC West  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1002,6 +1017,7 @@ div#nflseedR_standings {
 <td headers="AFC West  conf_pct" class="gt_row gt_right">0.667</td>
 <td headers="AFC West  sov" class="gt_row gt_right">0.348</td>
 <td headers="AFC West  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.467</td>
+<td headers="AFC West  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="AFC West  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC West  conf_rank" class="gt_row gt_right">5</td>
 <td headers="AFC West  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1023,6 +1039,7 @@ div#nflseedR_standings {
 <td headers="AFC West  conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="AFC West  sov" class="gt_row gt_right">0.394</td>
 <td headers="AFC West  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.502</td>
+<td headers="AFC West  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="AFC West  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC West  conf_rank" class="gt_row gt_right">7</td>
 <td headers="AFC West  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1044,6 +1061,7 @@ div#nflseedR_standings {
 <td headers="AFC West  conf_pct" class="gt_row gt_right">0.250</td>
 <td headers="AFC West  sov" class="gt_row gt_right">0.353</td>
 <td headers="AFC West  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.540</td>
+<td headers="AFC West  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="AFC West  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="AFC West  conf_rank" class="gt_row gt_right">14</td>
 <td headers="AFC West  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1051,7 +1069,7 @@ div#nflseedR_standings {
 <td headers="AFC West  draft_tie_broken_by" class="gt_row gt_left">—</td>
 </tr>
 <tr class="gt_group_heading_row">
-<th colspan="19" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="NFC East">NFC East</th>
+<th colspan="20" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="NFC East">NFC East</th>
     </tr>
 <tr class="gt_row_group_first">
 <td headers="NFC East  div_rank" class="gt_row gt_right">1</td>
@@ -1068,6 +1086,7 @@ div#nflseedR_standings {
 <td headers="NFC East  conf_pct" class="gt_row gt_right">0.750</td>
 <td headers="NFC East  sov" class="gt_row gt_right">0.424</td>
 <td headers="NFC East  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.453</td>
+<td headers="NFC East  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">SB_WIN</td>
 <td headers="NFC East  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC East  conf_rank" class="gt_row gt_right">2</td>
 <td headers="NFC East  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1089,6 +1108,7 @@ div#nflseedR_standings {
 <td headers="NFC East  conf_pct" class="gt_row gt_right">0.750</td>
 <td headers="NFC East  sov" class="gt_row gt_right">0.358</td>
 <td headers="NFC East  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.436</td>
+<td headers="NFC East  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">CON</td>
 <td headers="NFC East  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC East  conf_rank" class="gt_row gt_right">6</td>
 <td headers="NFC East  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1110,6 +1130,7 @@ div#nflseedR_standings {
 <td headers="NFC East  conf_pct" class="gt_row gt_right">0.417</td>
 <td headers="NFC East  sov" class="gt_row gt_right">0.387</td>
 <td headers="NFC East  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.522</td>
+<td headers="NFC East  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="NFC East  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC East  conf_rank" class="gt_row gt_right">11</td>
 <td headers="NFC East  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1131,6 +1152,7 @@ div#nflseedR_standings {
 <td headers="NFC East  conf_pct" class="gt_row gt_right">0.083</td>
 <td headers="NFC East  sov" class="gt_row gt_right">0.412</td>
 <td headers="NFC East  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.554</td>
+<td headers="NFC East  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="NFC East  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC East  conf_rank" class="gt_row gt_right">16</td>
 <td headers="NFC East  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1138,7 +1160,7 @@ div#nflseedR_standings {
 <td headers="NFC East  draft_tie_broken_by" class="gt_row gt_left">—</td>
 </tr>
 <tr class="gt_group_heading_row">
-<th colspan="19" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="NFC North">NFC North</th>
+<th colspan="20" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="NFC North">NFC North</th>
     </tr>
 <tr class="gt_row_group_first">
 <td headers="NFC North  div_rank" class="gt_row gt_right">1</td>
@@ -1155,6 +1177,7 @@ div#nflseedR_standings {
 <td headers="NFC North  conf_pct" class="gt_row gt_right">0.917</td>
 <td headers="NFC North  sov" class="gt_row gt_right">0.494</td>
 <td headers="NFC North  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.516</td>
+<td headers="NFC North  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">DIV</td>
 <td headers="NFC North  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC North  conf_rank" class="gt_row gt_right">1</td>
 <td headers="NFC North  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1176,6 +1199,7 @@ div#nflseedR_standings {
 <td headers="NFC North  conf_pct" class="gt_row gt_right">0.750</td>
 <td headers="NFC North  sov" class="gt_row gt_right">0.408</td>
 <td headers="NFC North  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.474</td>
+<td headers="NFC North  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="NFC North  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC North  conf_rank" class="gt_row gt_right">5</td>
 <td headers="NFC North  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1197,6 +1221,7 @@ div#nflseedR_standings {
 <td headers="NFC North  conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="NFC North  sov" class="gt_row gt_right">0.412</td>
 <td headers="NFC North  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.533</td>
+<td headers="NFC North  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="NFC North  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC North  conf_rank" class="gt_row gt_right">7</td>
 <td headers="NFC North  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1218,6 +1243,7 @@ div#nflseedR_standings {
 <td headers="NFC North  conf_pct" class="gt_row gt_right">0.250</td>
 <td headers="NFC North  sov" class="gt_row gt_right">0.388</td>
 <td headers="NFC North  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.554</td>
+<td headers="NFC North  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="NFC North  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC North  conf_rank" class="gt_row gt_right">13</td>
 <td headers="NFC North  conf_tie_broken_by" class="gt_row gt_left">Head-To-Head Sweep (2)</td>
@@ -1225,7 +1251,7 @@ div#nflseedR_standings {
 <td headers="NFC North  draft_tie_broken_by" class="gt_row gt_left">—</td>
 </tr>
 <tr class="gt_group_heading_row">
-<th colspan="19" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="NFC South">NFC South</th>
+<th colspan="20" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="NFC South">NFC South</th>
     </tr>
 <tr class="gt_row_group_first">
 <td headers="NFC South  div_rank" class="gt_row gt_right">1</td>
@@ -1242,6 +1268,7 @@ div#nflseedR_standings {
 <td headers="NFC South  conf_pct" class="gt_row gt_right">0.667</td>
 <td headers="NFC South  sov" class="gt_row gt_right">0.465</td>
 <td headers="NFC South  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.502</td>
+<td headers="NFC South  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="NFC South  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC South  conf_rank" class="gt_row gt_right">3</td>
 <td headers="NFC South  conf_tie_broken_by" class="gt_row gt_left">Conference Win PCT (2)</td>
@@ -1263,6 +1290,7 @@ div#nflseedR_standings {
 <td headers="NFC South  conf_pct" class="gt_row gt_right">0.583</td>
 <td headers="NFC South  sov" class="gt_row gt_right">0.426</td>
 <td headers="NFC South  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.519</td>
+<td headers="NFC South  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="NFC South  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC South  conf_rank" class="gt_row gt_right">9</td>
 <td headers="NFC South  conf_tie_broken_by" class="gt_row gt_left">Conference Win PCT (2)</td>
@@ -1284,6 +1312,7 @@ div#nflseedR_standings {
 <td headers="NFC South  conf_pct" class="gt_row gt_right">0.333</td>
 <td headers="NFC South  sov" class="gt_row gt_right">0.329</td>
 <td headers="NFC South  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.498</td>
+<td headers="NFC South  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="NFC South  div_tie_broken_by" class="gt_row gt_left">SOV (2)</td>
 <td headers="NFC South  conf_rank" class="gt_row gt_right">14</td>
 <td headers="NFC South  conf_tie_broken_by" class="gt_row gt_left">Division Tiebreaker</td>
@@ -1305,6 +1334,7 @@ div#nflseedR_standings {
 <td headers="NFC South  conf_pct" class="gt_row gt_right">0.333</td>
 <td headers="NFC South  sov" class="gt_row gt_right">0.306</td>
 <td headers="NFC South  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.505</td>
+<td headers="NFC South  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="NFC South  div_tie_broken_by" class="gt_row gt_left">SOV (2)</td>
 <td headers="NFC South  conf_rank" class="gt_row gt_right">15</td>
 <td headers="NFC South  conf_tie_broken_by" class="gt_row gt_left">Division Tiebreaker</td>
@@ -1312,7 +1342,7 @@ div#nflseedR_standings {
 <td headers="NFC South  draft_tie_broken_by" class="gt_row gt_left">—</td>
 </tr>
 <tr class="gt_group_heading_row">
-<th colspan="19" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="NFC West">NFC West</th>
+<th colspan="20" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; text-align: center; font-weight: bold; background-color: #F0F0F0;" scope="colgroup" id="NFC West">NFC West</th>
     </tr>
 <tr class="gt_row_group_first">
 <td headers="NFC West  div_rank" class="gt_row gt_right">1</td>
@@ -1329,6 +1359,7 @@ div#nflseedR_standings {
 <td headers="NFC West  conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="NFC West  sov" class="gt_row gt_right">0.441</td>
 <td headers="NFC West  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.505</td>
+<td headers="NFC West  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">DIV</td>
 <td headers="NFC West  div_tie_broken_by" class="gt_row gt_left">SOV (2)</td>
 <td headers="NFC West  conf_rank" class="gt_row gt_right">4</td>
 <td headers="NFC West  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1350,6 +1381,7 @@ div#nflseedR_standings {
 <td headers="NFC West  conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="NFC West  sov" class="gt_row gt_right">0.424</td>
 <td headers="NFC West  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.498</td>
+<td headers="NFC West  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="NFC West  div_tie_broken_by" class="gt_row gt_left">SOV (2)</td>
 <td headers="NFC West  conf_rank" class="gt_row gt_right">8</td>
 <td headers="NFC West  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1371,6 +1403,7 @@ div#nflseedR_standings {
 <td headers="NFC West  conf_pct" class="gt_row gt_right">0.333</td>
 <td headers="NFC West  sov" class="gt_row gt_right">0.404</td>
 <td headers="NFC West  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.536</td>
+<td headers="NFC West  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="NFC West  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC West  conf_rank" class="gt_row gt_right">10</td>
 <td headers="NFC West  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1392,6 +1425,7 @@ div#nflseedR_standings {
 <td headers="NFC West  conf_pct" class="gt_row gt_right">0.333</td>
 <td headers="NFC West  sov" class="gt_row gt_right">0.402</td>
 <td headers="NFC West  sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.564</td>
+<td headers="NFC West  exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="NFC West  div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="NFC West  conf_rank" class="gt_row gt_right">12</td>
 <td headers="NFC West  conf_tie_broken_by" class="gt_row gt_left">—</td>
@@ -1400,7 +1434,7 @@ div#nflseedR_standings {
 </tr>
 </tbody>
 <tfoot class="gt_sourcenotes"><tr>
-<td class="gt_sourcenote" style="font-family: Audiowide, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-size: large; text-align: right;" colspan="19">nflseedR</td>
+<td class="gt_sourcenote" style="font-family: Audiowide, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-size: large; text-align: right;" colspan="20">nflseedR</td>
     </tr></tfoot>
 </table>
 </div>
@@ -1895,10 +1929,11 @@ div#nflseedR_standings {
 <col>
 <col>
 <col>
+<col>
 </colgroup>
 <thead>
 <tr class="gt_heading">
-<td colspan="19" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="font-family: 'Prosto One', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-weight: bold;">2024 NFL Standings</td>
+<td colspan="20" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="font-family: 'Prosto One', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-weight: bold;">2024 NFL Standings</td>
     </tr>
 <tr class="gt_col_headings">
 <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="draft_rank"><div title="Draft Pick in following draft after application of draft tiebreakers. This s before any trades, forfeits, or other modifications to draft picks.">Draft<br>Rank</div></th>
@@ -1915,6 +1950,7 @@ div#nflseedR_standings {
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="conf_pct"><div title="Win Percentage Against Conference Opponents">Conf<br>PCT</div></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="sov"><div title="Strength of Victory (combined win percentage of beaten opponents)">sov</div></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="sos"><div title="Strength of Schedule (combined win percentage of all opponents)">sos</div></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="exit"><div title="The game type of the team's last game. One of 'REG', 'WC', 'DIV', 'CON', 'SB', 'SB_WIN'">exit</div></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="div_rank"><div title="Division Rank after application of division tiebreakers">Div<br>Rank</div></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="div_tie_broken_by"><div title="Tiebreaker used to break a tie with number of teams included">Division Tie<br>broken by</div></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;" scope="col" id="conf_rank"><div title="Conference Rank (Seed) after application of conference tiebreakers">Conf<br>Rank</div></th>
@@ -1938,6 +1974,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.250</td>
 <td headers="sov" class="gt_row gt_right">0.431</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.522</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">4</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">16</td>
@@ -1959,6 +1996,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.250</td>
 <td headers="sov" class="gt_row gt_right">0.510</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.536</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">4</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">15</td>
@@ -1980,6 +2018,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.083</td>
 <td headers="sov" class="gt_row gt_right">0.412</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.554</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">4</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">16</td>
@@ -2001,6 +2040,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.250</td>
 <td headers="sov" class="gt_row gt_right">0.471</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.471</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">4</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">13</td>
@@ -2022,6 +2062,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.333</td>
 <td headers="sov" class="gt_row gt_right">0.265</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.478</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">3</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">12</td>
@@ -2043,6 +2084,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.250</td>
 <td headers="sov" class="gt_row gt_right">0.353</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.540</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">4</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">14</td>
@@ -2064,6 +2106,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.417</td>
 <td headers="sov" class="gt_row gt_right">0.341</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.495</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">3</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">11</td>
@@ -2085,6 +2128,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.333</td>
 <td headers="sov" class="gt_row gt_right">0.329</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.498</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">3</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">SOV (2)</td>
 <td headers="conf_rank" class="gt_row gt_right">14</td>
@@ -2106,6 +2150,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.333</td>
 <td headers="sov" class="gt_row gt_right">0.306</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.505</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">4</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">SOV (2)</td>
 <td headers="conf_rank" class="gt_row gt_right">15</td>
@@ -2127,6 +2172,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.250</td>
 <td headers="sov" class="gt_row gt_right">0.388</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.554</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">4</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">13</td>
@@ -2148,6 +2194,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.333</td>
 <td headers="sov" class="gt_row gt_right">0.402</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.564</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">4</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">12</td>
@@ -2169,6 +2216,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.417</td>
 <td headers="sov" class="gt_row gt_right">0.387</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.522</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">3</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">11</td>
@@ -2190,6 +2238,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="sov" class="gt_row gt_right">0.294</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.419</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">2</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">10</td>
@@ -2211,6 +2260,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.583</td>
 <td headers="sov" class="gt_row gt_right">0.309</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.457</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">2</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">9</td>
@@ -2232,6 +2282,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.583</td>
 <td headers="sov" class="gt_row gt_right">0.426</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.519</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">2</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">9</td>
@@ -2253,6 +2304,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.333</td>
 <td headers="sov" class="gt_row gt_right">0.404</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.536</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">3</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">10</td>
@@ -2274,6 +2326,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="sov" class="gt_row gt_right">0.314</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.478</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">3</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">8</td>
@@ -2295,6 +2348,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="sov" class="gt_row gt_right">0.424</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.498</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">REG</td>
 <td headers="div_rank" class="gt_row gt_right">2</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">SOV (2)</td>
 <td headers="conf_rank" class="gt_row gt_right">8</td>
@@ -2316,6 +2370,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.667</td>
 <td headers="sov" class="gt_row gt_right">0.465</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.502</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="div_rank" class="gt_row gt_right">1</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">3</td>
@@ -2337,6 +2392,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="sov" class="gt_row gt_right">0.394</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.502</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="div_rank" class="gt_row gt_right">3</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">7</td>
@@ -2358,6 +2414,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.583</td>
 <td headers="sov" class="gt_row gt_right">0.453</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.502</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="div_rank" class="gt_row gt_right">2</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">6</td>
@@ -2379,6 +2436,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.667</td>
 <td headers="sov" class="gt_row gt_right">0.348</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.467</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="div_rank" class="gt_row gt_right">2</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">5</td>
@@ -2400,6 +2458,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="sov" class="gt_row gt_right">0.412</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.533</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="div_rank" class="gt_row gt_right">3</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">7</td>
@@ -2421,6 +2480,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.750</td>
 <td headers="sov" class="gt_row gt_right">0.408</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.474</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">WC</td>
 <td headers="div_rank" class="gt_row gt_right">2</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">5</td>
@@ -2442,6 +2502,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.667</td>
 <td headers="sov" class="gt_row gt_right">0.376</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.481</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">DIV</td>
 <td headers="div_rank" class="gt_row gt_right">1</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">4</td>
@@ -2463,6 +2524,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.500</td>
 <td headers="sov" class="gt_row gt_right">0.441</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.505</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">DIV</td>
 <td headers="div_rank" class="gt_row gt_right">1</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">SOV (2)</td>
 <td headers="conf_rank" class="gt_row gt_right">4</td>
@@ -2484,6 +2546,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.667</td>
 <td headers="sov" class="gt_row gt_right">0.525</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.529</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">DIV</td>
 <td headers="div_rank" class="gt_row gt_right">1</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">3</td>
@@ -2505,6 +2568,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.917</td>
 <td headers="sov" class="gt_row gt_right">0.494</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.516</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">DIV</td>
 <td headers="div_rank" class="gt_row gt_right">1</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">1</td>
@@ -2526,6 +2590,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.750</td>
 <td headers="sov" class="gt_row gt_right">0.358</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.436</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">CON</td>
 <td headers="div_rank" class="gt_row gt_right">2</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">6</td>
@@ -2547,6 +2612,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.750</td>
 <td headers="sov" class="gt_row gt_right">0.448</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.467</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">CON</td>
 <td headers="div_rank" class="gt_row gt_right">1</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">2</td>
@@ -2568,6 +2634,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.833</td>
 <td headers="sov" class="gt_row gt_right">0.463</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.488</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">SB</td>
 <td headers="div_rank" class="gt_row gt_right">1</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">1</td>
@@ -2589,6 +2656,7 @@ div#nflseedR_standings {
 <td headers="conf_pct" class="gt_row gt_right">0.750</td>
 <td headers="sov" class="gt_row gt_right">0.424</td>
 <td headers="sos" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">0.453</td>
+<td headers="exit" class="gt_row gt_right" style="border-right-width: 1px; border-right-style: dashed; border-right-color: #000000;">SB_WIN</td>
 <td headers="div_rank" class="gt_row gt_right">1</td>
 <td headers="div_tie_broken_by" class="gt_row gt_left">—</td>
 <td headers="conf_rank" class="gt_row gt_right">2</td>
@@ -2597,7 +2665,7 @@ div#nflseedR_standings {
 </tr>
 </tbody>
 <tfoot class="gt_sourcenotes"><tr>
-<td class="gt_sourcenote" style="font-family: Audiowide, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-size: large; text-align: right;" colspan="19">nflseedR</td>
+<td class="gt_sourcenote" style="font-family: Audiowide, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-size: large; text-align: right;" colspan="20">nflseedR</td>
     </tr></tfoot>
 </table>
 </div>
