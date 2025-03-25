@@ -1,3 +1,7 @@
+# nflseedR (development version)
+
+* `nflseedR_compute_results()` correctly adjusts Elo difference for postseason games. (#54)
+
 # nflseedR 2.0.0
 
 This is a major release that introduces a new generation of high efficient standings and simulation code
