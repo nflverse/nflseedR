@@ -85,11 +85,14 @@ nfl_standings_prettify <- function(
       columns = gt::everything(),
       after = order_by
     ) |>
+    nflplotR::gt_nfl_logos(team) |>
     gt::cols_move(
-      columns = "exit",
+      # if exit doesn't exist, we need another column to move or gt error
+      # That's why we "move" sos behind sos. It doesn't change anything but allows
+      # exit to be missing
+      columns = gt::any_of(c("exit", "sos")),
       after = "sos"
     ) |>
-    nflplotR::gt_nfl_logos(team) |>
     gt::fmt_number(c(win_pct, div_pct, conf_pct, sov, sos), decimals = 3) |>
     gt::sub_missing() |>
     table_theme() |>
@@ -115,10 +118,10 @@ nfl_standings_prettify <- function(
     gt::cols_width(
       gt::any_of(c("true_wins", "losses", "ties")) ~ gt::px(30)
     ) |>
-    gt::cols_align("right", columns = "exit") |>
+    gt::cols_align("right", columns = gt::any_of("exit")) |>
     gt::tab_style(
       style = gt::cell_borders(sides = "right", style = "dashed"),
-      locations = gt::cells_body(columns = c(team, games, ties, pd, sos, exit))
+      locations = gt::cells_body(columns = gt::any_of(c("team", "games", "ties", "pd", "sos", "exit")))
     ) |>
     gt::data_color(
       columns = "pd",
