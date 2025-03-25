@@ -1,6 +1,10 @@
 ---
 title: "Simulating NFL seasons using nflseedR 2.0"
 author: "Sebastian Carl & Lee Sharpe"
+opengraph:
+  image:
+    src: man/figures/gh_preview.png
+    alt: "nflseedR social preview card"
 ---
 
 ```{r, include = FALSE}

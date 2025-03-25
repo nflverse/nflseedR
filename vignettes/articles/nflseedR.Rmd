@@ -1,6 +1,10 @@
 ---
 title: "Get started with nflseedR"
 author: "Sebastian Carl and Lee Sharpe"
+opengraph:
+  image:
+    src: man/figures/gh_preview.png
+    alt: "nflseedR social preview card"
 ---
 
 ```{r, include = FALSE}
