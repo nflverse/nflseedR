@@ -241,8 +241,8 @@ nflseedR_compute_results <- function(teams, games, week_num, ...) {
   games[list(week_num), elo_diff := home_elo - away_elo + (home_rest - away_rest) / 7 * 25, on = "week"]
   # adjust elo diff for location = HOME
   games[list(week_num, "Home"), elo_diff := elo_diff + 20, on = c("week", "location")]
-  # adjust elo_diff for game type = REG
-  games[list(week_num, "REG"), elo_diff := elo_diff * 1.2, on = c("week", "game_type")]
+  # adjust elo_diff for postseason game types
+  games[list(week_num, c("WC", "DIV", "CON", "SB")), elo_diff := elo_diff * 1.2, on = c("week", "game_type")]
   # create wp and estimate
   games[list(week_num), `:=`(wp = 1 / (10^(-elo_diff / 400) + 1),
                        estimate = elo_diff / 25), on = "week"]
