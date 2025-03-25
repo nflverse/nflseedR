@@ -5,14 +5,17 @@ add_draft_ranks <- function(standings,
                             tiebreaker_depth,
                             playoff_seeds,
                             verbosity){
+  # if dg == NULL we are inside a sim and exit is already available
   if (!is.null(dg)){
-    dg[, sb_winner := fifelse(game_type == "SB" & result > 0, 1L, 0L, 0L)]
-    exit <- dg[
-      game_type != "REG",
-      list(exit = max(week) + max(sb_winner) - 1L),
-      by = c("sim", "team")
-    ]
+    # adjust game_type of SB winner to "SB_WIN"
+    dg[game_type == "SB" & result > 0, game_type := "SB_WIN"]
+    # exit is the game_type of the final game of a team or SB_WIN
+    exit <- dg[, list(exit = game_type[week == max(week)]),  by = c("sim", "team")]
+    # at this point, exit is a character value in REG, WC, DIV, CON, SB, SB_WIN
+    # replace that string with an integer representation for ordering
+    exit[, exit := sims_exit_translate_to("INT")[as.character(exit)]]
     standings <- merge(standings, exit, by = c("sim", "team"), all.x = TRUE)
+    # There shouldn't be any NA values but just in case
     standings[is.na(exit), exit := 0L]
   }
 
