@@ -79,12 +79,15 @@ nfl_standings_prettify <- function(
       "division",
       "wins",
       "season",
-      "conf",
-      "exit"
+      "conf"
     ))) |>
     gt::cols_move(
       columns = gt::everything(),
       after = order_by
+    ) |>
+    gt::cols_move(
+      columns = "exit",
+      after = "sos"
     ) |>
     nflplotR::gt_nfl_logos(team) |>
     gt::fmt_number(c(win_pct, div_pct, conf_pct, sov, sos), decimals = 3) |>
@@ -112,9 +115,10 @@ nfl_standings_prettify <- function(
     gt::cols_width(
       gt::any_of(c("true_wins", "losses", "ties")) ~ gt::px(30)
     ) |>
+    gt::cols_align("right", columns = "exit") |>
     gt::tab_style(
       style = gt::cell_borders(sides = "right", style = "dashed"),
-      locations = gt::cells_body(columns = c(team, games, ties, pd, sos))
+      locations = gt::cells_body(columns = c(team, games, ties, pd, sos, exit))
     ) |>
     gt::data_color(
       columns = "pd",
@@ -195,6 +199,7 @@ translate_label <- function(l) {
     "Conf<br>PCT" = "Win Percentage Against Conference Opponents",
     "sov" = "Strength of Victory (combined win percentage of beaten opponents)",
     "sos" = "Strength of Schedule (combined win percentage of all opponents)",
+    "exit" = "The game type of the team's last game. One of 'REG', 'WC', 'DIV', 'CON', 'SB', 'SB_WIN'",
     "Div<br>Rank" = "Division Rank after application of division tiebreakers",
     "Conf<br>Rank" = "Conference Rank (Seed) after application of conference tiebreakers",
     "Draft<br>Rank" = "Draft Pick in following draft after application of draft tiebreakers. This s before any trades, forfeits, or other modifications to draft picks.",
