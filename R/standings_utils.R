@@ -77,6 +77,9 @@ finalize_standings <- function(standings, games){
   if (attributes(games)[["uses_season"]]){
     colnames(standings)[colnames(standings) == "sim"] <- "season"
   }
+  if ("exit" %chin% colnames(standings)){
+    standings[, exit := sims_exit_translate_to("CHAR")[as.character(exit)]]
+  }
   # Conference Point Differential is a deep tiebreaker. We don't need to return it
   standings[, conf_pd := NULL]
   standings
