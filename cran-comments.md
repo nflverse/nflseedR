@@ -1,6 +1,6 @@
 ## Release summary
 
-This a major release introducing new functions.
+This a patch release fixing minor issues.
 
 ## R CMD check results
 
@@ -12,5 +12,3 @@ We checked 2 reverse dependencies, comparing R CMD check results across CRAN and
 
  * We saw 0 new problems
  * We failed to check 0 packages
-
-
