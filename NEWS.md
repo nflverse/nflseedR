@@ -1,4 +1,4 @@
-# nflseedR (development version)
+# nflseedR 2.0.1
 
 * `nflseedR_compute_results()` correctly adjusts Elo difference for postseason games. (#54)
 * `nfl_standings()` returns `exit` value consistent with `nfl_simulations()` if argument `ranks = "DRAFT"`. (#56)
