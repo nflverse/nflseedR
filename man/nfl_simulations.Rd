@@ -22,7 +22,8 @@ nfl_simulations(
 of simulations, this is simply the output of \link[nflreadr:load_schedules]{nflreadr::load_schedules}.
 The following variables are required as a minimum:
 \describe{
-\item{sim or season}{A season or simulation ID. Normally 1 - n simulated seasons.}
+\item{sim or season}{A season or simulation ID. Normally 1 - n simulated seasons.
+If both sim and season are included, a warning is triggered and work continues with sim.}
 \item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a
 game was a regular season game or one of the playoff rounds.}
 \item{week}{The week of the corresponding NFL season.}

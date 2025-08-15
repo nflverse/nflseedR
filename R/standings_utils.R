@@ -46,6 +46,17 @@ standings_validate_games <- function(games){
     "home_team",
     "result"
   )
+  if (all(c("sim", "season") %in% games_names)){
+    cli::cli_alert_warning(
+      "The {.arg games} argument includes both {.val sim} and {.val season}. \\
+      Will group by {.val sim}. Please adjust {.arg games} if that is not \\
+      what you want.",
+      wrap = TRUE
+    )
+    # drop season column
+    games$season <- NULL
+    games_names <- colnames(games)
+  }
   uses_sim <- all(c("sim", required_vars) %in% games_names)
   uses_season <- all(c("season", required_vars) %in% games_names)
   has_scores <- all(c("away_score", "home_score") %in% games_names)
