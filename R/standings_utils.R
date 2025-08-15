@@ -47,7 +47,7 @@ standings_validate_games <- function(games){
     "result"
   )
   if (all(c("sim", "season") %in% games_names)){
-    cli::cli_alert_warning(
+    cli::cli_warn(
       "The {.arg games} argument includes both {.val sim} and {.val season}. \\
       Will group by {.val sim}. Please adjust {.arg games} if that is not \\
       what you want.",
