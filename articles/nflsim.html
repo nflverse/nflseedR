@@ -96,7 +96,7 @@
 &amp; Sebastian Carl</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/nflverse/nflseedR/blob/master/vignettes/articles/nflsim.Rmd" class="external-link"><code>vignettes/articles/nflsim.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/nflverse/nflseedR/blob/v2.0.1/vignettes/articles/nflsim.Rmd" class="external-link"><code>vignettes/articles/nflsim.Rmd</code></a></small>
       <div class="d-none name"><code>nflsim.Rmd</code></div>
     </div>
 
@@ -125,11 +125,11 @@ wouldn’t do these things.</em></p>
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:10:53 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:10:53 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:10 | Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:10 | Aggregating across simulations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:10 | DONE!</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:22 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:22 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:39 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:39 | Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:39 | DONE!</span></span></code></pre></div>
 <p>The output contains a lot of pre-aggregated information, as well as
 the individual results from each game of each simulation. For example,
 let’s look at the overall results for the Bears:</p>
@@ -477,11 +477,11 @@ what happens:</p>
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  simulations <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:11 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:11 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:24 | Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:24 | Aggregating across simulations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:24 | DONE!</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:40 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:40 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:54 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:54 | Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:54 | DONE!</span></span>
 <span></span>
 <span><span class="va">sims2</span><span class="op">$</span><span class="va">overall</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -773,11 +773,11 @@ data type.</p>
 <span>  best <span class="op">=</span> <span class="st">"CHI"</span>, </span>
 <span>  worst <span class="op">=</span> <span class="st">"GB"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:24 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:24 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:38 | Combining simulation data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:38 | Aggregating across simulations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:38 | DONE!</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:54 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:09:54 | Beginning simulation of <span style="color: #0000BB;">100</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:10:08 | Combining simulation data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:10:08 | Aggregating across simulations</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:10:08 | DONE!</span></span></code></pre></div>
 <p>Now let nflseedR summarize the simulation for you by using
 <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> with the nflseedR simulation object. This will
 print a gt table.</p>
@@ -1817,9 +1817,9 @@ function.</p>
 <span>  fresh_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  test_week <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:40 | Loading games data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:40 | Beginning simulation of <span style="color: #0000BB;">1000</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:43 | Aborting and returning your `process_games` function's results</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:10:10 | Loading games data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:10:10 | Beginning simulation of <span style="color: #0000BB;">1000</span> seasons in <span style="color: #0000BB;">1</span> round</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:10:13 | Aborting and returning your `process_games` function's results</span></span>
 <span><span class="co">#&gt; from Week 3</span></span></code></pre></div>
 <p>Let’s look at the Bears’ Elo after Week 3 in the top handful of
 simulations:</p>
@@ -1897,7 +1897,7 @@ and the Elos were adjusted accordingly.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sim</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">away_team</span> <span class="op">==</span> <span class="st">"CHI"</span> <span class="op">|</span> <span class="va">home_team</span> <span class="op">==</span> <span class="st">"CHI"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-08-18 17:11:40 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-08-18 18:10:10 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 9</span></span></span>
 <span><span class="co">#&gt;      sim game_type  week away_team home_team away_rest home_rest location result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
