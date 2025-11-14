@@ -1,0 +1,143 @@
+# **nflseedR**
+
+## Motivation
+
+The goal of nflseedR is to allow NFL modelers to simulate NFL seasons
+using their models, and taking off their plate the work of tracking the
+schedule, navigating the complex rules for division ranking, playoff
+seeding, and draft order. This can also aid in sports betting, such as
+betting on futures or win totals.
+
+The package can run thousands of Monte Carlo style simulations of the
+NFL regular season, based on a model you input. Within each simulated
+season, it will calculate the division standings and playoff seedings
+for you. It will also generate the playoff games and simulate these as
+well, and calculate the order for next year’s NFL draft. These can be
+used to examine the probability of team making the playoffs or winning
+the Super Bowl, based on your model.
+
+The season simulations will take all completed games into account
+already, and only simulate from there forward, including if run during
+the playoffs.
+
+The season simulation code for nflseedR 1.x was developed by Lee Sharpe
+([@LeeSharpeNFL](https://twitter.com/leesharpenfl)) and building it as
+package was developed by Sebastian Carl
+([@mrcaseb](https://bsky.app/profile/mrcaseb.nflverse.com)).
+
+nflseedR 2.0 introduced high efficient standings and simulation
+functionality which was developed by Sebastian Carl
+([@mrcaseb](https://bsky.app/profile/mrcaseb.nflverse.com))
+
+## Installation
+
+The easiest way to get nflseedR is to install it from
+[CRAN](https://cran.r-project.org/package=nflseedR) with:
+
+``` r
+install.packages("nflseedR")
+```
+
+To get a bug fix or to use a feature from the development version, you
+can install the development version of nflseedR either from
+[GitHub](https://github.com/nflverse/nflseedR) with
+
+``` r
+if (!requireNamespace("pak")) install.packages("pak")
+pak::pak("nflverse/nflseedR")
+```
+
+or prebuilt from the [development repo](https://nflverse.r-universe.dev)
+with:
+
+``` r
+install.packages("nflseedR", repos = c("https://nflverse.r-universe.dev", getOption("repos")))
+```
+
+## Get Started
+
+With nflseedR it’s possible to
+
+- calculate NFL standings including deep tie breakers and to
+- simulate complete NFL seasons.
+
+For more info, please see **[“Getting started with
+nflseedR”](https://nflseedr.com/articles/nflseedR.html)**
+
+# Package index
+
+## Main Functions
+
+Calculate NFL standings (incl. deep tiebreakers) and simulate NFL
+seasons.
+
+- [`nfl_standings()`](https://nflseedr.com/reference/nfl_standings.md) :
+  Compute NFL Standings
+- [`nfl_simulations()`](https://nflseedr.com/reference/nfl_simulations.md)
+  : Simulate an NFL Season
+
+## Utilities
+
+Various helper functions.
+
+- [`simulations_verify_fct()`](https://nflseedr.com/reference/simulations_verify_fct.md)
+  : Verify Custom NFL Result Simulation Function
+- [`summary(`*`<nflseedR_simulation>`*`)`](https://nflseedr.com/reference/summary.nflseedR_simulation.md)
+  : Compute Pretty Simulations Summary Table
+- [`nfl_standings_prettify()`](https://nflseedr.com/reference/nfl_standings_prettify.md)
+  : Compute Pretty NFL Standings Table
+- [`fmt_pct_special()`](https://nflseedr.com/reference/fmt_pct_special.md)
+  : Format Numerical Values to Special Percentage Strings
+
+## Superseeded
+
+Seeding and simulation functionality of the nflseedR 1.x series.
+
+- [`compute_conference_seeds()`](https://nflseedr.com/reference/compute_conference_seeds.md)
+  : Compute NFL Playoff Seedings using Game Results and Divisional
+  Rankings
+- [`compute_division_ranks()`](https://nflseedr.com/reference/compute_division_ranks.md)
+  : Compute NFL Division Rankings using Game Results
+- [`compute_draft_order()`](https://nflseedr.com/reference/compute_draft_order.md)
+  : Compute NFL Draft Order using Game Results and Divisional Rankings
+- [`simulate_nfl()`](https://nflseedr.com/reference/simulate_nfl.md) :
+  Simulate an NFL Season
+
+## Simulation Output Dictionaries
+
+Access dictionaries to look up the output of the simulations.
+
+- [`dictionary_game_summary`](https://nflseedr.com/reference/dictionary_game_summary.md)
+  : Data Dictionary: Simulations \| Game Summary
+- [`dictionary_games`](https://nflseedr.com/reference/dictionary_games.md)
+  : Data Dictionary: Simulations \| Games
+- [`dictionary_overall`](https://nflseedr.com/reference/dictionary_overall.md)
+  : Data Dictionary: Simulations \| Overall
+- [`dictionary_standings`](https://nflseedr.com/reference/dictionary_standings.md)
+  : Data Dictionary: Simulations \| Standings
+- [`dictionary_team_wins`](https://nflseedr.com/reference/dictionary_team_wins.md)
+  : Data Dictionary: Simulations \| Team Wins
+
+## Simulation Data Examples
+
+Access example data for simulations.
+
+- [`sims_games_example`](https://nflseedr.com/reference/sims_games_example.md)
+  : Example Games Data used in NFL Simulations
+- [`sims_teams_example`](https://nflseedr.com/reference/sims_teams_example.md)
+  : Example Teams Data used in NFL Simulations
+- [`divisions`](https://nflseedr.com/reference/divisions.md) : NFL team
+  names and the conferences and divisions they belong to
+
+# Articles
+
+### All vignettes
+
+- [Get started with
+  nflseedR](https://nflseedr.com/articles/nflseedR.md):
+- [Simulating NFL seasons using
+  nflseedR](https://nflseedr.com/articles/nflsim.md):
+- [Simulating NFL seasons using nflseedR
+  2.0](https://nflseedr.com/articles/nflsim2.md):
+- [NFL Tiebreaking
+  Procedures](https://nflseedr.com/articles/tiebreaker.md):

@@ -1,0 +1,750 @@
+# Simulating NFL seasons using nflseedR
+
+## Running a Simulation
+
+Loading the package is obligatory, so it is done first (along with
+`dplyr` for data wrangling and the `pipe`):
+
+``` r
+library(nflseedR)
+library(dplyr, warn.conflicts = FALSE)
+options(digits = 3)
+```
+
+*Note: For this guide, we’ll set an initial random seed of `4` at the
+beginning and `simulations = 100` for the purposes of this document so
+you can follow along by entering the same code and get the same results
+shown here. We’ll also set `fresh_season = TRUE` to blank out the
+existing results from the 2020 season, but normally when simulating an
+incomplete season, you wouldn’t do these things.*
+
+``` r
+set.seed(4)
+sims <- simulate_nfl(
+  nfl_season = 2020,
+  fresh_season = TRUE,
+  simulations = 100
+)
+#> ℹ 14:02:29 | Loading games data
+#> ℹ 14:02:29 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 14:02:46 | Combining simulation data
+#> ℹ 14:02:46 | Aggregating across simulations
+#> ℹ 14:02:46 | DONE!
+```
+
+The output contains a lot of pre-aggregated information, as well as the
+individual results from each game of each simulation. For example, let’s
+look at the overall results for the Bears:
+
+``` r
+sims$overall |> dplyr::filter(team == "CHI") |> knitr::kable()
+```
+
+| conf | division  | team | wins | playoff | div1 | seed1 | won_conf | won_sb | draft1 | draft5 |
+|:-----|:----------|:-----|-----:|--------:|-----:|------:|---------:|-------:|-------:|-------:|
+| NFC  | NFC North | CHI  | 10.8 |    0.87 | 0.39 |   0.1 |     0.15 |   0.04 |      0 |   0.01 |
+
+We can see the Bears got 10.8 wins on average. They made the playoffs
+87% of simulations, won the division in 39%, won the Super Bowl in 4%,
+and only in 1% did they receive a top five draft pick. The `teams`
+section of the output will show how a team did in each simulated season.
+
+``` r
+sims$teams |>
+  dplyr::filter(team == "CHI") |>
+  dplyr::select(sim, team, wins, seed, draft_order) |> 
+  utils::head(6) |>
+  knitr::kable()
+```
+
+| sim | team | wins | seed | draft_order |
+|----:|:-----|-----:|-----:|------------:|
+|   1 | CHI  |   10 |    6 |          32 |
+|   2 | CHI  |   11 |    3 |          21 |
+|   3 | CHI  |    9 |    6 |          20 |
+|   4 | CHI  |   10 |    6 |          26 |
+|   5 | CHI  |   10 |    3 |          20 |
+|   6 | CHI  |    6 |   NA |          11 |
+
+Let’s check out the playoff games from the first simulation, where the
+Bears went 10-6 and got the 6th seed.
+
+``` r
+sims$games |> dplyr::filter(sim == 1, game_type != "REG") |> knitr::kable()
+```
+
+| sim | game_type | week | away_team | home_team | away_rest | home_rest | location | result |
+|----:|:----------|-----:|:----------|:----------|----------:|----------:|:---------|-------:|
+|   1 | WC        |   18 | MIA       | CLE       |         7 |         7 | Home     |     -8 |
+|   1 | WC        |   18 | TEN       | DEN       |         7 |         7 | Home     |     24 |
+|   1 | WC        |   18 | NYJ       | IND       |         7 |         7 | Home     |     14 |
+|   1 | WC        |   18 | PHI       | TB        |         7 |         7 | Home     |     -6 |
+|   1 | WC        |   18 | CHI       | LA        |         7 |         7 | Home     |    -26 |
+|   1 | WC        |   18 | DET       | MIN       |         7 |         7 | Home     |      2 |
+|   1 | DIV       |   19 | DEN       | IND       |         7 |         7 | Home     |      3 |
+|   1 | DIV       |   19 | MIA       | NE        |         7 |        14 | Home     |      3 |
+|   1 | DIV       |   19 | PHI       | MIN       |         7 |         7 | Home     |    -12 |
+|   1 | DIV       |   19 | CHI       | DAL       |         7 |        14 | Home     |    -11 |
+|   1 | CON       |   20 | IND       | NE        |         7 |         7 | Home     |     10 |
+|   1 | CON       |   20 | CHI       | PHI       |         7 |         7 | Home     |     -3 |
+|   1 | SB        |   21 | CHI       | NE        |        14 |        14 | Neutral  |     -6 |
+
+In this simulation, the Bears beat the Rams in a wildcard game by 26
+points, then beat the Cowboys in the divisional round by 11 points, took
+the Eagles by a field goal in the NFC Championship Game, and finally
+defeated the Patriots by 6 in the Super Bowl.
+
+As you may have gathered at this point, the default simulation code
+picks a random Elo for every team, and uses those as the starting Elo
+ratings for all 32 teams. However, the default code Elo will adjust
+independently within each simulation as each week is simulated. (The Elo
+model used is loosely based off of that of
+[FiveThirtyEight](https://fivethirtyeight.com/methodology/how-our-nfl-predictions-work/).)
+
+### Use Your Own Model
+
+But of course the real value of nflseedR is putting in your own model
+into the simulator. To accomplish this, you can write your own function
+which will determine the output of games instead. As an example, here’s
+a very stupid model that makes the team earlier alphabetically win by 3
+points 90% of the time, and lose by 3 points the other 10% of the time.
+
+``` r
+stupid_games_model <- function(teams, games, week_num, ...) {
+  # make the earlier alphabetical team win 90% of the time
+  games <- games |>
+    dplyr::mutate(
+      result = dplyr::case_when(
+        !is.na(result) | week != week_num ~ result,
+        away_team < home_team ~ sample(c(-3, 3), n(), prob = c(0.9, 0.1), replace = TRUE),
+        away_team > home_team ~ sample(c(-3, 3), n(), prob = c(0.1, 0.9), replace = TRUE),
+        TRUE ~ 0
+      )
+    )
+  
+  # return values
+  return(list(teams = teams, games = games))
+}
+```
+
+When you create this function, the first two inputs are data on the
+teams (one row per team per sim), and data on the games (one row per
+game per sim). The third argument is the week number currently being
+simulated, as only one week is processed at a time.
+
+Your function’s job - by whatever means you choose - is to update the
+`result` column for that week’s games in each of the sims with the
+number of points the home team won by (or lost by if negative, or 0 if
+the game ended in a tie).
+
+It returns both the `teams` and the `games` data. It does both because
+this way you can store information in new columns by team or by game to
+use in the next call. Make sure your code both accepts and returns the
+appropriate information, or the simulator will break!
+
+For example, the default function updates a team’s Elo after the game,
+and stores it in the `teams` data. When the simulator processes the next
+week, it uses the updated Elo rating to inform the team’s next game.
+
+!! Also, make sure you aren’t overriding completed games or games that
+aren’t in the current week of `w`. The simulator will **not** stop you
+from setting past, present, or future game results in your function,
+whether you meant to do so or not. !!
+
+Let’s run a simulation with `stupid_games_model` and see what happens:
+
+``` r
+sims2 <- simulate_nfl(
+  nfl_season = 2020,
+  process_games = stupid_games_model,
+  fresh_season = TRUE,
+  simulations = 100
+)
+#> ℹ 14:02:47 | Loading games data
+#> ℹ 14:02:47 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 14:03:01 | Combining simulation data
+#> ℹ 14:03:01 | Aggregating across simulations
+#> ℹ 14:03:01 | DONE!
+
+sims2$overall |> dplyr::arrange(team) |> utils::head() |> knitr::kable()
+```
+
+| conf | division  | team | wins | playoff | div1 | seed1 | won_conf | won_sb | draft1 | draft5 |
+|:-----|:----------|:-----|-----:|--------:|-----:|------:|---------:|-------:|-------:|-------:|
+| NFC  | NFC West  | ARI  | 14.3 |    1.00 | 0.97 |  0.40 |     0.64 |   0.59 |      0 |      0 |
+| NFC  | NFC South | ATL  | 14.4 |    1.00 | 0.91 |  0.47 |     0.29 |   0.26 |      0 |      0 |
+| AFC  | AFC North | BAL  | 14.4 |    1.00 | 0.82 |  0.60 |     0.79 |   0.09 |      0 |      0 |
+| AFC  | AFC East  | BUF  | 13.7 |    1.00 | 1.00 |  0.29 |     0.16 |   0.04 |      0 |      0 |
+| NFC  | NFC South | CAR  | 12.0 |    0.96 | 0.09 |  0.03 |     0.03 |   0.01 |      0 |      0 |
+| NFC  | NFC North | CHI  | 12.9 |    0.98 | 0.88 |  0.10 |     0.02 |   0.00 |      0 |      0 |
+
+``` r
+sims2$overall |> dplyr::arrange(team) |> utils::tail() |> knitr::kable()
+```
+
+| conf | division  | team | wins | playoff | div1 | seed1 | won_conf | won_sb | draft1 | draft5 |
+|:-----|:----------|:-----|-----:|--------:|-----:|------:|---------:|-------:|-------:|-------:|
+| AFC  | AFC North | PIT  | 3.09 |       0 |    0 |     0 |        0 |      0 |   0.01 |   0.40 |
+| NFC  | NFC West  | SEA  | 3.94 |       0 |    0 |     0 |        0 |      0 |   0.02 |   0.33 |
+| NFC  | NFC West  | SF   | 2.39 |       0 |    0 |     0 |        0 |      0 |   0.10 |   0.86 |
+| NFC  | NFC South | TB   | 1.63 |       0 |    0 |     0 |        0 |      0 |   0.24 |   0.85 |
+| AFC  | AFC South | TEN  | 1.60 |       0 |    0 |     0 |        0 |      0 |   0.21 |   0.82 |
+| NFC  | NFC East  | WAS  | 1.68 |       0 |    0 |     0 |        0 |      0 |   0.39 |   0.85 |
+
+As you might expect, the earliest alphabetical teams win a lot. The
+Cardinals won the Super Bowl in 59% of seasons! Meanwhile, the teams at
+the bottom alphabetically are virtually certain to be at the top of the
+draft order.
+
+### Adding In Your Own Data
+
+This is all well and good, you might be thinking, but your model works
+off of other data not in the simulator! How can that work? This is where
+we utilize R’s ability to have generic arguments.
+
+The `...` at the end of the function definition means that the function
+can be called with any number of additional arguments. You can name
+these whatever you want, as long as they’re not already the name of
+other defined arguments.
+
+When you call the
+[`simulate_nfl()`](https://nflseedr.com/reference/simulate_nfl.md)
+function, it too uses the `...` syntax, which allows you to pass in any
+number of additional arguments to the function. The simulator will in
+turn pass these on to *your* function that processes games.
+
+For example, let’s slightly modify our last example:
+
+``` r
+biased_games_model <- function(teams, games, week_num, ...) {
+  
+  # arguments
+  args <- list(...)
+  best <- ""
+  worst <- ""
+  
+  # best team?
+  if ("best" %in% names(args)) {
+    best <- args$best
+  }
+  
+  # worst team?
+  if ("worst" %in% names(args)) {
+    worst <- args$worst
+  }
+
+  # make the best team always win and the worst team always lose
+  # otherwise, make the earlier alphabetical team win 90% of the time
+  games <- games |>
+    dplyr::mutate(
+      result = dplyr::case_when(
+        !is.na(result) | week != week_num ~ result,
+        away_team == best | home_team == worst ~ -3,
+        away_team == worst | home_team == best ~ 3,
+        away_team < home_team ~ sample(c(-3, 3), n(), prob = c(0.9, 0.1), replace = TRUE),
+        away_team > home_team ~ sample(c(-3, 3), n(), prob = c(0.1, 0.9), replace = TRUE),
+        TRUE ~ 0
+      )
+    )
+  
+  # return values
+  return(list(teams = teams, games = games))
+}
+```
+
+This allows us to define `best` and `worst`, and use that information to
+determine a result (in this case, have the best team always win and the
+worst team always lose). While `best` and `worst` are in this example
+single-length character vectors, they can be data frames or any other R
+data type.
+
+Let’s simulate using this:
+
+``` r
+sims3 <- simulate_nfl(
+  nfl_season = 2020,
+  process_games = biased_games_model, 
+  fresh_season = TRUE, 
+  simulations = 100,
+  best = "CHI", 
+  worst = "GB"
+)
+#> ℹ 14:03:01 | Loading games data
+#> ℹ 14:03:01 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 14:03:15 | Combining simulation data
+#> ℹ 14:03:15 | Aggregating across simulations
+#> ℹ 14:03:15 | DONE!
+```
+
+Now let nflseedR summarize the simulation for you by using
+[`summary()`](https://rdrr.io/r/base/summary.html) with the nflseedR
+simulation object. This will print a gt table.
+
+``` r
+summary(sims3)
+```
+
+[TABLE]
+
+And this shows exactly what we expect. By defining the Bears as the best
+team, they always go 16-0, win the division, and win the Super Bowl.
+Interestingly, they do not always get the \#1 seed. This makes sense,
+however, as in games without the Bears or the Packers, the
+alphabetically earlier teams still wins 90% of the time. The Cardinals
+would therefore be expected to go 16-0 in some of the simulations, and
+in some of those have thee tiebreakers over the Bears. However, even in
+these simulations, they’ll still lose to Bears in the end when they meet
+in the playoffs.
+
+Similarly, the Packers always go 0-16, and never make the playoffs.
+While in these simulated seasons they got the \#1 draft pick every time,
+they aren’t guaranteed to do so. Using the same logic as above,
+sometimes the Washington Commanders will go 0-16 too, and may beat the
+Packers out for the \#1 pick through tiebreakers.
+
+### Passing Data in from One Week to the Next
+
+Sometimes though you want your data to keep updating as the simulation
+progresses. For example, an Elo-based model that updates each team’s Elo
+after each game. You can pass in the starting Elo values per team, and
+as games are simulated, update the Elo values for each team and store
+them in the `teams` data. This column will be part of the `teams` data
+passed into your function when the following week is simulated and your
+function is called.
+
+Read the comments in the code below for specific tips on doing this but
+here are good ones:
+
+- You can add columns to `teams` and/or `games` if you want.
+- When doing joins to do the above, do left joins to make sure no rows
+  are removed.
+- Remove any “helper” columns you generate along the way you don’t
+  actually need before returning.
+- Make sure any column doesn’t get blindly joined on so it has `.x` and
+  `.y` versions in Week 2 and R throws an error because an expected
+  column name doesn’t exist.
+- Make sure you only update games with
+  `is.na(result) & week == week_num`! You don’t want to override
+  completed games, or games from a week other than the current week
+  being simulated.
+
+``` r
+elo_model <- function(teams, games, week_num, ...) {
+
+  # round out (away from zero)
+  # this way the simulator never simulates a tie
+  # the simulator will still allow ties to be simulated if you want
+  # ... but not on playoff games
+  round_out <- function(x) {
+    x[!is.na(x) & x < 0] <- floor(x[!is.na(x) & x < 0])
+    x[!is.na(x) & x > 0] <- ceiling(x[!is.na(x) & x > 0])
+    return(x)
+  }
+
+  # we're going to store elo as a new columns in the teams data
+  # it won't start off there of course, so we need to determine it
+  # from our arguments
+  if (!("elo" %in% colnames(teams))) {
+    args <- list(...)
+    if ("elo" %in% names(args)) {
+      # pull the elo info from custom arguments
+      teams <- teams |>
+        dplyr::inner_join(args$elo |> dplyr::select(team, elo), by = c("team" = "team"))
+    } else {
+      # error with a friendly error message if no elo data is passed in
+      stop("Pass in a tibble `elo` as an argument to `simulate_nfl()`")
+    }
+  }
+
+  # isolate the ratings data by sim and by team only
+  # we will want to join to the games data later and don't want excess columns
+  ratings <- teams |> dplyr::select(sim, team, elo)
+
+  # simulate game outcomes
+  games <- games |>
+    # add in the away team's elo to the game data
+    # note we join on both `sim` and the team
+    # always join on `sim` to make sure each sim cares about only its data
+    dplyr::inner_join(ratings, by = c("sim" = "sim", "away_team" = "team")) |>
+    dplyr::rename(away_elo = elo) |>
+    # repeat for the home team as well
+    dplyr::inner_join(ratings, by = c("sim" = "sim", "home_team" = "team")) |>
+    dplyr::rename(home_elo = elo) |>
+    dplyr::mutate(
+      # calculate the elo difference
+      elo_diff = home_elo - away_elo,
+      # add in a small HFA amount if played at home
+      elo_diff = elo_diff + ifelse(location == "Home", 20, 0),
+      # make an adjustment for rest
+      elo_diff = elo_diff + (home_rest - away_rest) / 7 * 25,
+      # playoff games swing elo more
+      elo_diff = elo_diff * ifelse(game_type == "REG", 1, 1.2),
+      # from elo, we calculate the home team's win percentage
+      wp = 1 / (10^(-elo_diff / 400) + 1),
+      # we also can calculate the estimate (mean points home team wins by)
+      estimate = elo_diff / 25,
+      result = dplyr::case_when(
+        # !!! ALWAYS DO THIS NEXT LINE IN YOUR `result` CHANGES !!!
+        # you have to make sure you're only changing unfinished games in current week
+        # if you don't do this, it will usually error out on a friendly error message
+        is.na(result) & week == week_num ~ 
+          as.integer(round_out(rnorm(n(), estimate, 13))),
+        # if not this week or known result, leave as-is
+        TRUE ~ as.integer(result)
+      ),
+      # simplify to 1 = win, 0 = loss, 0.5 = tie to help calculate elo shift
+      outcome = dplyr::case_when(
+        is.na(result) ~ NA_real_,
+        result > 0 ~ 1,
+        result < 0 ~ 0,
+        TRUE ~ 0.5
+      ),
+      # calculate the amount to adjust home team's elo by
+      elo_input = dplyr::case_when(
+        is.na(result) ~ NA_real_,
+        result > 0 ~ elo_diff * 0.001 + 2.2,
+        result < 0 ~ -elo_diff * 0.001 + 2.2,
+        TRUE ~ 1.0,
+      ),
+      elo_mult = log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input,
+      elo_shift = 20 * elo_mult * (outcome - wp)
+    ) |>
+    # we don't want these columns in `games` any more
+    # remove any columns you don't need when you're done
+    # otherwise the next week they'll get joined as `col.x` and `col.y`
+    # which will almost certainly break your script
+    dplyr::select(
+      -away_elo, -home_elo, -elo_diff, -wp, -estimate,
+      -outcome, -elo_input, -elo_mult
+    )
+
+  # apply elo shifts
+  teams <- teams |>
+    # join games results from this week to away teams (within same sim!)
+    # note this is a LEFT join, we don't want to remove any teams rows
+    dplyr::left_join(games |>
+        dplyr::filter(week == week_num) |>
+        dplyr::select(sim, away_team, elo_shift),
+      by = c("sim" = "sim", "team" = "away_team")
+    ) |>
+    # away team's elo gets subtracted by elo amount
+    # if the team wasn't an away team, do nothing
+    dplyr::mutate(elo = elo - ifelse(!is.na(elo_shift), elo_shift, 0)) |>
+    # we don't want to keep `elo_shift` in `teams` either, remove it
+    dplyr::select(-elo_shift) |>
+    # repeat the above except now do it for the home team
+    dplyr::left_join(games |>
+        dplyr::filter(week == week_num) |>
+        dplyr::select(sim, home_team, elo_shift),
+      by = c("sim" = "sim", "team" = "home_team")
+    ) |>
+    # note that a team on a bye will have `elo_shift` as NA for both joins
+    # this means it won't change, which is what we want
+    dplyr::mutate(elo = elo + ifelse(!is.na(elo_shift), elo_shift, 0)) |>
+    dplyr::select(-elo_shift)
+
+  # we need to keep `elo_shift` out of `games` too and we're done with it
+  games <- games |>
+    dplyr::select(-elo_shift)
+
+  # return the updated teams and games information
+  # note that `teams` will now have an updated `elo` column which will
+  # be used for the next week's games
+  # note that starting `elo` values are the same per-team... 
+  # ... but after that will differ per sim depending on that sim's results
+  return(list(teams = teams, games = games))
+}
+```
+
+Let’s generate initial random Elo values for each team. To see how this
+works, we’ll supply an `test_week = 3` as an argument into
+[`simulate_nfl()`](https://nflseedr.com/reference/simulate_nfl.md) which
+will abort after simulating Week 3, and instead return the result of our
+`elo_model()` function.
+
+``` r
+initial_elo <- tibble::tibble(
+  team = unique(nflseedR::divisions$team),
+  elo = rnorm(length(unique(nflseedR::divisions$team)), 1500, 150)
+)
+test <- simulate_nfl(
+  nfl_season = 2020,
+  process_games = elo_model,
+  elo = initial_elo,
+  fresh_season = TRUE,
+  test_week = 3
+)
+#> ℹ 14:03:16 | Loading games data
+#> ℹ 14:03:16 | Beginning simulation of 1000 seasons in 1 round
+#> ℹ 14:03:19 | Aborting and returning your `process_games` function's results
+#> from Week 3
+```
+
+Let’s look at the Bears’ Elo after Week 3 in the top handful of
+simulations:
+
+``` r
+test$teams |>
+  dplyr::filter(team == "CHI") |>
+  utils::head() |>
+  knitr::kable()
+```
+
+| sim | team | conf | division  | sdiv |  elo |
+|----:|:-----|:-----|:----------|:-----|-----:|
+|   1 | CHI  | NFC  | NFC North | NFCN | 1498 |
+|   2 | CHI  | NFC  | NFC North | NFCN | 1498 |
+|   3 | CHI  | NFC  | NFC North | NFCN | 1482 |
+|   4 | CHI  | NFC  | NFC North | NFCN | 1464 |
+|   5 | CHI  | NFC  | NFC North | NFCN | 1447 |
+|   6 | CHI  | NFC  | NFC North | NFCN | 1496 |
+
+You can see that different simulations have different Elo results for
+the Bears, as the simulated seasons had different results for the games,
+and the Elos were adjusted accordingly.
+
+Let’s examine the Bears’ games in that first simulation:
+
+``` r
+test$games |>
+  filter(sim == 1) |>
+  filter(away_team == "CHI" | home_team == "CHI")
+#> ── nflverse games and schedules ────────────────────────────────────────────────
+#> ℹ Data updated: 2025-11-14 14:03:16 UTC
+#> # A tibble: 16 × 9
+#>      sim game_type  week away_team home_team away_rest home_rest location result
+#>    <dbl> <chr>     <int> <chr>     <chr>         <int>     <int> <chr>     <int>
+#>  1     1 REG           1 CHI       DET               7         7 Home         13
+#>  2     1 REG           2 NYG       CHI               6         7 Home         18
+#>  3     1 REG           3 CHI       ATL               7         7 Home         -1
+#>  4     1 REG           4 IND       CHI               7         7 Home         NA
+#>  5     1 REG           5 TB        CHI               4         4 Home         NA
+#>  6     1 REG           6 CHI       CAR              10         7 Home         NA
+#>  7     1 REG           7 CHI       LA                8         8 Home         NA
+#>  8     1 REG           8 NO        CHI               7         6 Home         NA
+#>  9     1 REG           9 CHI       TEN               7         7 Home         NA
+#> 10     1 REG          10 MIN       CHI               8         8 Home         NA
+#> 11     1 REG          12 CHI       GB               13         7 Home         NA
+#> 12     1 REG          13 DET       CHI              10         7 Home         NA
+#> 13     1 REG          14 HOU       CHI               7         7 Home         NA
+#> 14     1 REG          15 CHI       MIN               7         7 Home         NA
+#> 15     1 REG          16 CHI       JAX               7         7 Home         NA
+#> 16     1 REG          17 GB        CHI               7         7 Home         NA
+```
+
+Note that only the first three weeks have the result filled in, while
+the others are `NA`, indicating that game hasn’t yet occurred or been
+simulated. This is because the `test_week = 3` input aborted the
+simulation after Week 3, which was useful for seeing the Elo above.
+
+### Simulation Configuration
+
+There is a lot of flexibility in how you choose to run the simulation.
+These are the parameters and how to configure them when you run the
+[`simulate_nfl()`](https://nflseedr.com/reference/simulate_nfl.md)
+function.
+
+- **nfl_season** - Which NFL season are you simulating? By default, it
+  simulates the most recent season for which the regular season schedule
+  is available through [Lee Sharpe’s NFL game
+  data](https://github.com/nflverse/nfldata/tree/master/data). The
+  earliest season you can simulate is 2002.
+- Note: Before the schedule for a new season is released, nflseedR may
+  support simulating using a fake schedule for the upcoming season. It
+  will notify you if it is doing this. The opponents will be correct,
+  but the weeks in which games occur will not match the actual NFL
+  schedule. The actual schedule will be utilized instead after it is
+  released by the NFL.
+- **process_games** - This is where you supply a function you’ve written
+  to encompass your model used to determine simulated games results,
+  like the examples above. By default, this will generate a random Elo
+  for every team per round of simulations, then use that to determine
+  game data.
+- **playoff_seeds** - How many playoff seeds per conference are used? By
+  default, this is 7 for seasons 2020 and later, and 6 for earlier
+  seasons.
+- **if_ended_today** - This should only be used when running in the
+  middle of the regular season. It will take all completed games as
+  done, but remove the rest of the regular season games from the
+  schedule, and begin the playoffs as if everything was locked in based
+  on the regular season data that exists so far.
+- **fresh_season** - You’ll see this was set to `TRUE` in all of our
+  examples above. This setting deletes any playoff games and clears out
+  the results for all regular season games, so everything is generated
+  fresh. The default is `FALSE` where all games that have been completed
+  in real life are treated as locked in, and instead remaining games are
+  simulated.
+- **fresh_playoffs** - Similar to `fresh_season`, except instead when
+  set to `TRUE`, regular season results remain and only playoff games
+  are deleted and then simulated. The default is `FALSE` in which case
+  playoff games that are completed are accepted as they occurred,
+- **tiebreaker_depth** - How far do you want tiebreakers to be utilized?
+  Usually leaving it at the default below (`3`) is fine, but before the
+  season starts, you may wish to have less tie-breaking in order to
+  - `1`: All teams with the same record have any ties broken randomly.
+  - `2`: Instead of evaluating common games if that step is reached,
+    break any ties randomly. But all earlier tiebreakers are handled
+    correctly.
+  - `3`: The default. All tiebreakers are handled through strength of
+    schedule are processed (or through strength of victory for draft
+    pick order). In the unlikely event of a further tie, it will be
+    broken randomly.
+- **test_week** - This will abort after simulating this week number in
+  the simulator.
+  [`simulate_nfl()`](https://nflseedr.com/reference/simulate_nfl.md)
+  instead will return the output of your `process_games()` function.
+  This is a useful input for debugging your code, but should be left as
+  `NULL` (the default) for actual simulations. This also means only the
+  first round will be simulated.
+- **simulations** - How many simulations should be run? Defaults to
+  1000.
+- **sims_per_round** - The simulator can break things up into chunks of
+  simulated seasons, process each chunk on its own (called a round), and
+  then aggregate everything together at the end. The default value
+  determines the number of locally available cores and calculates the
+  number of simulations per round to be equal to half of the available
+  cores (various benchmarks showed this results in optimal performance
+  in parallel processes). If your computer is hanging and forces a
+  restart while running this simulation, it is recommended that you
+  lower this number.
+
+### Simulation Output
+
+The output of
+[`simulate_nfl()`](https://nflseedr.com/reference/simulate_nfl.md),
+assuming you don’t put in a `test_week` to debug your function, is a
+list of class `"nflseedR_simulation"` that holds four data frames with
+simulation results as well as a list of parameters used in the
+simulation. Here are the contents of each:
+
+- **teams** - One row per team per simulation.
+  - **sim** - The ID number of the simulation. All rows with the same
+    value of `sim` in both `teams` and `games` refer to the same
+    simulated season.
+  - **team** - The abbreviation representing the team
+  - **conf** - The conference the team is in (such as `AFC`)
+  - **division** - The division the team is in (such as `NFC West`)
+  - **games** - How many regular season games the team has played
+  - **wins** - The number of games the team has won, counting ties as
+    0.5 wins
+  - **true_wins** - The number of games the team has won, ignoring ties.
+  - **win_pct** - The win rate of the team. Equal to `wins / games`.
+  - **div_pct** - The win rate of the teams in games played against
+    teams in the same division.
+  - **conf_pct** - The win rate of the teams in games played against
+    teams in the same conference.
+  - **sov** - Strength of Victory. The combined win rate of teams this
+    team has beaten.
+  - **sos** - Strength of Schedule. The combined win rate of teams this
+    team has played.
+  - **div_rank** - What place the team finished in its division.
+  - **seed** - What playoff seed number the team earned. `NA` if the
+    team did not make the playoffs.
+  - **exit** - The week of the team’s last game. The Super Bowl winner’s
+    value will be one higher than the week of the Super Bowl.
+  - **draft_order** - Which pick the team earned in the following NFL
+    Draft. Note that this value is before any trades, forfeits, or other
+    modifications to draft picks.
+- **games** - One row per game per simulation.
+  - **sim** - The ID number of the simulation. All rows with the same
+    value of `sim` in both `teams` and `games` refer to the same
+    simulated season.
+  - **game_type** - What type of game this is
+    - `REG` - A regular season game
+    - `POST` - A playoff rounds earlier than a wildcard game (only used
+      if simulating with lots of playoff teams)
+    - `WC` - A wildcard playoff game
+    - `DIV` - A divisional playoff game
+    - `CON` - A conference championship game
+    - `SB` - A Super Bowl
+  - **week** - The numerical week the game takes place in. Continues
+    incrementing after the regular season to each playoff round.
+  - **away_team** - The abbreviation of the away team in the game
+  - **home_team** - The abbreviation of the home team in the game
+  - **away_rest** - The number of days since the away team’s last game.
+    Is `7` for the team’s first game of the season.
+  - **home_rest** - The number of days since the home team’s last game.
+    Is `7` for the team’s first game of the season.
+  - **location** - Either `Home` if played at the home team’s stadium,
+    or `Neutral` for a game played elsewhere
+  - **result** - The amount of points the home team won by (or lost by
+    if negative). Is `0` for tied games. It is `NA` for games which
+    aren’t yet complete or simulated, which should only ever be returned
+    if you used `test_week`.
+- **overall** - One row per team, aggregated across all simulations.
+  Sorted by `conf` then `division` then `team`. This is a good reference
+  for looking at futures bets, since this should represents your model’s
+  chances of various things happening for each team.
+  - **conf** - The conference the team is in (such as `AFC`)
+  - **division** - The division the team is in (such as `NFC West`)
+  - **team** - The abbreviation representing the team
+  - **wins** - The mean (average) number of games won across the
+    simulations, counting ties as 0.5 wins
+  - **playoff** - The rate this team made the playoffs across
+    simulations
+  - **div1** - The rate this team won the division across simulations
+  - **seed1** - The rate this team had the first playoff seed across
+    simulations
+  - **won_conf** - The rate this team won its conference across
+    simulations
+  - **won_sb** - The rate this team won the Super Bowl across
+    simulations
+  - **draft1** - The rate this team received the first pick in the next
+    draft across simulations
+  - **draft5** - The rate this team received a top five pick in the next
+    draft across simulations
+- **team_wins** - Each team has a row for 0 wins, 0.5 wins, 1 win, 1.5
+  wins, … , 15.5 wins, 16 wins. These are aggregated across all
+  simulations and are intending to represent your model’s probability
+  for teams being below or above a certain win total, making them an
+  excellent reference for using your model to make win total bets.
+  - **team** - The abbreviation representing the team
+  - **wins** - A number of wins (either an integer halfway between two
+    integers)
+  - **over_prob** - The rate this team had more wins than this number
+    aggregated across simulations. Ties are ignored.
+  - **under_prob** - The rate this team had fewer wins than this number
+    aggregated across simulations. Ties are ignored. Note that if `wins`
+    is an integer, `1-over_prob-under_prob` represents the rate at which
+    the team finished at exactly that many wins.
+- **game_summary** - One row per game, aggregated across all
+  simulations. Sorted by `game_type` then `week` then `away_team` then
+  `home_team`.
+  - **game_type** - What type of game this is
+    - `REG` - A regular season game
+    - `POST` - A playoff rounds earlier than a wildcard game (only used
+      if simulating with lots of playoff teams)
+    - `WC` - A wildcard playoff game
+    - `DIV` - A divisional playoff game
+    - `CON` - A conference championship game
+    - `SB` - A Super Bowl
+  - **week** - The numerical week the game takes place in. Continues
+    incrementing after the regular season to each playoff round.
+  - **away_team** - The abbreviation of the away team in the game
+  - **home_team** - The abbreviation of the home team in the game
+  - **away_wins** - The number of times the away team has won the game
+  - **home_wins** - The number of times the home team has won the game
+  - **ties** - The number of times the game ended in a tie
+  - **result** - The amount of points the home team won by (or lost by
+    if negative) on average across all simulations
+  - **games_played** - The number of times the game was played. For
+    `game_type == "REG"` this will equal the number of simulations. The
+    number of playoff matchups will differ.
+  - **away_percentage** - The rate the away team won the game counting
+    ties as half a win
+  - **home_percentage** - The rate the home team won the game counting
+    ties as half a win
+- **sim_params** - a list of parameters used in the simulation. The list
+  contains the following parameters which are described in
+  `?simulate_nfl()`:
+  - `nfl_season`
+  - `playoff_seeds`
+  - `if_ended_today`
+  - `fresh_season`
+  - `fresh_playoffs`
+  - `tiebreaker_depth`
+  - `test_week`
+  - `simulations`
+  - `sims_per_round`
+  - `.debug`
+  - `print_summary`

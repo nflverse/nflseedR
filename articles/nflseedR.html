@@ -34,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -143,10 +143,10 @@ It defaults to compute division ranks as well as conference ranks for
 all teams and it applies tiebreakers through strength of schedule.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="../reference/nfl_standings.html">nfl_standings</a></span><span class="op">(</span><span class="va">games</span>, ranks <span class="op">=</span> <span class="st">"DRAFT"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:24:10 | Initiate Standings &amp; Tiebreaking Data</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:24:10 | Compute Division Ranks</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:24:10 | Compute Conference Ranks</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 18:24:11 | Compute Draft Order</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:58:51 | Initiate Standings &amp; Tiebreaking Data</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:58:51 | Compute Division Ranks</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:58:51 | Compute Conference Ranks</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:58:51 | Compute Draft Order</span></span>
 <span><span class="co"># Let's view the structure of the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">standings</span>, max.level <span class="op">=</span> <span class="fl">1</span>, width <span class="op">=</span> <span class="fl">50</span>, strict.width <span class="op">=</span> <span class="st">"cut"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   64 obs. of  24 variables:</span></span>
@@ -1432,7 +1432,7 @@ div#nflseedR_standings {
 <td headers="NFC West  draft_tie_broken_by" class="gt_row gt_left">—</td>
 </tr>
 </tbody>
-<tfoot class="gt_sourcenotes"><tr>
+<tfoot><tr class="gt_sourcenotes">
 <td class="gt_sourcenote" style="font-family: Audiowide, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-size: large; text-align: right;" colspan="20">nflseedR</td>
     </tr></tfoot>
 </table>
@@ -2663,7 +2663,7 @@ div#nflseedR_standings {
 <td headers="draft_tie_broken_by" class="gt_row gt_left">—</td>
 </tr>
 </tbody>
-<tfoot class="gt_sourcenotes"><tr>
+<tfoot><tr class="gt_sourcenotes">
 <td class="gt_sourcenote" style="font-family: Audiowide, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-size: large; text-align: right;" colspan="20">nflseedR</td>
     </tr></tfoot>
 </table>
@@ -2708,7 +2708,7 @@ article</a> for a detailed explanation of how to use
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
