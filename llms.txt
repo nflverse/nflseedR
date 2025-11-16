@@ -21,13 +21,12 @@ already, and only simulate from there forward, including if run during
 the playoffs.
 
 The season simulation code for nflseedR 1.x was developed by Lee Sharpe
-([@LeeSharpeNFL](https://twitter.com/leesharpenfl)) and building it as
-package was developed by Sebastian Carl
-([@mrcaseb](https://bsky.app/profile/mrcaseb.nflverse.com)).
+([@LeeSharpeNFL](https://x.com/LeeSharpeNFL)) and building it as package
+was developed by Sebastian Carl ([@mrcaseb](https://mrcaseb.com)).
 
 nflseedR 2.0 introduced high efficient standings and simulation
 functionality which was developed by Sebastian Carl
-([@mrcaseb](https://bsky.app/profile/mrcaseb.nflverse.com))
+([@mrcaseb](https://mrcaseb.com))
 
 ## Installation
 

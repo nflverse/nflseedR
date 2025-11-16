@@ -231,15 +231,15 @@ sim <- nflseedR::simulate_nfl(
 # Overview output
 dplyr::glimpse(sim)
 })
-#> ℹ 13:58:32 | Loading games data
+#> ℹ 12:24:59 | Loading games data
 #> ℹ Computation in multiple rounds can be accelerated with parallel processing.
 #> ℹ You should consider calling a `future::plan()`. Please see the function
 #>   documentation for further information.
 #> ℹ Will go on sequentially...
-#> ℹ 13:58:32 | Beginning simulation of 4 seasons in 2 rounds
-#> ℹ 13:58:39 | Combining simulation data
-#> ℹ 13:58:39 | Aggregating across simulations
-#> ℹ 13:58:39 | DONE!
+#> ℹ 12:24:59 | Beginning simulation of 4 seasons in 2 rounds
+#> ℹ 12:25:06 | Combining simulation data
+#> ℹ 12:25:06 | Aggregating across simulations
+#> ℹ 12:25:06 | DONE!
 #> List of 6
 #>  $ teams       :Classes ‘data.table’ and 'data.frame':   128 obs. of  18 variables:
 #>   ..$ sim        : num [1:128] 1 1 1 1 1 1 1 1 1 1 ...
@@ -315,8 +315,8 @@ dplyr::glimpse(sim)
 #>   ..$ print_summary   : logi FALSE
 #>   ..$ sim_include     : chr "DRAFT"
 #>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1
-#>   .. ..$ : int [1:4] 2 0 1 9000
-#>   ..$ finished_at     : POSIXct[1:1], format: "2025-11-14 13:58:39"
+#>   .. ..$ : int [1:3] 2 0 2
+#>   ..$ finished_at     : POSIXct[1:1], format: "2025-11-16 12:25:06"
 #>  - attr(*, "class")= chr "nflseedR_simulation"
 # }
 ```

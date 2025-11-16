@@ -1,6 +1,6 @@
 # Changelog
 
-## nflseedR (development version)
+## nflseedR 2.0.2
 
 - Changed css styling of images in package documentation by CRAN
   request. ([\#61](https://github.com/nflverse/nflseedR/issues/61))
@@ -101,7 +101,7 @@ efficient standings and simulation code
   ([\#47](https://github.com/nflverse/nflseedR/issues/47))
 - nflseedR now requires R 4.1 to allow the package to use R’s native
   pipe `|>` operator. This follows the [Tidyverse R version support
-  rules](https://www.tidyverse.org/blog/2019/04/r-version-support/).
+  rules](https://tidyverse.org/blog/2019/04/r-version-support/).
   ([\#48](https://github.com/nflverse/nflseedR/issues/48))
 
 ## nflseedR 1.2.0
