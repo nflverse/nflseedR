@@ -291,24 +291,24 @@ sim <- nflseedR::nfl_simulations(
 #>   documentation for further information.
 #> ℹ Will go on sequentially...
 #> This message is displayed once every 8 hours.
-#> ℹ 12:24:52 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
-#> ℹ 12:24:53 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 12:40:48 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
+#> ℹ 12:40:49 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 12:24:53 | Initiate Standings & Tiebreaking Data
-#> ℹ 12:24:53 | Compute Division Ranks
-#> ℹ 12:24:53 | Compute Conference Ranks
-#> ℹ 12:24:54 | CHUNK #1: Start simulation of post season weeks "WC" and "SB"
-#> ℹ 12:24:54 | Compute Draft Order
-#> ℹ 12:24:54 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 12:40:49 | Initiate Standings & Tiebreaking Data
+#> ℹ 12:40:49 | Compute Division Ranks
+#> ℹ 12:40:49 | Compute Conference Ranks
+#> ℹ 12:40:49 | CHUNK #1: Start simulation of post season weeks "WC" and "SB"
+#> ℹ 12:40:49 | Compute Draft Order
+#> ℹ 12:40:49 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 12:24:54 | Initiate Standings & Tiebreaking Data
-#> ℹ 12:24:54 | Compute Division Ranks
-#> ℹ 12:24:54 | Compute Conference Ranks
-#> ℹ 12:24:54 | CHUNK #2: Start simulation of post season weeks "WC" and "SB"
-#> ℹ 12:24:54 | Compute Draft Order
-#> ℹ 12:24:54 | Combine simulation data
-#> ℹ 12:24:54 | Aggregate across simulations
-#> ℹ 12:24:54 | DONE!
+#> ℹ 12:40:49 | Initiate Standings & Tiebreaking Data
+#> ℹ 12:40:49 | Compute Division Ranks
+#> ℹ 12:40:50 | Compute Conference Ranks
+#> ℹ 12:40:50 | CHUNK #2: Start simulation of post season weeks "WC" and "SB"
+#> ℹ 12:40:50 | Compute Draft Order
+#> ℹ 12:40:50 | Combine simulation data
+#> ℹ 12:40:50 | Aggregate across simulations
+#> ℹ 12:40:50 | DONE!
 
 # Overview output
 str(sim, max.level = 3)
@@ -384,7 +384,7 @@ str(sim, max.level = 3)
 #>   ..$ verbosity       : chr "MIN"
 #>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1
 #>   .. ..$ : int [1:3] 2 0 2
-#>   ..$ finished_at     : POSIXct[1:1], format: "2025-11-16 12:24:54"
+#>   ..$ finished_at     : POSIXct[1:1], format: "2025-11-16 12:40:50"
 #>  - attr(*, "class")= chr "nflseedR_simulation"
 # }
 ```
