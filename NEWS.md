@@ -1,3 +1,7 @@
+# nflseedR (development version)
+
+* Added new function `nfl_regular_season()` which computes regular season matchups based on previous season standings and NFL regular season rules. (#64)
+
 # nflseedR 2.0.2
 
 * Changed css styling of images in package documentation by CRAN request. (#61)
