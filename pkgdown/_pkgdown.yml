@@ -81,6 +81,7 @@ reference:
   - summary.nflseedR_simulation
   - nfl_standings_prettify
   - fmt_pct_special
+  - nfl_regular_season
 
 - title: Superseeded
   desc: >
