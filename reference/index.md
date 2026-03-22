@@ -22,6 +22,8 @@ Various helper functions.
   : Compute Pretty NFL Standings Table
 - [`fmt_pct_special()`](https://nflseedr.com/reference/fmt_pct_special.md)
   : Format Numerical Values to Special Percentage Strings
+- [`nfl_regular_season()`](https://nflseedr.com/reference/nfl_regular_season.md)
+  : Compute NFL Regular Season Matchups
 
 ## Superseeded
 

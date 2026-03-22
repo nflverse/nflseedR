@@ -152,9 +152,9 @@ try({#to avoid CRAN test problems
   games <- nflreadr::load_schedules(2021:2022)
 })
 standings <- nflseedR::nfl_standings(games)
-#> ℹ 12:40:52 | Initiate Standings & Tiebreaking Data
-#> ℹ 12:40:52 | Compute Division Ranks
-#> ℹ 12:40:52 | Compute Conference Ranks
+#> ℹ 14:45:56 | Initiate Standings & Tiebreaking Data
+#> ℹ 14:45:56 | Compute Division Ranks
+#> ℹ 14:45:56 | Compute Conference Ranks
 print(standings, digits = 3)
 #>     season   team   conf  division games  wins true_wins losses  ties    pf
 #>      <int> <char> <char>    <char> <int> <num>     <int>  <int> <int> <int>
@@ -223,6 +223,7 @@ print(standings, digits = 3)
 #> 63:   2022     LA    NFC  NFC West    17   5.0         5     12     0   307
 #> 64:   2022    ARI    NFC  NFC West    17   4.0         4     13     0   340
 #>     season   team   conf  division games  wins true_wins losses  ties    pf
+#>      <int> <char> <char>    <char> <int> <num>     <int>  <int> <int> <int>
 #>        pa    pd win_pct div_pct conf_pct   sov   sos div_rank
 #>     <int> <int>   <num>   <num>    <num> <num> <num>    <int>
 #>  1:   289   194   0.647   0.833   0.5833 0.428 0.472        1
@@ -290,6 +291,7 @@ print(standings, digits = 3)
 #> 63:   384   -77   0.294   0.167   0.2500 0.341 0.517        3
 #> 64:   449  -109   0.235   0.167   0.2500 0.368 0.529        4
 #>        pa    pd win_pct div_pct conf_pct   sov   sos div_rank
+#>     <int> <int>   <num>   <num>    <num> <num> <num>    <int>
 #>            div_tie_broken_by conf_rank       conf_tie_broken_by
 #>                       <char>     <int>                   <char>
 #>  1:                     <NA>         3                     <NA>
@@ -357,5 +359,6 @@ print(standings, digits = 3)
 #> 63:                     <NA>        14                     <NA>
 #> 64:                     <NA>        15                     <NA>
 #>            div_tie_broken_by conf_rank       conf_tie_broken_by
+#>                       <char>     <int>                   <char>
 # }
 ```

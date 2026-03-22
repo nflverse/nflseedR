@@ -281,7 +281,7 @@ try({#to avoid CRAN test problems
 games <- load_sharpe_games()
 dplyr::glimpse(games)
 })
-#> Rows: 7,263
+#> Rows: 7,276
 #> Columns: 46
 #> $ game_id          <chr> "1999_01_MIN_ATL", "1999_01_KC_CHI", "1999_01_PIT_CLE…
 #> $ season           <int> 1999, 1999, 1999, 1999, 1999, 1999, 1999, 1999, 1999,…

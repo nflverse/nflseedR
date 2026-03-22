@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -183,9 +183,9 @@ needed to resolve season-end standings since the NFL expanded to 32 teams.</p>
 <span class="r-in"><span>  <span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">load_schedules</a></span><span class="op">(</span><span class="fl">2021</span><span class="op">:</span><span class="fl">2022</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu">nfl_standings</span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 12:40:52 | Initiate Standings &amp; Tiebreaking Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 12:40:52 | Compute Division Ranks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 12:40:52 | Compute Conference Ranks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:45:56 | Initiate Standings &amp; Tiebreaking Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:45:56 | Compute Division Ranks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:45:56 | Compute Conference Ranks</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">standings</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     season   team   conf  division games  wins true_wins losses  ties    pf</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;int&gt; &lt;char&gt; &lt;char&gt;    &lt;char&gt; &lt;int&gt; &lt;num&gt;     &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt;</span>
@@ -254,6 +254,7 @@ needed to resolve season-end standings since the NFL expanded to 32 teams.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 63:   2022     LA    NFC  NFC West    17   5.0         5     12     0   307</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64:   2022    ARI    NFC  NFC West    17   4.0         4     13     0   340</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     season   team   conf  division games  wins true_wins losses  ties    pf</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;int&gt; &lt;char&gt; &lt;char&gt;    &lt;char&gt; &lt;int&gt; &lt;num&gt;     &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        pa    pd win_pct div_pct conf_pct   sov   sos div_rank</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt; &lt;int&gt;   &lt;num&gt;   &lt;num&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;    &lt;int&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:   289   194   0.647   0.833   0.5833 0.428 0.472        1</span>
@@ -321,6 +322,7 @@ needed to resolve season-end standings since the NFL expanded to 32 teams.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 63:   384   -77   0.294   0.167   0.2500 0.341 0.517        3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64:   449  -109   0.235   0.167   0.2500 0.368 0.529        4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        pa    pd win_pct div_pct conf_pct   sov   sos div_rank</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt; &lt;int&gt;   &lt;num&gt;   &lt;num&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;    &lt;int&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            div_tie_broken_by conf_rank       conf_tie_broken_by</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       &lt;char&gt;     &lt;int&gt;                   &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:                     &lt;NA&gt;         3                     &lt;NA&gt;</span>
@@ -388,6 +390,7 @@ needed to resolve season-end standings since the NFL expanded to 32 teams.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 63:                     &lt;NA&gt;        14                     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64:                     &lt;NA&gt;        15                     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            div_tie_broken_by conf_rank       conf_tie_broken_by</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       &lt;char&gt;     &lt;int&gt;                   &lt;char&gt;</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

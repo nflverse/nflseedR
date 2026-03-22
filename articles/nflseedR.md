@@ -46,10 +46,10 @@ teams and it applies tiebreakers through strength of schedule.
 
 ``` r
 standings <- nflseedR::nfl_standings(games, ranks = "DRAFT")
-#> ℹ 12:41:13 | Initiate Standings & Tiebreaking Data
-#> ℹ 12:41:13 | Compute Division Ranks
-#> ℹ 12:41:13 | Compute Conference Ranks
-#> ℹ 12:41:13 | Compute Draft Order
+#> ℹ 14:46:18 | Initiate Standings & Tiebreaking Data
+#> ℹ 14:46:18 | Compute Division Ranks
+#> ℹ 14:46:18 | Compute Conference Ranks
+#> ℹ 14:46:18 | Compute Draft Order
 # Let's view the structure of the output
 str(standings, max.level = 1, width = 50, strict.width = "cut")
 #> Classes 'data.table' and 'data.frame':   64 obs. of  24 variables:
