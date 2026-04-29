@@ -25,11 +25,11 @@ sims <- simulate_nfl(
   fresh_season = TRUE,
   simulations = 100
 )
-#> ℹ 14:50:02 | Loading games data
-#> ℹ 14:50:02 | Beginning simulation of 100 seasons in 1 round
-#> ℹ 14:50:17 | Combining simulation data
-#> ℹ 14:50:17 | Aggregating across simulations
-#> ℹ 14:50:18 | DONE!
+#> ℹ 14:13:26 | Loading games data
+#> ℹ 14:13:26 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 14:13:41 | Combining simulation data
+#> ℹ 14:13:41 | Aggregating across simulations
+#> ℹ 14:13:41 | DONE!
 ```
 
 The output contains a lot of pre-aggregated information, as well as the
@@ -160,11 +160,11 @@ sims2 <- simulate_nfl(
   fresh_season = TRUE,
   simulations = 100
 )
-#> ℹ 14:50:18 | Loading games data
-#> ℹ 14:50:18 | Beginning simulation of 100 seasons in 1 round
-#> ℹ 14:50:31 | Combining simulation data
-#> ℹ 14:50:31 | Aggregating across simulations
-#> ℹ 14:50:31 | DONE!
+#> ℹ 14:13:42 | Loading games data
+#> ℹ 14:13:42 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 14:13:55 | Combining simulation data
+#> ℹ 14:13:55 | Aggregating across simulations
+#> ℹ 14:13:55 | DONE!
 
 sims2$overall |> dplyr::arrange(team) |> utils::head() |> knitr::kable()
 ```
@@ -269,11 +269,11 @@ sims3 <- simulate_nfl(
   best = "CHI", 
   worst = "GB"
 )
-#> ℹ 14:50:31 | Loading games data
-#> ℹ 14:50:31 | Beginning simulation of 100 seasons in 1 round
-#> ℹ 14:50:45 | Combining simulation data
-#> ℹ 14:50:45 | Aggregating across simulations
-#> ℹ 14:50:45 | DONE!
+#> ℹ 14:13:55 | Loading games data
+#> ℹ 14:13:55 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 14:14:08 | Combining simulation data
+#> ℹ 14:14:08 | Aggregating across simulations
+#> ℹ 14:14:09 | DONE!
 ```
 
 Now let nflseedR summarize the simulation for you by using
@@ -474,9 +474,9 @@ test <- simulate_nfl(
   fresh_season = TRUE,
   test_week = 3
 )
-#> ℹ 14:50:46 | Loading games data
-#> ℹ 14:50:46 | Beginning simulation of 1000 seasons in 1 round
-#> ℹ 14:50:49 | Aborting and returning your `process_games` function's results
+#> ℹ 14:14:10 | Loading games data
+#> ℹ 14:14:10 | Beginning simulation of 1000 seasons in 1 round
+#> ℹ 14:14:13 | Aborting and returning your `process_games` function's results
 #> from Week 3
 ```
 
@@ -510,7 +510,7 @@ test$games |>
   filter(sim == 1) |>
   filter(away_team == "CHI" | home_team == "CHI")
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-03-22 14:50:46 UTC
+#> ℹ Data updated: 2026-04-29 14:14:10 UTC
 #> # A tibble: 16 × 9
 #>      sim game_type  week away_team home_team away_rest home_rest location result
 #>    <dbl> <chr>     <int> <chr>     <chr>         <int>     <int> <chr>     <int>

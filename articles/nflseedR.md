@@ -46,10 +46,10 @@ teams and it applies tiebreakers through strength of schedule.
 
 ``` r
 standings <- nflseedR::nfl_standings(games, ranks = "DRAFT")
-#> ℹ 14:46:18 | Initiate Standings & Tiebreaking Data
-#> ℹ 14:46:18 | Compute Division Ranks
-#> ℹ 14:46:18 | Compute Conference Ranks
-#> ℹ 14:46:18 | Compute Draft Order
+#> ℹ 14:09:47 | Initiate Standings & Tiebreaking Data
+#> ℹ 14:09:47 | Compute Division Ranks
+#> ℹ 14:09:47 | Compute Conference Ranks
+#> ℹ 14:09:48 | Compute Draft Order
 # Let's view the structure of the output
 str(standings, max.level = 1, width = 50, strict.width = "cut")
 #> Classes 'data.table' and 'data.frame':   64 obs. of  24 variables:
@@ -77,7 +77,7 @@ str(standings, max.level = 1, width = 50, strict.width = "cut")
 #>  $ exit               : chr  "DIV" "WC" "REG" ""..
 #>  $ draft_rank         : int  28 21 10 3 30 23 20..
 #>  $ draft_tie_broken_by: chr  NA NA NA NA ...
-#>  - attr(*, ".internal.selfref")=<externalptr>
+#>  - attr(*, ".internal.selfref")=<pointer: 0x5601..
 ```
 
 nflseedR also provides functionality to create a “pretty” html table

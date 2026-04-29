@@ -133,7 +133,7 @@ on the same division rank</p></li>
 explained below. Here is how hosts are determined:</p><ul><li><p>Each team hosts 3 division matchups</p></li>
 <li><p>Intra conference division matchups rotate in a 6 year cycle</p></li>
 <li><p>Cross conference division matchups rotate in a 8 year cycle</p></li>
-<li><p>Intra conference divisional rank matchups rotate in a 6 year cylce</p></li>
+<li><p>Intra conference divisional rank matchups rotate in a 6 year cycle</p></li>
 <li><p>AFC teams host the 17th game in odd years, NFC teams host in even years</p></li>
 </ul><p>All rotation tables are stored inside nflseedR and used to compute the
 compete regular season matchup table.</p>
@@ -148,8 +148,8 @@ compete regular season matchup table.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Second compute standings</span></span></span>
 <span class="r-in"><span><span class="va">standings</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu"><a href="nfl_standings.html">nfl_standings</a></span><span class="op">(</span><span class="va">games</span>, ranks <span class="op">=</span> <span class="st">"DIV"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:45:50 | Initiate Standings &amp; Tiebreaking Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:45:50 | Compute Division Ranks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:09:19 | Initiate Standings &amp; Tiebreaking Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:09:19 | Compute Division Ranks</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Finally compute matchups</span></span></span>
 <span class="r-in"><span><span class="va">matchups</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu">nfl_regular_season</span><span class="op">(</span><span class="va">standings</span><span class="op">)</span></span></span>

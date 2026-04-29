@@ -96,7 +96,7 @@ explained below. Here is how hosts are determined:
 
 - Cross conference division matchups rotate in a 8 year cycle
 
-- Intra conference divisional rank matchups rotate in a 6 year cylce
+- Intra conference divisional rank matchups rotate in a 6 year cycle
 
 - AFC teams host the 17th game in odd years, NFC teams host in even
   years
@@ -114,8 +114,8 @@ games <- nflreadr::load_schedules(2025)
 
 # Second compute standings
 standings <- nflseedR::nfl_standings(games, ranks = "DIV")
-#> ℹ 14:45:50 | Initiate Standings & Tiebreaking Data
-#> ℹ 14:45:50 | Compute Division Ranks
+#> ℹ 14:09:19 | Initiate Standings & Tiebreaking Data
+#> ℹ 14:09:19 | Compute Division Ranks
 
 # Finally compute matchups
 matchups <- nflseedR::nfl_regular_season(standings)
