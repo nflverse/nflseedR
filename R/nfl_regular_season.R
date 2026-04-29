@@ -257,6 +257,7 @@ validate_standings <- function(standings) {
       call = rlang::caller_env()
     )
   }
+  divisions <- nflseedR::divisions
   divs <- setNames(divisions$sdiv, divisions$team)
   s <- standings[, required_vars, with = FALSE]
   s[, team_div := unname(divs[team])]
