@@ -46,6 +46,6 @@ regular_seasons <- lapply(
 # now we make an anti join. All matches in both tables will be removed
 # ideally this has 0 rows which means we've done perfect
 # In reality this has two lines. It's the 2022 W17 Bills at Bengals matchup
-# that got cancelled (he Damar Hamlin game)
+# that got cancelled (the Damar Hamlin game)
 mismatches <- regular_seasons |>
   dplyr::anti_join(actual_matchups)

@@ -48,7 +48,7 @@
 #' * Each team hosts 3 division matchups
 #' * Intra conference division matchups rotate in a 6 year cycle
 #' * Cross conference division matchups rotate in a 8 year cycle
-#' * Intra conference divisional rank matchups rotate in a 6 year cylce
+#' * Intra conference divisional rank matchups rotate in a 6 year cycle
 #' * AFC teams host the 17th game in odd years, NFC teams host in even years
 #'
 #' All rotation tables are stored inside nflseedR and used to compute the
@@ -95,7 +95,7 @@ nfl_regular_season <- function(previous_season_standings) {
   )[standings, on = "team"]
 
   # next we will use opp_type to set the opponent's previous season division rank
-  # it'll be more efficient wehn we set opp_type as key
+  # it'll be more efficient when we set opp_type as key
   setkey(opps, opp_type)
 
   # define division rank of opponent team based on opponent type

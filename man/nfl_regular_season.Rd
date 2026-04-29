@@ -57,7 +57,7 @@ explained below. Here is how hosts are determined:
 \item Each team hosts 3 division matchups
 \item Intra conference division matchups rotate in a 6 year cycle
 \item Cross conference division matchups rotate in a 8 year cycle
-\item Intra conference divisional rank matchups rotate in a 6 year cylce
+\item Intra conference divisional rank matchups rotate in a 6 year cycle
 \item AFC teams host the 17th game in odd years, NFC teams host in even years
 }
 
