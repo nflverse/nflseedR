@@ -19,4 +19,6 @@ Useful links:
 
 Authors:
 
+- Sebastian Carl <mrcaseb@gmail.com> \[copyright holder\]
+
 - Lee Sharpe

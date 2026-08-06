@@ -5,7 +5,7 @@ documented [on the NFL.com
 website](https://www.nfl.com/standings/tie-breaking-procedures) and [on
 the NFL Football Operations
 website](https://operations.nfl.com/the-rules/nfl-tie-breaking-procedures/).
-They are mostly identical, but not exactly[¹](#fn1).
+They are mostly identical, but not exactly[^1].
 
 Draft pick assignment is also documented [on the NFL.com
 website](https://www.nfl.com/standings/tie-breaking-procedures) and [on
@@ -252,17 +252,16 @@ to division or conference ties. Worse teams get earlier picks):
 6.  Worst net touchdowns in all games.
 7.  Coin toss.
 
-------------------------------------------------------------------------
-
-1.  Yes, you are reading right. And the difference is huge when you try
-    to efficiently code the process, smh. NFL Football Ops prefaces the
-    wildcard tiebreaking process for 3 or more clubs with *Note: If two
-    clubs remain tied after a third club or other clubs are eliminated,
-    the tiebreaker reverts to step 1 of the applicable two-club format.*
-    NFL.com adds a second - very important - sentence to this, which is
-    *If three clubs remain tied after a fourth club is eliminated during
-    any step, tiebreaker restarts at Step 2 of three-club format.*
-    That’s a big difference because the first part of that section
-    sounds like we are only allowed to restart the process if two clubs
-    remain tied. But we actually have to restart every time a team is
-    eliminated. That’s good news because it is easier to code.
+[^1]: Yes, you are reading right. And the difference is huge when you
+    try to efficiently code the process, smh. NFL Football Ops prefaces
+    the wildcard tiebreaking process for 3 or more clubs with *Note: If
+    two clubs remain tied after a third club or other clubs are
+    eliminated, the tiebreaker reverts to step 1 of the applicable
+    two-club format.* NFL.com adds a second - very important - sentence
+    to this, which is *If three clubs remain tied after a fourth club is
+    eliminated during any step, tiebreaker restarts at Step 2 of
+    three-club format.* That’s a big difference because the first part
+    of that section sounds like we are only allowed to restart the
+    process if two clubs remain tied. But we actually have to restart
+    every time a team is eliminated. That’s good news because it is
+    easier to code.

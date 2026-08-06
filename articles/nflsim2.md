@@ -62,6 +62,7 @@ case, all we need is a list of games. There is also an example of this
 for demonstration purposes. We will now invoke it.
 
 ``` r
+
 all_games <- nflseedR::sims_games_example |> dplyr::filter(game_type == "REG")
 DT::datatable(all_games)
 ```
@@ -77,31 +78,32 @@ simulations are carried out. At least 25k, better 50k. Due to the
 efficiency of the new simulator, this is no longer a problem.
 
 ``` r
+
 sims <- nflseedR::nfl_simulations(
   games = all_games,
   simulations = 4,
   chunks = 2
 )
-#> ℹ 14:16:02 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
-#> ℹ 14:16:04 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 11:08:14 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
+#> ℹ 11:08:15 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 14:16:04 | Initiate Standings & Tiebreaking Data
-#> ℹ 14:16:04 | Compute Division Ranks
-#> ℹ 14:16:04 | Compute Conference Ranks
-#> ℹ 14:16:04 | CHUNK #1: Start simulation of post season weeks "WC", "DIV",
+#> ℹ 11:08:16 | Initiate Standings & Tiebreaking Data
+#> ℹ 11:08:16 | Compute Division Ranks
+#> ℹ 11:08:16 | Compute Conference Ranks
+#> ℹ 11:08:16 | CHUNK #1: Start simulation of post season weeks "WC", "DIV",
 #> "CON", and "SB"
-#> ℹ 14:16:04 | Compute Draft Order
-#> ℹ 14:16:04 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 11:08:16 | Compute Draft Order
+#> ℹ 11:08:15 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 14:16:04 | Initiate Standings & Tiebreaking Data
-#> ℹ 14:16:04 | Compute Division Ranks
-#> ℹ 14:16:04 | Compute Conference Ranks
-#> ℹ 14:16:04 | CHUNK #2: Start simulation of post season weeks "WC", "DIV",
+#> ℹ 11:08:16 | Initiate Standings & Tiebreaking Data
+#> ℹ 11:08:16 | Compute Division Ranks
+#> ℹ 11:08:16 | Compute Conference Ranks
+#> ℹ 11:08:16 | CHUNK #2: Start simulation of post season weeks "WC", "DIV",
 #> "CON", and "SB"
-#> ℹ 14:16:04 | Compute Draft Order
-#> ℹ 14:16:04 | Combine simulation data
-#> ℹ 14:16:04 | Aggregate across simulations
-#> ℹ 14:16:04 | DONE!
+#> ℹ 11:08:16 | Compute Draft Order
+#> ℹ 11:08:16 | Combine simulation data
+#> ℹ 11:08:16 | Aggregate across simulations
+#> ℹ 11:08:16 | DONE!
 ```
 
 Before we take a closer look at the contents of a simulation, we will
@@ -179,6 +181,7 @@ postseason, because we want to simulate the postseason as well. We also
 remove all results because nflseedR only simulates missing results.
 
 ``` r
+
 games <- nflreadr::load_schedules(2024) |> 
   dplyr::filter(game_type == "REG") |> 
   dplyr::mutate(
@@ -202,6 +205,7 @@ team would be favored by against an average team on a neutral field.
 We use a very simple approach to convert the spreads into Elo ratings.
 
 ``` r
+
 team_ratings$elo <- 1500 + 25 * team_ratings$spread
 ```
 
@@ -209,6 +213,7 @@ The default `compute_results` function expects team ratings as named
 vector.
 
 ``` r
+
 team_ratings <- setNames(team_ratings$elo, team_ratings$team)
 print(team_ratings)
 #>  ARI  ATL  BAL  BUF  CAR  CHI  CIN  CLE  DAL  DEN  DET   GB  HOU  IND  JAX   KC 
@@ -224,6 +229,7 @@ simulations. At the time of writing, this code chunk takes less than 90
 seconds to run on a 2022 MacBook Air with M2 chip.
 
 ``` r
+
 # We set a seed for reproducible results
 # Please see section "Reproducible Random Number Generation (RNG)" in the 
 # help page of nfl_simulations for more details on the seed type "L'Ecuyer-CMRG"
@@ -236,8 +242,8 @@ sims <- nflseedR::nfl_simulations(
   chunks = 20,
   verbosity = "NONE"
 )
-#> ℹ 14:16:06 | Start simulation of 50 000 seasons in 20 chunks with a chunk size of 2 500.
-#> ℹ 14:21:04 | DONE!
+#> ℹ 11:08:18 | Start simulation of 50 000 seasons in 20 chunks with a chunk size of 2 500.
+#> ℹ 11:12:46 | DONE!
 ```
 
 Please pay attention to how we pass the team ratings to the simulation.
@@ -359,6 +365,7 @@ individual results from each game of each simulation. For example, let’s
 look at the overall results of the Chargers:
 
 ``` r
+
 sims$overall |> dplyr::filter(team == "LAC") |> knitr::kable()
 ```
 
@@ -376,6 +383,7 @@ Now let nflseedR summarize the simulation for you by using
 simulation object. This will print a gt table.
 
 ``` r
+
 summary(sims)
 ```
 
@@ -410,6 +418,7 @@ stupid model that makes the team earlier alphabetically win by 3 points
 90% of the time, and lose by 3 points the other 10% of the time.
 
 ``` r
+
 stupid_games_model <- function(teams, games, week_num, ...) {
   # make the earlier alphabetical team win 90% of the time
   games <- games |> 
@@ -449,6 +458,7 @@ inform the team’s next game.
 We can verify that the function works as required
 
 ``` r
+
 nflseedR::simulations_verify_fct(stupid_games_model)
 #> ✔ No problems found!
 ```
@@ -456,6 +466,7 @@ nflseedR::simulations_verify_fct(stupid_games_model)
 Let’s run a simulation with `stupid_games_model` and see what happens:
 
 ``` r
+
 sims2 <- nflseedR::nfl_simulations(
   games = games,
   compute_results = stupid_games_model,
@@ -467,9 +478,9 @@ sims2 <- nflseedR::nfl_simulations(
 #> ℹ To maximize performance, `nfl_simulations()` does not control the output of
 #>   your function during the simulation. Please use `simulations_verify_fct()` in
 #>   advance to ensure that you do not get any unexpected results or errors.
-#> ℹ 14:21:06 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
+#> ℹ 11:12:47 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
 #> 
-#> ℹ 14:21:13 | DONE!
+#> ℹ 11:12:54 | DONE!
 #> 
 #> This message is displayed once every 8 hours.
 
@@ -517,6 +528,7 @@ turn pass these on to *your* function that processes games.
 For example, let’s slightly modify our last example:
 
 ``` r
+
 library(rlang)
 biased_games_model <- function(teams, games, week_num, ...) {
   
@@ -559,6 +571,7 @@ data type.
 Let’s simulate using this:
 
 ``` r
+
 sims3 <- nflseedR::nfl_simulations(
   games = games,
   compute_results = biased_games_model, 
@@ -568,8 +581,8 @@ sims3 <- nflseedR::nfl_simulations(
   worst = "GB",
   verbosity = "NONE"
 )
-#> ℹ 14:21:13 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
-#> ℹ 14:21:21 | DONE!
+#> ℹ 11:12:54 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
+#> ℹ 11:13:01 | DONE!
 sims3$overall |> 
   dplyr::arrange(-wins) |> 
   gt::gt_preview(top_n = 5, bottom_n = 5)

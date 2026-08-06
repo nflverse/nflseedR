@@ -37,6 +37,7 @@ required variables are specified in the documentation of the function
 Here are games data from the 2023 and 2024 seasons.
 
 ``` r
+
 games <- nflreadr::load_schedules(2023:2024)
 ```
 
@@ -45,11 +46,12 @@ defaults to compute division ranks as well as conference ranks for all
 teams and it applies tiebreakers through strength of schedule.
 
 ``` r
+
 standings <- nflseedR::nfl_standings(games, ranks = "DRAFT")
-#> ℹ 14:09:47 | Initiate Standings & Tiebreaking Data
-#> ℹ 14:09:47 | Compute Division Ranks
-#> ℹ 14:09:47 | Compute Conference Ranks
-#> ℹ 14:09:48 | Compute Draft Order
+#> ℹ 11:02:17 | Initiate Standings & Tiebreaking Data
+#> ℹ 11:02:17 | Compute Division Ranks
+#> ℹ 11:02:17 | Compute Conference Ranks
+#> ℹ 11:02:17 | Compute Draft Order
 # Let's view the structure of the output
 str(standings, max.level = 1, width = 50, strict.width = "cut")
 #> Classes 'data.table' and 'data.frame':   64 obs. of  24 variables:
@@ -77,7 +79,7 @@ str(standings, max.level = 1, width = 50, strict.width = "cut")
 #>  $ exit               : chr  "DIV" "WC" "REG" ""..
 #>  $ draft_rank         : int  28 21 10 3 30 23 20..
 #>  $ draft_tie_broken_by: chr  NA NA NA NA ...
-#>  - attr(*, ".internal.selfref")=<pointer: 0x5601..
+#>  - attr(*, ".internal.selfref")=<pointer: 0x55cf..
 ```
 
 nflseedR also provides functionality to create a “pretty” html table
@@ -92,6 +94,7 @@ rank.
 The default groups by division and sorts by division rank.
 
 ``` r
+
 # It doesn't allow more than one season
 s <- standings[season == 2024]
 nflseedR::nfl_standings_prettify(s)
@@ -103,6 +106,7 @@ But we can also do things like ordering the complete league by draft
 rank.
 
 ``` r
+
 nflseedR::nfl_standings_prettify(s, grp_by = "nfl", order_by = "draft_rank")
 ```
 

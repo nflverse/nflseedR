@@ -6,6 +6,7 @@ Loading the package is obligatory, so it is done first (along with
 `dplyr` for data wrangling and the `pipe`):
 
 ``` r
+
 library(nflseedR)
 library(dplyr, warn.conflicts = FALSE)
 options(digits = 3)
@@ -19,17 +20,18 @@ existing results from the 2020 season, but normally when simulating an
 incomplete season, you wouldn’t do these things.*
 
 ``` r
+
 set.seed(4)
 sims <- simulate_nfl(
   nfl_season = 2020,
   fresh_season = TRUE,
   simulations = 100
 )
-#> ℹ 14:13:26 | Loading games data
-#> ℹ 14:13:26 | Beginning simulation of 100 seasons in 1 round
-#> ℹ 14:13:41 | Combining simulation data
-#> ℹ 14:13:41 | Aggregating across simulations
-#> ℹ 14:13:41 | DONE!
+#> ℹ 11:05:47 | Loading games data
+#> ℹ 11:05:48 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 11:06:01 | Combining simulation data
+#> ℹ 11:06:01 | Aggregating across simulations
+#> ℹ 11:06:01 | DONE!
 ```
 
 The output contains a lot of pre-aggregated information, as well as the
@@ -37,6 +39,7 @@ individual results from each game of each simulation. For example, let’s
 look at the overall results for the Bears:
 
 ``` r
+
 sims$overall |> dplyr::filter(team == "CHI") |> knitr::kable()
 ```
 
@@ -50,6 +53,7 @@ and only in 1% did they receive a top five draft pick. The `teams`
 section of the output will show how a team did in each simulated season.
 
 ``` r
+
 sims$teams |>
   dplyr::filter(team == "CHI") |>
   dplyr::select(sim, team, wins, seed, draft_order) |> 
@@ -70,6 +74,7 @@ Let’s check out the playoff games from the first simulation, where the
 Bears went 10-6 and got the 6th seed.
 
 ``` r
+
 sims$games |> dplyr::filter(sim == 1, game_type != "REG") |> knitr::kable()
 ```
 
@@ -110,6 +115,7 @@ a very stupid model that makes the team earlier alphabetically win by 3
 points 90% of the time, and lose by 3 points the other 10% of the time.
 
 ``` r
+
 stupid_games_model <- function(teams, games, week_num, ...) {
   # make the earlier alphabetical team win 90% of the time
   games <- games |>
@@ -154,17 +160,18 @@ whether you meant to do so or not. !!
 Let’s run a simulation with `stupid_games_model` and see what happens:
 
 ``` r
+
 sims2 <- simulate_nfl(
   nfl_season = 2020,
   process_games = stupid_games_model,
   fresh_season = TRUE,
   simulations = 100
 )
-#> ℹ 14:13:42 | Loading games data
-#> ℹ 14:13:42 | Beginning simulation of 100 seasons in 1 round
-#> ℹ 14:13:55 | Combining simulation data
-#> ℹ 14:13:55 | Aggregating across simulations
-#> ℹ 14:13:55 | DONE!
+#> ℹ 11:06:02 | Loading games data
+#> ℹ 11:06:02 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 11:06:13 | Combining simulation data
+#> ℹ 11:06:13 | Aggregating across simulations
+#> ℹ 11:06:14 | DONE!
 
 sims2$overall |> dplyr::arrange(team) |> utils::head() |> knitr::kable()
 ```
@@ -179,6 +186,7 @@ sims2$overall |> dplyr::arrange(team) |> utils::head() |> knitr::kable()
 | NFC  | NFC North | CHI  | 12.9 |    0.98 | 0.88 |  0.10 |     0.02 |   0.00 |      0 |      0 |
 
 ``` r
+
 sims2$overall |> dplyr::arrange(team) |> utils::tail() |> knitr::kable()
 ```
 
@@ -216,6 +224,7 @@ turn pass these on to *your* function that processes games.
 For example, let’s slightly modify our last example:
 
 ``` r
+
 biased_games_model <- function(teams, games, week_num, ...) {
   
   # arguments
@@ -261,6 +270,7 @@ data type.
 Let’s simulate using this:
 
 ``` r
+
 sims3 <- simulate_nfl(
   nfl_season = 2020,
   process_games = biased_games_model, 
@@ -269,11 +279,11 @@ sims3 <- simulate_nfl(
   best = "CHI", 
   worst = "GB"
 )
-#> ℹ 14:13:55 | Loading games data
-#> ℹ 14:13:55 | Beginning simulation of 100 seasons in 1 round
-#> ℹ 14:14:08 | Combining simulation data
-#> ℹ 14:14:08 | Aggregating across simulations
-#> ℹ 14:14:09 | DONE!
+#> ℹ 11:06:14 | Loading games data
+#> ℹ 11:06:14 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 11:06:26 | Combining simulation data
+#> ℹ 11:06:26 | Aggregating across simulations
+#> ℹ 11:06:26 | DONE!
 ```
 
 Now let nflseedR summarize the simulation for you by using
@@ -281,6 +291,7 @@ Now let nflseedR summarize the simulation for you by using
 simulation object. This will print a gt table.
 
 ``` r
+
 summary(sims3)
 ```
 
@@ -329,6 +340,7 @@ here are good ones:
   being simulated.
 
 ``` r
+
 elo_model <- function(teams, games, week_num, ...) {
 
   # round out (away from zero)
@@ -463,6 +475,7 @@ will abort after simulating Week 3, and instead return the result of our
 `elo_model()` function.
 
 ``` r
+
 initial_elo <- tibble::tibble(
   team = unique(nflseedR::divisions$team),
   elo = rnorm(length(unique(nflseedR::divisions$team)), 1500, 150)
@@ -474,9 +487,9 @@ test <- simulate_nfl(
   fresh_season = TRUE,
   test_week = 3
 )
-#> ℹ 14:14:10 | Loading games data
-#> ℹ 14:14:10 | Beginning simulation of 1000 seasons in 1 round
-#> ℹ 14:14:13 | Aborting and returning your `process_games` function's results
+#> ℹ 11:06:27 | Loading games data
+#> ℹ 11:06:27 | Beginning simulation of 1000 seasons in 1 round
+#> ℹ 11:06:30 | Aborting and returning your `process_games` function's results
 #> from Week 3
 ```
 
@@ -484,6 +497,7 @@ Let’s look at the Bears’ Elo after Week 3 in the top handful of
 simulations:
 
 ``` r
+
 test$teams |>
   dplyr::filter(team == "CHI") |>
   utils::head() |>
@@ -506,11 +520,12 @@ and the Elos were adjusted accordingly.
 Let’s examine the Bears’ games in that first simulation:
 
 ``` r
+
 test$games |>
   filter(sim == 1) |>
   filter(away_team == "CHI" | home_team == "CHI")
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-04-29 14:14:10 UTC
+#> ℹ Data updated: 2026-08-06 11:06:27 UTC
 #> # A tibble: 16 × 9
 #>      sim game_type  week away_team home_team away_rest home_rest location result
 #>    <dbl> <chr>     <int> <chr>     <chr>         <int>     <int> <chr>     <int>

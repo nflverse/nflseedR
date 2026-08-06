@@ -5,4 +5,4 @@ to see their documentation.
 
 - nflreadr:
 
-  [`load_schedules`](https://nflreadr.nflverse.com/reference/load_schedules.html)
+  [`load_schedules()`](https://nflreadr.nflverse.com/reference/load_schedules.html)

@@ -34,6 +34,7 @@ The easiest way to get nflseedR is to install it from
 [CRAN](https://cran.r-project.org/package=nflseedR) with:
 
 ``` r
+
 install.packages("nflseedR")
 ```
 
@@ -42,6 +43,7 @@ can install the development version of nflseedR either from
 [GitHub](https://github.com/nflverse/nflseedR) with
 
 ``` r
+
 if (!requireNamespace("pak")) install.packages("pak")
 pak::pak("nflverse/nflseedR")
 ```
@@ -50,6 +52,7 @@ or prebuilt from the [development repo](https://nflverse.r-universe.dev)
 with:
 
 ``` r
+
 install.packages("nflseedR", repos = c("https://nflverse.r-universe.dev", getOption("repos")))
 ```
 
