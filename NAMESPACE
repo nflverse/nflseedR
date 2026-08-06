@@ -17,37 +17,47 @@ export(simulations_verify_fct)
 import(data.table)
 import(gsubfn)
 importFrom(cli,symbol)
-importFrom(dplyr,arrange)
-importFrom(dplyr,bind_rows)
-importFrom(dplyr,case_when)
-importFrom(dplyr,distinct)
-importFrom(dplyr,everything)
-importFrom(dplyr,filter)
-importFrom(dplyr,group_by)
-importFrom(dplyr,inner_join)
-importFrom(dplyr,left_join)
-importFrom(dplyr,mutate)
-importFrom(dplyr,n)
-importFrom(dplyr,pull)
-importFrom(dplyr,rename)
-importFrom(dplyr,right_join)
-importFrom(dplyr,row_number)
-importFrom(dplyr,select)
-importFrom(dplyr,slice)
-importFrom(dplyr,summarise)
-importFrom(dplyr,summarize)
-importFrom(dplyr,ungroup)
-importFrom(furrr,furrr_options)
-importFrom(furrr,future_map)
+importFrom(dplyr,
+  arrange,
+  bind_rows,
+  case_when,
+  distinct,
+  everything,
+  filter,
+  group_by,
+  inner_join,
+  left_join,
+  mutate,
+  n,
+  pull,
+  rename,
+  right_join,
+  row_number,
+  select,
+  slice,
+  summarise,
+  summarize,
+  ungroup
+)
+importFrom(furrr,
+  furrr_options,
+  future_map
+)
 importFrom(future,plan)
 importFrom(lifecycle,deprecated)
 importFrom(nflreadr,load_schedules)
 importFrom(progressr,progressor)
 importFrom(purrr,pluck)
-importFrom(rlang,"%||%")
-importFrom(rlang,inform)
-importFrom(stats,rnorm)
-importFrom(stats,setNames)
-importFrom(tibble,is_tibble)
-importFrom(tibble,tibble)
+importFrom(rlang,
+  "%||%",
+  inform
+)
+importFrom(stats,
+  rnorm,
+  setNames
+)
+importFrom(tibble,
+  is_tibble,
+  tibble
+)
 importFrom(tidyr,pivot_longer)

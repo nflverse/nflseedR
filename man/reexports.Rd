@@ -11,6 +11,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{nflreadr}{\code{\link[nflreadr]{load_schedules}}}
+  \item{nflreadr}{\code{\link[nflreadr:load_schedules]{load_schedules()}}}
 }}
 

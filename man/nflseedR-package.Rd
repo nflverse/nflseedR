@@ -24,6 +24,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Sebastian Carl \email{mrcaseb@gmail.com} [copyright holder]
   \item Lee Sharpe
 }
 
