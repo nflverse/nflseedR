@@ -21,7 +21,7 @@ Please see the below given section "Details" for further information.'><meta pro
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -280,15 +280,15 @@ progress updates globally (for the current session) with</p>
 <span class="r-in"><span><span class="co"># Overview output</span></span></span>
 <span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:01:57 | Loading games data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 18:34:45 | Loading games data</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Computation in multiple rounds can be accelerated with parallel processing.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> You should consider calling a `future::plan()`. Please see the function</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   documentation for further information.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Will go on sequentially...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:01:57 | Beginning simulation of <span style="color: #0000BB;">4</span> seasons in <span style="color: #0000BB;">2</span> rounds</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:02:05 | Combining simulation data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:02:05 | Aggregating across simulations</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 11:02:05 | DONE!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 18:34:46 | Beginning simulation of <span style="color: #0000BB;">4</span> seasons in <span style="color: #0000BB;">2</span> rounds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 18:34:54 | Combining simulation data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 18:34:54 | Aggregating across simulations</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 18:34:54 | DONE!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ teams       :Classes ‘data.table’ and 'data.frame':	128 obs. of  18 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim        : num [1:128] 1 1 1 1 1 1 1 1 1 1 ...</span>
@@ -309,7 +309,7 @@ progress updates globally (for the current session) with</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ seed       : num [1:128] 2 6 NA NA NA NA NA 3 NA 1 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ exit       : num [1:128] 19 19 17 17 17 17 17 18 17 20 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ draft_order: num [1:128] 28 26 13 11 6 5 12 22 9 30 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, ".internal.selfref")=&lt;pointer: 0x55a6c1216ee0&gt; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, ".internal.selfref")=&lt;pointer: 0x565260877ee0&gt; </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ games       :Classes ‘data.table’ and 'data.frame':	1076 obs. of  9 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim      : num [1:1076] 1 2 1 2 1 2 1 2 1 2 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ game_type: chr [1:1076] "REG" "REG" "REG" "REG" ...</span>
@@ -320,7 +320,7 @@ progress updates globally (for the current session) with</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ home_rest: num [1:1076] 7 7 7 7 7 7 7 7 7 7 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ location : chr [1:1076] "Home" "Home" "Home" "Home" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ result   : int [1:1076] 5 3 -6 -4 14 10 19 18 -12 -23 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, ".internal.selfref")=&lt;pointer: 0x55a6c1216ee0&gt; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, ".internal.selfref")=&lt;pointer: 0x565260877ee0&gt; </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ overall     : tibble [32 × 11] (S3: tbl_df/tbl/data.frame)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf    : chr [1:32] "AFC" "AFC" "AFC" "AFC" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ division: chr [1:32] "AFC East" "AFC East" "AFC East" "AFC East" ...</span>
@@ -364,8 +364,8 @@ progress updates globally (for the current session) with</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ print_summary   : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim_include     : chr "DRAFT"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : int [1:4] 2 0 2 9000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ finished_at     : POSIXct[1:1], format: "2026-08-06 11:02:05"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : int [1:4] 2 0 2 9001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ finished_at     : POSIXct[1:1], format: "2026-09-18 18:34:54"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr "nflseedR_simulation"</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
