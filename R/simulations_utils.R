@@ -240,7 +240,9 @@ nflseedR_compute_results <- function(teams, games, week_num, ...) {
   # create elo diff
   games[list(week_num), elo_diff := home_elo - away_elo + (home_rest - away_rest) / 7 * 25, on = "week"]
   # adjust elo diff for location = HOME
-  games[list(week_num, "Home"), elo_diff := elo_diff + 20, on = c("week", "location")]
+  # we estimate roughly 25 elo points per actual point
+  # with ~1.8 points home field advantage leads, we get 25 * 1.8 = 45 elo points
+  games[list(week_num, "Home"), elo_diff := elo_diff + 45, on = c("week", "location")]
   # adjust elo_diff for postseason game types
   games[list(week_num, c("WC", "DIV", "CON", "SB")), elo_diff := elo_diff * 1.2, on = c("week", "game_type")]
   # create wp and estimate
