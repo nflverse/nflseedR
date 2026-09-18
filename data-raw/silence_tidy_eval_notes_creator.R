@@ -3,7 +3,7 @@ pkg_check <- rcmdcheck::rcmdcheck()
 notes <- pkg_check$notes |>
   stringr::str_squish() |>
   stringr::str_extract("(?<=Undefined global functions or variables:).+(?=Consider)") |>
-  purrr::pluck(2) |>
+  purrr::pluck(1) |>
   stringr::str_squish() |>
   stringr::str_split(" ", simplify = NA) |>
   unique() |>
