@@ -2,6 +2,7 @@
 
 * Added new function `nfl_regular_season()` which computes regular season matchups based on previous season standings and NFL regular season rules. (#64)
 * Changed home field elo point adjustment in `nflseedR_compute_results()` from 20 points to 45 points, which reflects roughly 1.8 actual points in home field advantage.
+* `nfl_simulations()`, `nfl_standings()`, and `nflseedR_compute_results()` are significantly faster.
 
 # nflseedR 2.0.2
 
