@@ -7,3 +7,7 @@ standings_cpp <- function(games_list, season_complete, ranks, depth, playoff_see
 draft_ranks_cpp <- function(games_list, row_sim, row_team, div_rank, conf_rank, exit, depth) {
   .Call(`_nflseedR_draft_ranks_cpp`, games_list, row_sim, row_team, div_rank, conf_rank, exit, depth)
 }
+
+positions_of_cpp <- function(x, value) {
+  .Call(`_nflseedR_positions_of_cpp`, x, value)
+}

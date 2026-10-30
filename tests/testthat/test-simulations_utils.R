@@ -104,6 +104,14 @@ test_that("nflseedR_compute_results() transports elo shifts correctly", {
   )
 })
 
+test_that("sims_week_rows() finds the rows of a week", {
+  week <- c(3L, 10L, 3L, 1L)
+  expect_identical(sims_week_rows(week, 3L), c(1L, 3L))
+  expect_identical(sims_week_rows(as.factor(week), "3"), c(1L, 3L))
+  expect_identical(sims_week_rows(as.factor(week), 3L), c(1L, 3L))
+  expect_identical(sims_week_rows(as.factor(week), "99"), integer())
+})
+
 test_that("sims_encode_strings() and sims_decode_strings() round trip", {
   games <- data.table::as.data.table(nflseedR::sims_games_example)
   games[c(2, 5), home_team := NA_character_]
