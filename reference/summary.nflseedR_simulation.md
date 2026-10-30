@@ -39,11 +39,11 @@ sim <- nflseedR::simulate_nfl(
   fresh_season = TRUE,
   simulations = 20
 )
-#> ℹ 18:34:57 | Loading games data
-#> ℹ 18:34:57 | Beginning simulation of 20 seasons in 1 round
-#> ℹ 18:35:04 | Combining simulation data
-#> ℹ 18:35:04 | Aggregating across simulations
-#> ℹ 18:35:04 | DONE!
+#> ℹ 09:10:29 | Loading games data
+#> ℹ 09:10:29 | Beginning simulation of 20 seasons in 1 round
+#> ℹ 09:10:37 | Combining simulation data
+#> ℹ 09:10:37 | Aggregating across simulations
+#> ℹ 09:10:37 | DONE!
 
 # Create Summary Tables
 tbl <- summary(sim)

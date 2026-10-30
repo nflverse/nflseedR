@@ -11,6 +11,13 @@
   [`nflseedR_compute_results()`](https://nflseedr.com/reference/nflseedR_compute_results.md)
   from 20 points to 45 points, which reflects roughly 1.8 actual points
   in home field advantage.
+  ([\#65](https://github.com/nflverse/nflseedR/issues/65))
+- [`nfl_simulations()`](https://nflseedr.com/reference/nfl_simulations.md),
+  [`nfl_standings()`](https://nflseedr.com/reference/nfl_standings.md),
+  and
+  [`nflseedR_compute_results()`](https://nflseedr.com/reference/nflseedR_compute_results.md)
+  are significantly faster thanks to efficiency optimization.
+  ([\#66](https://github.com/nflverse/nflseedR/issues/66))
 
 ## nflseedR 2.0.2
 

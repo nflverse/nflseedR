@@ -152,9 +152,9 @@ try({#to avoid CRAN test problems
   games <- nflreadr::load_schedules(2021:2022)
 })
 standings <- nflseedR::nfl_standings(games)
-#> ℹ 18:34:43 | Initiate Standings & Tiebreaking Data
-#> ℹ 18:34:43 | Compute Division Ranks
-#> ℹ 18:34:43 | Compute Conference Ranks
+#> ℹ 09:10:16 | Initiate Standings & Tiebreaking Data
+#> ℹ 09:10:16 | Compute Division Ranks
+#> ℹ 09:10:16 | Compute Conference Ranks
 print(standings, digits = 3)
 #>     season   team   conf  division games  wins true_wins losses  ties    pf
 #>      <int> <char> <char>    <char> <int> <num>     <int>  <int> <int> <int>

@@ -114,8 +114,8 @@ games <- nflreadr::load_schedules(2025)
 
 # Second compute standings
 standings <- nflseedR::nfl_standings(games, ranks = "DIV")
-#> ℹ 18:34:38 | Initiate Standings & Tiebreaking Data
-#> ℹ 18:34:38 | Compute Division Ranks
+#> ℹ 09:10:10 | Initiate Standings & Tiebreaking Data
+#> ℹ 09:10:10 | Compute Division Ranks
 
 # Finally compute matchups
 matchups <- nflseedR::nfl_regular_season(standings)
