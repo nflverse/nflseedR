@@ -327,45 +327,22 @@ nfl_simulations <- function(games,
 
   all_standings[, exit := sims_exit_translate_to("CHAR")[as.character(exit)]]
 
-  # take all teams and repeat them for each half win and repeat this for each
-  # simulation. The length of the half win sequence equals 2 * games + 1
-  team_vec <- rep(
-    sort(unique(all_standings$team)),
-    each = (max(all_standings$games) * 2L + 1L) * length(unique(all_standings$sim))
-  )
-
-  # Create the win sequence vector and repeat every win for every sim
-  # Take this and repeat it for every team
-  wins_vec <- rep(
-    seq(0, max(all_standings$games), 0.5),
-    each = length(unique(all_standings$sim))
-  ) |>
-    rep(length(unique(all_standings$team)))
-
-  # create sequence of sims and repeat it for every half win and for every team
-  sims_vec <- rep(
-    sort(unique(all_standings$sim)),
-    (max(all_standings$games) * 2L + 1L) * length(unique(all_standings$team))
-  )
-
-  team_wins <- data.table(
-    sim = sims_vec,
-    team = team_vec,
-    wins = wins_vec,
-    key = c("team", "wins")
-  )
-
-  team_wins <- merge(
-    team_wins,
-    all_standings[,list(sim, team, true_wins)],
-    by = c("sim", "team"),
-    sort = FALSE
-  )
-
-  team_wins <- team_wins[,list(
-    over_prob = mean(true_wins > wins),
-    under_prob = mean(true_wins < wins)
-  ), keyby = c("team", "wins")]
+  # For each team, compute the probability of winning more (over_prob) or less
+  # (under_prob) than each half win from 0 to the maximum number of games.
+  # Instead of crossing every half win with every simulation, we sort the
+  # simulated wins once per team and count the wins below and above each
+  # half win with findInterval().
+  half_wins <- seq(0, max(all_standings$games), 0.5)
+  team_wins <- all_standings[, {
+    sorted_wins <- sort(true_wins)
+    n_sims <- length(sorted_wins)
+    list(
+      wins = half_wins,
+      over_prob = (n_sims - findInterval(half_wins, sorted_wins)) / n_sims,
+      under_prob = findInterval(half_wins, sorted_wins, left.open = TRUE) / n_sims
+    )
+  }, keyby = "team"]
+  setkeyv(team_wins, c("team", "wins"))
 
 
   ## Game Summary
