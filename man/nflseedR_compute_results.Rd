@@ -41,14 +41,16 @@ by Sebastian Carl (in nflseedR 2.0).
 }
 \examples{
 g <- nflseedR::sims_games_example
-# The functions expects the variable "sim" instead of "season"
-g$sim <- g$season
+# The functions expects the variable "sim" instead of "season". The example
+# teams hold simulations 1 and 2, so we simulate the games as sim 1
+g$sim <- 1L
 t <- nflseedR::sims_teams_example
 
+# Week 6 has a game without result
 out <- nflseedR_compute_results(
   teams = t,
   games = g,
-  week_num = 5L
+  week_num = "6"
 )
 
 str(out, max.level = 2)

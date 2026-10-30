@@ -51,3 +51,12 @@ test_that("verification finds problems", {
   }
   expect_error(simulations_verify_fct(user_fun))
 })
+
+test_that("verification accepts functions defined inline", {
+  expect_identical(
+    simulations_verify_fct(\(teams, games, week_num, ...) {
+      nflseedR_compute_results(teams, games, week_num, ...)
+    }),
+    TRUE
+  )
+})
