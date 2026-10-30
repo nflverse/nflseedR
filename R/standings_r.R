@@ -1,5 +1,5 @@
 # The data.table implementation of nfl_standings() before the C++ engine.
-# Internal and unchanged, so tests can compare the C++ engine with it (see
+# Internal and unchanged, so the C++ engine can be compared with it (see
 # dev/cpp-standings-engine.md).
 nfl_standings2 <- function(
   games,

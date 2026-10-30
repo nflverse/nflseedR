@@ -5,7 +5,7 @@
 ### C++ standings engine
 
 `nfl_standings()` uses a C++ engine (`src/`). The old data.table code is the
-internal `nfl_standings2()`, used in tests for comparison. Before touching
+internal `nfl_standings2()`, kept for comparisons. Before touching
 any standings, tiebreaker or `src/` code, read `dev/cpp-standings-engine.md`
 (rule spec, decision log) and `vignettes/articles/tiebreaker.Rmd` (the
 rules). Never resolve an open decision on your own; ask the maintainer and

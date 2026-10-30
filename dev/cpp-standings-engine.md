@@ -2,7 +2,8 @@
 
 `nfl_standings()` computes standings with a C++ engine (`src/`). The old
 data.table implementation is kept as the internal `nfl_standings2()`
-(`R/standings_r*.R`) so tests can compare both. Branch:
+(`R/standings_r*.R`) so both can be compared (e.g.
+`data-raw/bench_standings.R`). Branch:
 `cpp-standings-engine`, started 2026-10-30.
 
 **Agents: read this file before touching standings, tiebreaker or `src/`
@@ -247,8 +248,6 @@ team, so diffs show changed teams. Coin tosses are seeded with
   MIN/SEA: the NFL doesn't use net wins there, against D13).
   Short tests for `ranks`/`playoff_seeds`, missing ranks before every team
   played, large draft ties (D10) and input errors.
-- `test-standings_r.R` (`nfl_standings2()`): the same 2006–2025 and deep
-  tiebreaker snapshots, and the D10 error.
 - `deep_tiebreaker_games.rds` (built by
   `data-raw/build_deep_tiebreaker_games.R`): synthetic tie-heavy seasons on
   the 2022 schedule that reach every tiebreaker step.
