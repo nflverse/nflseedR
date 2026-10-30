@@ -1,12 +1,14 @@
 // R interface of the standings engine. This is the only engine file that
 // includes R or cpp11 headers.
 #include <R_ext/Random.h>
+#include <Rmath.h>
 
 #include <algorithm>
 #include <cpp11.hpp>
 #include <span>
 #include <vector>
 
+#include "engine/elo.hpp"
 #include "engine/engine.hpp"
 
 namespace {
@@ -22,6 +24,7 @@ class RRandom final : public nflseedr::RandomSource {
   int32_t index(int32_t n) override {
     return static_cast<int32_t>(R_unif_index(static_cast<double>(n)));
   }
+  double normal() override { return norm_rand(); }
 };
 
 std::span<const int32_t> int_span(SEXP x) {
@@ -73,10 +76,25 @@ cpp11::writable::integers to_r(const std::vector<int32_t>& x) {
   return out;
 }
 
+// Game results. A plain copy: to_r() would turn -1 (kMissing), a valid result,
+// into NA. kNoResult is INT_MIN, which is R's NA_INTEGER.
+cpp11::writable::integers results_to_r(const std::vector<int32_t>& x) {
+  cpp11::writable::integers out(static_cast<R_xlen_t>(x.size()));
+  std::ranges::copy(x, INTEGER(out));
+  return out;
+}
+
 cpp11::writable::doubles to_r(const std::vector<double>& x) {
   cpp11::writable::doubles out(static_cast<R_xlen_t>(x.size()));
   std::ranges::copy(x, REAL(out));
   return out;
+}
+
+std::span<const int32_t> lgl_span(SEXP x) {
+  if (TYPEOF(x) != LGLSXP) {
+    throw nflseedr::EngineError("Expected a logical vector");
+  }
+  return {LOGICAL_RO(x), static_cast<size_t>(Rf_xlength(x))};
 }
 
 void check_interrupt() { cpp11::check_user_interrupt(); }
@@ -177,4 +195,53 @@ cpp11::writable::integers positions_of_cpp(SEXP x, int value) {
     if (in[i] == value) *pos++ = static_cast<int>(i + 1);
   }
   return out;
+}
+
+// One week of cpp_compute_results(). Games are the rows of the week, teams
+// are ids into the team table (NA if unknown). See R/simulations_utils.R.
+[[cpp11::register]]
+cpp11::writable::list elo_week_cpp(SEXP game_sim, SEXP away, SEXP home,
+                                   SEXP rest_diff, SEXP home_field,
+                                   SEXP postseason, SEXP result, SEXP team_sim,
+                                   SEXP team, SEXP elo) {
+  // NA team ids become kMissing
+  auto ids = [](SEXP x) {
+    const std::span<const int32_t> in = int_span(x);
+    std::vector<int32_t> out(in.size());
+    std::ranges::transform(in, out.begin(), [](int32_t v) {
+      return v == NA_INTEGER ? kMissing : v - 1;
+    });
+    return out;
+  };
+  const std::vector<int32_t> away_id = ids(away);
+  const std::vector<int32_t> home_id = ids(home);
+  const std::vector<int32_t> team_id = ids(team);
+  // R's NA_INTEGER is INT_MIN, which is kNoResult, so results need no
+  // conversion in either direction
+  const nflseedr::EloGames games{int_span(game_sim),
+                                 away_id,
+                                 home_id,
+                                 dbl_span(rest_diff),
+                                 lgl_span(home_field),
+                                 lgl_span(postseason),
+                                 int_span(result)};
+  const nflseedr::EloTeams teams{int_span(team_sim), team_id, dbl_span(elo)};
+  const size_t n = games.sim.size();
+  if (games.away.size() != n || games.home.size() != n ||
+      games.rest_diff.size() != n || games.home_field.size() != n ||
+      games.postseason.size() != n || games.result.size() != n ||
+      teams.team.size() != teams.sim.size() ||
+      teams.elo.size() != teams.sim.size()) {
+    throw nflseedr::EngineError("Inputs must have the same length");
+  }
+  nflseedr::EloWeek week;
+  {
+    RRandom rng;
+    week = nflseedr::simulate_elo_week(games, teams, rng);
+  }
+  using namespace cpp11::literals;
+  return cpp11::writable::list({
+      "result"_nm = results_to_r(week.result),
+      "elo"_nm = to_r(week.elo),
+  });
 }

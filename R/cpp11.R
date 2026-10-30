@@ -11,3 +11,7 @@ draft_ranks_cpp <- function(games_list, row_sim, row_team, div_rank, conf_rank, 
 positions_of_cpp <- function(x, value) {
   .Call(`_nflseedR_positions_of_cpp`, x, value)
 }
+
+elo_week_cpp <- function(game_sim, away, home, rest_diff, home_field, postseason, result, team_sim, team, elo) {
+  .Call(`_nflseedR_elo_week_cpp`, game_sim, away, home, rest_diff, home_field, postseason, result, team_sim, team, elo)
+}

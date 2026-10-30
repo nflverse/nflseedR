@@ -20,6 +20,7 @@
 #' @param compute_results Defaults to the nflseedR function `nflseedR_compute_results`.
 #' A function to compute results of games. Uses team, schedule, and week number
 #' as arguments. Please see [simulations_verify_fct] for further information.
+#' [cpp_compute_results()] computes the same results about 2 times faster.
 #' @param ... Additional parameters passed on to the function `compute_results`.
 #' @param simulations Equals the number of times the given NFL season shall be simulated
 #' @param chunks The number of chunks `simulations` should be split into

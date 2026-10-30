@@ -2,6 +2,7 @@ test_that("verification finds problems", {
 
   # default function should not error and return TRUE
   expect_true(simulations_verify_fct(nflseedR_compute_results))
+  expect_true(simulations_verify_fct(cpp_compute_results))
 
   # Missing args
   user_fun <- function(...) {}

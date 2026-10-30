@@ -39,7 +39,8 @@ home (\code{home_score}) and away (\code{away_score}) teams must also be availab
 
 \item{compute_results}{Defaults to the nflseedR function \code{nflseedR_compute_results}.
 A function to compute results of games. Uses team, schedule, and week number
-as arguments. Please see \link{simulations_verify_fct} for further information.}
+as arguments. Please see \link{simulations_verify_fct} for further information.
+\code{\link[=cpp_compute_results]{cpp_compute_results()}} computes the same results about 2 times faster.}
 
 \item{...}{Additional parameters passed on to the function \code{compute_results}.}
 

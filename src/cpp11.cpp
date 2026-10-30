@@ -26,12 +26,20 @@ extern "C" SEXP _nflseedR_positions_of_cpp(SEXP x, SEXP value) {
     return cpp11::as_sexp(positions_of_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x), cpp11::as_cpp<cpp11::decay_t<int>>(value)));
   END_CPP11
 }
+// bindings.cpp
+cpp11::writable::list elo_week_cpp(SEXP game_sim, SEXP away, SEXP home, SEXP rest_diff, SEXP home_field, SEXP postseason, SEXP result, SEXP team_sim, SEXP team, SEXP elo);
+extern "C" SEXP _nflseedR_elo_week_cpp(SEXP game_sim, SEXP away, SEXP home, SEXP rest_diff, SEXP home_field, SEXP postseason, SEXP result, SEXP team_sim, SEXP team, SEXP elo) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(elo_week_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(game_sim), cpp11::as_cpp<cpp11::decay_t<SEXP>>(away), cpp11::as_cpp<cpp11::decay_t<SEXP>>(home), cpp11::as_cpp<cpp11::decay_t<SEXP>>(rest_diff), cpp11::as_cpp<cpp11::decay_t<SEXP>>(home_field), cpp11::as_cpp<cpp11::decay_t<SEXP>>(postseason), cpp11::as_cpp<cpp11::decay_t<SEXP>>(result), cpp11::as_cpp<cpp11::decay_t<SEXP>>(team_sim), cpp11::as_cpp<cpp11::decay_t<SEXP>>(team), cpp11::as_cpp<cpp11::decay_t<SEXP>>(elo)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_nflseedR_draft_ranks_cpp",  (DL_FUNC) &_nflseedR_draft_ranks_cpp,  7},
-    {"_nflseedR_positions_of_cpp", (DL_FUNC) &_nflseedR_positions_of_cpp, 2},
-    {"_nflseedR_standings_cpp",    (DL_FUNC) &_nflseedR_standings_cpp,    5},
+    {"_nflseedR_draft_ranks_cpp",  (DL_FUNC) &_nflseedR_draft_ranks_cpp,   7},
+    {"_nflseedR_elo_week_cpp",     (DL_FUNC) &_nflseedR_elo_week_cpp,     10},
+    {"_nflseedR_positions_of_cpp", (DL_FUNC) &_nflseedR_positions_of_cpp,  2},
+    {"_nflseedR_standings_cpp",    (DL_FUNC) &_nflseedR_standings_cpp,     5},
     {NULL, NULL, 0}
 };
 }
