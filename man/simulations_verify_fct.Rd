@@ -50,8 +50,9 @@ default function \code{nflseedR_compute_results}.
 
 The function passed to \code{compute_results} is required to support the arguments
 \code{"teams"}, \code{"games"}, and \code{"week_num"}. The two leading ones are already
-described above. The latter is a factor with a length of 1, which identifies
-the current week. Regular season weeks are labeled \code{"1"}, \code{"2"}, etc.
+described above. The latter is a character string of length 1, which
+identifies the current week. Regular season weeks are labeled \code{"1"}, \code{"2"},
+etc.
 Playoff weeks are labeled \code{"WC"}, \code{"DIV"}, \code{"CON"}, and \code{"SB"}.
 }
 
