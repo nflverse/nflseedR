@@ -88,3 +88,22 @@ join_cols <- function(x, i, on = c("sim", "team")) {
   x[, (cols) := lapply(cols, function(col) i[[col]][idx])]
   x
 }
+
+finalize_standings <- function(standings, games) {
+  # Keep a stable column order no matter which tiebreakers were needed
+  setcolorder(standings, c("sim", "team", "conf", "division"))
+  if ("div_rank" %chin% colnames(standings)) {
+    standings <- standings[order(sim, division, div_rank)]
+  } else {
+    standings <- standings[order(sim, division)]
+  }
+  if (attributes(games)[["uses_season"]]) {
+    colnames(standings)[colnames(standings) == "sim"] <- "season"
+  }
+  if ("exit" %chin% colnames(standings)) {
+    standings[, exit := sims_exit_translate_to("CHAR")[as.character(exit)]]
+  }
+  # Conference Point Differential is a deep tiebreaker. We don't need to return it
+  standings[, conf_pd := NULL]
+  standings
+}

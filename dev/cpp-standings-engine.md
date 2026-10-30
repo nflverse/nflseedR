@@ -186,9 +186,10 @@ draft_tie_broken_by <chr>`
 R/standings.R          nfl_standings(): match arguments, call standings_compute()
 R/standings_cpp.R      standings_compute(): validate, encode, call C++, decode;
                        standings_add_draft_ranks() for simulations; labels
-R/standings_utils.R    standings_validate_games() (shared), finalize_standings()
+R/standings_utils.R    standings_validate_games() (shared)
 R/standings_r.R        nfl_standings2(): the old implementation (internal)
-R/standings_r_*.R      its helpers, unchanged
+R/standings_r_*.R      its helpers, unchanged apart from finalize_standings()
+                       moving here
 src/
   bindings.cpp         standings_cpp(), draft_ranks_cpp(), RRandom (R's RNG).
                        Both take the games and league as one list from

@@ -33,7 +33,7 @@ standings_compute <- function(
   league <- standings_league()
   sims <- sort(unique(games$sim))
   out <- standings_cpp(
-    standings_encode_games(games, sims, league, has_scores),
+    standings_encode_games(games, sims, league, has_scores, call = call),
     season_complete = as.integer(rep_len(
       season_complete %||% standings_season_complete(games, sims),
       length(sims)
@@ -114,10 +114,16 @@ standings_add_draft_ranks <- function(standings, games, tiebreaker_depth) {
 
 # Games as the C++ engine expects them: dense season ids, 0-based team ids,
 # integer game types. One list, unpacked by make_games() in src/bindings.cpp
-standings_encode_games <- function(games, sims, league, has_scores) {
+standings_encode_games <- function(
+  games,
+  sims,
+  league,
+  has_scores,
+  call = rlang::caller_env()
+) {
   list(
     sim = match(games$sim, sims),
-    type = standings_game_type(games$game_type),
+    type = standings_game_type(games$game_type, call = call),
     away = chmatch(games$away_team, league$team) - 1L,
     home = chmatch(games$home_team, league$team) - 1L,
     result = as.double(games$result),
@@ -155,9 +161,18 @@ standings_depth <- function(tiebreaker_depth) {
   match(tiebreaker_depth, c("RANDOM", "PRE-SOV", "SOS", "POINTS")) - 1L
 }
 
+# Cache of standings_league()
+the <- new.env(parent = emptyenv())
+
 # The 32 valid teams in alphabetical order with 0-based division and
-# conference ids (also alphabetical), as the C++ engine expects them
+# conference ids (also alphabetical), as the C++ engine expects them. Built
+# once per session.
 standings_league <- function() {
+  the$league <- the$league %||% standings_league_build()
+  the$league
+}
+
+standings_league_build <- function() {
   league <- nflseedR::divisions[
     !nflseedR::divisions$team %in% c("LAR", "OAK", "STL", "SD"),
     c("team", "conf", "division")
@@ -169,12 +184,13 @@ standings_league <- function() {
   league
 }
 
-standings_game_type <- function(game_type) {
+standings_game_type <- function(game_type, call = rlang::caller_env()) {
   type <- chmatch(game_type, c("REG", "WC", "DIV", "CON", "SB")) - 1L
   if (anyNA(type)) {
     invalid <- unique(game_type[is.na(type)])
     cli::cli_abort(
-      "{.arg games} includes invalid {.val game_type} values: {.val {invalid}}"
+      "{.arg games} includes invalid {.val game_type} values: {.val {invalid}}",
+      call = call
     )
   }
   type
