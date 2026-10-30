@@ -103,3 +103,17 @@ test_that("nflseedR_compute_results() transports elo shifts correctly", {
     old_teams[, list(elo = sum(elo)), keyby = "sim"]$elo
   )
 })
+
+test_that("sims_encode_strings() and sims_decode_strings() round trip", {
+  games <- data.table::as.data.table(nflseedR::sims_games_example)
+  games[c(2, 5), home_team := NA_character_]
+  input <- data.table::copy(games)
+
+  cols <- sims_encode_strings(games)
+  expect_identical(cols, c("game_type", "away_team", "home_team", "location"))
+  expect_s3_class(games$home_team, "factor")
+
+  combined <- data.table::rbindlist(list(games, games[rev(seq_len(.N))]))
+  sims_decode_strings(combined, cols)
+  expect_identical(combined, rbind(input, input[rev(seq_len(.N))]))
+})

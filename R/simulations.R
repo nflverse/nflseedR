@@ -300,6 +300,9 @@ nfl_simulations <- function(games,
     byes_per_conf = byes_per_conf,
     p = p,
     sim_include = sim_include,
+    # Parallel workers send their results to this process, which is slow for
+    # millions of strings. They send integer codes instead.
+    encode_strings = !is_sequential(),
     .options = furrr::furrr_options(seed = TRUE)
   )
 
@@ -311,6 +314,8 @@ nfl_simulations <- function(games,
   # bind with data.table afterwards
   all_standings <- data.table::rbindlist(lapply(all, function(i) i[["standings"]]), fill = TRUE)
   all_games <- data.table::rbindlist(lapply(all, function(i) i[["games"]]), fill = TRUE)
+  sims_decode_strings(all_standings, all[[1]][["encoded"]][["standings"]])
+  sims_decode_strings(all_games, all[[1]][["encoded"]][["games"]])
 
   if (verbosity > 0L) report("Aggregate across simulations")
   # we need the exit number of the sb winner to compute sb and conf percentages

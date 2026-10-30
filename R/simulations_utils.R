@@ -60,6 +60,34 @@ sims_week_rows <- function(week, week_num) {
   }
 }
 
+# Turn all character columns of `dt` into factors (by reference) and return
+# their names. Levels are in order of appearance, so no sorting is needed.
+# Parallel workers return integer codes much faster than strings.
+sims_encode_strings <- function(dt) {
+  cols <- names(dt)[vapply(dt, is.character, logical(1))]
+  for (col in cols) {
+    x <- dt[[col]]
+    levels <- unique(x)
+    levels <- levels[!is.na(levels)]
+    codes <- chmatch(x, levels)
+    data.table::set(dt, j = col, value = factor_from_codes(codes, levels))
+  }
+  cols
+}
+
+factor_from_codes <- function(codes, levels) {
+  structure(codes, levels = levels, class = "factor")
+}
+
+# Turn the columns `cols` of `dt` back into strings (by reference)
+sims_decode_strings <- function(dt, cols) {
+  for (col in cols) {
+    x <- dt[[col]]
+    data.table::set(dt, j = col, value = levels(x)[as.integer(x)])
+  }
+  invisible(dt)
+}
+
 # Played games of a simulation chunk, encoded for the standings engine
 sims_encode_played_games <- function(games, sims) {
   played <- which(!is.na(games$result))
