@@ -19,11 +19,19 @@ extern "C" SEXP _nflseedR_draft_ranks_cpp(SEXP games_list, SEXP row_sim, SEXP ro
     return cpp11::as_sexp(draft_ranks_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(games_list), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(row_sim), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(row_team), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(div_rank), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(conf_rank), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(exit), cpp11::as_cpp<cpp11::decay_t<int>>(depth)));
   END_CPP11
 }
+// bindings.cpp
+cpp11::writable::integers positions_of_cpp(SEXP x, int value);
+extern "C" SEXP _nflseedR_positions_of_cpp(SEXP x, SEXP value) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(positions_of_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(x), cpp11::as_cpp<cpp11::decay_t<int>>(value)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_nflseedR_draft_ranks_cpp", (DL_FUNC) &_nflseedR_draft_ranks_cpp, 7},
-    {"_nflseedR_standings_cpp",   (DL_FUNC) &_nflseedR_standings_cpp,   5},
+    {"_nflseedR_draft_ranks_cpp",  (DL_FUNC) &_nflseedR_draft_ranks_cpp,  7},
+    {"_nflseedR_positions_of_cpp", (DL_FUNC) &_nflseedR_positions_of_cpp, 2},
+    {"_nflseedR_standings_cpp",    (DL_FUNC) &_nflseedR_standings_cpp,    5},
     {NULL, NULL, 0}
 };
 }

@@ -165,3 +165,16 @@ cpp11::writable::list draft_ranks_cpp(cpp11::list games_list,
       "draft_label"_nm = to_r(draft.label),
   });
 }
+
+// 1-based positions of `value` in the integer (or factor) vector `x`
+[[cpp11::register]]
+cpp11::writable::integers positions_of_cpp(SEXP x, int value) {
+  const std::span<const int32_t> in = int_span(x);
+  cpp11::writable::integers out(
+      static_cast<R_xlen_t>(std::ranges::count(in, value)));
+  int* pos = INTEGER(out);
+  for (size_t i = 0; i < in.size(); ++i) {
+    if (in[i] == value) *pos++ = static_cast<int>(i + 1);
+  }
+  return out;
+}
