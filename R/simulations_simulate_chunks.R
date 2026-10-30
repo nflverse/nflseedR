@@ -15,6 +15,7 @@ simulate_chunk <- function(chunk,
                            sim_include,
                            compute_results,
                            p,
+                           encode_strings = FALSE,
                            ...){
 
   # NULL means the default function (see nfl_simulations())
@@ -267,5 +268,10 @@ simulate_chunk <- function(chunk,
 
   # STATUS UPDATE AND RETURN ------------------------------------------------
   p(sprintf("Finished sim chunk %g", chunk))
-  list("standings" = standings, "games" = sim_games)
+  encoded <- list()
+  if (encode_strings) {
+    encoded$standings <- sims_encode_strings(standings)
+    encoded$games <- sims_encode_strings(sim_games)
+  }
+  list("standings" = standings, "games" = sim_games, "encoded" = encoded)
 }
