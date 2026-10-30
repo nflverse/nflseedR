@@ -47,6 +47,8 @@ struct StandingsRows {
   std::vector<double> wins, pf, pa, win_pct, div_pct, conf_pct, sov, sos;
   std::vector<int32_t> div_rank, div_label, conf_rank, conf_label;
   std::vector<int32_t> exit, draft_rank, draft_label;
+
+  void reserve(size_t n);
 };
 
 // Called every 1,000 seasons. May throw to cancel.

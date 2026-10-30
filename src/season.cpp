@@ -43,12 +43,14 @@ void SeasonData::build(std::span<const Game> season_games, const League& league,
   regular_season_complete = complete;
 
   for (const Game& g : season_games) {
-    if (g.type != kRegular) {
+    if (g.type != GameType::kRegular) {
       // Exit = last playoff round, SB_WIN for the Super Bowl winner
-      exit[g.away] = std::max(exit[g.away], g.type);
-      exit[g.home] = std::max(exit[g.home], g.type);
-      if (g.type == kSuperBowl) {
-        exit[g.result > 0 ? g.home : g.away] = kSuperBowlWin;
+      const auto round = static_cast<int32_t>(g.type);
+      exit[g.away] = std::max(exit[g.away], round);
+      exit[g.home] = std::max(exit[g.home], round);
+      if (g.type == GameType::kSuperBowl) {
+        exit[g.result > 0 ? g.home : g.away] =
+            static_cast<int32_t>(GameType::kSuperBowlWin);
       }
       continue;
     }
@@ -87,7 +89,7 @@ void SeasonData::build(std::span<const Game> season_games, const League& league,
 
   // SOV and SOS need the records of all opponents
   for (const Game& g : season_games) {
-    if (g.type != kRegular) continue;
+    if (g.type != GameType::kRegular) continue;
     const std::array<TeamId, 2> team{g.home, g.away};
     const std::array<double, 2> result{g.result, -g.result};
     for (int i = 0; i < 2; ++i) {

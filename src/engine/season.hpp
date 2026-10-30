@@ -12,7 +12,7 @@ namespace nflseedr {
 struct Game {
   TeamId away = 0;
   TeamId home = 0;
-  int32_t type = kRegular;
+  GameType type = GameType::kRegular;
   double result = 0;  // home score - away score
   double away_score = 0;
   double home_score = 0;
