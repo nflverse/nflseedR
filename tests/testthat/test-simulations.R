@@ -109,3 +109,24 @@ test_that("team_wins matches over and under probabilities of simulated wins", {
   )]
   expect_equal(sim$team_wins, expected, ignore_attr = TRUE)
 })
+
+test_that("simulations work with custom compute_results functions", {
+  if (!is_sequential()) future::plan(future::sequential)
+  # Home teams always win by 3
+  set.seed(12, "L'Ecuyer-CMRG")
+  sim <- suppressMessages(nflseedR::nfl_simulations(
+    games = nflseedR::sims_games_example,
+    compute_results = function(teams, games, week_num, ...) {
+      games[week == week_num & is.na(result), result := 3L]
+      list(teams = teams, games = games)
+    },
+    simulations = 4,
+    chunks = 2,
+    verbosity = "NONE"
+  ))
+  games <- data.table::as.data.table(sim$games)
+  simulated <- is.na(nflseedR::sims_games_example$result)
+
+  expect_all_equal(games$result[rep(simulated, 4)], 3L)
+  expect_identical(sum(sim$standings$exit == "SB_WIN"), 4L)
+})

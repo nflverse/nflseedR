@@ -184,7 +184,8 @@ nfl_simulations <- function(games,
   }
 
   # Remind user to validate compute_results
-  if (as.character(substitute(compute_results)) != "nflseedR_compute_results"){
+  default_results <- identical(compute_results, nflseedR_compute_results)
+  if (!default_results) {
     cli::cli_inform(c(
       "i" = "You have provided your own function to {.arg compute_results}, cool!",
       "i" = "To maximize performance, {.fun nfl_simulations} does not control the output

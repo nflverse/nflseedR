@@ -31,8 +31,9 @@
 #' ## Required Function Arguments of `compute_results`
 #' The function passed to `compute_results` is required to support the arguments
 #' `"teams"`, `"games"`, and `"week_num"`. The two leading ones are already
-#' described above. The latter is a factor with a length of 1, which identifies
-#' the current week. Regular season weeks are labeled `"1"`, `"2"`, etc.
+#' described above. The latter is a character string of length 1, which
+#' identifies the current week. Regular season weeks are labeled `"1"`, `"2"`,
+#' etc.
 #' Playoff weeks are labeled `"WC"`, `"DIV"`, `"CON"`, and `"SB"`.
 #'
 #' ## Required Output Structure of `compute_results`
@@ -100,7 +101,7 @@ simulations_verify_fct <- function(compute_results,
   old_teams <- data.table::copy(teams)
   old_games <- data.table::copy(games)
 
-  if (as.character(substitute(compute_results)) != "nflseedR_compute_results"){
+  if (!identical(compute_results, nflseedR_compute_results)) {
     # convert games to data.frame to avoid data.table warnings regarding shallow copies
     games <- setDF(games)
   }
