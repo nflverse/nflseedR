@@ -16,3 +16,4 @@
 ^revdep$
 ^\.positai$
 ^\.claude$
+^AGENTS\.md$
