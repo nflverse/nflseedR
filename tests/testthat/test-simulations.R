@@ -110,6 +110,29 @@ test_that("team_wins matches over and under probabilities of simulated wins", {
   expect_equal(sim$team_wins, expected, ignore_attr = TRUE)
 })
 
+test_that("simulations split sims over chunks and keep the input", {
+  if (!is_sequential()) future::plan(future::sequential)
+  games <- data.table::as.data.table(nflseedR::sims_games_example)
+  input <- data.table::copy(games)
+  set.seed(10, "L'Ecuyer-CMRG")
+  sim <- suppressMessages(nflseedR::nfl_simulations(
+    games = games,
+    simulations = 6,
+    chunks = 3,
+    verbosity = "NONE"
+  ))
+
+  expect_identical(
+    as.list(table(sim$standings$sim)),
+    as.list(table(rep(1:6, each = 32)))
+  )
+  expect_identical(
+    as.list(table(sim$games$sim)),
+    as.list(table(rep(1:6, each = nrow(games))))
+  )
+  expect_equal(games, input, ignore_attr = TRUE)
+})
+
 test_that("simulations work with custom compute_results functions", {
   if (!is_sequential()) future::plan(future::sequential)
   # Home teams always win by 3

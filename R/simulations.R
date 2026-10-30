@@ -271,16 +271,6 @@ nfl_simulations <- function(games,
   chunk_size <- sims_calculate_chunk_size(nsims = simulations, nchunks = chunks)
   sims_check_chunk_size(nsims = simulations, nchunks = chunks, chunk_size = chunk_size)
 
-  # Repeat games and teams to fit the chunk size
-  game_number <- nrow(games)
-  sim_games <- games[rep(seq_len(game_number), times = chunk_size)]
-  team_number <- nrow(teams)
-  sim_teams <- teams[rep(seq_len(team_number), times = chunk_size)]
-
-  # Compute vectors of simulation identifiers
-  games_sim_vec <- rep(seq_len(simulations), each = game_number)
-  teams_sim_vec <- rep(seq_len(simulations), each = team_number)
-
   # RUN SIMULATIONS ---------------------------------------------------------
   report(
     "Start simulation of {.pkg {prettyNum(simulations, big.mark = ' ')}} \\
@@ -288,18 +278,22 @@ nfl_simulations <- function(games,
     size of {.pkg {prettyNum(chunk_size, big.mark = ' ')}}."
   )
   p <- progressr::progressor(along = seq_len(chunks))
+  # furrr scans the mapped function and all arguments for globals before every
+  # run, which takes long for big functions. So we keep that work small:
+  # - Every chunk gets the games and teams of a single season and repeats them
+  #   itself, so only small tables are sent to the futures.
+  # - The mapped function is a small wrapper of simulate_chunk().
+  # - The default compute_results is picked inside the chunks (NULL here).
+  #   Custom functions are scanned as they can use globals.
   all <- furrr::future_map(
     .x = seq_len(chunks),
-    .f = simulate_chunk,
-    compute_results = compute_results,
+    .f = simulate_chunk_future,
+    compute_results = if (!default_results) compute_results,
     ...,
-    games_sim_vec = games_sim_vec,
-    teams_sim_vec = teams_sim_vec,
+    chunk_size = chunk_size,
     weeks_to_simulate = weeks_to_simulate,
-    nsims = simulations,
-    nchunks = chunks,
-    sim_games = sim_games,
-    sim_teams = sim_teams,
+    base_games = games,
+    base_teams = teams,
     tiebreaker_depth = tiebreaker_depth,
     verbosity = verbosity,
     playoff_seeds = playoff_seeds,
