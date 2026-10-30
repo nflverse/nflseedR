@@ -6,11 +6,14 @@ add_div_ranks <- function(standings,
   # Set ranks by win percentage in descending order by sim and division.
   # If ties method is "random", data.table will break all ties randomly
   # and we won't need any further tie-breaking methods
-  dt_ties_method <- if (tiebreaker_depth == 0L) "random" else "min"
-  standings[,
-    div_rank := frankv(-win_pct, ties.method = dt_ties_method),
-    by = c("sim", "division")
-  ]
+  if (tiebreaker_depth == 0L) {
+    standings[,
+      div_rank := frankv(-win_pct, ties.method = "random"),
+      by = c("sim", "division")
+    ]
+  } else {
+    standings[, div_rank := frank_by(list(sim, division), list(-win_pct))]
+  }
 
   # If tiebreaker_depth == 0L, all ties are broken at this stage. We add
   # tiebreaker information to the tied teams.
@@ -129,7 +132,7 @@ break_div_ties_by_h2h <- function(standings, h2h, n_tied){
     h2h_games_played, h2h, by = c("sim", "team", "opp")
   )[, list(h2h_win_pct = sum(h2h_wins) / sum(h2h_games)), by = c("sim", "team")]
 
-  standings <- merge(standings, h2h_win_pct, by = c("sim", "team"), all.x = TRUE)
+  standings <- join_cols(standings, h2h_win_pct)
   # If a tied team didn't play any h2h vs. other tied teams, it misses in h2h_win_pct
   # After the merge, that team's h2h_win_pct will remain NA, but should be 0
   # This is something that can happen at early stages in the season
@@ -140,26 +143,26 @@ break_div_ties_by_h2h <- function(standings, h2h, n_tied){
   ]
   standings[
     div_rank_counter == n_tied,
-    div_rank := min(div_rank) - 1 + frank(list(div_rank, -h2h_win_pct), ties.method = "min"),
-    by = c("sim", "division")
+    div_rank := min_by(div_rank, list(sim, division)) - 1 +
+      frank_by(list(sim, division), list(div_rank, -h2h_win_pct))
   ]
-  standings <- div_count_ranks(standings)
+  standings <- div_count_ranks(standings, open_only = TRUE)
   standings[!is.na(h2h_win_pct) & div_rank_counter == 1, div_tie_broken_by := paste0("Head-To-Head Win PCT (", n_tied, ")")]
-  standings <- standings[,!c("h2h_win_pct")]
+  standings[, h2h_win_pct := NULL]
   standings
 }
 
 break_div_ties_by_div_win_pct <- function(standings, n_tied){
   standings[
     div_rank_counter == n_tied,
-    div_rank := min(div_rank) - 1 + frank(list(div_rank, -div_pct), ties.method = "min"),
-    by = c("sim", "division")
+    div_rank := min_by(div_rank, list(sim, division)) - 1 +
+      frank_by(list(sim, division), list(div_rank, -div_pct))
   ]
   standings[
     div_rank_counter == n_tied,
     div_tie_broken_by := paste0("Division Win PCT (", n_tied, ")")
   ]
-  standings <- div_count_ranks(standings)
+  standings <- div_count_ranks(standings, open_only = TRUE)
   standings[div_rank_counter > 1, div_tie_broken_by := NA_character_]
   standings
 }
@@ -178,7 +181,7 @@ break_div_ties_by_common_win_pct <- function(standings, h2h, n_tied){
   ]
   common_win_pct[is.nan(common_win_pct), common_win_pct := 0]
 
-  standings <- merge(standings, common_win_pct, by = c("sim", "team"), all.x = TRUE)
+  standings <- join_cols(standings, common_win_pct)
   # If a tied team didn't play any common games, it misses in common_win_pct
   # After the merge, that team's common_win_pct will remain NA, but should be 0
   # This is something that can happen at early stages in the season
@@ -189,26 +192,26 @@ break_div_ties_by_common_win_pct <- function(standings, h2h, n_tied){
   ]
   standings[
     div_rank_counter == n_tied,
-    div_rank := min(div_rank) - 1 + frank(list(div_rank, -common_win_pct), ties.method = "min"),
-    by = c("sim", "division")
+    div_rank := min_by(div_rank, list(sim, division)) - 1 +
+      frank_by(list(sim, division), list(div_rank, -common_win_pct))
   ]
-  standings <- div_count_ranks(standings)
+  standings <- div_count_ranks(standings, open_only = TRUE)
   standings[!is.na(common_win_pct) & div_rank_counter == 1, div_tie_broken_by := paste0("Common Games Win PCT (", n_tied, ")")]
-  standings <- standings[,!c("common_win_pct")]
+  standings[, common_win_pct := NULL]
   standings
 }
 
 break_div_ties_by_conf_win_pct <- function(standings, n_tied){
   standings[
     div_rank_counter == n_tied,
-    div_rank := min(div_rank) - 1 + frank(list(div_rank, -conf_pct), ties.method = "min"),
-    by = c("sim", "division")
+    div_rank := min_by(div_rank, list(sim, division)) - 1 +
+      frank_by(list(sim, division), list(div_rank, -conf_pct))
   ]
   standings[
     div_rank_counter == n_tied,
     div_tie_broken_by := paste0("Conference Win PCT (", n_tied, ")")
   ]
-  standings <- div_count_ranks(standings)
+  standings <- div_count_ranks(standings, open_only = TRUE)
   standings[div_rank_counter > 1, div_tie_broken_by := NA_character_]
   standings
 }
@@ -216,14 +219,14 @@ break_div_ties_by_conf_win_pct <- function(standings, n_tied){
 break_div_ties_by_sov <- function(standings, n_tied){
   standings[
     div_rank_counter == n_tied,
-    div_rank := min(div_rank) - 1 + frank(list(div_rank, -sov), ties.method = "min"),
-    by = c("sim", "division")
+    div_rank := min_by(div_rank, list(sim, division)) - 1 +
+      frank_by(list(sim, division), list(div_rank, -sov))
   ]
   standings[
     div_rank_counter == n_tied,
     div_tie_broken_by := paste0("SOV (", n_tied, ")")
   ]
-  standings <- div_count_ranks(standings)
+  standings <- div_count_ranks(standings, open_only = TRUE)
   standings[div_rank_counter > 1, div_tie_broken_by := NA_character_]
   standings
 }
@@ -231,14 +234,14 @@ break_div_ties_by_sov <- function(standings, n_tied){
 break_div_ties_by_sos <- function(standings, n_tied){
   standings[
     div_rank_counter == n_tied,
-    div_rank := min(div_rank) - 1 + frank(list(div_rank, -sos), ties.method = "min"),
-    by = c("sim", "division")
+    div_rank := min_by(div_rank, list(sim, division)) - 1 +
+      frank_by(list(sim, division), list(div_rank, -sos))
   ]
   standings[
     div_rank_counter == n_tied,
     div_tie_broken_by := paste0("SOS (", n_tied, ")")
   ]
-  standings <- div_count_ranks(standings)
+  standings <- div_count_ranks(standings, open_only = TRUE)
   standings[div_rank_counter > 1, div_tie_broken_by := NA_character_]
   standings
 }
@@ -246,14 +249,14 @@ break_div_ties_by_sos <- function(standings, n_tied){
 break_div_ties_by_point_ranks <- function(standings, n_tied, type = c("conf", "league")){
   type <- match.arg(type)
   sum_by <- if (type == "conf") c("sim", "conf") else c("sim")
+  by_cols <- as.list(standings[, sum_by, with = FALSE])
   standings[,
-    combined_rank := frank(-pf, ties.method = "min") + frank(pa, ties.method = "min"),
-    by = sum_by
+    combined_rank := frank_by(by_cols, list(-pf)) + frank_by(by_cols, list(pa))
   ]
   standings[
     div_rank_counter == n_tied,
-    div_rank := min(div_rank) - 1 + frank(combined_rank, ties.method = "min"),
-    by = c("sim", "division")
+    div_rank := min_by(div_rank, list(sim, division)) - 1 +
+      frank_by(list(sim, division), list(combined_rank))
   ]
   standings[
     div_rank_counter == n_tied,
@@ -263,7 +266,7 @@ break_div_ties_by_point_ranks <- function(standings, n_tied, type = c("conf", "l
       n_tied, ")"
     )
   ]
-  standings <- div_count_ranks(standings)
+  standings <- div_count_ranks(standings, open_only = TRUE)
   standings[div_rank_counter > 1, div_tie_broken_by := NA_character_]
   standings[, combined_rank := NULL]
   standings
@@ -282,13 +285,13 @@ break_div_ties_by_common_point_differential <- function(standings, h2h, n_tied){
     by = c("sim", "team")
   ]
 
-  standings <- merge(standings, common_point_differential, by = c("sim", "team"), all.x = TRUE)
+  standings <- join_cols(standings, common_point_differential)
   standings[
     div_rank_counter == n_tied,
-    div_rank := min(div_rank) - 1 + frank(list(div_rank, -common_pd), ties.method = "min"),
-    by = c("sim", "division")
+    div_rank := min_by(div_rank, list(sim, division)) - 1 +
+      frank_by(list(sim, division), list(div_rank, -common_pd))
   ]
-  standings <- div_count_ranks(standings)
+  standings <- div_count_ranks(standings, open_only = TRUE)
   standings[!is.na(common_pd) & div_rank_counter == 1, div_tie_broken_by := paste0("Common Games Point Differential (", n_tied, ")")]
   standings[, common_pd := NULL]
   standings
@@ -297,14 +300,14 @@ break_div_ties_by_common_point_differential <- function(standings, h2h, n_tied){
 break_div_ties_by_point_differential <- function(standings, n_tied){
   standings[
     div_rank_counter == n_tied,
-    div_rank := min(div_rank) - 1 + frank(list(div_rank, -pd), ties.method = "min"),
-    by = c("sim", "division")
+    div_rank := min_by(div_rank, list(sim, division)) - 1 +
+      frank_by(list(sim, division), list(div_rank, -pd))
   ]
   standings[
     div_rank_counter == n_tied,
     div_tie_broken_by := paste0("Point Differential (", n_tied, ")")
   ]
-  standings <- div_count_ranks(standings)
+  standings <- div_count_ranks(standings, open_only = TRUE)
   standings[div_rank_counter > 1, div_tie_broken_by := NA_character_]
   standings
 }
@@ -317,7 +320,19 @@ div_tie_break_done <- function(standings, n_tied){
   all(standings$div_rank_counter < n_tied)
 }
 
-div_count_ranks <- function(standings){
-  standings[, div_rank_counter := .N, by = c("sim", "division", "div_rank")]
+# Ranks only change inside a tie block, and a block of n tied teams holds the
+# ranks r, ..., r + n - 1 exclusively. Teams that are not tied anymore can't
+# get a new tie partner. With `open_only = TRUE` we only recount the open rows,
+# which gives the same result much faster.
+div_count_ranks <- function(standings, open_only = FALSE){
+  if (open_only) {
+    standings[
+      div_rank_counter > 1L,
+      div_rank_counter := .N,
+      by = c("sim", "division", "div_rank")
+    ]
+  } else {
+    standings[, div_rank_counter := .N, by = c("sim", "division", "div_rank")]
+  }
   setindexv(standings, "div_rank_counter")
 }

@@ -7,18 +7,28 @@ add_conf_ranks <- function(standings,
   # Set ranks by win percentage in descending order by sim and conference.
   # If ties method is "random", data.table will break all ties randomly
   # and we won't need any further tie-breaking methods
-  dt_ties_method <- if (tiebreaker_depth == 0L) "random" else "min"
   setindexv(standings, "div_rank")
-  standings[
-    div_rank == 1,
-    conf_rank := frankv(-win_pct, ties.method = dt_ties_method),
-    by = c("sim", "conf")
-  ]
-  standings[
-    div_rank != 1,
-    conf_rank := 4 + frankv(-win_pct, ties.method = dt_ties_method),
-    by = c("sim", "conf")
-  ]
+  if (tiebreaker_depth == 0L) {
+    standings[
+      div_rank == 1,
+      conf_rank := frankv(-win_pct, ties.method = "random"),
+      by = c("sim", "conf")
+    ]
+    standings[
+      div_rank != 1,
+      conf_rank := 4 + frankv(-win_pct, ties.method = "random"),
+      by = c("sim", "conf")
+    ]
+  } else {
+    standings[
+      div_rank == 1,
+      conf_rank := frank_by(list(sim, conf), list(-win_pct))
+    ]
+    standings[
+      div_rank != 1,
+      conf_rank := 4 + frank_by(list(sim, conf), list(-win_pct))
+    ]
+  }
 
   # If tiebreaker_depth == "RANDOM", all ties are broken at this stage. We add
   # tiebreaker information to the tied teams.
@@ -45,6 +55,8 @@ add_conf_ranks <- function(standings,
   # Count conference ranks by sim and conference. If each rank only exists once,
   # then there are no ties that need to be broken
   standings <- conf_count_ranks(standings)
+  # Remember all teams that are part of a tie. Only these can change ranks.
+  standings[, conf_in_tie := conf_rank_counter > 1L]
 
   # Do this only if any ties exist
   if ( any(standings$conf_rank_counter > 1) ){
@@ -168,7 +180,7 @@ add_conf_ranks <- function(standings,
       # teams to NA during the process.
       # We've also increased the possible conf rank of the eliminated teams by 1,
       # so now we need to recount all ranks and break ties again, if necessary.
-      standings <- conf_count_ranks(standings)
+      standings <- conf_count_ranks(standings, open_only = TRUE)
 
       # At this spot, we might have remaining ties within one division where we can
       # apply the division tiebreaker. We do this here to avoid another round of
@@ -188,18 +200,24 @@ add_conf_ranks <- function(standings,
   }
 
   # Finally, the helper variables can be removed
-  standings <- standings[, conf_rank_counter := NULL]
+  standings <- standings[, c("conf_rank_counter", "conf_in_tie") := NULL]
   standings
 }
 
 break_conf_ties_by_division <- function(standings, verbosity){
   # The variable conf_rank_shared_by_one_div will be TRUE if all teams that are
   # tied for one rank share the same division.
-  standings[
-    conf_rank_counter > 1,
-    conf_rank_shared_by_one_div := uniqueN(division) == 1,
-    by = c("sim", "conf", "conf_rank")
-  ]
+  # Use min == max instead of uniqueN() == 1 because data.table optimizes
+  # min and max by group. Skip empty subsets to avoid warnings from min/max.
+  if (any(standings$conf_rank_counter > 1L)) {
+    standings[
+      conf_rank_counter > 1,
+      conf_rank_shared_by_one_div := min(division) == max(division),
+      by = c("sim", "conf", "conf_rank")
+    ]
+  } else {
+    standings[, conf_rank_shared_by_one_div := NA]
+  }
 
   if (any(standings$conf_rank_shared_by_one_div, na.rm = TRUE) & verbosity == 2L){
     report("CONF    : Division Rank")
@@ -208,14 +226,13 @@ break_conf_ties_by_division <- function(standings, verbosity){
   standings[
     conf_rank_counter > 1 & conf_rank_shared_by_one_div == TRUE,
     `:=`(
-      conf_rank = conf_rank - 1 + frankv(div_rank, ties.method = "min"),
+      conf_rank = conf_rank - 1 + frank_by(list(sim, conf, conf_rank), list(div_rank)),
       conf_tie_broken_by = "Division Tiebreaker"
-    ),
-    by = c("sim", "conf", "conf_rank")
+    )
   ]
   # Remove the helper and update the counter because the tie is broken
   standings[, conf_rank_shared_by_one_div := NULL]
-  standings <- conf_count_ranks(standings)
+  standings <- conf_count_ranks(standings, open_only = TRUE)
   standings
 }
 
@@ -250,14 +267,10 @@ break_conf_ties_by_h2h <- function(standings, h2h, n_tied){
 
   # 2. Join the head 2 head table to the standings and
   # add the helper variables tie_winner and tie_loser
-  standings <- merge(standings, h2h_table, by = c("sim", "team"), all.x = TRUE)
+  standings <- join_cols(standings, h2h_table)
   standings[
     conf_rank_counter == n_tied,
-    `:=`(
-      tie_winner = frankv(-h2h_sweep, ties.method = "max") == 1,
-      tie_loser = frankv(-h2h_sweep, ties.method = "dense") != 1
-    ),
-    by = "tied_for"
+    c("tie_winner", "tie_loser") := tie_winner_loser(tied_for, h2h_sweep)
   ]
   standings[
     tie_loser == TRUE,
@@ -283,11 +296,7 @@ break_conf_ties_by_h2h <- function(standings, h2h, n_tied){
 break_conf_ties_by_conf_win_pct <- function(standings, n_tied){
   standings[
     conf_rank_counter == n_tied,
-    `:=`(
-      tie_winner = frankv(-conf_pct, ties.method = "max") == 1,
-      tie_loser = frankv(-conf_pct, ties.method = "dense") != 1
-    ),
-    by = "tied_for"
+    c("tie_winner", "tie_loser") := tie_winner_loser(tied_for, conf_pct)
   ]
   standings[
     tie_loser == TRUE,
@@ -327,14 +336,10 @@ break_conf_ties_by_common_win_pct <- function(standings, h2h, n_tied){
   ]
   common_win_pct[is.nan(common_win_pct), common_win_pct := 0]
 
-  standings <- merge(standings, common_win_pct, by = c("sim", "team"), all.x = TRUE)
+  standings <- join_cols(standings, common_win_pct)
   standings[
     conf_rank_counter == n_tied & common_games >= 4,
-    `:=`(
-      tie_winner = frankv(-common_win_pct, ties.method = "max") == 1,
-      tie_loser = frankv(-common_win_pct, ties.method = "dense") != 1
-    ),
-    by = "tied_for"
+    c("tie_winner", "tie_loser") := tie_winner_loser(tied_for, common_win_pct)
   ]
   standings[
     tie_loser == TRUE,
@@ -360,11 +365,7 @@ break_conf_ties_by_common_win_pct <- function(standings, h2h, n_tied){
 break_conf_ties_by_sov <- function(standings, n_tied){
   standings[
     conf_rank_counter == n_tied,
-    `:=`(
-      tie_winner = frankv(-sov, ties.method = "max") == 1,
-      tie_loser = frankv(-sov, ties.method = "dense") != 1
-    ),
-    by = "tied_for"
+    c("tie_winner", "tie_loser") := tie_winner_loser(tied_for, sov)
   ]
   standings[
     tie_loser == TRUE,
@@ -390,19 +391,14 @@ break_conf_ties_by_sov <- function(standings, n_tied){
 break_conf_ties_by_sos <- function(standings, n_tied){
   standings[
     conf_rank_counter == n_tied,
-    `:=`(
-      tie_winner = frankv(-sos, ties.method = "max") == 1,
-      tie_loser = frankv(-sos, ties.method = "dense") != 1
-    ),
-    by = "tied_for"
+    c("tie_winner", "tie_loser") := tie_winner_loser(tied_for, sos)
   ]
   standings[
     tie_loser == TRUE,
     `:=`(
       conf_rank_counter = NA_integer_,
       conf_rank = conf_rank + 1
-    ),
-    by = "tied_for"
+    )
   ]
   standings[
     tie_winner == TRUE,
@@ -421,25 +417,20 @@ break_conf_ties_by_sos <- function(standings, n_tied){
 break_conf_ties_by_point_ranks <- function(standings, n_tied, type = c("conf", "league")){
   type <- match.arg(type)
   sum_by <- if (type == "conf") c("sim", "conf") else c("sim")
+  by_cols <- as.list(standings[, sum_by, with = FALSE])
   standings[,
-    combined_rank := frank(-pf, ties.method = "min") + frank(pa, ties.method = "min"),
-    by = sum_by
+    combined_rank := frank_by(by_cols, list(-pf)) + frank_by(by_cols, list(pa))
   ]
   standings[
     conf_rank_counter == n_tied,
-    `:=`(
-      tie_winner = frankv(combined_rank, ties.method = "max") == 1,
-      tie_loser = frankv(combined_rank, ties.method = "dense") != 1
-    ),
-    by = "tied_for"
+    c("tie_winner", "tie_loser") := tie_winner_loser(tied_for, -combined_rank)
   ]
   standings[
     tie_loser == TRUE,
     `:=`(
       conf_rank_counter = NA_integer_,
       conf_rank = conf_rank + 1
-    ),
-    by = "tied_for"
+    )
   ]
   standings[
     tie_winner == TRUE,
@@ -462,19 +453,14 @@ break_conf_ties_by_point_ranks <- function(standings, n_tied, type = c("conf", "
 break_conf_ties_by_conf_point_differential <- function(standings, n_tied){
   standings[
     conf_rank_counter == n_tied,
-    `:=`(
-      tie_winner = frankv(-conf_pd, ties.method = "max") == 1,
-      tie_loser = frankv(-conf_pd, ties.method = "dense") != 1
-    ),
-    by = "tied_for"
+    c("tie_winner", "tie_loser") := tie_winner_loser(tied_for, conf_pd)
   ]
   standings[
     tie_loser == TRUE,
     `:=`(
       conf_rank_counter = NA_integer_,
       conf_rank = conf_rank + 1
-    ),
-    by = "tied_for"
+    )
   ]
   standings[
     tie_winner == TRUE,
@@ -493,19 +479,14 @@ break_conf_ties_by_conf_point_differential <- function(standings, n_tied){
 break_conf_ties_by_league_point_differential <- function(standings, n_tied){
   standings[
     conf_rank_counter == n_tied,
-    `:=`(
-      tie_winner = frankv(-pd, ties.method = "max") == 1,
-      tie_loser = frankv(-pd, ties.method = "dense") != 1
-    ),
-    by = "tied_for"
+    c("tie_winner", "tie_loser") := tie_winner_loser(tied_for, pd)
   ]
   standings[
     tie_loser == TRUE,
     `:=`(
       conf_rank_counter = NA_integer_,
       conf_rank = conf_rank + 1
-    ),
-    by = "tied_for"
+    )
   ]
   standings[
     tie_winner == TRUE,
@@ -557,7 +538,7 @@ conf_apply_division_reduction <- function(standings, verbosity){
     conf_rank := conf_rank + 1,
   ]
   # and count ranks again, because counters cannot be greater than 4
-  standings <- conf_count_ranks(standings)
+  standings <- conf_count_ranks(standings, open_only = TRUE)
   # The counter counts NAs so we have to remove those to avoid a participation
   # of the eliminated teams in lower tier tiebreakers
   standings[
@@ -569,8 +550,21 @@ conf_apply_division_reduction <- function(standings, verbosity){
   standings
 }
 
-conf_count_ranks <- function(standings){
-  standings[, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
+# All rank changes during tiebreaking (eliminations, reductions, coin tosses)
+# stay inside the block of ranks the tied teams shared at the start. Teams that
+# were never part of a tie can't get a new tie partner. With `open_only = TRUE`
+# we only recount teams in such tie blocks (`conf_in_tie`), which gives the same
+# result as a full recount but is much faster.
+conf_count_ranks <- function(standings, open_only = FALSE){
+  if (open_only) {
+    standings[
+      conf_in_tie == TRUE,
+      conf_rank_counter := .N,
+      by = c("sim", "conf", "conf_rank")
+    ]
+  } else {
+    standings[, conf_rank_counter := .N, by = c("sim", "conf", "conf_rank")]
+  }
   setindexv(standings, "conf_rank_counter")
 }
 

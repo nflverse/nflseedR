@@ -143,3 +143,128 @@
       ]
     }
 
+# standings of played games are stable
+
+    {
+      "type": "list",
+      "attributes": {
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["data.frame"]
+        },
+        "row.names": {
+          "type": "integer",
+          "attributes": {},
+          "value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
+        },
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["season", "team", "conf", "division", "games", "wins", "true_wins", "losses", "ties", "win_pct", "div_pct", "conf_pct", "sov", "sos", "div_rank", "div_tie_broken_by", "conf_rank", "conf_tie_broken_by", "exit", "draft_rank"]
+        }
+      },
+      "value": [
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["BUF", "NE", "NYJ", "MIA", "CIN", "BAL", "PIT", "CLE", "JAX", "TEN", "IND", "HOU", "KC", "LAC", "LV", "DEN", "PHI", "DAL", "NYG", "WAS", "MIN", "DET", "GB", "CHI", "TB", "CAR", "NO", "ATL", "SF", "SEA", "ARI", "LA"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["AFC East", "AFC East", "AFC East", "AFC East", "AFC North", "AFC North", "AFC North", "AFC North", "AFC South", "AFC South", "AFC South", "AFC South", "AFC West", "AFC West", "AFC West", "AFC West", "NFC East", "NFC East", "NFC East", "NFC East", "NFC North", "NFC North", "NFC North", "NFC North", "NFC South", "NFC South", "NFC South", "NFC South", "NFC West", "NFC West", "NFC West", "NFC West"]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [12, 16, 14, 12, 15, 15, 16, 14, 15, 15, 17, 15, 14, 16, 17, 14, 17, 16, 17, 16, 17, 17, 15, 15, 16, 16, 16, 15, 13, 14, 14, 13]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [9, 8, 7, 5, 11, 10, 9, 5, 8, 7, 4.5, 2.5, 11, 10, 6, 3, 14, 12, 9.5, 7.5, 13, 9, 7, 2, 8, 7, 6, 5, 11, 8, 4, 3]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [9, 8, 7, 5, 11, 10, 9, 5, 8, 7, 4, 2, 11, 10, 6, 3, 14, 12, 9, 7, 13, 9, 7, 2, 8, 7, 6, 5, 11, 8, 4, 3]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [3, 8, 7, 7, 4, 5, 7, 9, 7, 8, 12, 12, 3, 6, 11, 11, 3, 4, 7, 8, 4, 8, 8, 13, 8, 9, 10, 10, 2, 6, 10, 10]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.75, 0.5, 0.5, 0.41666667, 0.73333333, 0.66666667, 0.5625, 0.35714286, 0.53333333, 0.46666667, 0.26470588, 0.16666667, 0.78571429, 0.625, 0.35294118, 0.21428571, 0.82352941, 0.75, 0.55882353, 0.46875, 0.76470588, 0.52941176, 0.46666667, 0.13333333, 0.5, 0.4375, 0.375, 0.33333333, 0.84615385, 0.57142857, 0.28571429, 0.23076923]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.66666667, 0.6, 0.4, 0.25, 0.4, 0.75, 0.6, 0.25, 0.66666667, 0.6, 0.25, 0.5, 1, 0.4, 0.5, 0.16666667, 0.66666667, 0.8, 0.25, 0.3, 0.66666667, 0.83333333, 0.5, 0, 0.66666667, 0.8, 0.33333333, 0.2, 1, 1, 0.2, 0]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.8, 0.54545455, 0.5, 0.375, 0.7, 0.6, 0.45454545, 0.22222222, 0.7, 0.5, 0.375, 0.25, 0.72727273, 0.63636364, 0.41666667, 0.18181818, 0.75, 0.72727273, 0.375, 0.40909091, 0.66666667, 0.58333333, 0.5, 0, 0.66666667, 0.54545455, 0.36363636, 0.4, 1, 0.6, 0.27272727, 0.2]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.53731343, 0.4279661, 0.40816327, 0.52, 0.47560976, 0.45394737, 0.44326241, 0.46153846, 0.46825397, 0.31531532, 0.46666667, 0.390625, 0.41411043, 0.30821918, 0.38764045, 0.53409091, 0.47072072, 0.48429319, 0.39928058, 0.39449541, 0.41071429, 0.45323741, 0.44444444, 0.33870968, 0.425, 0.41666667, 0.4673913, 0.36986301, 0.38957055, 0.38559322, 0.35483871, 0.375]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.5480226, 0.49788136, 0.52427184, 0.60674157, 0.50666667, 0.48883929, 0.52272727, 0.52112676, 0.48953975, 0.50211864, 0.51879699, 0.47659574, 0.44444444, 0.39484979, 0.47222222, 0.52112676, 0.48148148, 0.50984252, 0.53903346, 0.52777778, 0.46934866, 0.53667954, 0.5210084, 0.54449153, 0.48535565, 0.47925311, 0.53252033, 0.45833333, 0.40575916, 0.41745283, 0.55399061, 0.55958549]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": [null, "Head-To-Head Win PCT (2)", "Head-To-Head Win PCT (2)", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [2, 8, 9, 11, 3, 5, 7, 12, 4, 10, 14, 16, 1, 6, 13, 15, 2, 5, 7, 9, 3, 8, 10, 16, 4, 11, 12, 13, 1, 6, 14, 15]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": [null, "Division Tiebreaker", "Division Tiebreaker", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["DIV", "REG", "REG", "REG", "CON", "WC", "REG", "REG", "DIV", "REG", "REG", "REG", "CON", "WC", "REG", "REG", "CON", "DIV", "DIV", "REG", "WC", "REG", "REG", "REG", "WC", "REG", "REG", "REG", "CON", "WC", "REG", "REG"]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [28, 16, 17, 11, 29, 23, 19, 9, 25, 13, 5, 2, 30, 22, 8, 3, 31, 27, 26, 15, 24, 18, 14, 1, 20, 12, 10, 7, 32, 21, 6, 4]
+        }
+      ]
+    }
+
