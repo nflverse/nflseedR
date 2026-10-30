@@ -9,9 +9,9 @@
 namespace nflseedr {
 
 void TeamSet::erase(TeamId t) noexcept {
-  auto* it = std::find(begin(), end(), t);
+  auto* it = std::ranges::find(*this, t);
   if (it == end()) return;
-  std::copy(it + 1, end(), it);
+  std::ranges::copy(it + 1, end(), it);
   --size_;
 }
 
@@ -99,13 +99,13 @@ StepValues evaluate(const SeasonData& s, const TeamSet& c, Step step,
     for (TeamId t : c) is_candidate[t] = true;
     std::array<bool, kTeams> common{};
     for (TeamId o = 0; o < kTeams; ++o) {
-      common[o] = !is_candidate[o] &&
-                  std::all_of(c.begin(), c.end(),
-                              [&](TeamId t) { return s.h2h_games[t][o] > 0; });
+      common[o] = !is_candidate[o] && std::ranges::all_of(c, [&](TeamId t) {
+        return s.h2h_games[t][o] > 0;
+      });
     }
     // D14: conference and draft need at least four common opponents
     if (step == Step::kCommonPct && procedure != Procedure::kDivision &&
-        std::count(common.begin(), common.end(), true) < 4) {
+        std::ranges::count(common, true) < 4) {
       out.applies = false;
     }
     for (int32_t i = 0; i < n; ++i) {
@@ -195,7 +195,7 @@ StepValues evaluate(const SeasonData& s, const TeamSet& c, Step step,
 void shuffle(TeamSet& set, RandomSource& rng) {
   for (int32_t i = set.size() - 1; i > 0; --i) {
     const int32_t j = rng.index(i + 1);
-    std::swap(*(set.begin() + i), *(set.begin() + j));
+    std::swap(set.begin()[i], set.begin()[j]);
   }
 }
 
@@ -207,11 +207,6 @@ void assign_in_order(const TeamSet& set, int32_t first, int32_t label,
     out.rank[t] = r++;
     out.label[t] = label;
   }
-}
-
-template <typename Less>
-void stable_sort(TeamSet& set, Less less) {
-  std::stable_sort(set.begin(), set.end(), less);
 }
 
 // Blocks of consecutive teams in `sorted` with equal `key`. Calls
@@ -244,8 +239,8 @@ Pick pick_one(const SeasonData& s, TeamSet candidates, Procedure procedure,
       const int32_t n = candidates.size();
       const StepValues v = evaluate(s, candidates, spec.step, procedure);
       if (!v.applies) continue;
-      const Value best =
-          *std::max_element(v.value.begin(), v.value.begin() + n);
+      const Value best = *std::ranges::max_element(
+          std::span(v.value).first(static_cast<size_t>(n)));
       TeamSet remaining;
       for (int32_t i = 0; i < n; ++i) {
         if (v.value[i] == best) remaining.push(candidates[i]);
@@ -274,7 +269,7 @@ RankResult rank_divisions(const SeasonData& s, const League& league,
     for (TeamId t = 0; t < kTeams; ++t) {
       if (league.division[t] == d && s.played(t)) teams.push(t);
     }
-    stable_sort(
+    std::ranges::stable_sort(
         teams, [&](TeamId a, TeamId b) { return s.win_pct(a) > s.win_pct(b); });
     for_each_block(
         teams, [&](TeamId t) { return s.win_pct(t); },
@@ -308,7 +303,7 @@ RankResult rank_conferences(const SeasonData& s, const League& league,
                             RandomSource& rng) {
   RankResult out;
   auto rank_group = [&](TeamSet teams, int32_t offset) {
-    stable_sort(
+    std::ranges::stable_sort(
         teams, [&](TeamId a, TeamId b) { return s.win_pct(a) > s.win_pct(b); });
     for_each_block(
         teams, [&](TeamId t) { return s.win_pct(t); },
@@ -322,10 +317,10 @@ RankResult rank_conferences(const SeasonData& s, const League& league,
           }
           while (block.size() > 1) {
             const int32_t first_div = league.division[block[0]];
-            if (std::all_of(block.begin(), block.end(), [&](TeamId t) {
+            if (std::ranges::all_of(block, [&](TeamId t) {
                   return league.division[t] == first_div;
                 })) {
-              stable_sort(block, [&](TeamId a, TeamId b) {
+              std::ranges::stable_sort(block, [&](TeamId a, TeamId b) {
                 return div_rank[a] < div_rank[b];
               });
               assign_in_order(block, r,
@@ -336,7 +331,7 @@ RankResult rank_conferences(const SeasonData& s, const League& league,
             TeamSet candidates;
             for (TeamId t : block) {
               const bool best_of_division =
-                  std::none_of(block.begin(), block.end(), [&](TeamId u) {
+                  std::ranges::none_of(block, [&](TeamId u) {
                     return league.division[u] == league.division[t] &&
                            div_rank[u] < div_rank[t];
                   });
@@ -386,7 +381,8 @@ RankResult rank_draft(const SeasonData& s, const League& league,
   auto key = [&](TeamId t) {
     return std::tuple(exit[t], s.win_pct(t), s.sos(t));
   };
-  stable_sort(teams, [&](TeamId a, TeamId b) { return key(a) < key(b); });
+  std::ranges::stable_sort(teams,
+                           [&](TeamId a, TeamId b) { return key(a) < key(b); });
   for_each_block(teams, key, [&](TeamSet block, int32_t pos) {
     int32_t r = pos + 1;
     if (block.size() > 1 && depth == 0) {
@@ -395,13 +391,13 @@ RankResult rank_draft(const SeasonData& s, const League& league,
       return;
     }
     auto all_same = [&](const TeamArray<int32_t>& group) {
-      return std::all_of(block.begin(), block.end(),
-                         [&](TeamId t) { return group[t] == group[block[0]]; });
+      return std::ranges::all_of(
+          block, [&](TeamId t) { return group[t] == group[block[0]]; });
     };
     while (block.size() > 1) {
       // Worse division or conference rank picks first
       if (all_same(league.division)) {
-        stable_sort(block, [&](TeamId a, TeamId b) {
+        std::ranges::stable_sort(block, [&](TeamId a, TeamId b) {
           return div_rank[a] > div_rank[b];
         });
         assign_in_order(block, r, label_code(Step::kDivisionTiebreaker, 0),
@@ -409,7 +405,7 @@ RankResult rank_draft(const SeasonData& s, const League& league,
         return;
       }
       if (all_same(league.conference)) {
-        stable_sort(block, [&](TeamId a, TeamId b) {
+        std::ranges::stable_sort(block, [&](TeamId a, TeamId b) {
           return conf_rank[a] > conf_rank[b];
         });
         assign_in_order(block, r, label_code(Step::kConferenceTiebreaker, 0),

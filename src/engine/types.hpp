@@ -97,6 +97,11 @@ enum class Step : int32_t {
 };
 
 // Label code: step * 10 + number of tied teams (0 if not part of the label).
+// A step never has more than 9 candidates: at most 4 teams of a division, the
+// best team of each of the 4 divisions of a conference, or one team per
+// conference.
+static_assert(kTeamsPerDivision < 10 && kDivisions / kConferences < 10 &&
+              kConferences < 10);
 [[nodiscard]] constexpr int32_t label_code(Step step, int32_t n) noexcept {
   return static_cast<int32_t>(step) * 10 + n;
 }
@@ -118,7 +123,7 @@ struct League {
 };
 
 // Game types. Exit codes use the same numbers plus kSuperBowlWin.
-enum GameType : int32_t {
+enum class GameType : int32_t {
   kRegular = 0,
   kWildCard = 1,
   kDivisional = 2,

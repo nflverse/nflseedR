@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <initializer_list>
 #include <tuple>
 
 #include "engine/season.hpp"
@@ -62,7 +63,8 @@ GamesBySeason group_games(const GamesInput& in) {
         in.home[i] >= kTeams || in.away[i] == in.home[i]) {
       throw EngineError("Invalid team id");
     }
-    if (in.type[i] < kRegular || in.type[i] > kSuperBowl) {
+    if (in.type[i] < static_cast<int32_t>(GameType::kRegular) ||
+        in.type[i] > static_cast<int32_t>(GameType::kSuperBowl)) {
       throw EngineError("Invalid game type");
     }
     if (std::isnan(in.result[i])) throw EngineError("Missing game result");
@@ -75,7 +77,7 @@ GamesBySeason group_games(const GamesInput& in) {
     Game& g = out.sorted[next[in.sim[i] - 1]++];
     g.away = in.away[i];
     g.home = in.home[i];
-    g.type = in.type[i];
+    g.type = static_cast<GameType>(in.type[i]);
     g.result = in.result[i];
     if (in.has_scores) {
       g.away_score = in.away_score[i];
@@ -90,6 +92,17 @@ double pct(int32_t half_wins, int32_t games) {
 }
 
 }  // namespace
+
+void StandingsRows::reserve(size_t n) {
+  for (auto* v :
+       {&sim, &team, &games, &true_wins, &losses, &ties, &div_rank, &div_label,
+        &conf_rank, &conf_label, &exit, &draft_rank, &draft_label}) {
+    v->reserve(n);
+  }
+  for (auto* v : {&wins, &pf, &pa, &win_pct, &div_pct, &conf_pct, &sov, &sos}) {
+    v->reserve(n);
+  }
+}
 
 StandingsRows compute_standings(const GamesInput& games, const League& league,
                                 const StandingsOptions& options,
@@ -106,6 +119,7 @@ StandingsRows compute_standings(const GamesInput& games, const League& league,
                                     : options.playoff_seeds;
 
   StandingsRows out;
+  out.reserve(static_cast<size_t>(games.n_sims) * kTeams);
   SeasonData data;
   for (int32_t s = 1; s <= games.n_sims; ++s) {
     if (s % kInterruptEvery == 0) interrupt();
@@ -132,7 +146,7 @@ StandingsRows compute_standings(const GamesInput& games, const League& league,
     for (TeamId t = 0; t < kTeams; ++t) {
       if (data.played(t)) teams.push(t);
     }
-    std::stable_sort(teams.begin(), teams.end(), [&](TeamId a, TeamId b) {
+    std::ranges::stable_sort(teams, [&](TeamId a, TeamId b) {
       return std::tuple(league.division[a], div.rank[a], a) <
              std::tuple(league.division[b], div.rank[b], b);
     });
