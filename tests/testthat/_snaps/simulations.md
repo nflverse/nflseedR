@@ -1,3 +1,11 @@
+# simulations check return_games
+
+    Code
+      nflseedR::nfl_simulations(games = nflseedR::sims_games_example, return_games = NA)
+    Condition
+      Error in `nflseedR::nfl_simulations()`:
+      ! The `return_games` argument must be `TRUE` or `FALSE`!
+
 # simulations check teams and playoff seeds before simulating
 
     Code

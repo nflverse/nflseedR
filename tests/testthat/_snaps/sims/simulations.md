@@ -411,7 +411,7 @@
         "names": {
           "type": "character",
           "attributes": {},
-          "value": ["nfl_season", "playoff_seeds", "simulations", "chunks", "byes_per_conf", "tiebreaker_depth", "sim_include", "verbosity"]
+          "value": ["nfl_season", "playoff_seeds", "simulations", "chunks", "byes_per_conf", "tiebreaker_depth", "sim_include", "return_games", "verbosity"]
         }
       },
       "value": [
@@ -449,6 +449,11 @@
           "type": "character",
           "attributes": {},
           "value": ["DRAFT"]
+        },
+        {
+          "type": "logical",
+          "attributes": {},
+          "value": [true]
         },
         {
           "type": "character",

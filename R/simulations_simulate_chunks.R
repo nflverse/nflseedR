@@ -14,6 +14,7 @@ simulate_chunk <- function(chunk,
                            byes_per_conf,
                            sim_include,
                            compute_results,
+                           return_games = TRUE,
                            p,
                            encode_strings = FALSE,
                            ...){
@@ -268,10 +269,11 @@ simulate_chunk <- function(chunk,
 
   # STATUS UPDATE AND RETURN ------------------------------------------------
   p(sprintf("Finished sim chunk %g", chunk))
+  if (!return_games) sim_games <- NULL
   encoded <- list()
   if (encode_strings) {
     encoded$standings <- sims_encode_strings(standings)
-    encoded$games <- sims_encode_strings(sim_games)
+    if (return_games) encoded$games <- sims_encode_strings(sim_games)
   }
   list("standings" = standings, "games" = sim_games, "encoded" = encoded)
 }
