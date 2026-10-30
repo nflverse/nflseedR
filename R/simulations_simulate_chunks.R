@@ -1,10 +1,12 @@
+# The function nfl_simulations() maps over chunks. furrr scans it for globals,
+# which is quick for this small wrapper (and slow for simulate_chunk()). The
+# workers find simulate_chunk() in the nflseedR namespace.
+simulate_chunk_future <- function(chunk, ...) simulate_chunk(chunk, ...)
+
 simulate_chunk <- function(chunk,
-                           nsims,
-                           nchunks,
-                           games_sim_vec,
-                           teams_sim_vec,
-                           sim_games,
-                           sim_teams,
+                           chunk_size,
+                           base_games,
+                           base_teams,
                            weeks_to_simulate,
                            tiebreaker_depth,
                            verbosity,
@@ -15,31 +17,19 @@ simulate_chunk <- function(chunk,
                            p,
                            ...){
 
-  # sim_games and sim_teams have no sim identifier yet. Add it here
-  # we have to copy sim_games and sim_teams because otherwise all changes to
-  # those tables in one round would affect the input to the next round.
-  # This happens when running the sims with a sequential future plan which is
-  # the same as running it with purrr::map. We need to make sure that the input
-  # doesn't change. It doesn't happen in non sequential future plans because
-  # in these cases the tables are copied anyways.
-  if (is_sequential()){
-    sim_games <- data.table::copy(sim_games)
-    sim_teams <- data.table::copy(sim_teams)
-  }
-  sim_games <- sim_games[,
-    sim := games_sim_vec[data.table::inrange(
-      games_sim_vec,
-      lower = ceiling(nsims / nchunks) * (chunk - 1L) + 1L,
-      upper = ceiling(nsims / nchunks) * chunk
-    )]
-  ]
-  sim_teams <- sim_teams[,
-    sim := teams_sim_vec[data.table::inrange(
-      teams_sim_vec,
-      lower = ceiling(nsims / nchunks) * (chunk - 1L) + 1L,
-      upper = ceiling(nsims / nchunks) * chunk
-    )]
-  ]
+  # NULL means the default function (see nfl_simulations())
+  compute_results <- compute_results %||% nflseedR_compute_results
+
+  # Repeat the games and teams of one season for every simulation of this
+  # chunk. Subsetting creates new tables, so the input stays unchanged. This
+  # matters for sequential plans where all chunks share the same input.
+  sims <- as.integer((chunk - 1L) * chunk_size) + seq_len(chunk_size)
+  game_number <- nrow(base_games)
+  sim_games <- base_games[rep(seq_len(game_number), times = chunk_size)]
+  sim_games[, sim := rep(sims, each = game_number)]
+  team_number <- nrow(base_teams)
+  sim_teams <- base_teams[rep(seq_len(team_number), times = chunk_size)]
+  sim_teams[, sim := rep(sims, each = team_number)]
 
   # REMAINDER OF REGULAR SEASON ---------------------------------------------
   reg_season_weeks <- base::setdiff(weeks_to_simulate, playoff_weeks())
@@ -82,7 +72,6 @@ simulate_chunk <- function(chunk,
   # we do with sim_games. However, we would have to pass standings, and h2h and
   # write a bunch of code to handle that situation. Yes, it would be faster to
   # simulate postseason only, but the speed increase isn't really worth the effort.
-  sims <- sort(unique(sim_games$sim))
   encoded <- sims_encode_played_games(sim_games, sims)
   if (verbosity > 0L) report("Compute standings")
   # Standings after the complete regular season, so records compare by
