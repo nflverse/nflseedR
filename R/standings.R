@@ -50,6 +50,8 @@
 #'   ranks. This means, the function applies conference tiebreakers to all
 #'   conference ranks. For better performance, it is possible to set this to a
 #'   value < 16 to make the function skip tiebreakers of those conference ranks.
+#'   Ignored if `ranks = "DRAFT"` because draft ranks need all conference
+#'   ranks.
 #' @param verbosity One of `"MIN"`, `"MAX"`, or `"NONE"` allowing the user
 #'  to set the grade of verbosity of status reports. They mean:
 #'  - `"MIN"` (default): Prints main steps of the process.
@@ -61,6 +63,11 @@
 #' @export
 #'
 #' @details
+#' Division, conference and draft ranks are only computed once every team has
+#' played at least one regular season game. Until then, they are `NA`.
+#'
+#' Only the 32 current team abbreviations are valid (see [divisions]).
+#'
 #' nflseedR does not support all levels of tie-breakers at the moment. The
 #' deepest tie-breaker currently is "best net points in all games".
 #' After that, the decision is made at random. However, the need for
@@ -79,77 +86,22 @@
 #' standings <- nflseedR::nfl_standings(games)
 #' print(standings, digits = 3)
 #' }
-nfl_standings <- function(games,
-                          ...,
-                          ranks = c("CONF", "DIV", "DRAFT", "NONE"),
-                          tiebreaker_depth = c("SOS", "PRE-SOV", "POINTS", "RANDOM"),
-                          playoff_seeds = NULL,
-                          verbosity = c("MIN", "MAX", "NONE")){
-
-  # VALIDATE INPUT ----------------------------------------------------------
-  games <- standings_validate_games(games)
+nfl_standings <- function(
+  games,
+  ...,
+  ranks = c("CONF", "DIV", "DRAFT", "NONE"),
+  tiebreaker_depth = c("SOS", "PRE-SOV", "POINTS", "RANDOM"),
+  playoff_seeds = NULL,
+  verbosity = c("MIN", "MAX", "NONE")
+) {
   ranks <- rlang::arg_match(ranks)
   tiebreaker_depth <- rlang::arg_match(tiebreaker_depth)
-  tiebreaker_depth <- switch (tiebreaker_depth,
-    "RANDOM" = 0L,
-    "PRE-SOV" = 1L,
-    "SOS" = 2L,
-    "POINTS" = 3L
-  )
   verbosity <- rlang::arg_match(verbosity)
-  verbosity <- switch (verbosity,
-    "MIN" = 1L,
-    "MAX" = 2L,
-    "NONE" = 0L
-  )
-  if ( !is.null(playoff_seeds) && !inrange(playoff_seeds, 1L, 16L) ){
-    cli::cli_abort("The {.arg playoff_seeds} argument must be in range {.pkg 1} - {.pkg 16}")
-  }
-
-  # INITIATE STANDINGS WITHOUT ANY RANKINGS ---------------------------------
-  if (verbosity > 0L) report("Initiate Standings & Tiebreaking Data")
-  dg <- standings_double_games(games, verbosity = verbosity)
-  standings <- standings_init(dg, verbosity = verbosity)
-  h2h <- standings_h2h(dg, verbosity = verbosity)
-
-  if (ranks == "NONE") return(finalize_standings(standings, games))
-
-  # DIVISION RANKS ----------------------------------------------------------
-  if (verbosity > 0L) report("Compute Division Ranks")
-  standings <- add_div_ranks(
-    standings = standings,
-    h2h = h2h,
-    tiebreaker_depth = tiebreaker_depth,
-    verbosity = verbosity
-  )
-  if (ranks == "DIV") return(finalize_standings(standings, games))
-
-  # CONFERENCE RANKS --------------------------------------------------------
-  if (verbosity > 0L) report("Compute Conference Ranks")
-  standings <- add_conf_ranks(
-    standings = standings,
-    h2h = h2h,
+  standings_compute(
+    games,
+    ranks = ranks,
     tiebreaker_depth = tiebreaker_depth,
     playoff_seeds = playoff_seeds,
     verbosity = verbosity
   )
-  if (ranks == "CONF"){
-    out <- finalize_standings(standings, games)
-    dots <- list(...)
-    in_sim <- if ("in_sim" %in% names(dots)) dots$in_sim else FALSE
-    if (isTRUE(in_sim)) data.table::setattr(out, "h2h", h2h)
-    return(out)
-  }
-
-  # DRAFT ORDER -------------------------------------------------------------
-  if (verbosity > 0L) report("Compute Draft Order")
-  standings <- add_draft_ranks(
-    standings = standings,
-    h2h = h2h,
-    dg = dg,
-    tiebreaker_depth = tiebreaker_depth,
-    verbosity = verbosity
-  )
-
-  return(finalize_standings(standings, games))
 }

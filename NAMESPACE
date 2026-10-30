@@ -61,3 +61,4 @@ importFrom(tibble,
   tibble
 )
 importFrom(tidyr,pivot_longer)
+useDynLib(nflseedR, .registration = TRUE)
