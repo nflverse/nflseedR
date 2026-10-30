@@ -12,40 +12,50 @@ standings_init <- function(games_doubled, verbosity){
     div_game = div_vec[team] == div_vec[opp],
     conf_game = conf_vec[team] == conf_vec[opp]
   )]
-  team_records <- games_doubled[
-    "REG",
+  # Precompute all summands as columns so the grouped sums below are simple
+  # column sums. That allows data.table to use its optimized grouping (GForce)
+  # which is much faster than evaluating expressions once per group.
+  reg_games <- games_doubled[game_type == "REG"]
+  reg_games[, `:=`(
+    true_win = outcome == 1,
+    loss = outcome == 0,
+    tie = outcome == 0.5,
+    score_allowed = score - result,
+    div_outcome = div_game * outcome,
+    conf_outcome = conf_game * outcome,
+    conf_result = conf_game * result
+  )]
+  team_records <- reg_games[
+    ,
     list(
       games = .N,
       wins = sum(outcome),
-      true_wins = sum(outcome == 1),
-      losses = sum(outcome == 0),
-      ties = sum(outcome == 0.5),
+      true_wins = sum(true_win),
+      losses = sum(loss),
+      ties = sum(tie),
       pf = sum(score),
-      pa = sum(score - result),
-      win_pct = sum(outcome) / .N,
-      div_pct = fifelse(
-        sum(div_game) == 0, 0,
-        sum(div_game * outcome) / sum(div_game)
-      ),
-      conf_pct = fifelse(
-        sum(conf_game) == 0, 0,
-        sum(conf_game * outcome) / sum(conf_game)
-      ),
-      conf_pd = fifelse(
-        sum(conf_game) == 0, NA_integer_,
-        sum(conf_game * result)
-      )
+      pa = sum(score_allowed),
+      div_games = sum(div_game),
+      div_wins = sum(div_outcome),
+      conf_games = sum(conf_game),
+      conf_wins = sum(conf_outcome),
+      conf_pd = sum(conf_result)
     ),
-    by = c("sim", "team"),
-    on = "game_type"
+    by = c("sim", "team")
   ]
+  team_records[, `:=`(
+    win_pct = wins / games,
+    div_pct = fifelse(div_games == 0, 0, div_wins / div_games),
+    conf_pct = fifelse(conf_games == 0, 0, conf_wins / conf_games),
+    conf_pd = fifelse(conf_games == 0, NA_integer_, conf_pd)
+  )]
   team_records[, `:=`(
     division = div_vec[team],
     conf = conf_vec[team]
   )]
 
   opp_info <- merge(
-    games_doubled["REG", list(sim, team, opp, outcome), on = "game_type"],
+    reg_games[, list(sim, team, opp, outcome)],
     team_records[,list(sim, opp = team, wins_opp = wins, games_opp = games)],
     by = c("sim", "opp")
   )[, list(
