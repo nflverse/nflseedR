@@ -74,7 +74,7 @@ Before we take a closer look at the contents of a simulation, we will first use 
 
 # Simulation Output
 
-The output of `nfl_simulations()` is a list of class `"nflseedR_simulation"` that holds five data frames with simulation results as well as a list of parameters used in the simulation. Here are the contents of each:
+The output of `nfl_simulations()` is a list of class `"nflseedR_simulation"` that holds five data frames with simulation results as well as a list of parameters used in the simulation. The `games` table holds every game of every simulation and needs a lot of memory. If you only need standings, set `return_games = FALSE` and `games` and `game_summary` will be `NULL`. Here are the contents of each:
 
 <details> 
   <summary> **standings** </summary>
