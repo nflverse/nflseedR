@@ -82,11 +82,11 @@ simulate_chunk <- function(chunk,
   # we do with sim_games. However, we would have to pass standings, and h2h and
   # write a bunch of code to handle that situation. Yes, it would be faster to
   # simulate postseason only, but the speed increase isn't really worth the effort.
-  standings <- nfl_standings(
+  # Standings after the complete regular season, so records compare by
+  # percentage only (D13)
+  standings <- standings_compute(
     games = sim_games[!is.na(result)],
-    # this is an undocumented feature that make standings return the h2h table
-    # in the standings attributes. We need it to add draft_ranks later
-    in_sim = if (sim_include > 1L) TRUE else NULL,
+    season_complete = TRUE,
     ranks = "CONF",
     tiebreaker_depth = tiebreaker_depth,
     # If user asks for draft_ranks, then we must calculate all conf_ranks in order
@@ -94,13 +94,6 @@ simulate_chunk <- function(chunk,
     playoff_seeds = if (sim_include > 1L) 16L else playoff_seeds,
     verbosity = user_verbosity
   )
-
-  # If we need draft ranks, the above will return the h2h table
-  # in attributes. Extract it here and then remove it from standings.
-  if (sim_include > 1L){
-    h2h <- data.table::setDT(attr(standings, "h2h"))
-    data.table::setattr(standings, "h2h", NULL)
-  }
 
   # We use the exit variable to identify teams playing playoffs.
   standings[is.na(conf_rank) | conf_rank > playoff_seeds, exit := sims_exit_translate_to("INT")["REG"]]
@@ -265,16 +258,11 @@ simulate_chunk <- function(chunk,
   if (sim_include > 1L){
     if (verbosity > 0L) report("Compute Draft Order")
 
-    standings <- add_draft_ranks(
+    standings <- standings_add_draft_ranks(
       standings = standings,
-      h2h = h2h,
-      dg = NULL,
-      tiebreaker_depth = tiebreaker_depth,
-      verbosity = verbosity
+      games = sim_games,
+      tiebreaker_depth = tiebreaker_depth
     )
-    # nfl_standings sorts the output by sim, division and draft rank
-    # let's do this here
-    standings <- standings[order(sim, division, div_rank)]
   }
 
 
