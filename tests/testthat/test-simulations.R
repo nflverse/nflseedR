@@ -31,6 +31,39 @@ test_that("simulations works", {
   expect_snapshot_value(sim_params, style = "json2", variant = "sims")
 })
 
+test_that("simulations can skip games and game_summary", {
+  if (!is_sequential()) future::plan(future::sequential)
+  run <- function(return_games) {
+    set.seed(5, "L'Ecuyer-CMRG")
+    nflseedR::nfl_simulations(
+      games = nflseedR::sims_games_example,
+      simulations = 4,
+      chunks = 2,
+      return_games = return_games,
+      verbosity = "NONE"
+    )
+  }
+  with_games <- run(TRUE)
+  without_games <- run(FALSE)
+  expect_named(without_games, names(with_games))
+  expect_null(without_games$games)
+  expect_null(without_games$game_summary)
+  expect_identical(without_games$standings, with_games$standings)
+  expect_identical(without_games$overall, with_games$overall)
+  expect_identical(without_games$team_wins, with_games$team_wins)
+  expect_identical(without_games$sim_params$return_games, FALSE)
+})
+
+test_that("simulations check return_games", {
+  expect_snapshot(
+    nflseedR::nfl_simulations(
+      games = nflseedR::sims_games_example,
+      return_games = NA
+    ),
+    error = TRUE
+  )
+})
+
 test_that("simulations results with many tiebreakers are stable", {
   if (!is_sequential()) future::plan(future::sequential)
   games <- data.table::as.data.table(nflseedR::sims_games_example)

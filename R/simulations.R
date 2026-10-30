@@ -35,6 +35,11 @@
 #'   - `"REG"`: Simulate the regular season and compute standings, division ranks, and playoff seeds
 #'   - `"POST"`: Do `"REG"` + simulate the postseason
 #'   - `"DRAFT"` (default): Do `"POST"` + compute draft order
+#' @param return_games If `TRUE` (the default), the output includes the tables
+#'   `games` and `game_summary`. Set it to `FALSE` to save memory if you only
+#'   need standings. The games table holds every game of every simulation and is
+#'   usually much larger than the standings. With `FALSE`, `games` and
+#'   `game_summary` are `NULL`.
 #'
 #' @details ## More Speed Using Parallel Processing
 #' We recommend choosing a default parallel processing method and saving it
@@ -111,8 +116,8 @@
 #' generation (RNG)" in [furrr::furrr_options].
 #'
 #' @returns An `nflseedR_simulation` object containing a list of 6
-#'   data frames with the results of all simulated games,
-#'   the final standings in each simulated season,
+#'   data frames with the results of all simulated games (unless
+#'   `return_games = FALSE`), the final standings in each simulated season,
 #'   summary statistics across all simulated seasons, and the simulation parameters. For a full list,
 #'   please see [the package website](https://nflseedr.com/articles/articles/nflsim2.html#simulation-output).
 #' @seealso The examples [on the package website](https://nflseedr.com/articles/articles/nflsim2.html)
@@ -146,6 +151,7 @@ nfl_simulations <- function(games,
                             byes_per_conf = 1L,
                             tiebreaker_depth = c("SOS", "PRE-SOV", "RANDOM"),
                             sim_include = c("DRAFT", "REG", "POST"),
+                            return_games = TRUE,
                             verbosity = c("MIN", "MAX", "NONE")) {
 
   # VALIDATE INPUT ----------------------------------------------------------
@@ -181,6 +187,10 @@ nfl_simulations <- function(games,
     cli::cli_abort(
       "One or more of the arguments {.arg {args}} are not single digit numeric values!"
     )
+  }
+
+  if (!rlang::is_bool(return_games)) {
+    cli::cli_abort("The {.arg return_games} argument must be {.code TRUE} or {.code FALSE}!")
   }
 
   if (!inrange(playoff_seeds, 1L, 16L)) {
@@ -300,6 +310,7 @@ nfl_simulations <- function(games,
     byes_per_conf = byes_per_conf,
     p = p,
     sim_include = sim_include,
+    return_games = return_games,
     # Parallel workers send their results to this process, which is slow for
     # millions of strings. They send integer codes instead.
     encode_strings = !is_sequential(),
@@ -313,9 +324,12 @@ nfl_simulations <- function(games,
   # because the length of the loop only is the number of chunks) and
   # bind with data.table afterwards
   all_standings <- data.table::rbindlist(lapply(all, function(i) i[["standings"]]), fill = TRUE)
-  all_games <- data.table::rbindlist(lapply(all, function(i) i[["games"]]), fill = TRUE)
   sims_decode_strings(all_standings, all[[1]][["encoded"]][["standings"]])
-  sims_decode_strings(all_games, all[[1]][["encoded"]][["games"]])
+  if (return_games) {
+    all_games <- data.table::rbindlist(lapply(all, function(i) i[["games"]]), fill = TRUE)
+    sims_decode_strings(all_games, all[[1]][["encoded"]][["games"]])
+  }
+  rm(all)
 
   if (verbosity > 0L) report("Aggregate across simulations")
   # we need the exit number of the sb winner to compute sb and conf percentages
@@ -355,25 +369,27 @@ nfl_simulations <- function(games,
 
 
   ## Game Summary
-  game_summary <- all_games[,list(
+  game_summary <- if (return_games) all_games[,list(
     away_wins = sum(result < 0L),
     home_wins = sum(result > 0L),
     ties = sum(result == 0L),
     result = mean(result)
   ), keyby = c("game_type", "week", "away_team", "home_team")]
-  game_summary[, games_played := away_wins + home_wins + ties]
-  game_summary[,`:=`(
-    away_percentage = (away_wins + 0.5 * ties) / games_played,
-    home_percentage = (home_wins + 0.5 * ties) / games_played
-  )]
+  if (return_games) {
+    game_summary[, games_played := away_wins + home_wins + ties]
+    game_summary[,`:=`(
+      away_percentage = (away_wins + 0.5 * ties) / games_played,
+      home_percentage = (home_wins + 0.5 * ties) / games_played
+    )]
+  }
 
   out <- structure(
     list(
       "standings" = data.table::setDF(all_standings),
-      "games" = data.table::setDF(all_games),
+      "games" = if (return_games) data.table::setDF(all_games),
       "overall" = data.table::setDF(overall),
       "team_wins" = data.table::setDF(team_wins),
-      "game_summary" = data.table::setDF(game_summary),
+      "game_summary" = if (return_games) data.table::setDF(game_summary),
       "sim_params" = list(
         "nfl_season" = nfl_season,
         "playoff_seeds" = playoff_seeds,
@@ -382,6 +398,7 @@ nfl_simulations <- function(games,
         "byes_per_conf" = byes_per_conf,
         "tiebreaker_depth" = tiebreaker_depth,
         "sim_include" = sim_include_out,
+        "return_games" = return_games,
         "verbosity" = verbosity_out,
         "nflseedR_version" = utils::packageVersion("nflseedR"),
         "finished_at" = Sys.time()

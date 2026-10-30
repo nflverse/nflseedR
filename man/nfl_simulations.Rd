@@ -14,6 +14,7 @@ nfl_simulations(
   byes_per_conf = 1L,
   tiebreaker_depth = c("SOS", "PRE-SOV", "RANDOM"),
   sim_include = c("DRAFT", "REG", "POST"),
+  return_games = TRUE,
   verbosity = c("MIN", "MAX", "NONE")
 )
 }
@@ -89,6 +90,12 @@ Simulation will behave as follows:
 \item \code{"DRAFT"} (default): Do \code{"POST"} + compute draft order
 }}
 
+\item{return_games}{If \code{TRUE} (the default), the output includes the tables
+\code{games} and \code{game_summary}. Set it to \code{FALSE} to save memory if you only
+need standings. The games table holds every game of every simulation and is
+usually much larger than the standings. With \code{FALSE}, \code{games} and
+\code{game_summary} are \code{NULL}.}
+
 \item{verbosity}{One of \code{"MIN"}, \code{"MAX"}, or \code{"NONE"} allowing the user
 to set the grade of verbosity of status reports. They mean:
 \itemize{
@@ -99,8 +106,8 @@ to set the grade of verbosity of status reports. They mean:
 }
 \value{
 An \code{nflseedR_simulation} object containing a list of 6
-data frames with the results of all simulated games,
-the final standings in each simulated season,
+data frames with the results of all simulated games (unless
+\code{return_games = FALSE}), the final standings in each simulated season,
 summary statistics across all simulated seasons, and the simulation parameters. For a full list,
 please see \href{https://nflseedr.com/articles/articles/nflsim2.html#simulation-output}{the package website}.
 }
