@@ -91,17 +91,20 @@ simulate_chunk <- function(chunk,
   # We use the exit variable to identify teams playing playoffs.
   standings[is.na(conf_rank) | conf_rank > playoff_seeds, exit := sims_exit_translate_to("INT")["REG"]]
 
+  # Teams are identified across simulations by an integer key of sim and team
+  standings_key <- sims_team_key(standings$sim, standings$team)
+
   # If sims_games includes already finished playoff games, then we have to fill
   # the exit variable of the losers. Otherwise the wrong teams could be filled
   # in the matchups.
   po_results <- sim_games[week %in% playoff_weeks() & !is.na(result)]
 
   if (nrow(po_results) > 0){
-    # identify losers and create a lookup vector of the playoff round they lost
-    po_results[, loser := fifelse(result > 0, away_team, home_team)]
-    po_losers <- po_results[, setNames(game_type, paste(sim, loser, sep = "-"))]
-    # use the lookup vector to set the exit of playoff losers
-    standings[is.na(exit), exit := sims_exit_translate_to("INT")[unname(po_losers[paste(sim, team, sep = "-")])]]
+    # identify losers and look up the playoff round they lost
+    po_losers <- po_results[, sims_team_key(sim, fifelse(result > 0, away_team, home_team))]
+    lost_in <- po_results$game_type[match(standings_key, po_losers)]
+    no_exit <- is.na(standings$exit)
+    standings[no_exit, exit := sims_exit_translate_to("INT")[lost_in[no_exit]]]
   }
 
   # PLAYOFFS ----------------------------------------------------------------
@@ -116,89 +119,98 @@ simulate_chunk <- function(chunk,
       )
     }
 
-    # Create an identifier that is used to fill home and away teams, and to
-    # identify losers
-    standings[is.na(exit), playoff_id := paste(sim, conf, conf_rank, sep = "-")]
-    # This vector lists all playoff teams across simulations. It's a named vector
-    # where the above created playoff_id is the name. That's how we can identify
-    # teams across all sims and playoff rounds
-    playoff_teams <- standings[is.na(exit), setNames(team, playoff_id)]
+    # Matchups are filled through slots of simulation, conference and seed
+    standings_sim <- match(standings$sim, sims)
+    standings_conf <- chmatch(standings$conf, c("AFC", "NFC"))
 
     for (week_num in post_season_weeks) {
       if (verbosity > 1L){
         report("Simulate post season week {.val {week_num}}")
       }
 
+      week_rows <- sims_week_rows(sim_games$week, week_num)
+
       # It is possible - but unlikely - that the user provided a games table
       # where some or all playoff matchups are already filled. In that case we
       # can skip filling participants. That's why we look up all home and away
       # teams and fill only if one is missing
-      home_teams <- sim_games[week_num, home_team, on = "week"]
-      away_teams <- sim_games[week_num, away_team, on = "week"]
-
-      if (any(is.na(home_teams), is.na(away_teams))) {
-        # Compute vector of teams participating in the playoff round
-        # Use standings to identify teams that should play this round
-        remaining_teams <- standings[is.na(exit)]
-
-        if (week_num == "WC"){
-          round_teams <- remaining_teams[, setNames(team, playoff_id)]
+      if (anyNA(sim_games$home_team[week_rows]) || anyNA(sim_games$away_team[week_rows])) {
+        # Use standings to identify teams that should play this round. In the
+        # Wild Card round, a team's seed is its conference rank. After that,
+        # the remaining teams are reseeded 1-N by conference rank.
+        remaining <- which(is.na(standings$exit))
+        if (week_num == "WC") {
+          seed <- standings$conf_rank[remaining]
         } else {
-          # We need an identifier in games data that can be used to fill
-          # names of home and away teams. After the WC round, the identifier can be
-          # defined as "teams 1-N" of that playoff round. The number of games is
-          # predefined.
-          # If we have 1-N as identifier, we need to reassign ranks of the remaining
-          # teams based on their conference rank.
-          remaining_teams[, new_rank := frankv(conf_rank), by = c("sim", "conf")]
-          remaining_teams[, round_id := paste(sim, conf, new_rank, sep = "-")]
-
-          round_teams <- remaining_teams[, setNames(team, round_id)]
+          by_rank <- remaining[order(
+            standings_sim[remaining],
+            standings_conf[remaining],
+            standings$conf_rank[remaining]
+          )]
+          seed <- integer(length(remaining))
+          seed[match(by_rank, remaining)] <- data.table::rowid(
+            standings_sim[by_rank],
+            standings_conf[by_rank]
+          )
         }
+        slot <- sims_playoff_slot(
+          standings_sim[remaining],
+          standings_conf[remaining],
+          seed
+        )
+        round_teams <- rep(NA_character_, chunk_size * 2L * 16L)
+        round_teams[slot[!is.na(slot)]] <- standings$team[remaining[!is.na(slot)]]
 
-        # Prepare Matchup IDs
+        game_sim <- match(sim_games$sim[week_rows], sims)
         if (week_num == "WC"){
           # For Wildcard, the playoff games template has prefilled matchup IDs
-          # All we need to do is to prepend the sim number
-          sim_games[week_num, home_round_id := paste(sim, home_round_id, sep = "-"), on = "week"]
-          sim_games[week_num, away_round_id := paste(sim, away_round_id, sep = "-"), on = "week"]
-
+          # like "AFC-2"
+          home_id <- sim_games$home_round_id[week_rows]
+          away_id <- sim_games$away_round_id[week_rows]
+          home_slot <- sims_playoff_slot(
+            game_sim,
+            chmatch(sub("-.*", "", home_id), c("AFC", "NFC")),
+            as.integer(sub(".*-", "", home_id))
+          )
+          away_slot <- sims_playoff_slot(
+            game_sim,
+            chmatch(sub("-.*", "", away_id), c("AFC", "NFC")),
+            as.integer(sub(".*-", "", away_id))
+          )
         } else if (week_num != "SB") {
-          # We can describe the home_round_id and away_round_id as
-          # "The top .N teams by conf_rank and conference are home teams, and the
-          # top .N + .N teams (in reversed order) are away_teams.
+          # The top .N teams by conf_rank and conference are home teams, and
+          # the top .N + .N teams (in reversed order) are away teams.
           # Consider DIV round, this translates to
-          # home_round_id = sim-conf-1/2
-          # away_round_id = sim-conf-4/3
-          sim_games[week_num,
-                    home_round_id := paste(sim, conf, seq_len(.N), sep = "-"),
-                    by = c("sim", "conf"),
-                    on = "week"]
-          sim_games[week_num,
-                    away_round_id := paste(sim, conf, rev(seq_len(.N) + .N), sep = "-"),
-                    by = c("sim", "conf"),
-                    on = "week"]
+          # home seeds 1/2 and away seeds 4/3
+          game_conf <- chmatch(sim_games$conf[week_rows], c("AFC", "NFC"))
+          game_number <- data.table::rowid(game_sim, game_conf)
+          n_games <- data.table(game_sim, game_conf)[,
+            n := .N,
+            by = c("game_sim", "game_conf")
+          ][["n"]]
+          home_slot <- sims_playoff_slot(game_sim, game_conf, game_number)
+          away_slot <- sims_playoff_slot(
+            game_sim,
+            game_conf,
+            2L * n_games + 1L - game_number
+          )
 
           # adjust rest of bye week teams
           if (week_num == "DIV") {
-            sim_games[week == "DIV" & grepl("AFC-1|NFC-1", home_round_id), home_rest := 14L]
+            bye_rows <- week_rows[game_number == 1L & !is.na(game_conf)]
+            sim_games[bye_rows, home_rest := 14L]
           }
 
         } else {
           # this is SB
           # AFC always listed as home team. Shouldn't matter anyways as
           # location defaults to "Neutral"
-          sim_games[week_num,
-                    home_round_id := paste(sim, "AFC", 1, sep = "-"),
-                    on = "week"]
-          sim_games[week_num,
-                    away_round_id := paste(sim, "NFC", 1, sep = "-"),
-                    on = "week"]
+          home_slot <- sims_playoff_slot(game_sim, 1L, 1L)
+          away_slot <- sims_playoff_slot(game_sim, 2L, 1L)
         }
 
-        # Use above created IDs to fill the matchups
-        sim_games[week_num, home_team := round_teams[home_round_id], on = "week"]
-        sim_games[week_num, away_team := round_teams[away_round_id], on = "week"]
+        sim_games[week_rows, home_team := round_teams[home_slot]]
+        sim_games[week_rows, away_team := round_teams[away_slot]]
       }
 
       return_value <- compute_results(
@@ -210,22 +222,16 @@ simulate_chunk <- function(chunk,
       sim_teams <- return_value[["teams"]]
       sim_games <- return_value[["games"]]
 
-      # Each Playoff round, we compute the losing teams and set their "exit" value
-      # to the current round. sim_games doesn't hold unique identifiers across
-      # the complete playoffs (just the current round). That's why we have to
-      # merge the playoff_id to make sure we set the exit value for the right teams
-      round_loser <- sim_games[week_num, on = "week"][, loser := fifelse(result < 0, home_team, away_team)]
-      round_loser <- merge(
-        round_loser,
-        standings[, list(sim, loser = team, loser_playoff_id = playoff_id)],
-        by = c("sim", "loser"),
-        all.x = TRUE
-      )
-      # We use current week_num for the exit value, but that's a factor
-      # To be able to calculate draft_ranks later on, we need to make the exit
-      # value an integer. sims_exit_translate_to("INT") does this for us
+      # Each Playoff round, we compute the losing teams and set their "exit"
+      # value to the current round. We use current week_num for the exit
+      # value, but that's a factor. To be able to calculate draft_ranks later
+      # on, we need to make the exit value an integer.
+      # sims_exit_translate_to("INT") does this for us
+      week_rows <- sims_week_rows(sim_games$week, week_num)
+      round_games <- sim_games[week_rows]
+      round_losers <- round_games[, sims_team_key(sim, fifelse(result < 0, home_team, away_team))]
       standings[
-        is.na(exit) & (playoff_id %in% round_loser$loser_playoff_id),
+        is.na(exit) & standings_key %in% round_losers,
         exit := sims_exit_translate_to("INT")[week_num]]
 
       if (week_num == "SB"){
@@ -235,7 +241,6 @@ simulate_chunk <- function(chunk,
     }
 
     # Remove helper variables
-    standings[, playoff_id := NULL]
     sim_games[, c("home_round_id", "away_round_id", "conf") := NULL]
 
   }

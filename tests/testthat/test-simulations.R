@@ -133,6 +133,37 @@ test_that("simulations split sims over chunks and keep the input", {
   expect_equal(games, input, ignore_attr = TRUE)
 })
 
+test_that("simulations keep given playoff results", {
+  if (!is_sequential()) future::plan(future::sequential)
+  reg <- data.table::as.data.table(nflseedR::sims_games_example)
+  reg <- reg[game_type == "REG"]
+  set.seed(11, "L'Ecuyer-CMRG")
+  season <- nflseedR::nfl_simulations(
+    games = reg,
+    simulations = 1,
+    chunks = 1,
+    sim_include = "POST",
+    verbosity = "NONE"
+  )
+  games <- data.table::as.data.table(season$games)[game_type %in% c("REG", "WC")]
+  wc_losers <- games[game_type == "WC", fifelse(result > 0, away_team, home_team)]
+
+  sim <- nflseedR::nfl_simulations(
+    games = games,
+    simulations = 20,
+    chunks = 2,
+    verbosity = "NONE"
+  )
+  standings <- data.table::as.data.table(sim$standings)
+  sim_games <- data.table::as.data.table(sim$games)
+
+  expect_all_equal(standings[team %chin% wc_losers, exit], "WC")
+  expect_identical(nrow(sim_games[game_type == "WC"]), 20L * 6L)
+  expect_false(anyNA(sim_games[game_type != "REG", c(away_team, home_team)]))
+  expect_identical(sim_games[game_type == "DIV" & home_rest == 14L, .N], 20L * 2L)
+  expect_identical(standings[exit == "SB_WIN", .N], 20L)
+})
+
 test_that("simulations work with custom compute_results functions", {
   if (!is_sequential()) future::plan(future::sequential)
   # Home teams always win by 3
