@@ -160,7 +160,9 @@ as arguments. Please see <a href="simulations_verify_fct.html">simulations_verif
 <dd><p>If <code>NULL</code> (the default), will compute all 16 conference
 ranks. This means, the function applies conference tiebreakers to all
 conference ranks. For better performance, it is possible to set this to a
-value &lt; 16 to make the function skip tiebreakers of those conference ranks.</p></dd>
+value &lt; 16 to make the function skip tiebreakers of those conference ranks.
+Ignored if <code>ranks = "DRAFT"</code> because draft ranks need all conference
+ranks.</p></dd>
 
 
 <dt id="arg-simulations">simulations<a class="anchor" aria-label="anchor" href="#arg-simulations"></a></dt>
@@ -325,49 +327,46 @@ generation (RNG)" in <a href="https://furrr.futureverse.org/reference/furrr_opti
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   documentation for further information.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Will go on sequentially...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #555555;">This message is displayed once every 8 hours.</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:11 | Start simulation of <span style="color: #0000BB;">4</span> seasons in <span style="color: #0000BB;">2</span> chunks with a chunk size of <span style="color: #0000BB;">2</span>.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:12 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:26 | Start simulation of <span style="color: #0000BB;">4</span> seasons in <span style="color: #0000BB;">2</span> chunks with a chunk size of <span style="color: #0000BB;">2</span>.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:27 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> …, <span style="color: #0000BB;">"17"</span>, and <span style="color: #0000BB;">"18"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:12 | Initiate Standings &amp; Tiebreaking Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:12 | Compute Division Ranks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | Compute Conference Ranks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | Compute Draft Order</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:27 | Compute standings</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:27 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:27 | Compute Draft Order</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:27 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> …, <span style="color: #0000BB;">"17"</span>, and <span style="color: #0000BB;">"18"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | Initiate Standings &amp; Tiebreaking Data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | Compute Division Ranks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | Compute Conference Ranks</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | Compute Draft Order</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | Combine simulation data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | Aggregate across simulations</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 09:10:13 | DONE!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | Compute standings</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | Compute Draft Order</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | Combine simulation data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | Aggregate across simulations</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | DONE!</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Overview output</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">sim</span>, max.level <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ standings   :'data.frame':	128 obs. of  20 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim               : int [1:128] 1 1 1 1 1 1 1 1 1 1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ team              : chr [1:128] "BUF" "NE" "MIA" "NYJ" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf              : chr [1:128] "AFC" "AFC" "AFC" "AFC" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ division          : chr [1:128] "AFC East" "AFC East" "AFC East" "AFC East" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ games             : int [1:128] 16 17 17 17 16 17 17 17 17 17 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ wins              : num [1:128] 13 8 8 8 11 11 9 8 8 8 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ true_wins         : int [1:128] 13 8 8 8 11 11 9 8 8 8 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ losses            : int [1:128] 3 9 9 9 5 6 8 9 9 9 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ties              : int [1:128] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ win_pct           : num [1:128] 0.812 0.471 0.471 0.471 0.688 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div_pct           : num [1:128] 0.667 0.5 0.5 0.333 0.333 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf_pct          : num [1:128] 0.818 0.5 0.417 0.5 0.636 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sov               : num [1:128] 0.462 0.445 0.496 0.452 0.481 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sos               : num [1:128] 0.482 0.505 0.544 0.531 0.522 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div_rank          : int [1:128] 1 2 3 4 1 2 3 4 1 2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div_tie_broken_by : chr [1:128] NA "Head-To-Head Win PCT (3)" "Head-To-Head Win PCT (3)" "Head-To-Head Win PCT (3)" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf_rank         : int [1:128] 1 9 11 12 3 5 7 10 4 8 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf_tie_broken_by: chr [1:128] NA "Head-To-Head Sweep (2)" "Division Tiebreaker" "Division Tiebreaker" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ exit              : chr [1:128] "DIV" "REG" "REG" "REG" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ draft_rank        : int [1:128] 27 14 17 16 28 22 31 15 24 13 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ standings   :'data.frame':	128 obs. of  21 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim                : int [1:128] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ team               : chr [1:128] "BUF" "NE" "MIA" "NYJ" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf               : chr [1:128] "AFC" "AFC" "AFC" "AFC" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ division           : chr [1:128] "AFC East" "AFC East" "AFC East" "AFC East" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ games              : int [1:128] 16 17 17 17 16 17 17 17 17 17 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ wins               : num [1:128] 13 8 8 8 11 11 9 8 8 8 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ true_wins          : int [1:128] 13 8 8 8 11 11 9 8 8 8 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ losses             : int [1:128] 3 9 9 9 5 6 8 9 9 9 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ties               : int [1:128] 0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ win_pct            : num [1:128] 0.812 0.471 0.471 0.471 0.688 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div_pct            : num [1:128] 0.667 0.5 0.5 0.333 0.333 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf_pct           : num [1:128] 0.818 0.5 0.417 0.5 0.636 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sov                : num [1:128] 0.462 0.445 0.496 0.452 0.481 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sos                : num [1:128] 0.482 0.505 0.544 0.531 0.522 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div_rank           : int [1:128] 1 2 3 4 1 2 3 4 1 2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ div_tie_broken_by  : chr [1:128] NA "Head-To-Head Win PCT (3)" "Division Win PCT (2)" "Division Win PCT (2)" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf_rank          : int [1:128] 1 9 11 12 3 5 7 10 4 8 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf_tie_broken_by : chr [1:128] NA "Head-To-Head Sweep (2)" "Division Tiebreaker" "Division Tiebreaker" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ exit               : chr [1:128] "DIV" "REG" "REG" "REG" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ draft_rank         : int [1:128] 27 14 17 16 28 22 31 15 24 13 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ draft_tie_broken_by: chr [1:128] NA NA NA NA ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ games       :'data.frame':	1136 obs. of  9 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ game_type: chr [1:1136] "REG" "REG" "REG" "REG" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ week     : int [1:1136] 1 1 1 1 1 1 1 1 1 1 ...</span>
@@ -418,7 +417,7 @@ generation (RNG)" in <a href="https://furrr.futureverse.org/reference/furrr_opti
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ verbosity       : chr "MIN"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : int [1:4] 2 0 2 9002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ finished_at     : POSIXct[1:1], format: "2026-10-30 09:10:13"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ finished_at     : POSIXct[1:1], format: "2026-10-30 14:49:28"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr "nflseedR_simulation"</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>

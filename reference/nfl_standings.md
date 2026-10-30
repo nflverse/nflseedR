@@ -111,6 +111,8 @@ nfl_standings(
   means, the function applies conference tiebreakers to all conference
   ranks. For better performance, it is possible to set this to a value
   \< 16 to make the function skip tiebreakers of those conference ranks.
+  Ignored if `ranks = "DRAFT"` because draft ranks need all conference
+  ranks.
 
 - verbosity:
 
@@ -130,6 +132,12 @@ A data.table of NFL standings including the ranks selected in the
 argument `ranks`
 
 ## Details
+
+Division, conference and draft ranks are only computed once every team
+has played at least one regular season game. Until then, they are `NA`.
+
+Only the 32 current team abbreviations are valid (see
+[divisions](https://nflseedr.com/reference/divisions.md)).
 
 nflseedR does not support all levels of tie-breakers at the moment. The
 deepest tie-breaker currently is "best net points in all games". After
@@ -152,9 +160,7 @@ try({#to avoid CRAN test problems
   games <- nflreadr::load_schedules(2021:2022)
 })
 standings <- nflseedR::nfl_standings(games)
-#> ℹ 09:10:16 | Initiate Standings & Tiebreaking Data
-#> ℹ 09:10:16 | Compute Division Ranks
-#> ℹ 09:10:16 | Compute Conference Ranks
+#> ℹ 14:49:30 | Compute standings
 print(standings, digits = 3)
 #>     season   team   conf  division games  wins true_wins losses  ties    pf
 #>      <int> <char> <char>    <char> <int> <num>     <int>  <int> <int> <int>
@@ -352,8 +358,8 @@ print(standings, digits = 3)
 #> 56:                     <NA>        16                     <NA>
 #> 57:                     <NA>         4                     <NA>
 #> 58: Head-To-Head Win PCT (3)        11      Division Tiebreaker
-#> 59: Head-To-Head Win PCT (3)        12      Division Tiebreaker
-#> 60: Head-To-Head Win PCT (3)        13      Division Tiebreaker
+#> 59: Head-To-Head Win PCT (2)        12      Division Tiebreaker
+#> 60: Head-To-Head Win PCT (2)        13      Division Tiebreaker
 #> 61:                     <NA>         2   Conference Win PCT (2)
 #> 62:                     <NA>         7   Head-To-Head Sweep (2)
 #> 63:                     <NA>        14                     <NA>

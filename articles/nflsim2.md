@@ -84,26 +84,22 @@ sims <- nflseedR::nfl_simulations(
   simulations = 4,
   chunks = 2
 )
-#> ℹ 09:19:03 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
-#> ℹ 09:19:05 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 14:58:24 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
+#> ℹ 14:58:25 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 09:19:05 | Initiate Standings & Tiebreaking Data
-#> ℹ 09:19:05 | Compute Division Ranks
-#> ℹ 09:19:05 | Compute Conference Ranks
-#> ℹ 09:19:05 | CHUNK #1: Start simulation of post season weeks "WC", "DIV",
+#> ℹ 14:58:26 | Compute standings
+#> ℹ 14:58:26 | CHUNK #1: Start simulation of post season weeks "WC", "DIV",
 #> "CON", and "SB"
-#> ℹ 09:19:05 | Compute Draft Order
-#> ℹ 09:19:05 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 14:58:26 | Compute Draft Order
+#> ℹ 14:58:25 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 09:19:05 | Initiate Standings & Tiebreaking Data
-#> ℹ 09:19:05 | Compute Division Ranks
-#> ℹ 09:19:05 | Compute Conference Ranks
-#> ℹ 09:19:05 | CHUNK #2: Start simulation of post season weeks "WC", "DIV",
+#> ℹ 14:58:26 | Compute standings
+#> ℹ 14:58:26 | CHUNK #2: Start simulation of post season weeks "WC", "DIV",
 #> "CON", and "SB"
-#> ℹ 09:19:05 | Compute Draft Order
-#> ℹ 09:19:05 | Combine simulation data
-#> ℹ 09:19:05 | Aggregate across simulations
-#> ℹ 09:19:05 | DONE!
+#> ℹ 14:58:26 | Compute Draft Order
+#> ℹ 14:58:26 | Combine simulation data
+#> ℹ 14:58:26 | Aggregate across simulations
+#> ℹ 14:58:26 | DONE!
 ```
 
 Before we take a closer look at the contents of a simulation, we will
@@ -242,8 +238,8 @@ sims <- nflseedR::nfl_simulations(
   chunks = 20,
   verbosity = "NONE"
 )
-#> ℹ 09:19:07 | Start simulation of 50 000 seasons in 20 chunks with a chunk size of 2 500.
-#> ℹ 09:20:23 | DONE!
+#> ℹ 14:58:27 | Start simulation of 50 000 seasons in 20 chunks with a chunk size of 2 500.
+#> ℹ 14:59:09 | DONE!
 ```
 
 Please pay attention to how we pass the team ratings to the simulation.
@@ -377,7 +373,7 @@ sims$overall |> dplyr::filter(team == "LAC") |> knitr::kable()
 
 | conf | division | team | wins | playoff | div1 | seed1 | won_conf | won_sb | draft1 | draft5 |
 |:-----|:---------|:-----|-----:|--------:|-----:|------:|---------:|-------:|-------:|-------:|
-| AFC  | AFC West | LAC  | 8.53 |   0.419 | 0.22 | 0.043 |    0.041 |  0.019 |  0.028 |  0.149 |
+| AFC  | AFC West | LAC  | 8.53 |   0.419 | 0.22 | 0.043 |    0.039 |  0.019 |  0.028 |  0.149 |
 
 We can see the Chargers got 8.5 wins on average. They made the playoffs
 42% of simulations, won the division in 22%, won the Super Bowl in 2%,
@@ -484,9 +480,9 @@ sims2 <- nflseedR::nfl_simulations(
 #> ℹ To maximize performance, `nfl_simulations()` does not control the output of
 #>   your function during the simulation. Please use `simulations_verify_fct()` in
 #>   advance to ensure that you do not get any unexpected results or errors.
-#> ℹ 09:20:25 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
+#> ℹ 14:59:11 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
 #> 
-#> ℹ 09:20:29 | DONE!
+#> ℹ 14:59:13 | DONE!
 #> 
 #> This message is displayed once every 8 hours.
 
@@ -497,11 +493,11 @@ sims2$overall |>
 
 |       | conf | division  | team | wins  | playoff | div1  | seed1 | won_conf | won_sb | draft1 | draft5 |
 |-------|------|-----------|------|-------|---------|-------|-------|----------|--------|--------|--------|
-| 1     | NFC  | NFC West  | ARI  | 15.35 | 1.000   | 0.982 | 0.528 | 0.756    | 0.672  | 0.000  | 0.000  |
-| 2     | NFC  | NFC South | ATL  | 15.32 | 1.000   | 0.912 | 0.406 | 0.194    | 0.176  | 0.000  | 0.000  |
-| 3     | AFC  | AFC North | BAL  | 15.27 | 1.000   | 0.858 | 0.788 | 0.772    | 0.104  | 0.000  | 0.000  |
-| 4     | AFC  | AFC East  | BUF  | 13.62 | 0.998   | 0.998 | 0.108 | 0.176    | 0.026  | 0.000  | 0.000  |
-| 5     | NFC  | NFC South | CAR  | 12.89 | 0.980   | 0.088 | 0.018 | 0.030    | 0.008  | 0.000  | 0.000  |
+| 1     | NFC  | NFC West  | ARI  | 15.35 | 1.000   | 0.982 | 0.528 | 0.780    | 0.708  | 0.000  | 0.000  |
+| 2     | NFC  | NFC South | ATL  | 15.32 | 1.000   | 0.912 | 0.406 | 0.158    | 0.136  | 0.000  | 0.000  |
+| 3     | AFC  | AFC North | BAL  | 15.27 | 1.000   | 0.858 | 0.788 | 0.800    | 0.120  | 0.000  | 0.000  |
+| 4     | AFC  | AFC East  | BUF  | 13.62 | 0.998   | 0.998 | 0.108 | 0.138    | 0.020  | 0.000  | 0.000  |
+| 5     | NFC  | NFC South | CAR  | 12.89 | 0.980   | 0.088 | 0.018 | 0.042    | 0.008  | 0.000  | 0.000  |
 | 6..27 |      |           |      |       |         |       |       |          |        |        |        |
 | 28    | NFC  | NFC West  | SEA  | 3.31  | 0.000   | 0.000 | 0.000 | 0.000    | 0.000  | 0.014  | 0.476  |
 | 29    | NFC  | NFC West  | SF   | 2.38  | 0.000   | 0.000 | 0.000 | 0.000    | 0.000  | 0.202  | 0.814  |
@@ -510,7 +506,7 @@ sims2$overall |>
 | 32    | NFC  | NFC East  | WAS  | 1.69  | 0.000   | 0.000 | 0.000 | 0.000    | 0.000  | 0.354  | 0.922  |
 
 As you might expect, the earliest alphabetical teams win a lot. The
-Cardinals won the Super Bowl in 67% of seasons! Meanwhile, the teams at
+Cardinals won the Super Bowl in 71% of seasons! Meanwhile, the teams at
 the bottom alphabetically are virtually certain to be at the top of the
 draft order with the Commanders picking 1st overall in 35% of seasons.
 
@@ -587,8 +583,8 @@ sims3 <- nflseedR::nfl_simulations(
   worst = "GB",
   verbosity = "NONE"
 )
-#> ℹ 09:20:29 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
-#> ℹ 09:20:33 | DONE!
+#> ℹ 14:59:13 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
+#> ℹ 14:59:16 | DONE!
 sims3$overall |> 
   dplyr::arrange(-wins) |> 
   gt::gt_preview(top_n = 5, bottom_n = 5)
@@ -597,16 +593,16 @@ sims3$overall |>
 |       | conf | division  | team | wins  | playoff | div1  | seed1 | won_conf | won_sb | draft1 | draft5 |
 |-------|------|-----------|------|-------|---------|-------|-------|----------|--------|--------|--------|
 | 1     | NFC  | NFC North | CHI  | 17.00 | 1.000   | 1.000 | 0.996 | 1.000    | 1      | 0.000  | 0.000  |
-| 2     | AFC  | AFC North | BAL  | 15.30 | 1.000   | 0.870 | 0.788 | 0.788    | 0      | 0.000  | 0.000  |
+| 2     | AFC  | AFC North | BAL  | 15.30 | 1.000   | 0.870 | 0.788 | 0.804    | 0      | 0.000  | 0.000  |
 | 3     | NFC  | NFC South | ATL  | 15.28 | 1.000   | 0.944 | 0.004 | 0.000    | 0      | 0.000  | 0.000  |
 | 4     | NFC  | NFC West  | ARI  | 14.55 | 1.000   | 0.966 | 0.000 | 0.000    | 0      | 0.000  | 0.000  |
-| 5     | AFC  | AFC East  | BUF  | 13.65 | 0.992   | 0.988 | 0.116 | 0.162    | 0      | 0.000  | 0.000  |
+| 5     | AFC  | AFC East  | BUF  | 13.65 | 0.992   | 0.988 | 0.116 | 0.148    | 0      | 0.000  | 0.000  |
 | 6..27 |      |           |      |       |         |       |       |          |        |        |        |
 | 28    | NFC  | NFC West  | SF   | 3.31  | 0.000   | 0.000 | 0.000 | 0.000    | 0      | 0.000  | 0.606  |
 | 29    | NFC  | NFC South | TB   | 2.53  | 0.000   | 0.000 | 0.000 | 0.000    | 0      | 0.002  | 0.776  |
 | 30    | AFC  | AFC North | PIT  | 2.47  | 0.000   | 0.000 | 0.000 | 0.000    | 0      | 0.000  | 0.682  |
-| 31    | NFC  | NFC East  | WAS  | 1.57  | 0.000   | 0.000 | 0.000 | 0.000    | 0      | 0.020  | 0.898  |
-| 32    | NFC  | NFC North | GB   | 0.00  | 0.000   | 0.000 | 0.000 | 0.000    | 0      | 0.978  | 1.000  |
+| 31    | NFC  | NFC East  | WAS  | 1.57  | 0.000   | 0.000 | 0.000 | 0.000    | 0      | 0.024  | 0.898  |
+| 32    | NFC  | NFC North | GB   | 0.00  | 0.000   | 0.000 | 0.000 | 0.000    | 0      | 0.974  | 1.000  |
 
 And this shows exactly what we expect. By defining the Bears as the best
 team, they always go 17-0, win the division, and win the Super Bowl.

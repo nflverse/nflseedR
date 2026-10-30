@@ -55,10 +55,7 @@ An object of class `gt_tbl`.
 # Calculate standings
 s <- nflreadr::load_schedules(2024) |>
   nflseedR::nfl_standings(ranks = "DRAFT")
-#> ℹ 09:10:16 | Initiate Standings & Tiebreaking Data
-#> ℹ 09:10:16 | Compute Division Ranks
-#> ℹ 09:10:16 | Compute Conference Ranks
-#> ℹ 09:10:17 | Compute Draft Order
+#> ℹ 14:49:30 | Compute standings
 
 # Create table
 tbl1 <- nfl_standings_prettify(s, grp_by = "conf", order_by = "conf_rank")

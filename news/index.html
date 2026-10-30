@@ -61,6 +61,22 @@
 <li>Changed home field elo point adjustment in <code><a href="../reference/nflseedR_compute_results.html">nflseedR_compute_results()</a></code> from 20 points to 45 points, which reflects roughly 1.8 actual points in home field advantage. (<a href="https://github.com/nflverse/nflseedR/issues/65" class="external-link">#65</a>)</li>
 <li>
 <code><a href="../reference/nfl_simulations.html">nfl_simulations()</a></code>, <code><a href="../reference/nfl_standings.html">nfl_standings()</a></code>, and <code><a href="../reference/nflseedR_compute_results.html">nflseedR_compute_results()</a></code> are significantly faster thanks to efficiency optimization. (<a href="https://github.com/nflverse/nflseedR/issues/66" class="external-link">#66</a>)</li>
+<li>
+<code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> computes standings with a new C++ engine. It is 18 to 46 times faster than before and no longer aborts with “Entered infinite loop in draft tiebreaking procedure” when many teams are tied for draft picks. Ties decided by coin toss use R’s random number generator differently, so results with a given <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> differ from previous versions.</li>
+<li>
+<code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> follows the NFL tiebreaking rules more closely: only one team advances per tiebreaking step in division ties, the remaining teams restart at the first step; conference and draft ties use common games only if the tied teams have at least four common opponents; draft ties go on to combined points ranking and net points after strength of victory and respect <code>tiebreaker_depth</code>; two separately tied groups in one division are no longer mixed in the combined points ranking step.</li>
+<li>
+<code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> ranks teams with the same win percentage by net wins (wins minus losses) while teams have played a different number of games, like the official NFL standings during the season (e.g. 2-0 ahead of 1-0, 0-0 in division games ahead of 0-1). After the final regular season week, only win percentages count.</li>
+<li>
+<code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> always returns the <code>*_tie_broken_by</code> columns of the requested <code>ranks</code> and no longer returns a stray <code>tied_for</code> column with <code>tiebreaker_depth = "RANDOM"</code>.</li>
+<li>
+<code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> ignores <code>playoff_seeds</code> if <code>ranks = "DRAFT"</code> because draft ranks need all conference ranks.</li>
+<li>
+<code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> returns <code>NA</code> division, conference and draft ranks for a season until every team has played a game.</li>
+<li>
+<code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> errors on team abbreviations other than the 32 current ones (e.g. <code>"STL"</code>, <code>"SD"</code>, <code>"OAK"</code>, <code>"LAR"</code>). Use <code><a href="https://nflreadr.nflverse.com/reference/clean_team_abbrs.html" class="external-link">nflreadr::clean_team_abbrs()</a></code> to convert old abbreviations.</li>
+<li>
+<code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> errors if <code>tiebreaker_depth = "POINTS"</code> but <code>games</code> has no scores.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.0.2" id="nflseedr-202">nflseedR 2.0.2<a class="anchor" aria-label="anchor" href="#nflseedr-202"></a></h2><p class="text-muted">CRAN release: 2025-11-16</p>

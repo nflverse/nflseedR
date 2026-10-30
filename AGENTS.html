@@ -59,6 +59,18 @@
 <div class="section level2">
 <h2 id="this-package">This package<a class="anchor" aria-label="anchor" href="#this-package"></a></h2>
 <!-- Insert package-specific content here. use_tidy_agents() will preserve this section when updating the rest of the file. -->
+<div class="section level3">
+<h3 id="c-standings-engine">C++ standings engine<a class="anchor" aria-label="anchor" href="#c-standings-engine"></a></h3>
+<p><code><a href="reference/nfl_standings.html">nfl_standings()</a></code> uses a C++ engine (<code>src/</code>). The old data.table code is the internal <code>nfl_standings2()</code>, kept for comparisons. Before touching any standings, tiebreaker or <code>src/</code> code, read <code>dev/cpp-standings-engine.md</code> (rule spec, decision log) and <code>vignettes/articles/tiebreaker.Rmd</code> (the rules). Never resolve an open decision on your own; ask the maintainer and record the answer in the decision log.</p>
+</div>
+<div class="section level3">
+<h3 id="c-code-src">C++ code (<code>src/</code>)<a class="anchor" aria-label="anchor" href="#c-code-src"></a></h3>
+<ul><li>cpp11 only (no Rcpp), C++20. <code>devtools::document()</code> regenerates <code>src/cpp11.cpp</code> and <code>R/cpp11.R</code>; never edit them by hand.</li>
+<li>Only <code>src/bindings.cpp</code> includes R or cpp11 headers. The engine is pure C++.</li>
+<li>Never call the R API while C++ objects with destructors are alive; throw <code>nflseedr::EngineError</code> and use <code>cpp11::check_user_interrupt()</code>.</li>
+<li>No printing, <code>exit()</code>, <code>abort()</code>, <code>rand()</code> or non-portable <code>Makevars</code> flags (CRAN). Random numbers only through <code>nflseedr::RandomSource</code>.</li>
+<li>Run <code>clang-format -i</code> on changed C++ files. Review standings snapshot changes carefully (see <code>dev/cpp-standings-engine.md</code>).</li>
+</ul></div>
 </div>
 <div class="section level2">
 <h2 id="package-development">Package development<a class="anchor" aria-label="anchor" href="#package-development"></a></h2>

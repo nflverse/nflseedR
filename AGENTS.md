@@ -2,6 +2,29 @@
 
 ## This package
 
+### C++ standings engine
+
+[`nfl_standings()`](https://nflseedr.com/reference/nfl_standings.md)
+uses a C++ engine (`src/`). The old data.table code is the internal
+`nfl_standings2()`, kept for comparisons. Before touching any standings,
+tiebreaker or `src/` code, read `dev/cpp-standings-engine.md` (rule
+spec, decision log) and `vignettes/articles/tiebreaker.Rmd` (the rules).
+Never resolve an open decision on your own; ask the maintainer and
+record the answer in the decision log.
+
+### C++ code (`src/`)
+
+- cpp11 only (no Rcpp), C++20. `devtools::document()` regenerates
+  `src/cpp11.cpp` and `R/cpp11.R`; never edit them by hand.
+- Only `src/bindings.cpp` includes R or cpp11 headers. The engine is
+  pure C++.
+- Never call the R API while C++ objects with destructors are alive;
+  throw `nflseedr::EngineError` and use `cpp11::check_user_interrupt()`.
+- No printing, `exit()`, `abort()`, `rand()` or non-portable `Makevars`
+  flags (CRAN). Random numbers only through `nflseedr::RandomSource`.
+- Run `clang-format -i` on changed C++ files. Review standings snapshot
+  changes carefully (see `dev/cpp-standings-engine.md`).
+
 ## Package development
 
 ### Key commands

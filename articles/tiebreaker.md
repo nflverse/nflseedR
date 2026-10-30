@@ -101,7 +101,8 @@ from each conference, the following steps will be taken.
 
 1.  Head-to-head, if applicable.
 2.  Best won-lost-tied percentage in games played within the conference.
-3.  Best won-lost-tied percentage in common games, minimum of four.
+3.  Best won-lost-tied percentage in common games, minimum of four
+    common opponents.
 4.  Strength of victory in all games.
 5.  Strength of schedule in all games.
 6.  Best combined ranking (see [Other Tie-Breaking
@@ -139,7 +140,8 @@ division qualifies for a Wild Card berth.
 2.  Head-to-head sweep. (Applicable only if one club has defeated each
     of the others or if one club has lost to each of the others.)
 3.  Best won-lost-tied percentage in games played within the conference.
-4.  Best won-lost-tied percentage in common games, minimum of four.
+4.  Best won-lost-tied percentage in common games, minimum of four
+    common opponents.
 5.  Strength of victory in all games.
 6.  Strength of schedule in all games.
 7.  Best combined ranking (see [Other Tie-Breaking
@@ -165,7 +167,11 @@ division qualifies for a Wild Card berth.
     three-club format.
 2.  In comparing records against common opponents among tied teams, the
     best won-lost-tied percentage is the deciding factor, since teams
-    may have played an unequal number of games.
+    may have played an unequal number of games. The minimum of four in
+    the Wild Card and draft procedures refers to common opponents, not
+    common games. A club can play a common opponent twice if it is a
+    division rival, so four common games can come from only three common
+    opponents.
 3.  To determine home field priority among division winners, apply Wild
     Card tiebreakers.
 4.  To determine home field priority for Wild Card qualifiers, apply
@@ -244,7 +250,8 @@ participating in the following steps (draft pick assignment is reversed
 to division or conference ties. Worse teams get earlier picks):
 
 1.  Head-to-head, if applicable. The loser gets the earlier pick.
-2.  Worst won-lost-tied percentage in common games (minimum of four).
+2.  Worst won-lost-tied percentage in common games (minimum of four
+    common opponents).
 3.  Worst Strength of victory in all games.
 4.  Worst combined ranking among all teams in points scored and points
     allowed in all games.

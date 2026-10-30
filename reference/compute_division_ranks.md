@@ -145,12 +145,12 @@ nflseedR::load_sharpe_games() |>
   nflseedR::compute_division_ranks() |>
   purrr::pluck("standings")
 })
-#> ℹ 09:10:06 | Calculating team data
-#> ℹ 09:10:06 | Calculating head to head
-#> ℹ 09:10:06 | Calculating division rank #1
-#> ℹ 09:10:06 | Calculating division rank #2
-#> ℹ 09:10:06 | Calculating division rank #3
-#> ℹ 09:10:06 | Calculating division rank #4
+#> ℹ 14:49:21 | Calculating team data
+#> ℹ 14:49:21 | Calculating head to head
+#> ℹ 14:49:21 | Calculating division rank #1
+#> ℹ 14:49:21 | Calculating division rank #2
+#> ℹ 14:49:21 | Calculating division rank #3
+#> ℹ 14:49:21 | Calculating division rank #4
 #> # A tibble: 64 × 16
 #>      sim conf  division team  games  wins true_wins losses  ties win_pct div_pct
 #>    <int> <chr> <chr>    <chr> <int> <dbl>     <int>  <int> <int>   <dbl>   <dbl>
