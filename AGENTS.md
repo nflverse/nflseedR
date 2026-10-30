@@ -2,14 +2,14 @@
 
 <!-- Insert package-specific content here. use_tidy_agents() will preserve this section when updating the rest of the file. -->
 
-### Ongoing work: C++ standings engine
+### C++ standings engine
 
-`nfl_standings()` is being rewritten as a C++ engine (branch
-`cpp-standings-engine`). Before touching any standings, tiebreaker or `src/`
-code, read `dev/cpp-standings-engine.md` (plan, rule spec, decision log,
-status) and `vignettes/articles/tiebreaker.Rmd` (the rules). Never resolve an
-open decision from the plan on your own; ask the maintainer and record the
-answer in the plan.
+`nfl_standings()` uses a C++ engine (`src/`). The old data.table code is the
+internal `nfl_standings2()`, used in tests for comparison. Before touching
+any standings, tiebreaker or `src/` code, read `dev/cpp-standings-engine.md`
+(rule spec, decision log) and `vignettes/articles/tiebreaker.Rmd` (the
+rules). Never resolve an open decision on your own; ask the maintainer and
+record the answer in the decision log.
 
 ### C++ code (`src/`)
 
@@ -19,9 +19,9 @@ answer in the plan.
 - Never call the R API while C++ objects with destructors are alive; throw
   `nflseedr::EngineError` and use `cpp11::check_user_interrupt()`.
 - No printing, `exit()`, `abort()`, `rand()` or non-portable `Makevars` flags
-  (CRAN). Random numbers only through the engine's `Rng` concept.
-- Run `clang-format -i` on changed C++ files. Keep the C++/R comparison tests
-  passing.
+  (CRAN). Random numbers only through `nflseedr::RandomSource`.
+- Run `clang-format -i` on changed C++ files. Review standings snapshot
+  changes carefully (see `dev/cpp-standings-engine.md`).
 
 ## Package development
 

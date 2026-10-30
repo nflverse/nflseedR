@@ -1,238 +1,153 @@
 # C++ standings engine
 
-Living plan for replacing the data.table implementation of `nfl_standings()`
-with a C++ engine. Branch: `cpp-standings-engine`. Started 2026-10-30.
+`nfl_standings()` computes standings with a C++ engine (`src/`). The old
+data.table implementation is kept as the internal `nfl_standings2()`
+(`R/standings_r*.R`) so tests can compare both. Branch:
+`cpp-standings-engine`, started 2026-10-30.
 
-**Agents: read this whole file before touching any standings code.** Keep the
-[status](#status) and [decision log](#decision-log) up to date at the end of
-every session. Never resolve an open decision on your own. Ask the maintainer
-and record the answer here.
+**Agents: read this file before touching standings, tiebreaker or `src/`
+code.** Record every new behavior difference between `nfl_standings()` and
+`nfl_standings2()` in the [decision log](#decision-log). Never resolve an open
+decision on your own; ask the maintainer and record the answer here.
 
 ## Goal
 
 Make `nfl_standings()` (and the draft ranking step in `nfl_simulations()`)
-30x or more faster without changing its interface or output schema.
+30x or more faster without changing its interface.
 
-Baseline on master `6673c0e`, 10,000 simulated regular seasons (2.7M game
-rows), Apple Silicon, `verbosity = "NONE"`:
+`data-raw/bench_standings.R`: 10,000 simulated regular seasons (2.7M game
+rows), Apple Silicon, `verbosity = "NONE"`, optimized build:
 
-| `ranks` | time |
-|---|---|
-| `"DIV"` | 4.0s |
-| `"CONF"` | 8.2s |
-| `"DRAFT"` | 9.2s |
-| `"CONF"`, one season | 82ms per call |
+| `ranks` | `nfl_standings2()` | `nfl_standings()` | speedup |
+|---|---|---|---|
+| `"DIV"` | 3.29s | 186ms | 18x |
+| `"CONF"` | 6.39s | 207ms | 31x |
+| `"DRAFT"` | 6.99s | 229ms | 31x |
+| `"CONF"`, one season | 41ms | 0.89ms | 46x |
 
-Profiling showed about 93% of the time inside `[.data.table` (35% in
-`forderv` alone). Each step filters, sorts or joins the full table, even
-though each season has only 32 teams and every tie involves at most 4 teams
-per step. 76% of teams are in a conference win percentage tie at the start,
-so the tiebreaking loops run over a large part of the table every time.
-
-## Approach
-
-This is **not** a line-by-line translation of the data.table code. The engine
-is designed from the rules, one season at a time:
-
-1. The rules are the spec:
-   [`vignettes/articles/tiebreaker.Rmd`](../vignettes/articles/tiebreaker.Rmd)
-   plus the [rule spec](#rule-spec) below, which makes the article precise
-   and records how nflseedR interprets it.
-2. The current R implementation (moved to `R/standings_r_*.R`) is the
-   **reference** in tests. Wherever the rules don't settle a behavior, the
-   reference does, unless the decision log says otherwise.
-3. Every known difference between the article and the reference is a
-   decision in the [decision log](#decision-log). The engine follows the
-   recorded decision. Comparison tests allow exactly those differences and
-   nothing else.
-
-## Scope
-
-In scope:
-
-- `nfl_standings()` for all `ranks`, `tiebreaker_depth`, `playoff_seeds` and
-  `verbosity` values.
-- The draft ranking step in `simulations_simulate_chunks()` (currently
-  `add_draft_ranks(dg = NULL)` with the `h2h` attribute workaround).
-
-Out of scope:
-
-- The legacy `compute_division_ranks()`, `compute_conference_seeds()` and
-  `compute_draft_order()` functions and `simulate_nfl()`.
-- Game simulation (`nflseedR_compute_results()`) and playoff simulation.
-- Threads inside C++. Parallelism stays at the `furrr` chunk level (see D8).
+Both columns include copying the 2.7M-row input (about 70ms). Of the rest,
+the C++ engine itself takes about 0.1s; validating and encoding the input in
+R takes most of the remaining time.
 
 ## Rule spec
 
-Definitions for one season. "Games" means regular season games
-(`game_type == "REG"`) unless stated otherwise. A tie game counts as half a
-win and half a loss.
+The rules are
+[`vignettes/articles/tiebreaker.Rmd`](../vignettes/articles/tiebreaker.Rmd).
+This section makes them precise. Where the rules don't settle a behavior,
+`nfl_standings2()` does, unless the decision log says otherwise.
+
+"Games" means regular season games (`game_type == "REG"`) unless stated
+otherwise. A tie game counts as half a win and half a loss.
 
 ### League structure
 
 Every season has **exactly 32 teams** in 2 conferences, 8 divisions and 4
-teams per division. The valid teams are
+teams per division: `nflseedR::divisions` without `LAR`, `OAK`, `STL` and
+`SD` (D9). The engine relies on these constants (fixed-size arrays, a 32×32
+head-to-head matrix).
 
-```r
-nflseedR::divisions |>
-  dplyr::filter_out(team %in% c("LAR", "OAK", "STL", "SD"))
-```
-
-(`ARI ATL BAL BUF CAR CHI CIN CLE DAL DEN DET GB HOU IND JAX KC LA LAC LV MIA
-MIN NE NO NYG NYJ PHI PIT SEA SF TB TEN WAS`). The old abbreviations `LAR`,
-`OAK`, `STL` and `SD` are invalid. `standings_validate_games()` errors on any
-other abbreviation in `away_team` or `home_team` (D9). The engine relies on
-these constants: fixed-size arrays (`std::array<..., 32>`, a 32×32
-head-to-head matrix, 4 teams per division) and no code paths for other
-league sizes.
-
-**Teams without games** are possible in exactly one situation: week 1 has
-started but not every team has played yet. The reference leaves such teams
-out of the output (only teams with at least one regular season game get a
-row). The engine keeps that behavior: fixed 32-team arrays plus a "has
-played" mask that controls which rows are written. Ranks are computed among
-the teams that have played. Tested by the "partial week 1" snapshot.
+Only teams with at least one regular season game get an output row.
+**Division, conference and draft ranks (and their labels) are `NA` until
+every team has played a game** in that season.
 
 ### Records
 
 - `wins` = wins + 0.5 × ties. `win_pct = wins / games`.
 - `div_pct`, `conf_pct`: the same restricted to division or conference games.
   0 if no such games.
-- **Head-to-head** between teams in set S: games of a team against the other
-  members of S. Win percentage = wins / games. A team with no games against S
-  gets 0 (division procedure).
-- **Head-to-head sweep** (conference and draft procedures): 1 if the team won
-  every game against every other member of S *and* played each of them, 0 if
-  it lost all of them, otherwise not applicable (treated as 0.5, i.e. no
-  winner). For 2 teams from different divisions or conferences this is the
-  same as head-to-head win percentage, because such teams meet at most once.
-- **Common games** of set S: games against opponents that *every* member of
-  S played. Members of S are never common opponents. Common win percentage =
-  wins / games in those games, 0 if none. Common point differential = sum of
-  `result` in those games.
-- **Strength of victory (SOV)**: sum of `wins` of beaten opponents (counted
-  once per win) / sum of `games` of those opponents. 0 if no wins.
-- **Strength of schedule (SOS)**: sum of `wins` of all opponents (once per
-  game) / sum of `games` of those opponents.
-- **Combined points ranking** among a set of teams (conference or league):
-  rank of points scored (descending) + rank of points allowed (ascending),
-  `ties.method = "min"`. Lower is better.
-- **Net points**: point differential in conference games (`conf_pd`, NA if
-  no conference games) or all games (`pd`).
-- Net touchdowns are not implemented (no data). The step after net points is
-  the coin toss.
+- **Head-to-head** (division): win percentage in games against the other
+  tied teams, 0 without such games.
+- **Head-to-head sweep** (conference and draft): best if the team won every
+  game against every other tied team *and* played each of them, worst if it
+  lost all of them, otherwise in between.
+- **Common games** of the tied teams: games against opponents that *every*
+  tied team played. Tied teams are never common opponents. Common win
+  percentage (0 if none), common point differential (sum of `result`).
+- **SOV**: sum of `wins` of beaten opponents (once per win) / sum of their
+  `games`. 0 without wins. **SOS**: the same for all opponents (once per
+  game).
+- **Combined points ranking** among the conference or league teams: rank of
+  points scored (descending) + rank of points allowed (ascending), ties get
+  the lowest rank. Lower is better.
+- **Net points**: point differential in conference games (worst possible if
+  no conference games) or all games.
+- Net touchdowns are not implemented (no data).
 
-All comparisons of percentages must be exact. Count wins in half-wins so
-every percentage is a ratio of integers and compare with cross-multiplication.
-Output columns use the same formulas as today (`wins / games` in double), so
-they are bit-identical to the reference.
+**Comparing records** (overall, division, conference): by win percentage.
+During the regular season, equal percentages are broken by net wins (wins −
+losses), so 2-0 ranks ahead of 1-0 and 0-0 ahead of 0-1 (D13). Once the
+regular season is complete (its final week, 17 through 2020 and 18 since
+2021, or a playoff game was played), only percentages count, even if a
+cancelled game left teams with fewer games. With `sim` instead of `season`,
+18 weeks are assumed; `nfl_simulations()` always ranks complete seasons.
+Head-to-head and common games compare percentages only.
+
+Win counts are half-wins, so every percentage is a ratio of integers and
+comparisons are exact (`Ratio`, cross-multiplication). Output columns use the
+same double formulas as `nfl_standings2()` and are bit-identical.
 
 ### Tiebreaker depth
 
-`tiebreaker_depth` cuts the step lists off. Remaining ties go to a coin toss.
-
-| depth | division and conference steps used |
+| depth | steps used (division, conference, draft) |
 |---|---|
-| `"RANDOM"` (0) | none: rank by win percentage, break every tie at random |
+| `"RANDOM"` (0) | none: every tie is broken at random |
 | `"PRE-SOV"` (1) | everything before SOV |
 | `"SOS"` (2, default) | everything through SOS |
-| `"POINTS"` (3) | everything through net points in all games |
+| `"POINTS"` (3) | everything through net points in all games. Needs scores. |
 
-Draft: see D3.
+### One team per step
+
+All procedures pick **one team at a time** from a block of tied teams (same
+`win_pct`; draft: same `exit`, `win_pct`, `sos`). Run the steps on the
+candidates: a step with one best team gives it the next rank. A step that
+eliminates some teams restarts the steps with the remaining teams. A step
+that changes nothing goes on to the next step. After the coin toss, or when
+a team took the rank, all teams that are left come back for the next rank.
 
 ### Division ranks (`div_rank`)
 
-Rank teams within each division by `win_pct`. Each block of teams with equal
-`win_pct` is broken with these steps (the same list for 2 and 3+ clubs):
+Steps: head-to-head win percentage, division win percentage, common games
+win percentage, conference win percentage, SOV, SOS, combined points ranking
+(conference), combined points ranking (league), common games point
+differential, point differential, coin toss.
 
-1. Head-to-head win percentage.
-2. Division win percentage.
-3. Common games win percentage.
-4. Conference win percentage.
-5. SOV. 6. SOS.
-7. Combined points ranking (conference). 8. Combined points ranking (league).
-9. Common games point differential. 10. Point differential.
-11. Coin toss.
-
-After any step that splits the block, each remaining group of tied teams
-restarts at step 1 with only its own members (head-to-head and common games
-are recomputed for the smaller set). How many ranks one step assigns is D1.
+The step that decides the last two teams labels both of them.
 
 ### Conference ranks (`conf_rank`)
 
-Division winners (`div_rank == 1`) take ranks 1 to 4, everybody else ranks
-5 to 16. Within each group, rank by `win_pct`. Each block of teams with equal
-`win_pct` is resolved **one seed at a time**:
+Division winners take ranks 1 to 4, all other teams 5 to 16. For every rank:
 
-1. Candidates = all unseeded teams in the block.
-2. If all candidates are from the same division, the best `div_rank` takes
-   the seed.
-3. Otherwise apply division reduction: keep only the best `div_rank` of each
-   division. The other teams sit out this seed only.
-4. Run the steps on the candidates until one team is best:
-   1. Head-to-head sweep.
-   2. Conference win percentage.
-   3. Common games win percentage, minimum of four (D2).
-   4. SOV. 5. SOS.
-   6. Combined points ranking (conference). 7. Combined points ranking
-      (league).
-   8. Net points in conference games. 9. Net points in all games.
-   10. Coin toss.
+1. If all candidates are from the same division, rank them all by `div_rank`
+   ("Division Tiebreaker").
+2. Otherwise keep only the best `div_rank` of each division (reduction).
+3. Steps: head-to-head sweep, conference win percentage, common games win
+   percentage (only with at least 4 common opponents, D14), SOV,
+   SOS, combined points ranking (conference), combined points ranking
+   (league), net points in conference games, net points, coin toss.
 
-   A step with one best team: that team takes the seed. A step that
-   eliminates some teams but leaves 2 or more tied: restart step 4 with the
-   remaining teams. A step that changes nothing: go to the next step.
-5. Remove the seeded team from the block and go back to 1. Teams that were
-   eliminated or reduced come back for the next seed. Division ranks
-   ("original seeding within a division") never change.
-
-For division winners the reduction never applies because every candidate is
-from a different division. With `playoff_seeds = k`, stop once seed k is
-assigned and set lower ranks to `NA` in the output (D7).
+The last team of a block gets no label (D4). With `playoff_seeds = k`, blocks
+that start below seed k are skipped and ranks below k are `NA`. Ignored for
+`ranks = "DRAFT"` (D7).
 
 ### Draft ranks (`draft_rank`)
 
-The draft procedure works differently from the division and conference
-procedures:
+Worse teams pick first, so every comparison is reversed.
 
-- **Reversed:** the worse team gets the earlier pick. Every comparison is
-  inverted ("worst SOV", "loser of head-to-head").
-- **Playoff exit comes first:** non-playoff teams pick 1–18, then Wild Card
-  losers, Divisional losers, Conference losers, the Super Bowl loser, and the
-  Super Bowl winner last (`exit`).
-- **SOS is the first tiebreaker** and is part of the initial order, not a
-  late step.
-- **Existing ranks are reused:** division and conference tiebreakers are not
-  re-run. `div_rank` and `conf_rank` decide ties within a division or
-  conference.
-- **At most two teams reach the real tiebreakers:** after reduction, only one
-  team per conference is left. There is no 3+ club format.
+1. Sort by `exit` (non-playoff teams, then Wild Card, Divisional, Conference
+   and Super Bowl losers, the Super Bowl winner last), `win_pct`, `sos`.
+2. If all candidates are from the same division, the worse `div_rank` picks
+   first ("Division Tiebreaker"). Else if all are from the same conference,
+   the worse `conf_rank` ("Conference Tiebreaker").
+3. Otherwise keep the worst `conf_rank` of each conference (two teams).
+4. Steps: head-to-head, common games win percentage (minimum of four common
+   opponents, D14), SOV, combined points ranking (league), net points, coin toss (D3).
 
-Procedure:
+`exit` is the last playoff round of a team (`"SB_WIN"` for the winner,
+`"REG"` without playoff games). In simulations, it comes from the simulated
+playoffs and existing division and conference ranks are reused
+(`standings_add_draft_ranks()`).
 
-1. Sort by `exit`, `win_pct`, `sos` ascending. Each block with equal values is
-   resolved **one pick at a time**:
-2. If all candidates are from the same division, the worst `div_rank` takes
-   the pick. Else, if all are from the same conference, the worst `conf_rank`
-   takes it.
-3. Otherwise apply reduction: keep the worst `div_rank` of each division,
-   then the worst `conf_rank` of each conference. Exactly two teams remain,
-   one from each conference.
-4. Two-club steps, the worse team takes the pick: head-to-head (loser),
-   common games win percentage (minimum of four, worse), SOV (worse), and
-   then see D3, then coin toss.
-5. Remove the team that took the pick and go back to 2.
-
-Draft ranks need all 16 conference ranks, no matter what `playoff_seeds` is
-(D7).
-
-In `nfl_standings()`, `exit` is the `game_type` of each team's last game
-(`"SB"` becomes `"SB_WIN"` for the winner), with `"REG"` for non-playoff
-teams. In simulations, `exit` comes from the simulated playoffs.
-
-### Tie labels (`*_tie_broken_by`)
-
-These labels are kept unchanged:
+### Labels (`*_tie_broken_by`)
 
 - Division: `"Head-To-Head Win PCT (n)"`, `"Division Win PCT (n)"`,
   `"Common Games Win PCT (n)"`, `"Conference Win PCT (n)"`, `"SOV (n)"`,
@@ -246,304 +161,172 @@ These labels are kept unchanged:
   `"Coin Toss"`.
 - Draft: `"Division Tiebreaker"`, `"Conference Tiebreaker"`,
   `"Head-To-Head (n)"`, `"Common Games Win PCT (n)"`, `"SOV (n)"`,
-  `"Coin Toss"`.
+  `"League Points Rank (n)"`, `"Point Differential (n)"`, `"Coin Toss"`.
 
-`n` is the number of candidates in the step that decided it. Teams never in a
-tie get `NA`.
-
-Behavior of the reference:
-
-- Division: every team in a tie gets the label of the step that fixed its
-  rank.
-- Conference and draft: the team that takes the seed or pick gets the label.
-  The last remaining team of a block gets `NA` (D4).
-- With `"RANDOM"`, every team sharing a win percentage gets `"Coin Toss"`. In
-  conference ranks this groups by `(sim, conf, win_pct)` across division
-  winners and wild cards.
+`n` is the number of candidates in the deciding step. Teams never in a tie
+get `NA`. With `"RANDOM"`, every team of a tied block gets `"Coin Toss"`.
 
 ## Output schema
 
-Columns and types must stay as they are (the output is consumed by
-`nfl_simulations()`, `summary()`, `standings_prettify()` and users):
-
-`sim|season <int>, team <chr>, conf <chr>, division <chr>, games <int>,
-wins <dbl>, true_wins <int>, losses <int>, ties <int>, [pf, pa, pd],
-win_pct <dbl>, div_pct <dbl>, conf_pct <dbl>, sov <dbl>, sos <dbl>,
-div_rank <int>, div_tie_broken_by <chr>, conf_rank <int>,
-conf_tie_broken_by <chr>, exit <chr>, draft_rank <int>,
+`sim|season, team, conf, division, games <int>, wins <dbl>,
+true_wins <int>, losses <int>, ties <int>, [pf, pa, pd], win_pct, div_pct,
+conf_pct, sov, sos <dbl>, div_rank <int>, div_tie_broken_by <chr>,
+conf_rank <int>, conf_tie_broken_by <chr>, exit <chr>, draft_rank <int>,
 draft_tie_broken_by <chr>`
 
-- Columns after `sos` exist only for the requested `ranks`.
-- `pf`, `pa`, `pd` exist only if `home_score`/`away_score` were supplied.
-- Sorted by sim, division, div_rank (or sim, division if no ranks).
-- `season` instead of `sim` if the input used `season`.
-- Today a `*_tie_broken_by` column is missing if no tie happened (D6).
+- Rank and label columns exist for the requested `ranks` (labels always,
+  D6). `exit` only for `"DRAFT"`.
+- `pf`, `pa`, `pd` only with `home_score`/`away_score` (integer if both score
+  columns are integer).
+- Sorted by season, division, division rank, team.
 
 ## Architecture
 
 ```
-R/standings.R          nfl_standings(): validate, encode, call C++, decode
-R/standings_engine.R   encoding (teams/sims to integers), label lookup,
-                       MAX-verbosity reporting, engine switch
-R/standings_r_*.R      current R implementation, renamed, otherwise untouched
+R/standings.R          nfl_standings(): match arguments, call standings_compute()
+R/standings_cpp.R      standings_compute(): validate, encode, call C++, decode;
+                       standings_add_draft_ranks() for simulations; labels
+R/standings_utils.R    standings_validate_games() (shared), finalize_standings()
+R/standings_r.R        nfl_standings2(): the old implementation (internal)
+R/standings_r_*.R      its helpers, unchanged
 src/
-  Makevars             CXX_STD = CXX20 (no other flags)
-  Makevars.win         same
-  cpp11.cpp            generated by cpp11::cpp_register(), never edit
-  bindings.cpp         the only file including cpp11 or R headers
-  engine/
-    types.hpp          TeamId, Tiebreaker (enum class), Ratio, constants
-    season.hpp/.cpp    SeasonData: records, h2h matrix, SOV, SOS, points ranks
-    division.cpp       division procedure
-    conference.cpp     conference procedure
-    draft.cpp          draft procedure
-    rng.hpp            Rng concept, RRng (R's RNG), test RNG
-    engine.hpp/.cpp    rank_seasons(): loop over seasons, write outputs
-tests/testthat/
-  test-engine.cpp            C++ unit tests (testthat's Catch)
-  test-standings_engine.R    comparison tests against the reference
-  helper-standings_engine.R  random season generator, comparison helpers
-data-raw/bench_standings.R   benchmark (baseline numbers above)
+  bindings.cpp         standings_cpp(), draft_ranks_cpp(), RRandom (R's RNG).
+                       The only engine file that includes R or cpp11 headers
+  engine/types.hpp     constants, Ratio, Step, label codes, RandomSource
+  engine/season.hpp    SeasonData: records, h2h, SOV, SOS, points ranks
+  season.cpp
+  engine/procedures.hpp  division, conference and draft procedures
+  procedures.cpp
+  engine/engine.hpp    compute_standings(), compute_draft_ranks(): season loop
+  engine.cpp
+  cpp11.cpp            generated by devtools::document(), never edit
 ```
 
-R only compiles `.cpp` files at the top level of `src/`. Either keep `.cpp`
-files flat in `src/` (e.g. `src/engine_division.cpp`) with headers in
-`src/engine/`, or list the objects in `Makevars`. Prefer the first.
-
-### Boundary
-
-- R validates and encodes. Team abbreviations become ids 0..31 from the 32
-  valid teams (see [league structure](#league-structure)), with ids for
-  teams, divisions and conferences in alphabetical order, so sorting by id is
-  the same as sorting by name. Keep the lookup tables in `R/sysdata.rda`
-  (built in `data-raw/internal_constants.R`). Sims become dense ids
-  1..S. `game_type` becomes an integer code.
-- One C++ entry point per job:
-  - `standings_cpp(games..., ranks, depth, playoff_seeds)` returns a list of
-    columns, rows already in output order.
-  - `draft_ranks_cpp(games..., sim_team, div_rank, conf_rank, exit, depth)`
-    for simulations. It rebuilds `SeasonData` from the games (microseconds)
-    instead of passing `h2h` around. This removes the `in_sim` / `h2h`
-    attribute workaround.
-- C++ returns labels as integer codes (tiebreaker × n). R turns them into
-  text with one vector lookup.
-- `verbosity = "MAX"`: C++ returns how often each step was used, and R
-  prints the step messages afterwards in canonical order.
-
-### Engine
-
-- Pure C++20, no R headers. Inputs `std::span<const int32_t>` /
-  `std::span<const double>`, outputs written to preallocated spans.
-- Group games by sim in O(n) (counting sort on dense sim ids), then process
-  one season at a time. Scratch memory (32×32 head-to-head matrix, records)
-  is reused across seasons: no allocation in the loop, memory independent of
-  the number of seasons.
-- Procedures are step tables (`constexpr std::array` of
-  `{Tiebreaker, min_depth, metric}`), not copied code. Two strategies:
-  *rank the block* (division) and *pick one winner* (conference, draft).
-- `struct Ratio { int32_t num, den; }` with `operator<=>` by
-  cross-multiplication (64-bit).
-- Random numbers only through an `Rng` concept. `RRng` wraps
-  `GetRNGstate()`/`PutRNGstate()` (RAII) and `R_unif_index()`. Coin toss =
-  uniform choice among the remaining candidates (one at a time) or a
-  Fisher–Yates shuffle (rank a block).
-- Errors: R validates before calling. Inside C++, a broken assumption throws
-  `nflseedr::EngineError`. cpp11 turns it into an R error. Check for user
-  interrupts every ~1,000 seasons with `cpp11::check_user_interrupt()`.
+- R encodes teams as ids 0..31 (alphabetical, so sorting by id equals sorting
+  by name), seasons as dense ids, `game_type` as 0..4. Label codes are
+  `step * 10 + n` (`Step` in `types.hpp`), decoded by `standings_labels()`.
+- Games are grouped by season with a counting sort. Each season is processed
+  on its own with fixed-size arrays.
+- Coin tosses use `R_unif_index()`, so `set.seed()` makes results
+  reproducible (but different from `nfl_standings2()`, D5).
 
 ## C++ conventions
 
 Also summarized in `AGENTS.md`.
 
-- cpp11 (no Rcpp), C++20, `SystemRequirements: C++20`. If an old CRAN macOS
-  build can't handle it, fall back to C++17 (replace `std::span` and `<=>`).
-- Use `std::span`, `std::array`, `constexpr`, `enum class`, concepts,
-  `[[nodiscard]]`, `noexcept` in hot paths, `int32_t` for R integers. Avoid
-  `<format>`, modules, coroutines, exceptions in the hot path.
-- C++ Core Guidelines: no raw `new`/`delete`, no global mutable state, const
-  by default, RAII for every resource.
-- Never call the R API (`Rf_error`, `R_CheckUserInterrupt`, allocation)
-  while C++ objects with destructors are alive. Use `cpp11::safe[]`,
-  `cpp11::check_user_interrupt()` or throw.
-- Not allowed on CRAN: printing (`std::cout`, `printf`), `exit`, `abort`,
-  `rand()`, non-portable flags in `Makevars` (`-O3`, `-march=native`,
-  `-Werror`, `-Wall`). Strict warnings belong in `~/.R/Makevars` and CI.
-- Tooling (in `.Rbuildignore`): `.clang-format` (Google based, 80 columns),
-  `.clang-tidy` (`bugprone-*`, `performance-*`, `modernize-*`,
-  `cppcoreguidelines-*`, `readability-*`, minus noisy checks), `.clangd`
-  with R and cpp11 include paths. Install with `brew install llvm`. The
-  `clangd-lsp` Claude Code plugin gives live diagnostics.
-- `devtools::document()` regenerates `src/cpp11.cpp` and `R/cpp11.R`.
+- cpp11 (no Rcpp), C++20, `SystemRequirements: C++20`.
+- Never call the R API while C++ objects with destructors are alive. Throw
+  `nflseedr::EngineError`, use `cpp11::safe[]` and
+  `cpp11::check_user_interrupt()`.
+- Not allowed on CRAN: printing, `exit`, `abort`, `rand()`, non-portable
+  flags in `Makevars`.
+- Run `clang-format -i` on changed C++ files (`.clang-format`: Google
+  style, 80 columns).
 
 ## Tests
 
-1. **Comparison harness** (written before any C++):
-   - Generator for random seasons rich in ties: results in -3..3 including
-     tie games, small scores so point steps are reached, partial seasons
-     (weeks 1–4, and a partly played week 1 with teams without games), and
-     played playoffs for draft ranks. Always the 32 valid teams.
-   - Every combination of `ranks` × `tiebreaker_depth` × `playoff_seeds`.
-   - Compare C++ and reference: identical output, except
-     - groups decided by `"Coin Toss"`: same teams, same set of ranks;
-     - the differences that the decision log allows.
-   - About 2,000 seasons in `devtools::test()`; a larger run on demand
-     (`NFLSEEDR_LONG_TESTS=true`).
-   - Prove the harness can fail: break one step on purpose, see it fail,
-     revert.
-2. **C++ unit tests** (`usethis::use_catch()`): `Ratio` ordering, each
-   strategy on hand-built 2-, 3- and 4-team ties, restart behavior, coin
-   toss with a fixed RNG sequence.
-3. **Rule scenarios** in R: one small hand-built season per tiebreaker step,
-   each named after the step it tests. Use known historical cases where
-   possible.
-4. **Snapshots**: standings snapshots of real seasons stay identical (they
-   rarely hit deep tiebreakers and contain few coin tosses; investigate any
-   change). Simulation snapshots change once because the random number
-   stream changes (D5); review them before accepting.
-5. **Deep tiebreaker reference** (`test-standings.R`, created before M0 from
-   the R implementation):
-   - Fixture `tests/testthat/deep_tiebreaker_games.rds`: synthetic
-     tie-heavy seasons on the 2022 schedule, with scores, picked so that
-     together they reach every tiebreaker label the reference can produce at
-     depths `"POINTS"`, `"SOS"` and `"PRE-SOV"`. Built by
-     `data-raw/build_deep_tiebreaker_games.R`. Don't regenerate it unless
-     needed. It is frozen so the snapshots stay comparable.
-   - Snapshots `_snaps/standings/deep_tiebreakers_{points,sos,pre-sov}.csv`:
-     full `ranks = "DRAFT"` output of the reference, seeded with
-     `with_reference_seed()` from `helpers.R` (pins R's default RNG kinds
-     because `test-simulations.R` leaves L'Ecuyer-CMRG behind), sorted by sim
-     and team so diffs are per team.
-   - A test checks that the fixture really reaches the deep steps.
-   - Partial week 1 snapshot (teams without games).
-   - These snapshots are the yardstick for the C++ engine. A C++ result may
-     differ from them only in (a) teams in ties decided by `"Coin Toss"`
-     (D5) and everything that follows from them, and (b) differences
-     required by decided entries in the decision log. Don't accept a
-     snapshot change blindly. For every changed row, name the coin toss or
-     decision that explains it. The comparison test (item 1) should read
-     these CSV files directly, so it can mask coin toss groups instead of
-     failing on them.
-   - `draft_tiebreaker_loop_games.rds` reproduces D10. Its snapshot records
-     the current error and must change to valid draft ranks with the engine.
-6. **Sanitizers and coverage**: rhub `clang-asan`, `clang-ubsan`, `valgrind`
-   (`.github/workflows/rhub.yaml`), `covr` including C++.
+Top-level snapshot tests only. The weekly comparison with the NFL is the
+strongest one. Snapshots are CSV files sorted by season and
+team, so diffs show changed teams. Coin tosses are seeded with
+`with_reference_seed()` (`tests/testthat/helpers.R`).
 
-## Milestones
+- `test-standings.R` (`nfl_standings()`): 2006–2025
+  (`games_2006_2025.rds`, built by `data-raw/build_games_2006_2025.R`), the
+  example simulation games, and the deep tiebreaker games at every depth. A
+  test checks that the deep tiebreaker games reach every tiebreaker step.
+  The standings of every week of 2006–2025 are compared with the official NFL
+  standings (`nfl_standings_2006_2025.rds`, built with the internal `nflapi`
+  package by `data-raw/build_nfl_standings_2006_2025.R`). The snapshot
+  `nfl_weekly_differences.csv` lists every team whose rank differs (18 of
+  11,038 team-weeks after D14): coin tosses in week 1 (the NFL seems to put
+  the alphabetically first team ahead) and two unexplained pairs (2008 week 2
+  TEN/PIT: the NFL seems to skip the conference points ranking; 2019 week 7
+  MIN/SEA: the NFL doesn't use net wins there, against D13).
+  Short tests for `ranks`/`playoff_seeds`, missing ranks before every team
+  played, large draft ties (D10) and input errors.
+- `test-standings_r.R` (`nfl_standings2()`): the same 2006–2025 and deep
+  tiebreaker snapshots, and the D10 error.
+- `deep_tiebreaker_games.rds` (built by
+  `data-raw/build_deep_tiebreaker_games.R`): synthetic tie-heavy seasons on
+  the 2022 schedule that reach every tiebreaker step.
 
-Each milestone is one or more commits that pass `devtools::test()`. Until M5,
-the R engine stays the default and C++ is behind
-`options(nflseedR.standings_engine = "cpp")`.
-
-- **M0 Setup.** `usethis::use_cpp11()`, Makevars, tooling files, `dev/` and
-  tooling in `.Rbuildignore`, move the R implementation to
-  `R/standings_r_*.R`, engine switch, comparison harness (reference vs
-  itself), benchmark script.
-- **M1 Records.** Team validation (D9), `SeasonData` and `ranks = "NONE"`. All columns
-  bit-identical.
-- **M2 Division ranks.** Needs D1.
-- **M3 Conference ranks** including `playoff_seeds`. Needs D2, D4, D7.
-- **M4 Draft ranks** and the simulations entry point. Remove the `h2h`
-  attribute workaround. Needs D3, D6.
-- **M5 Switch.** C++ by default, MAX verbosity, NEWS bullets (one per
-  behavior change in the decision log), docs, `devtools::check()` clean on
-  all OS, rhub sanitizers clean, benchmark at least 30x faster than the
-  baseline.
-- **M6 Cleanup** (next release). Remove the R engine from `R/`, keep it in
-  `tests/` only if still needed as reference.
-
-## Status
-
-| Milestone | State | Notes |
-|---|---|---|
-| M0 | not started | |
-| M1 | not started | |
-| M2 | not started | |
-| M3 | not started | |
-| M4 | not started | |
-| M5 | not started | |
-| M6 | not started | |
+The C++ engine was verified against `nfl_standings2()` before these snapshots
+were taken (2026-10-30): identical output on 1,000 random tie-heavy seasons,
+real seasons 2002–2025 and the deep tiebreaker games, apart from coin tosses
+and the decisions below. Review every snapshot change: name the coin toss or
+decision that explains it.
 
 ## Decision log
 
-Status values: **open** (ask the maintainer), **decided** (follow it).
+**D1 Division: one team per step. Decided (2026-10-30).** `nfl_standings2()`
+ranks the whole block by the deciding step (a 3-way head-to-head A > B > C
+sets all three ranks). The engine follows the rules: one team per step, the
+others restart at step 1. Real seasons 2002–2025: only labels change
+(NFC South 2012, 2022, 2025). The new labels match the official tiebreaker
+notes (Wikipedia season pages), e.g. 2025: Carolina by 3-team head-to-head,
+then Tampa Bay over Atlanta by common games (2 teams).
 
-**D1 Division: how many ranks one step decides. Open, needed for M2.**
-The reference ranks the whole block by the deciding step: a 3-way
-head-to-head that gives A > B > C sets all three ranks. The article's "other
-procedures" say only one club advances per step and the rest restart at step
-1, so B vs C would get a fresh 2-club head-to-head and could flip. This
-changes `div_rank` 2–4 and with it the wild card division reduction.
-Recommendation: one club per step (rule-faithful). Alternative: keep the
-reference behavior.
+**D2 Common games minimum of four. Decided (2026-10-30), replaced by D14.**
+The conference and draft step applies only if every candidate has at least 4
+common games. `nfl_standings2()` let teams with fewer sit out the step.
 
-**D2 Conference/draft common games minimum. Open, needed for M3.**
-The reference checks "minimum of four" per team: teams with fewer than 4
-common games sit out the step while the others are compared. Recommendation:
-apply the step only if every candidate has at least 4 common games,
-otherwise skip it. Alternative: keep the reference behavior.
+**D3 Draft steps after SOV. Decided (2026-10-30).** Combined points ranking
+(league) and net points follow SOV, and draft steps use the depth cut-offs
+of the other procedures. `nfl_standings2()` went from SOV to the coin toss
+and ignored the depth.
 
-**D3 Draft steps after SOV and tiebreaker depth. Open, needed for M4.**
-The article lists combined points ranking (league) and net points (all games)
-after SOV. The reference goes straight from SOV to the coin toss and ignores
-`tiebreaker_depth` for draft steps (only `"RANDOM"` changes anything). SOS is
-always used because it is part of the initial order. Recommendation:
-implement the article's steps and use the same depth cut-offs as the other
-procedures (SOV at depth 2 or higher, point steps at 3). Alternative: keep
-the reference.
+**D4 Label of the last team in a conference or draft block. Decided
+(2026-10-30).** Stays `NA`.
 
-**D4 Label of the last team in a conference/draft block. Open, needed for
-M3.** The reference leaves it `NA` although its rank was decided by the last
-step. Recommendation: keep `NA` (no output change). Alternative: give it the
-label of the step that decided the last duel.
+**D5 Random number stream. Decided.** Coin tosses differ from
+`nfl_standings2()`, reproducible with `set.seed()`.
 
-**D5 Random number stream. Decided.** The C++ coin toss uses R's RNG
-differently than `frankv(ties.method = "random")`. Results stay reproducible
-with `set.seed()` but differ from the R engine. Accept, update simulation
-snapshots, add a NEWS bullet.
+**D6 Stable output columns. Decided (2026-10-30).** `*_tie_broken_by`
+columns are always there for the requested `ranks`.
 
-**D6 Stable output columns. Open, needed for M4.** Today
-`*_tie_broken_by` columns are missing when no tie of that kind happened.
-Recommendation: always include them (`NA_character_`) when the matching
-`ranks` is requested.
+**D7 `playoff_seeds` with `ranks = "DRAFT"`. Decided (2026-10-30):
+ignored.** Draft ranks need all conference ranks.
 
-**D7 `playoff_seeds` with `ranks = "DRAFT"`. Open, needed for M3.** The
-reference sets conference ranks below `playoff_seeds` to `NA` before the
-draft step, which then uses them. Recommendation: always compute all 16
-conference ranks internally when draft ranks are requested and set the
-lower ones to `NA` only in the output. Alternative: ignore `playoff_seeds`
-when `ranks = "DRAFT"`.
+**D8 Threads. Decided.** No threads in C++.
 
-**D8 Threads. Decided.** No threads inside C++ for now. R's RNG is not
-thread-safe, and chunks already run in parallel with `furrr`. If needed
-later: seed a counter-based RNG per season from R's stream.
+**D9 Team abbreviations. Decided (2026-10-30).** Only the 32 current
+abbreviations. `nfl_standings()` errors on others and points to
+`nflreadr::clean_team_abbrs()`. Historical schedules from
+`nflreadr::load_schedules()` (e.g. 2008–2019 with `STL`, `SD`, `OAK`) need
+that cleaning now.
 
-**D9 Team abbreviations and league size. Decided (2026-10-30).** Always
-exactly 32 teams. Only the 32 current abbreviations are valid (`LAR`, `OAK`,
-`STL`, `SD` are not; see [league structure](#league-structure)).
-`standings_validate_games()` errors with a cli message listing any invalid
-abbreviations. Today they quietly get `NA` division and conference. Add a
-NEWS bullet.
+**D10 Draft loop counter bug. Decided: fixed.** `nfl_standings2()` aborts
+with "Entered infinite loop in draft tiebreaking procedure" for large draft
+ties. The engine has no such limit.
 
-**D10 Draft loop counter bug. Decided (fix in the engine).** The reference
-aborts with "Entered infinite loop in draft tiebreaking procedure" when many
-teams are tied for draft picks (same `exit`, `win_pct` and `sos`). Each
-`while` round places at most one team per tie, and the counter stops after
-18 rounds. Found with synthetic tie-heavy seasons (draft ties of 13+ teams,
-about 1 in 5 such seasons fails). Real seasons are very unlikely to hit it.
-The conference loop has the same kind of cap (12 rounds) but can't exceed it
-because a block has at most 12 wild card teams. The engine places one team
-per iteration of a bounded loop over the block (at most 32 iterations), so
-no arbitrary cap is needed. Regression fixture:
-`tests/testthat/draft_tiebreaker_loop_games.rds`. Add a NEWS bullet.
+**D11 `tied_for` column. Decided (2026-10-30): dropped.** `nfl_standings2()`
+leaks it with `"RANDOM"` and `ranks = "CONF"`/`"DRAFT"`.
 
-## Session protocol
+**D12 Division points rank bug. Decided (2026-10-30): fixed.** When two tie blocks of the same division (e.g. two
+2-team blocks after a 4-team tie split at SOS) both reach the combined points
+ranking, `nfl_standings2()` ranks them together. Teams of the worse block can
+end up ahead of the better block, e.g. against win percentage. Found with the
+deep tiebreaker fixture (sim 27) and random seasons. The engine ranks each
+block separately.
 
-1. Read this file, `AGENTS.md` and the tiebreaker article.
-2. Work on the next unfinished milestone. If it needs an open decision, ask
-   the maintainer first.
-3. Before committing: `air format .`, `clang-format`, `devtools::test()`;
-   for C++ changes also `devtools::check()` before closing a milestone.
-4. Update [status](#status) and the [decision log](#decision-log), and add
-   new findings to the rule spec. Rules found in the reference that the spec
-   doesn't cover go into the spec, and into the decision log if they differ
-   from the article.
+**D13 Records with different numbers of games. Decided (2026-10-30).**
+Equal percentages are broken by net wins (wins − losses) for the overall,
+division and conference records, as in the official NFL standings during the
+season (e.g. conference 2-0 ahead of 1-0, 0-2 overall ahead of 0-3).
+Compared with the NFL's weekly standings 2006–2025, this reduced the
+differing division-weeks from 161 to 1 and conference-weeks from 177 to 7
+(of 345 weekly standings). It applies only during the regular season, not
+after its final week, e.g. 2022 when the cancelled BUF-CIN game left both
+teams with 16 games. The rule isn't in the official tiebreaking procedures,
+which only mention percentages.
+
+**D14 Minimum of four common opponents. Decided (2026-10-30).** The
+conference and draft common games step needs at least four common opponents,
+not four common games (a team can play a common opponent twice if it's a
+division rival). Then every candidate also has at least four common games, so
+this replaces D2. Found in the NFL's weekly standings: 2009 week 16, HOU and
+PIT had 4 common games each but only 3 common opponents (LV, TEN, CIN). The
+NFL skipped the step and ranked PIT ahead by SOV. No other weekly standings
+2006–2025 changed. D2 and D14 only differ during the season: in the final
+standings 2006–2025, they agree for all 8,960 pairs of teams from different
+divisions (in 2009 week 16 they disagree for 24 pairs).
