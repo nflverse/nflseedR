@@ -34,8 +34,11 @@ Suggests:
     scales,
     testthat (>= 3.1.9),
     withr
+LinkingTo: 
+    cpp11
 Config/testthat/edition: 3
 Encoding: UTF-8
+SystemRequirements: C++20
 LazyData: true
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.1.1

@@ -19,6 +19,7 @@
 #' @importFrom stats rnorm setNames
 #' @importFrom tibble is_tibble tibble
 #' @importFrom tidyr pivot_longer
+#' @useDynLib nflseedR, .registration = TRUE
 ## usethis namespace: end
 NULL
 

@@ -45,7 +45,9 @@ as arguments. Please see \link{simulations_verify_fct} for further information.}
 \item{playoff_seeds}{If \code{NULL} (the default), will compute all 16 conference
 ranks. This means, the function applies conference tiebreakers to all
 conference ranks. For better performance, it is possible to set this to a
-value < 16 to make the function skip tiebreakers of those conference ranks.}
+value < 16 to make the function skip tiebreakers of those conference ranks.
+Ignored if \code{ranks = "DRAFT"} because draft ranks need all conference
+ranks.}
 
 \item{simulations}{Equals the number of times the given NFL season shall be simulated}
 

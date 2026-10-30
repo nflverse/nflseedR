@@ -1,0 +1,3 @@
+BasedOnStyle: Google
+ColumnLimit: 80
+Standard: c++20

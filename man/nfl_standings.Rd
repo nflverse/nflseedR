@@ -68,7 +68,9 @@ why I allow this...
 \item{playoff_seeds}{If \code{NULL} (the default), will compute all 16 conference
 ranks. This means, the function applies conference tiebreakers to all
 conference ranks. For better performance, it is possible to set this to a
-value < 16 to make the function skip tiebreakers of those conference ranks.}
+value < 16 to make the function skip tiebreakers of those conference ranks.
+Ignored if \code{ranks = "DRAFT"} because draft ranks need all conference
+ranks.}
 
 \item{verbosity}{One of \code{"MIN"}, \code{"MAX"}, or \code{"NONE"} allowing the user
 to set the grade of verbosity of status reports. They mean:
@@ -86,6 +88,11 @@ argument \code{ranks}
 Compute NFL Standings
 }
 \details{
+Division, conference and draft ranks are only computed once every team has
+played at least one regular season game. Until then, they are \code{NA}.
+
+Only the 32 current team abbreviations are valid (see \link{divisions}).
+
 nflseedR does not support all levels of tie-breakers at the moment. The
 deepest tie-breaker currently is "best net points in all games".
 After that, the decision is made at random. However, the need for
