@@ -458,3 +458,419 @@
       ]
     }
 
+# simulations results with many tiebreakers are stable
+
+    {
+      "type": "list",
+      "attributes": {
+        "row.names": {
+          "type": "integer",
+          "attributes": {},
+          "value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
+        },
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["data.frame"]
+        },
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["team", "div_rank", "conf_rank", "draft_rank"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["ARI", "ATL", "BAL", "BUF", "CAR", "CHI", "CIN", "CLE", "DAL", "DEN", "DET", "GB", "HOU", "IND", "JAX", "KC", "LA", "LAC", "LV", "MIA", "MIN", "NE", "NO", "NYG", "NYJ", "PHI", "PIT", "SEA", "SF", "TB", "TEN", "WAS"]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [409, 546, 310, 437, 729, 726, 349, 730, 426, 491, 578, 384, 684, 508, 461, 298, 574, 456, 755, 727, 312, 256, 458, 485, 580, 351, 611, 433, 584, 267, 347, 738]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [1371, 2007, 870, 1418, 2807, 2604, 1040, 2709, 1397, 1986, 1936, 1154, 2154, 1521, 1334, 1138, 2002, 1868, 2940, 2485, 879, 597, 1619, 1538, 2011, 1001, 2183, 1467, 2056, 776, 946, 2586]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [4146, 3039, 4904, 3619, 1351, 1956, 4748, 1064, 4042, 2224, 3282, 4741, 2089, 3488, 3891, 3988, 3053, 2464, 591, 1419, 5025, 5446, 3894, 3901, 2363, 4620, 1993, 3937, 2754, 5118, 4523, 1927]
+        }
+      ]
+    }
+
+---
+
+    {
+      "type": "list",
+      "attributes": {
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["div_tie_broken_by", "conf_tie_broken_by", "draft_tie_broken_by"]
+        }
+      },
+      "value": [
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["Common Games Win PCT (2)", "Common Games Win PCT (3)", "Conference Win PCT (2)", "Division Win PCT (2)", "Division Win PCT (3)", "Head-To-Head Win PCT (2)", "Head-To-Head Win PCT (3)", "SOS (2)", "SOV (2)"]
+            }
+          },
+          "value": [
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [114]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [2]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [50]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [356]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [3]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [448]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [59]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [2]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [28]
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["Common Games Win PCT (2)", "Common Games Win PCT (3)", "Conference Win PCT (2)", "Conference Win PCT (3)", "Conference Win PCT (4)", "Division Tiebreaker", "Head-To-Head Sweep (2)", "Head-To-Head Sweep (3)", "SOS (2)", "SOV (2)", "SOV (3)"]
+            }
+          },
+          "value": [
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [187]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [3]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [503]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [123]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [8]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [446]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [668]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [32]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [1]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [91]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [29]
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["Conference Tiebreaker", "Division Tiebreaker", "Head-To-Head (2)", "SOV (2)"]
+            }
+          },
+          "value": [
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [26]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [18]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [3]
+            },
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [1]
+            }
+          ]
+        }
+      ]
+    }
+
+---
+
+    {
+      "type": "list",
+      "attributes": {
+        "row.names": {
+          "type": "integer",
+          "attributes": {},
+          "value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
+        },
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["data.frame"]
+        },
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["conf", "division", "team", "wins", "playoff", "div1", "seed1", "won_conf", "won_sb", "draft1", "draft5"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["AFC East", "AFC East", "AFC East", "AFC East", "AFC North", "AFC North", "AFC North", "AFC North", "AFC South", "AFC South", "AFC South", "AFC South", "AFC West", "AFC West", "AFC West", "AFC West", "NFC East", "NFC East", "NFC East", "NFC East", "NFC North", "NFC North", "NFC North", "NFC North", "NFC South", "NFC South", "NFC South", "NFC South", "NFC West", "NFC West", "NFC West", "NFC West"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["BUF", "MIA", "NE", "NYJ", "BAL", "CIN", "CLE", "PIT", "HOU", "IND", "JAX", "TEN", "DEN", "KC", "LAC", "LV", "DAL", "NYG", "PHI", "WAS", "CHI", "DET", "GB", "MIN", "ATL", "CAR", "NO", "TB", "ARI", "LA", "SEA", "SF"]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [8.51, 5.405, 11.835, 7.06, 10.76, 9.585, 4.625, 6.54, 6.54, 8.67, 9.105, 10.49, 6.9, 9.005, 7.39, 3.57, 9.85, 9.71, 11.265, 6.23, 6.295, 8.32, 10.89, 11.655, 8.38, 5.12, 9.435, 11.715, 10.09, 8.21, 9.805, 8.04]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.57, 0.06, 0.925, 0.18, 0.85, 0.825, 0.035, 0.16, 0.19, 0.535, 0.605, 0.785, 0.27, 0.725, 0.28, 0.005, 0.55, 0.48, 0.735, 0.055, 0.06, 0.29, 0.715, 0.84, 0.24, 0.025, 0.5, 0.87, 0.565, 0.285, 0.525, 0.265]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.175, 0.01, 0.785, 0.03, 0.535, 0.39, 0.01, 0.065, 0.055, 0.15, 0.23, 0.565, 0.185, 0.65, 0.16, 0.005, 0.29, 0.21, 0.49, 0.01, 0.01, 0.075, 0.35, 0.565, 0.07, 0.01, 0.16, 0.76, 0.43, 0.14, 0.335, 0.095]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.075, 0, 0.32, 0, 0.21, 0.075, 0, 0, 0, 0.02, 0.025, 0.21, 0.005, 0.06, 0, 0, 0.055, 0.055, 0.2, 0, 0.005, 0.005, 0.14, 0.2, 0, 0, 0.01, 0.18, 0.085, 0.02, 0.035, 0.01]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.02, 0, 0.34, 0, 0.185, 0.16, 0, 0, 0.01, 0.025, 0.06, 0.135, 0.005, 0.05, 0.01, 0, 0.03, 0.06, 0.085, 0, 0.015, 0.035, 0.15, 0.16, 0.035, 0, 0.105, 0.16, 0.08, 0.03, 0.045, 0.01]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.01, 0, 0.22, 0, 0.105, 0.095, 0, 0, 0, 0.01, 0.005, 0.045, 0, 0.025, 0.005, 0, 0.015, 0.03, 0.03, 0, 0.005, 0.025, 0.09, 0.09, 0.005, 0, 0.045, 0.075, 0.035, 0.005, 0.025, 0.005]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0, 0.05, 0, 0, 0, 0, 0.25, 0.035, 0.04, 0, 0, 0, 0.05, 0.005, 0.015, 0.39, 0, 0, 0, 0.03, 0.015, 0.01, 0, 0, 0, 0.09, 0, 0, 0, 0, 0, 0.02]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.04, 0.515, 0, 0.135, 0, 0.005, 0.655, 0.34, 0.285, 0.065, 0.02, 0.015, 0.295, 0.07, 0.19, 0.88, 0.01, 0.015, 0, 0.26, 0.285, 0.06, 0, 0.005, 0.1, 0.48, 0.015, 0, 0.005, 0.115, 0.03, 0.11]
+        }
+      ]
+    }
+
+# simulations results with pre-SOV tiebreakers are stable
+
+    {
+      "type": "list",
+      "attributes": {
+        "row.names": {
+          "type": "integer",
+          "attributes": {},
+          "value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
+        },
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["data.frame"]
+        },
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["team", "div_rank", "conf_rank"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["ARI", "ATL", "BAL", "BUF", "CAR", "CHI", "CIN", "CLE", "DAL", "DEN", "DET", "GB", "HOU", "IND", "JAX", "KC", "LA", "LAC", "LV", "MIA", "MIN", "NE", "NO", "NYG", "NYJ", "PHI", "PIT", "SEA", "SF", "TB", "TEN", "WAS"]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [521, 723, 238, 370, 523, 576, 392, 726, 483, 630, 534, 688, 705, 506, 574, 505, 753, 317, 548, 417, 202, 670, 342, 566, 543, 273, 644, 214, 512, 412, 215, 678]
+        },
+        {
+          "type": "integer",
+          "attributes": {},
+          "value": [212, 20, 440, 519, 128, 8, 493, 0, 685, 90, 3, 0, 0, 54, 48, 255, 0, 424, 170, 591, 466, 203, 413, 563, 407, 433, 33, 436, 255, 241, 473, 337]
+        }
+      ]
+    }
+
+---
+
+    {
+      "type": "list",
+      "attributes": {
+        "row.names": {
+          "type": "integer",
+          "attributes": {},
+          "value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
+        },
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["data.frame"]
+        },
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["conf", "division", "team", "wins", "playoff", "div1", "seed1", "won_conf", "won_sb", "draft1", "draft5"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "AFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC", "NFC"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["AFC East", "AFC East", "AFC East", "AFC East", "AFC North", "AFC North", "AFC North", "AFC North", "AFC South", "AFC South", "AFC South", "AFC South", "AFC West", "AFC West", "AFC West", "AFC West", "NFC East", "NFC East", "NFC East", "NFC East", "NFC North", "NFC North", "NFC North", "NFC North", "NFC South", "NFC South", "NFC South", "NFC South", "NFC West", "NFC West", "NFC West", "NFC West"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["BUF", "MIA", "NE", "NYJ", "BAL", "CIN", "CLE", "PIT", "HOU", "IND", "JAX", "TEN", "DEN", "KC", "LAC", "LV", "DAL", "NYG", "PHI", "WAS", "CHI", "DET", "GB", "MIN", "ATL", "CAR", "NO", "TB", "ARI", "LA", "SEA", "SF"]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [10.495, 10.545, 8.045, 9.435, 11.915, 8.985, 5.21, 6.38, 4.73, 6.895, 6.125, 11.575, 7.07, 8.33, 10.445, 7.645, 11.18, 10.875, 13.85, 9.43, 6.045, 6.155, 4.765, 12.825, 4.515, 5.975, 8, 7.31, 8.685, 5.665, 13.365, 8.535]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.79, 0.735, 0.22, 0.44, 0.91, 0.51, 0, 0.03, 0, 0.06, 0.055, 0.94, 0.105, 0.325, 0.7, 0.18, 0.73, 0.57, 0.955, 0.315, 0.01, 0.005, 0, 0.99, 0.025, 0.16, 0.515, 0.305, 0.19, 0, 0.975, 0.255]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.5, 0.32, 0.055, 0.125, 0.845, 0.15, 0, 0.005, 0, 0.035, 0.03, 0.935, 0.065, 0.23, 0.615, 0.09, 0.135, 0.1, 0.745, 0.02, 0.005, 0.005, 0, 0.99, 0.025, 0.16, 0.51, 0.305, 0.015, 0, 0.93, 0.055]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.175, 0.095, 0.01, 0.02, 0.265, 0.005, 0, 0, 0, 0, 0.005, 0.28, 0.005, 0.02, 0.115, 0.005, 0.05, 0.01, 0.5, 0, 0, 0, 0, 0.185, 0, 0, 0, 0, 0, 0, 0.235, 0.02]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.15, 0.075, 0, 0.02, 0.27, 0.045, 0, 0, 0, 0.01, 0.005, 0.25, 0.01, 0.015, 0.135, 0.015, 0.055, 0.075, 0.26, 0.06, 0, 0, 0, 0.14, 0, 0.01, 0.015, 0.005, 0.01, 0, 0.335, 0.035]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": [0.055, 0.02, 0, 0, 0.14, 0.01, 0, 0, 0, 0.005, 0, 0.11, 0.005, 0.01, 0.05, 0.015, 0.005, 0.06, 0.155, 0.04, 0, 0, 0, 0.06, 0, 0.005, 0.015, 0.005, 0.01, 0, 0.205, 0.02]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": ["NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA"]
+        },
+        {
+          "type": "double",
+          "attributes": {},
+          "value": ["NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA"]
+        }
+      ]
+    }
+

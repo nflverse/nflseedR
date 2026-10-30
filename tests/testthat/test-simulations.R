@@ -30,3 +30,82 @@ test_that("simulations works", {
   sim_params[["finished_at"]] <- NULL
   expect_snapshot_value(sim_params, style = "json2", variant = "sims")
 })
+
+test_that("simulations results with many tiebreakers are stable", {
+  if (!is_sequential()) future::plan(future::sequential)
+  games <- data.table::as.data.table(nflseedR::sims_games_example)
+  games <- games[game_type == "REG"][week >= 6L, result := NA_integer_]
+  set.seed(7, "L'Ecuyer-CMRG")
+  sim <- nflseedR::nfl_simulations(
+    games = games,
+    simulations = 200,
+    chunks = 1,
+    sim_include = "DRAFT",
+    verbosity = "NONE"
+  )
+  standings <- data.table::as.data.table(sim$standings)
+
+  ranks <- standings[, list(
+    div_rank = sum(div_rank),
+    conf_rank = sum(conf_rank),
+    draft_rank = sum(draft_rank)
+  ), keyby = "team"]
+  expect_snapshot_value(as.data.frame(ranks), style = "json2", variant = "sims")
+
+  tiebreakers <- lapply(
+    standings[, list(div_tie_broken_by, conf_tie_broken_by, draft_tie_broken_by)],
+    \(x) as.list(table(x))
+  )
+  expect_snapshot_value(tiebreakers, style = "json2", variant = "sims")
+  expect_snapshot_value(sim$overall, style = "json2", variant = "sims")
+})
+
+test_that("simulations results with pre-SOV tiebreakers are stable", {
+  if (!is_sequential()) future::plan(future::sequential)
+  games <- data.table::as.data.table(nflseedR::sims_games_example)
+  games <- games[game_type == "REG"][week >= 10L, result := NA_integer_]
+  set.seed(8, "L'Ecuyer-CMRG")
+  sim <- nflseedR::nfl_simulations(
+    games = games,
+    simulations = 200,
+    chunks = 1,
+    sim_include = "POST",
+    tiebreaker_depth = "PRE-SOV",
+    playoff_seeds = 6,
+    byes_per_conf = 2,
+    verbosity = "NONE"
+  )
+  standings <- data.table::as.data.table(sim$standings)
+
+  ranks <- standings[, list(
+    div_rank = sum(div_rank),
+    conf_rank = sum(conf_rank, na.rm = TRUE)
+  ), keyby = "team"]
+  expect_snapshot_value(as.data.frame(ranks), style = "json2", variant = "sims")
+  expect_snapshot_value(sim$overall, style = "json2", variant = "sims")
+})
+
+test_that("team_wins matches over and under probabilities of simulated wins", {
+  if (!is_sequential()) future::plan(future::sequential)
+  games <- data.table::as.data.table(nflseedR::sims_games_example)
+  games <- games[game_type == "REG"][week >= 10L, result := NA_integer_]
+  set.seed(9, "L'Ecuyer-CMRG")
+  sim <- nflseedR::nfl_simulations(
+    games = games,
+    simulations = 50,
+    chunks = 1,
+    sim_include = "REG",
+    verbosity = "NONE"
+  )
+  standings <- data.table::as.data.table(sim$standings)
+
+  expected <- data.table::CJ(
+    team = unique(standings$team),
+    wins = seq(0, max(standings$games), 0.5)
+  )
+  expected[, `:=`(
+    over_prob = mapply(\(t, w) mean(standings[team == t, true_wins] > w), team, wins),
+    under_prob = mapply(\(t, w) mean(standings[team == t, true_wins] < w), team, wins)
+  )]
+  expect_equal(sim$team_wins, expected, ignore_attr = TRUE)
+})
