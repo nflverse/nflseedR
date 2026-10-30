@@ -2,6 +2,7 @@
 // includes R or cpp11 headers.
 #include <R_ext/Random.h>
 
+#include <algorithm>
 #include <cpp11.hpp>
 #include <span>
 #include <vector>
@@ -23,48 +24,58 @@ class RRandom final : public nflseedr::RandomSource {
   }
 };
 
-std::span<const int32_t> int_span(const cpp11::integers& x) {
-  return {INTEGER_RO(x), static_cast<size_t>(x.size())};
+std::span<const int32_t> int_span(SEXP x) {
+  if (TYPEOF(x) != INTSXP) {
+    throw nflseedr::EngineError("Expected an integer vector");
+  }
+  return {INTEGER_RO(x), static_cast<size_t>(Rf_xlength(x))};
 }
 
-std::span<const double> dbl_span(const cpp11::doubles& x) {
-  return {REAL_RO(x), static_cast<size_t>(x.size())};
+std::span<const double> dbl_span(SEXP x) {
+  if (TYPEOF(x) != REALSXP) {
+    throw nflseedr::EngineError("Expected a double vector");
+  }
+  return {REAL_RO(x), static_cast<size_t>(Rf_xlength(x))};
 }
 
-nflseedr::League make_league(const cpp11::integers& team_division,
-                             const cpp11::integers& team_conference) {
-  if (team_division.size() != kTeams || team_conference.size() != kTeams) {
+// `games` is the list built by standings_encode_games() in R. The spans point
+// into its elements, so it must outlive the result.
+nflseedr::GamesInput make_games(const cpp11::list& games) {
+  return {int_span(games["sim"]),
+          int_span(games["type"]),
+          int_span(games["away"]),
+          int_span(games["home"]),
+          dbl_span(games["result"]),
+          dbl_span(games["away_score"]),
+          dbl_span(games["home_score"]),
+          cpp11::as_cpp<bool>(games["has_scores"]),
+          cpp11::as_cpp<int>(games["n_sims"])};
+}
+
+nflseedr::League make_league(const cpp11::list& games) {
+  const std::span<const int32_t> division = int_span(games["team_division"]);
+  const std::span<const int32_t> conference =
+      int_span(games["team_conference"]);
+  if (division.size() != kTeams || conference.size() != kTeams) {
     throw nflseedr::EngineError("The league needs 32 teams");
   }
   nflseedr::League league;
-  for (int32_t t = 0; t < kTeams; ++t) {
-    league.division[t] = team_division[t];
-    league.conference[t] = team_conference[t];
-  }
+  std::ranges::copy(division, league.division.begin());
+  std::ranges::copy(conference, league.conference.begin());
   return league;
-}
-
-nflseedr::GamesInput make_games(
-    const cpp11::integers& sim, const cpp11::integers& type,
-    const cpp11::integers& away, const cpp11::integers& home,
-    const cpp11::doubles& result, const cpp11::doubles& away_score,
-    const cpp11::doubles& home_score, bool has_scores, int n_sims) {
-  return {int_span(sim),        int_span(type),   int_span(away),
-          int_span(home),       dbl_span(result), dbl_span(away_score),
-          dbl_span(home_score), has_scores,       n_sims};
 }
 
 cpp11::writable::integers to_r(const std::vector<int32_t>& x) {
   cpp11::writable::integers out(static_cast<R_xlen_t>(x.size()));
-  for (size_t i = 0; i < x.size(); ++i) {
-    out[static_cast<R_xlen_t>(i)] = x[i] == kMissing ? NA_INTEGER : x[i];
-  }
+  std::ranges::transform(x, INTEGER(out), [](int32_t v) {
+    return v == kMissing ? NA_INTEGER : v;
+  });
   return out;
 }
 
 cpp11::writable::doubles to_r(const std::vector<double>& x) {
   cpp11::writable::doubles out(static_cast<R_xlen_t>(x.size()));
-  std::copy(x.begin(), x.end(), REAL(out));
+  std::ranges::copy(x, REAL(out));
   return out;
 }
 
@@ -75,16 +86,11 @@ void check_interrupt() { cpp11::check_user_interrupt(); }
 // Standings of all seasons in `sim` (dense ids 1..n_sims). Team ids are
 // 0-based. See R/standings.R.
 [[cpp11::register]]
-cpp11::writable::list standings_cpp(
-    cpp11::integers sim, cpp11::integers type, cpp11::integers away,
-    cpp11::integers home, cpp11::doubles result, cpp11::doubles away_score,
-    cpp11::doubles home_score, bool has_scores, int n_sims,
-    cpp11::integers team_division, cpp11::integers team_conference,
-    cpp11::integers season_complete, int ranks, int depth, int playoff_seeds) {
-  const nflseedr::GamesInput games =
-      make_games(sim, type, away, home, result, away_score, home_score,
-                 has_scores, n_sims);
-  const nflseedr::League league = make_league(team_division, team_conference);
+cpp11::writable::list standings_cpp(cpp11::list games_list,
+                                    cpp11::integers season_complete, int ranks,
+                                    int depth, int playoff_seeds) {
+  const nflseedr::GamesInput games = make_games(games_list);
+  const nflseedr::League league = make_league(games_list);
   nflseedr::StandingsOptions options;
   options.ranks = static_cast<nflseedr::Ranks>(ranks);
   options.playoff_seeds = playoff_seeds;
@@ -126,23 +132,21 @@ cpp11::writable::list standings_cpp(
 
 // Draft ranks for existing standings rows (simulations).
 [[cpp11::register]]
-cpp11::writable::list draft_ranks_cpp(
-    cpp11::integers sim, cpp11::integers type, cpp11::integers away,
-    cpp11::integers home, cpp11::doubles result, cpp11::doubles away_score,
-    cpp11::doubles home_score, bool has_scores, int n_sims,
-    cpp11::integers team_division, cpp11::integers team_conference,
-    cpp11::integers row_sim, cpp11::integers row_team, cpp11::integers div_rank,
-    cpp11::integers conf_rank, cpp11::integers exit, int depth) {
-  const nflseedr::GamesInput games =
-      make_games(sim, type, away, home, result, away_score, home_score,
-                 has_scores, n_sims);
-  const nflseedr::League league = make_league(team_division, team_conference);
+cpp11::writable::list draft_ranks_cpp(cpp11::list games_list,
+                                      cpp11::integers row_sim,
+                                      cpp11::integers row_team,
+                                      cpp11::integers div_rank,
+                                      cpp11::integers conf_rank,
+                                      cpp11::integers exit, int depth) {
+  const nflseedr::GamesInput games = make_games(games_list);
+  const nflseedr::League league = make_league(games_list);
   // NA ranks become kMissing
-  auto ranks = [](const cpp11::integers& x) {
-    std::vector<int32_t> out(x.size());
-    for (R_xlen_t i = 0; i < x.size(); ++i) {
-      out[i] = x[i] == NA_INTEGER ? kMissing : x[i];
-    }
+  auto ranks = [](SEXP x) {
+    const std::span<const int32_t> in = int_span(x);
+    std::vector<int32_t> out(in.size());
+    std::ranges::transform(in, out.begin(), [](int32_t v) {
+      return v == NA_INTEGER ? kMissing : v;
+    });
     return out;
   };
   const std::vector<int32_t> div = ranks(div_rank);

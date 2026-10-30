@@ -191,7 +191,9 @@ R/standings_r.R        nfl_standings2(): the old implementation (internal)
 R/standings_r_*.R      its helpers, unchanged
 src/
   bindings.cpp         standings_cpp(), draft_ranks_cpp(), RRandom (R's RNG).
-                       The only engine file that includes R or cpp11 headers
+                       Both take the games and league as one list from
+                       standings_encode_games(). The only engine file that
+                       includes R or cpp11 headers
   engine/types.hpp     constants, Ratio, Step, label codes, RandomSource
   engine/season.hpp    SeasonData: records, h2h, SOV, SOS, points ranks
   season.cpp
