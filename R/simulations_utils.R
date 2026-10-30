@@ -39,6 +39,19 @@ sims_check_chunk_size <- function(nsims, nchunks, chunk_size){
   invisible(NULL)
 }
 
+# Played games of a simulation chunk, encoded for the standings engine
+sims_encode_played_games <- function(games, sims) {
+  played <- which(!is.na(games$result))
+  vars <- c("sim", "game_type", "away_team", "home_team", "result")
+  games <- lapply(stats::setNames(vars, vars), \(var) games[[var]][played])
+  league <- standings_league()
+  encoded <- standings_encode_games(games, sims, league, has_scores = FALSE)
+  if (anyNA(encoded$away) || anyNA(encoded$home)) {
+    standings_check_teams(games$away_team, games$home_team)
+  }
+  encoded
+}
+
 sims_validate_games <- function(games){
   setDT(games)
 

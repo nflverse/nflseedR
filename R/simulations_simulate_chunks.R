@@ -74,21 +74,25 @@ simulate_chunk <- function(chunk,
     "1" = "MIN",
     "2" = "MAX"
   )
-  # We need conference ranks to identify playoff teams
-  # sim_games includes games with missing results, i.e. post season, remove them
-  # for the standings calculation
+  # We need conference ranks to identify playoff teams. Standings use the
+  # played games only (sim_games includes post season games without results).
+  # The games are encoded once and reused for the draft ranks.
   # NOTE: in case all regular season games are done before we enter the sims,
   # we could calculate standings based on one season only and replicate it like
   # we do with sim_games. However, we would have to pass standings, and h2h and
   # write a bunch of code to handle that situation. Yes, it would be faster to
   # simulate postseason only, but the speed increase isn't really worth the effort.
+  sims <- sort(unique(sim_games$sim))
+  encoded <- sims_encode_played_games(sim_games, sims)
+  if (verbosity > 0L) report("Compute standings")
   # Standings after the complete regular season, so records compare by
   # percentage only (D13)
-  standings <- standings_compute(
-    games = sim_games[!is.na(result)],
+  standings <- standings_run(
+    encoded,
+    sims = sims,
     season_complete = TRUE,
     ranks = "CONF",
-    tiebreaker_depth = tiebreaker_depth,
+    depth = standings_depth(tiebreaker_depth),
     # If user asks for draft_ranks, then we must calculate all conf_ranks in order
     # to use them for draft_ranks
     playoff_seeds = if (sim_include > 1L) 16L else playoff_seeds,
@@ -260,7 +264,8 @@ simulate_chunk <- function(chunk,
 
     standings <- standings_add_draft_ranks(
       standings = standings,
-      games = sim_games,
+      encoded = encoded,
+      sims = sims,
       tiebreaker_depth = tiebreaker_depth
     )
   }

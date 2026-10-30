@@ -32,12 +32,41 @@ standings_compute <- function(
 
   league <- standings_league()
   sims <- sort(unique(games$sim))
-  out <- standings_cpp(
+  standings_run(
     standings_encode_games(games, sims, league, has_scores, call = call),
-    season_complete = as.integer(rep_len(
-      season_complete %||% standings_season_complete(games, sims),
-      length(sims)
-    )),
+    sims = sims,
+    season_complete = season_complete %||%
+      standings_season_complete(games, sims),
+    ranks = ranks,
+    depth = depth,
+    playoff_seeds = playoff_seeds,
+    verbosity = verbosity,
+    uses_season = attr(games, "uses_season"),
+    integer_scores = has_scores &&
+      is.integer(games$away_score) &&
+      is.integer(games$home_score)
+  )
+}
+
+# Run the C++ engine on encoded games (standings_encode_games()) and decode
+# the result. nfl_simulations() calls it directly to skip validating and
+# encoding the games again.
+standings_run <- function(
+  encoded,
+  sims,
+  season_complete,
+  ranks,
+  depth,
+  playoff_seeds,
+  verbosity,
+  uses_season = FALSE,
+  integer_scores = FALSE
+) {
+  has_scores <- encoded$has_scores
+  league <- standings_league()
+  out <- standings_cpp(
+    encoded,
+    season_complete = as.integer(rep_len(season_complete, length(sims))),
     ranks = match(ranks, c("NONE", "DIV", "CONF", "DRAFT")) - 1L,
     depth = depth,
     playoff_seeds = playoff_seeds %||% 16L
@@ -58,8 +87,6 @@ standings_compute <- function(
     ties = out$ties
   )
   if (has_scores) {
-    integer_scores <- is.integer(games$away_score) &&
-      is.integer(games$home_score)
     as_score <- if (integer_scores) as.integer else identity
     cols$pf <- as_score(out$pf)
     cols$pa <- as_score(out$pa)
@@ -80,7 +107,7 @@ standings_compute <- function(
     cols$draft_rank <- out$draft_rank
     cols$draft_tie_broken_by <- standings_labels(out$draft_label, "draft")
   }
-  if (attr(games, "uses_season")) {
+  if (uses_season) {
     names(cols)[1] <- "season"
   }
   standings <- setDT(cols)
@@ -92,14 +119,22 @@ standings_compute <- function(
 
 # Draft ranks for standings computed inside nfl_simulations(). Division and
 # conference ranks (all 16) and the integer `exit` are already there.
-standings_add_draft_ranks <- function(standings, games, tiebreaker_depth) {
-  games <- games[game_type == "REG" & !is.na(result)]
-  league <- standings_league()
-  sims <- sort(unique(standings$sim))
+# `encoded` are the played games that standings_run() got, `sims` their
+# season ids.
+standings_add_draft_ranks <- function(
+  standings,
+  encoded,
+  sims,
+  tiebreaker_depth
+) {
+  # Draft ranks only use regular season games
+  reg <- encoded$type == 0L
+  vars <- c("sim", "type", "away", "home", "result")
+  encoded[vars] <- lapply(encoded[vars], \(x) x[reg])
   out <- draft_ranks_cpp(
-    standings_encode_games(games, sims, league, has_scores = FALSE),
+    encoded,
     row_sim = match(standings$sim, sims),
-    row_team = chmatch(standings$team, league$team) - 1L,
+    row_team = chmatch(standings$team, standings_league()$team) - 1L,
     div_rank = as.integer(standings$div_rank),
     conf_rank = as.integer(standings$conf_rank),
     exit = as.integer(standings$exit),
