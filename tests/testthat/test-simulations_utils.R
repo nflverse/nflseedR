@@ -104,6 +104,61 @@ test_that("nflseedR_compute_results() transports elo shifts correctly", {
   )
 })
 
+test_that("cpp_compute_results() matches nflseedR_compute_results()", {
+  input <- new_compute_results_input()
+  # existing results of the week, including -1, stay
+  input$games[which(week == 10L)[1:2], result := c(-1L, 0L)]
+  input$teams <- input$teams[rev(seq_len(.N))]
+  run <- function(fun, week_num) {
+    set.seed(4)
+    fun(
+      teams = data.table::copy(input$teams),
+      games = data.table::copy(input$games),
+      week_num = week_num
+    )
+  }
+
+  expected <- run(nflseedR_compute_results, 10L)
+  expect_equal(run(cpp_compute_results, 10L), expected)
+  expect_equal(run(cpp_compute_results, "10"), expected)
+  expect_equal(
+    run(cpp_compute_results, 3L),
+    run(nflseedR_compute_results, 3L)
+  )
+
+  # factor weeks as in nfl_simulations()
+  input$games[, week := as.factor(week)]
+  expect_equal(
+    run(cpp_compute_results, "10"),
+    run(nflseedR_compute_results, "10")
+  )
+  expect_identical(run(cpp_compute_results, "99")$games, input$games)
+})
+
+test_that("cpp_compute_results() starts with the same elo values", {
+  input <- new_compute_results_input()
+  input$teams[, elo := NULL]
+  run <- function(fun, ...) {
+    set.seed(8)
+    fun(
+      teams = data.table::copy(input$teams),
+      games = data.table::copy(input$games),
+      week_num = 10L,
+      ...
+    )
+  }
+  elo <- setNames(seq(1400, 1600, length.out = 32), unique(input$teams$team))
+
+  expect_equal(
+    run(cpp_compute_results),
+    run(nflseedR_compute_results)
+  )
+  expect_equal(
+    run(cpp_compute_results, elo = elo),
+    run(nflseedR_compute_results, elo = elo)
+  )
+})
+
 test_that("sims_week_rows() finds the rows of a week", {
   week <- c(3L, 10L, 3L, 1L)
   expect_identical(sims_week_rows(week, 3L), c(1L, 3L))

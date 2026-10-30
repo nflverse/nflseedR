@@ -104,13 +104,15 @@ static_assert(kTeamsPerDivision < 10 && kDivisions / kConferences < 10 &&
   return static_cast<int32_t>(step) * 10 + n;
 }
 
-// Source of random numbers for coin tosses. bindings.cpp implements it with
-// R's RNG.
+// Source of random numbers for coin tosses and simulated results.
+// bindings.cpp implements it with R's RNG.
 class RandomSource {
  public:
   virtual ~RandomSource() = default;
   // Uniform integer in [0, n)
   virtual int32_t index(int32_t n) = 0;
+  // Standard normal draw, like norm_rand() (rnorm(1) is the same draw)
+  virtual double normal() = 0;
 };
 
 // Division and conference of every team. Division ids 0..7, conference ids

@@ -218,6 +218,24 @@ test_that("simulations work with custom compute_results functions", {
   expect_identical(sum(sim$standings$exit == "SB_WIN"), 4L)
 })
 
+test_that("simulations with cpp_compute_results() match the default", {
+  if (!is_sequential()) future::plan(future::sequential)
+  run <- function(fun) {
+    set.seed(5, "L'Ecuyer-CMRG")
+    nflseedR::nfl_simulations(
+      games = nflseedR::sims_games_example,
+      compute_results = fun,
+      simulations = 6,
+      chunks = 2,
+      verbosity = "NONE"
+    )
+  }
+  expect_equal(
+    run(cpp_compute_results)[c("standings", "games")],
+    run(nflseedR_compute_results)[c("standings", "games")]
+  )
+})
+
 test_that("simulations check teams and playoff seeds before simulating", {
   games <- data.table::as.data.table(nflseedR::sims_games_example)
   games[home_team == "LV", home_team := "OAK"]
