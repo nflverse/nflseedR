@@ -3,6 +3,14 @@
 * Added new function `nfl_regular_season()` which computes regular season matchups based on previous season standings and NFL regular season rules. (#64)
 * Changed home field elo point adjustment in `nflseedR_compute_results()` from 20 points to 45 points, which reflects roughly 1.8 actual points in home field advantage. (#65)
 * `nfl_simulations()`, `nfl_standings()`, and `nflseedR_compute_results()` are significantly faster thanks to efficiency optimization. (#66)
+* `nfl_standings()` computes standings with a new C++ engine. It is 18 to 46 times faster than before and no longer aborts with "Entered infinite loop in draft tiebreaking procedure" when many teams are tied for draft picks. Ties decided by coin toss use R's random number generator differently, so results with a given `set.seed()` differ from previous versions.
+* `nfl_standings()` follows the NFL tiebreaking rules more closely: only one team advances per tiebreaking step in division ties, the remaining teams restart at the first step; conference and draft ties use common games only if the tied teams have at least four common opponents; draft ties go on to combined points ranking and net points after strength of victory and respect `tiebreaker_depth`; two separately tied groups in one division are no longer mixed in the combined points ranking step.
+* `nfl_standings()` ranks teams with the same win percentage by net wins (wins minus losses) while teams have played a different number of games, like the official NFL standings during the season (e.g. 2-0 ahead of 1-0, 0-0 in division games ahead of 0-1). After the final regular season week, only win percentages count.
+* `nfl_standings()` always returns the `*_tie_broken_by` columns of the requested `ranks` and no longer returns a stray `tied_for` column with `tiebreaker_depth = "RANDOM"`.
+* `nfl_standings()` ignores `playoff_seeds` if `ranks = "DRAFT"` because draft ranks need all conference ranks.
+* `nfl_standings()` returns `NA` division, conference and draft ranks for a season until every team has played a game.
+* `nfl_standings()` errors on team abbreviations other than the 32 current ones (e.g. `"STL"`, `"SD"`, `"OAK"`, `"LAR"`). Use `nflreadr::clean_team_abbrs()` to convert old abbreviations.
+* `nfl_standings()` errors if `tiebreaker_depth = "POINTS"` but `games` has no scores.
 
 # nflseedR 2.0.2
 

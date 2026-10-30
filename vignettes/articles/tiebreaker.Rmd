@@ -87,7 +87,7 @@ If it is necessary to break ties to determine the three Wild Card clubs from eac
 
 1. Head-to-head, if applicable.
 1. Best won-lost-tied percentage in games played within the conference.
-1. Best won-lost-tied percentage in common games, minimum of four.
+1. Best won-lost-tied percentage in common games, minimum of four common opponents.
 1. Strength of victory in all games.
 1. Strength of schedule in all games.
 1. Best combined ranking (see [Other Tie-Breaking Procedures]) among conference teams in points scored and points allowed in all games.
@@ -106,7 +106,7 @@ When the first Wild Card team has been identified, the procedure is repeated to 
 1. Apply division tiebreaker to eliminate all but the highest ranked club in each division prior to proceeding to step 2. The original seeding within a division upon application of the division tiebreaker remains the same for all subsequent applications of the procedure that are necessary to identify the ~~two~~[sic!] three Wild-Card participants.
 1. Head-to-head sweep. (Applicable only if one club has defeated each of the others or if one club has lost to each of the others.)
 1. Best won-lost-tied percentage in games played within the conference.
-1. Best won-lost-tied percentage in common games, minimum of four.
+1. Best won-lost-tied percentage in common games, minimum of four common opponents.
 1. Strength of victory in all games.
 1. Strength of schedule in all games.
 1. Best combined ranking (see [Other Tie-Breaking Procedures]) among conference teams in points scored and points allowed in all games.
@@ -119,7 +119,7 @@ When the first Wild Card team has been identified, the procedure is repeated to 
 # Other Tie-Breaking Procedures
 
 1. Only one club advances to the playoffs in any tie-breaking step. Remaining tied clubs revert to the first step of the applicable division or Wild Card tie-breakers. As an example, if two clubs remain tied in any tie-breaker step after all other clubs have been eliminated, the procedure reverts to Step 1 of the two-club format to determine the winner. When one club wins the tiebreaker, all other clubs revert to Step 1 of the applicable two-club or three-club format.
-1. In comparing records against common opponents among tied teams, the best won-lost-tied percentage is the deciding factor, since teams may have played an unequal number of games.
+1. In comparing records against common opponents among tied teams, the best won-lost-tied percentage is the deciding factor, since teams may have played an unequal number of games. The minimum of four in the Wild Card and draft procedures refers to common opponents, not common games. A club can play a common opponent twice if it is a division rival, so four common games can come from only three common opponents.
 1. To determine home field priority among division winners, apply Wild Card tiebreakers.
 1. To determine home field priority for Wild Card qualifiers, apply division tiebreakers (if teams are from the same division) or Wild Card tiebreakers (if teams are from different divisions).
 1. To determine the *best combined ranking* among conference team's in points scored and points allowed, add a team's position in the two categories, and the lowest score wins. For example, if Team A is first in points scored and second in points allowed, its combined ranking is "3." If Team B is third in points scored and first in points allowed, its combined ranking is "4." Team A then wins the tiebreaker. If two teams are tied for a position, both teams are awarded the ranking as if they held it solely. For example, if Team A and Team B are tied for first in points scored, each team is assigned a ranking of "1" in that category, and if Team C is third, its ranking will still be "3."
@@ -162,7 +162,7 @@ Ties involving THREE OR MORE clubs from different conferences will be broken by 
 After this process, there can only be 2 inter-conference teams participating in the following steps (draft pick assignment is reversed to division or conference ties. Worse teams get earlier picks):
 
 1. Head-to-head, if applicable. The loser gets the earlier pick.
-1. Worst won-lost-tied percentage in common games (minimum of four).
+1. Worst won-lost-tied percentage in common games (minimum of four common opponents).
 1. Worst Strength of victory in all games.
 1. Worst combined ranking among all teams in points scored and points allowed in all games.
 1. Worst net points in all games.
