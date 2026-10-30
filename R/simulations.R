@@ -201,8 +201,8 @@ nfl_simulations <- function(games,
   }
 
   # Remind user to validate compute_results
-  default_results <- identical(compute_results, nflseedR_compute_results)
-  if (!default_results) {
+  builtin_results <- sims_builtin_results(compute_results)
+  if (is.null(builtin_results)) {
     cli::cli_inform(c(
       "i" = "You have provided your own function to {.arg compute_results}, cool!",
       "i" = "To maximize performance, {.fun nfl_simulations} does not control the output
@@ -294,12 +294,12 @@ nfl_simulations <- function(games,
   # - Every chunk gets the games and teams of a single season and repeats them
   #   itself, so only small tables are sent to the futures.
   # - The mapped function is a small wrapper of simulate_chunk().
-  # - The default compute_results is picked inside the chunks (NULL here).
-  #   Custom functions are scanned as they can use globals.
+  # - Built-in compute_results functions are sent by name and picked inside
+  #   the chunks. Custom functions are scanned as they can use globals.
   all <- furrr::future_map(
     .x = seq_len(chunks),
     .f = simulate_chunk_future,
-    compute_results = if (!default_results) compute_results,
+    compute_results = builtin_results %||% compute_results,
     ...,
     chunk_size = chunk_size,
     weeks_to_simulate = weeks_to_simulate,

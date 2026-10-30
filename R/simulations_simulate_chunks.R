@@ -19,8 +19,8 @@ simulate_chunk <- function(chunk,
                            encode_strings = FALSE,
                            ...){
 
-  # NULL means the default function (see nfl_simulations())
-  compute_results <- compute_results %||% nflseedR_compute_results
+  # Built-in functions arrive by name (see nfl_simulations())
+  compute_results <- sims_results_fun(compute_results)
 
   # Repeat the games and teams of one season for every simulation of this
   # chunk. Subsetting creates new tables, so the input stays unchanged. This
