@@ -167,6 +167,20 @@ test_that("sims_week_rows() finds the rows of a week", {
   expect_identical(sims_week_rows(as.factor(week), "99"), integer())
 })
 
+test_that("built-in compute_results functions round trip by name", {
+  custom <- function(teams, games, week_num, ...) NULL
+  expect_identical(
+    sims_results_fun(sims_builtin_results(nflseedR_compute_results)),
+    nflseedR_compute_results
+  )
+  expect_identical(
+    sims_results_fun(sims_builtin_results(cpp_compute_results)),
+    cpp_compute_results
+  )
+  expect_null(sims_builtin_results(custom))
+  expect_identical(sims_results_fun(custom), custom)
+})
+
 test_that("sims_encode_strings() and sims_decode_strings() round trip", {
   games <- data.table::as.data.table(nflseedR::sims_games_example)
   games[c(2, 5), home_team := NA_character_]

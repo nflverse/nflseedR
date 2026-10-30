@@ -62,6 +62,26 @@ sims_week_rows <- function(week, week_num) {
   }
 }
 
+# Name of a built-in compute_results function, NULL for custom functions.
+# nfl_simulations() sends built-in functions to the workers by name, so furrr
+# doesn't scan them for globals.
+sims_builtin_results <- function(fun) {
+  if (identical(fun, nflseedR_compute_results)) {
+    "nflseedR"
+  } else if (identical(fun, cpp_compute_results)) {
+    "cpp"
+  }
+}
+
+# The compute_results function of a name from sims_builtin_results(), or the
+# function itself
+sims_results_fun <- function(x) {
+  if (!is.character(x)) {
+    return(x)
+  }
+  switch(x, nflseedR = nflseedR_compute_results, cpp = cpp_compute_results)
+}
+
 # Turn all character columns of `dt` into factors (by reference) and return
 # their names. Levels are in order of appearance, so no sorting is needed.
 # Parallel workers return integer codes much faster than strings.
