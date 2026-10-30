@@ -9,6 +9,27 @@ load_test_games <- function() {
     dplyr::select(sim = season, game_type, week, away_team, home_team, result)
 }
 
+load_games_2006_2025 <- function() {
+  data.table::as.data.table(readRDS(test_path("games_2006_2025.rds")))
+}
+
+load_nfl_standings_2006_2025 <- function() {
+  data.table::as.data.table(readRDS(test_path("nfl_standings_2006_2025.rds")))
+}
+
+# Regular season games through `week` of `season` for every row of `weeks`, one
+# sim per season and week (sim = season * 100 + week)
+weekly_games <- function(games, weeks) {
+  games <- games[game_type == "REG"]
+  out <- weeks[,
+    games[season == .BY$s & week <= .BY$wk],
+    by = list(s = season, wk = week)
+  ]
+  out[, sim := s * 100L + wk]
+  out[, c("s", "wk", "season") := NULL]
+  out[]
+}
+
 load_deep_tiebreaker_games <- function() {
   data.table::as.data.table(readRDS(test_path("deep_tiebreaker_games.rds")))
 }

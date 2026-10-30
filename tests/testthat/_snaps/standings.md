@@ -1,8 +1,18 @@
-# large draft ties abort the draft tiebreaker loop
+# nfl_standings() checks its input
 
     Code
-      with_reference_seed(1L, nfl_standings(games, ranks = "DRAFT", verbosity = "NONE"))
+      nfl_standings(games, verbosity = "NONE")
     Condition
-      Error in `add_draft_ranks()`:
-      ! Entered infinite loop in draft tiebreaking procedure
+      Error in `nfl_standings()`:
+      ! The `games` table includes invalid team abbreviations: "OAK".
+      i Valid abbreviations are the teams in `nflseedR::divisions` without "LAR", "OAK", "SD", and "STL".
+      i `nflreadr::clean_team_abbrs()` converts old abbreviations.
+
+---
+
+    Code
+      nfl_standings(games, tiebreaker_depth = "POINTS", verbosity = "NONE")
+    Condition
+      Error in `nfl_standings()`:
+      ! `tiebreaker_depth = "POINTS"` needs the variables "home_score" and "away_score" in `games`.
 

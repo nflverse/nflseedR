@@ -10,6 +10,11 @@
 # The fixture is frozen as rds so the tests don't depend on this generator.
 # Rerun only if you need to change the fixture, and review all snapshot
 # changes afterwards.
+#
+# Season 28 was added later (2026-10-30): a season where nfl_standings() (C++)
+# breaks a division tie by point differential, which the first 27 seasons
+# don't reach. It was found the same way (synthesize_seasons(), set.seed(28),
+# 20,000 seasons, the first one without coin tosses).
 
 devtools::load_all()
 library(data.table)
