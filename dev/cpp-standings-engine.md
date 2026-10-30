@@ -83,8 +83,15 @@ MIN NE NO NYG NYJ PHI PIT SEA SF TB TEN WAS`). The old abbreviations `LAR`,
 `OAK`, `STL` and `SD` are invalid. `standings_validate_games()` errors on any
 other abbreviation in `away_team` or `home_team` (D9). The engine relies on
 these constants: fixed-size arrays (`std::array<..., 32>`, a 32×32
-head-to-head matrix, 4 teams per division) and no code paths for missing
-teams or other league sizes.
+head-to-head matrix, 4 teams per division) and no code paths for other
+league sizes.
+
+**Teams without games** are possible in exactly one situation: week 1 has
+started but not every team has played yet. The reference leaves such teams
+out of the output (only teams with at least one regular season game get a
+row). The engine keeps that behavior: fixed 32-team arrays plus a "has
+played" mask that controls which rows are written. Ranks are computed among
+the teams that have played. Tested by the "partial week 1" snapshot.
 
 ### Records
 
@@ -373,8 +380,8 @@ Also summarized in `AGENTS.md`.
 1. **Comparison harness** (written before any C++):
    - Generator for random seasons rich in ties: results in -3..3 including
      tie games, small scores so point steps are reached, partial seasons
-     (weeks 1–4), and played playoffs for draft ranks. Always all 32 valid
-     teams.
+     (weeks 1–4, and a partly played week 1 with teams without games), and
+     played playoffs for draft ranks. Always the 32 valid teams.
    - Every combination of `ranks` × `tiebreaker_depth` × `playoff_seeds`.
    - Compare C++ and reference: identical output, except
      - groups decided by `"Coin Toss"`: same teams, same set of ranks;
@@ -389,11 +396,36 @@ Also summarized in `AGENTS.md`.
 3. **Rule scenarios** in R: one small hand-built season per tiebreaker step,
    each named after the step it tests. Use known historical cases where
    possible.
-4. **Snapshots**: standings snapshots stay identical (they rarely hit deep
-   tiebreakers and contain few coin tosses; investigate any change).
-   Simulation snapshots change once because the random number stream changes
-   (D5); review them before accepting.
-5. **Sanitizers and coverage**: rhub `clang-asan`, `clang-ubsan`, `valgrind`
+4. **Snapshots**: standings snapshots of real seasons stay identical (they
+   rarely hit deep tiebreakers and contain few coin tosses; investigate any
+   change). Simulation snapshots change once because the random number
+   stream changes (D5); review them before accepting.
+5. **Deep tiebreaker reference** (`test-standings.R`, created before M0 from
+   the R implementation):
+   - Fixture `tests/testthat/deep_tiebreaker_games.rds`: synthetic
+     tie-heavy seasons on the 2022 schedule, with scores, picked so that
+     together they reach every tiebreaker label the reference can produce at
+     depths `"POINTS"`, `"SOS"` and `"PRE-SOV"`. Built by
+     `data-raw/build_deep_tiebreaker_games.R`. Don't regenerate it unless
+     needed. It is frozen so the snapshots stay comparable.
+   - Snapshots `_snaps/standings/deep_tiebreakers_{points,sos,pre-sov}.csv`:
+     full `ranks = "DRAFT"` output of the reference, seeded with
+     `with_reference_seed()` from `helpers.R` (pins R's default RNG kinds
+     because `test-simulations.R` leaves L'Ecuyer-CMRG behind), sorted by sim
+     and team so diffs are per team.
+   - A test checks that the fixture really reaches the deep steps.
+   - Partial week 1 snapshot (teams without games).
+   - These snapshots are the yardstick for the C++ engine. A C++ result may
+     differ from them only in (a) teams in ties decided by `"Coin Toss"`
+     (D5) and everything that follows from them, and (b) differences
+     required by decided entries in the decision log. Don't accept a
+     snapshot change blindly. For every changed row, name the coin toss or
+     decision that explains it. The comparison test (item 1) should read
+     these CSV files directly, so it can mask coin toss groups instead of
+     failing on them.
+   - `draft_tiebreaker_loop_games.rds` reproduces D10. Its snapshot records
+     the current error and must change to valid draft ranks with the engine.
+6. **Sanitizers and coverage**: rhub `clang-asan`, `clang-ubsan`, `valgrind`
    (`.github/workflows/rhub.yaml`), `covr` including C++.
 
 ## Milestones
@@ -491,6 +523,18 @@ exactly 32 teams. Only the 32 current abbreviations are valid (`LAR`, `OAK`,
 `standings_validate_games()` errors with a cli message listing any invalid
 abbreviations. Today they quietly get `NA` division and conference. Add a
 NEWS bullet.
+
+**D10 Draft loop counter bug. Decided (fix in the engine).** The reference
+aborts with "Entered infinite loop in draft tiebreaking procedure" when many
+teams are tied for draft picks (same `exit`, `win_pct` and `sos`). Each
+`while` round places at most one team per tie, and the counter stops after
+18 rounds. Found with synthetic tie-heavy seasons (draft ties of 13+ teams,
+about 1 in 5 such seasons fails). Real seasons are very unlikely to hit it.
+The conference loop has the same kind of cap (12 rounds) but can't exceed it
+because a block has at most 12 wild card teams. The engine places one team
+per iteration of a bounded loop over the block (at most 32 iterations), so
+no arbitrary cap is needed. Regression fixture:
+`tests/testthat/draft_tiebreaker_loop_games.rds`. Add a NEWS bullet.
 
 ## Session protocol
 
