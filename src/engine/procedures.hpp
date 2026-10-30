@@ -14,7 +14,6 @@ class TeamSet {
  public:
   void push(TeamId t) noexcept { teams_[size_++] = t; }
   void erase(TeamId t) noexcept;
-  void clear() noexcept { size_ = 0; }
   [[nodiscard]] int32_t size() const noexcept { return size_; }
   [[nodiscard]] TeamId operator[](int32_t i) const noexcept {
     return teams_[i];

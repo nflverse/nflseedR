@@ -40,8 +40,6 @@ class Ratio {
   constexpr Ratio(int32_t num, int32_t den) noexcept
       : num_(den == 0 ? 0 : num), den_(den == 0 ? 1 : den) {}
 
-  [[nodiscard]] constexpr int32_t num() const noexcept { return num_; }
-  [[nodiscard]] constexpr int32_t den() const noexcept { return den_; }
   [[nodiscard]] constexpr Ratio negated() const noexcept {
     return {-num_, den_};
   }
