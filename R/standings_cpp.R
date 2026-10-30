@@ -32,18 +32,15 @@ standings_compute <- function(
 
   league <- standings_league()
   sims <- sort(unique(games$sim))
-  out <- do.call(
-    standings_cpp,
-    c(
-      standings_encode_games(games, sims, league, has_scores),
-      season_complete = list(as.integer(rep_len(
-        season_complete %||% standings_season_complete(games, sims),
-        length(sims)
-      ))),
-      ranks = match(ranks, c("NONE", "DIV", "CONF", "DRAFT")) - 1L,
-      depth = depth,
-      playoff_seeds = playoff_seeds %||% 16L
-    )
+  out <- standings_cpp(
+    standings_encode_games(games, sims, league, has_scores),
+    season_complete = as.integer(rep_len(
+      season_complete %||% standings_season_complete(games, sims),
+      length(sims)
+    )),
+    ranks = match(ranks, c("NONE", "DIV", "CONF", "DRAFT")) - 1L,
+    depth = depth,
+    playoff_seeds = playoff_seeds %||% 16L
   )
 
   # Build all columns as a list and convert once. Every `[.data.table` call
@@ -99,19 +96,14 @@ standings_add_draft_ranks <- function(standings, games, tiebreaker_depth) {
   games <- games[game_type == "REG" & !is.na(result)]
   league <- standings_league()
   sims <- sort(unique(standings$sim))
-  out <- do.call(
-    draft_ranks_cpp,
-    c(
-      standings_encode_games(games, sims, league, has_scores = FALSE),
-      list(
-        row_sim = match(standings$sim, sims),
-        row_team = chmatch(standings$team, league$team) - 1L,
-        div_rank = as.integer(standings$div_rank),
-        conf_rank = as.integer(standings$conf_rank),
-        exit = as.integer(standings$exit),
-        depth = standings_depth(tiebreaker_depth)
-      )
-    )
+  out <- draft_ranks_cpp(
+    standings_encode_games(games, sims, league, has_scores = FALSE),
+    row_sim = match(standings$sim, sims),
+    row_team = chmatch(standings$team, league$team) - 1L,
+    div_rank = as.integer(standings$div_rank),
+    conf_rank = as.integer(standings$conf_rank),
+    exit = as.integer(standings$exit),
+    depth = standings_depth(tiebreaker_depth)
   )
   standings[, `:=`(
     draft_rank = out$draft_rank,
@@ -121,7 +113,7 @@ standings_add_draft_ranks <- function(standings, games, tiebreaker_depth) {
 }
 
 # Games as the C++ engine expects them: dense season ids, 0-based team ids,
-# integer game types
+# integer game types. One list, unpacked by make_games() in src/bindings.cpp
 standings_encode_games <- function(games, sims, league, has_scores) {
   list(
     sim = match(games$sim, sims),

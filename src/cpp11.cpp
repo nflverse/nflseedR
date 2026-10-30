@@ -6,24 +6,24 @@
 #include <R_ext/Visibility.h>
 
 // bindings.cpp
-cpp11::writable::list standings_cpp(cpp11::integers sim, cpp11::integers type, cpp11::integers away, cpp11::integers home, cpp11::doubles result, cpp11::doubles away_score, cpp11::doubles home_score, bool has_scores, int n_sims, cpp11::integers team_division, cpp11::integers team_conference, cpp11::integers season_complete, int ranks, int depth, int playoff_seeds);
-extern "C" SEXP _nflseedR_standings_cpp(SEXP sim, SEXP type, SEXP away, SEXP home, SEXP result, SEXP away_score, SEXP home_score, SEXP has_scores, SEXP n_sims, SEXP team_division, SEXP team_conference, SEXP season_complete, SEXP ranks, SEXP depth, SEXP playoff_seeds) {
+cpp11::writable::list standings_cpp(cpp11::list games_list, cpp11::integers season_complete, int ranks, int depth, int playoff_seeds);
+extern "C" SEXP _nflseedR_standings_cpp(SEXP games_list, SEXP season_complete, SEXP ranks, SEXP depth, SEXP playoff_seeds) {
   BEGIN_CPP11
-    return cpp11::as_sexp(standings_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(sim), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(type), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(away), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(home), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(result), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(away_score), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(home_score), cpp11::as_cpp<cpp11::decay_t<bool>>(has_scores), cpp11::as_cpp<cpp11::decay_t<int>>(n_sims), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(team_division), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(team_conference), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(season_complete), cpp11::as_cpp<cpp11::decay_t<int>>(ranks), cpp11::as_cpp<cpp11::decay_t<int>>(depth), cpp11::as_cpp<cpp11::decay_t<int>>(playoff_seeds)));
+    return cpp11::as_sexp(standings_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(games_list), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(season_complete), cpp11::as_cpp<cpp11::decay_t<int>>(ranks), cpp11::as_cpp<cpp11::decay_t<int>>(depth), cpp11::as_cpp<cpp11::decay_t<int>>(playoff_seeds)));
   END_CPP11
 }
 // bindings.cpp
-cpp11::writable::list draft_ranks_cpp(cpp11::integers sim, cpp11::integers type, cpp11::integers away, cpp11::integers home, cpp11::doubles result, cpp11::doubles away_score, cpp11::doubles home_score, bool has_scores, int n_sims, cpp11::integers team_division, cpp11::integers team_conference, cpp11::integers row_sim, cpp11::integers row_team, cpp11::integers div_rank, cpp11::integers conf_rank, cpp11::integers exit, int depth);
-extern "C" SEXP _nflseedR_draft_ranks_cpp(SEXP sim, SEXP type, SEXP away, SEXP home, SEXP result, SEXP away_score, SEXP home_score, SEXP has_scores, SEXP n_sims, SEXP team_division, SEXP team_conference, SEXP row_sim, SEXP row_team, SEXP div_rank, SEXP conf_rank, SEXP exit, SEXP depth) {
+cpp11::writable::list draft_ranks_cpp(cpp11::list games_list, cpp11::integers row_sim, cpp11::integers row_team, cpp11::integers div_rank, cpp11::integers conf_rank, cpp11::integers exit, int depth);
+extern "C" SEXP _nflseedR_draft_ranks_cpp(SEXP games_list, SEXP row_sim, SEXP row_team, SEXP div_rank, SEXP conf_rank, SEXP exit, SEXP depth) {
   BEGIN_CPP11
-    return cpp11::as_sexp(draft_ranks_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(sim), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(type), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(away), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(home), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(result), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(away_score), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(home_score), cpp11::as_cpp<cpp11::decay_t<bool>>(has_scores), cpp11::as_cpp<cpp11::decay_t<int>>(n_sims), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(team_division), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(team_conference), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(row_sim), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(row_team), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(div_rank), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(conf_rank), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(exit), cpp11::as_cpp<cpp11::decay_t<int>>(depth)));
+    return cpp11::as_sexp(draft_ranks_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(games_list), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(row_sim), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(row_team), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(div_rank), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(conf_rank), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(exit), cpp11::as_cpp<cpp11::decay_t<int>>(depth)));
   END_CPP11
 }
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_nflseedR_draft_ranks_cpp", (DL_FUNC) &_nflseedR_draft_ranks_cpp, 17},
-    {"_nflseedR_standings_cpp",   (DL_FUNC) &_nflseedR_standings_cpp,   15},
+    {"_nflseedR_draft_ranks_cpp", (DL_FUNC) &_nflseedR_draft_ranks_cpp, 7},
+    {"_nflseedR_standings_cpp",   (DL_FUNC) &_nflseedR_standings_cpp,   5},
     {NULL, NULL, 0}
 };
 }
