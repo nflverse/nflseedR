@@ -34,6 +34,51 @@ test_that("nflseedR_compute_results() matches elo by sim and team", {
   )
 })
 
+test_that("nflseedR_compute_results() matches elo in randomly ordered teams", {
+  input <- new_compute_results_input()
+  set.seed(4)
+  ordered <- nflseedR_compute_results(
+    teams = data.table::copy(input$teams),
+    games = data.table::copy(input$games),
+    week_num = 10L
+  )
+
+  set.seed(3)
+  random_teams <- input$teams[sample(.N)]
+  set.seed(4)
+  random <- nflseedR_compute_results(
+    teams = random_teams,
+    games = data.table::copy(input$games),
+    week_num = 10L
+  )
+
+  expect_identical(random$games$result, ordered$games$result)
+  expect_identical(
+    data.table::setkey(random$teams, sim, team)$elo,
+    data.table::setkey(ordered$teams, sim, team)$elo
+  )
+})
+
+test_that("nflseedR_compute_results() works outside the nflseedR namespace", {
+  # Users copy this function as an example, so it must not use internals
+  copied <- nflseedR_compute_results
+  environment(copied) <- globalenv()
+  input <- new_compute_results_input()
+  set.seed(4)
+  expected <- nflseedR_compute_results(
+    teams = data.table::copy(input$teams),
+    games = data.table::copy(input$games),
+    week_num = "10"
+  )
+  set.seed(4)
+  out <- copied(
+    teams = data.table::copy(input$teams),
+    games = data.table::copy(input$games),
+    week_num = "10"
+  )
+  expect_identical(out, expected)
+})
+
 test_that("nflseedR_compute_results() transports elo shifts correctly", {
   input <- new_compute_results_input()
   old_teams <- data.table::copy(input$teams)
