@@ -130,3 +130,21 @@ test_that("simulations work with custom compute_results functions", {
   expect_all_equal(games$result[rep(simulated, 4)], 3L)
   expect_identical(sum(sim$standings$exit == "SB_WIN"), 4L)
 })
+
+test_that("simulations check teams and playoff seeds before simulating", {
+  games <- data.table::as.data.table(nflseedR::sims_games_example)
+  games[home_team == "LV", home_team := "OAK"]
+  expect_snapshot(
+    nflseedR::nfl_simulations(games, simulations = 2, chunks = 1),
+    error = TRUE
+  )
+  expect_snapshot(
+    nflseedR::nfl_simulations(
+      nflseedR::sims_games_example,
+      playoff_seeds = 17,
+      simulations = 2,
+      chunks = 1
+    ),
+    error = TRUE
+  )
+})

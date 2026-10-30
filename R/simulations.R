@@ -183,6 +183,12 @@ nfl_simulations <- function(games,
     )
   }
 
+  if (!inrange(playoff_seeds, 1L, 16L)) {
+    cli::cli_abort(
+      "The {.arg playoff_seeds} argument must be in range {.pkg 1} - {.pkg 16}"
+    )
+  }
+
   # Remind user to validate compute_results
   default_results <- identical(compute_results, nflseedR_compute_results)
   if (!default_results) {
@@ -251,6 +257,9 @@ nfl_simulations <- function(games,
       {.arg sim_include} to {.val REG}."
     )
   }
+  # The standings engine only knows the 32 current teams (D9). Check them here
+  # instead of in every chunk
+  standings_check_teams(games$away_team, games$home_team, allow_missing = TRUE)
   teams <- data.table::as.data.table(nflseedR::divisions)
   teams <- teams[team %chin% games$away_team | team %chin% games$home_team]
 

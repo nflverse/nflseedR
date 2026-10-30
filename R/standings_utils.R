@@ -36,16 +36,35 @@ standings_validate_games <- function(games, call = rlang::caller_env()) {
       call = call
     )
   }
-  # D9 in dev/cpp-standings-engine.md: only the 32 current teams
-  valid_teams <- standings_league()$team
-  if (
-    anyNA(chmatch(games$away_team, valid_teams)) ||
-      anyNA(chmatch(games$home_team, valid_teams))
-  ) {
-    invalid_teams <- setdiff(
-      unique(c(games$away_team, games$home_team)),
-      valid_teams
+  standings_check_teams(games$away_team, games$home_team, call = call)
+  if (any(is.na(games$result))) {
+    cli::cli_abort(
+      "The {.arg games} table includes {.val NA} results! Please fix and rerun.",
+      call = call
     )
+  }
+  if (uses_season) {
+    colnames(games)[colnames(games) == "season"] <- "sim"
+  }
+
+  games
+}
+
+# D9 in dev/cpp-standings-engine.md: only the 32 current teams. Simulations
+# allow missing teams in playoff games that aren't filled yet.
+standings_check_teams <- function(
+  away,
+  home,
+  allow_missing = FALSE,
+  call = rlang::caller_env()
+) {
+  teams <- unique(c(away, home))
+  invalid <- !teams %chin% standings_league()$team
+  if (allow_missing) {
+    invalid <- invalid & !is.na(teams)
+  }
+  invalid_teams <- teams[invalid]
+  if (length(invalid_teams) > 0L) {
     cli::cli_abort(
       c(
         "The {.arg games} table includes invalid team abbreviations: \\
@@ -58,15 +77,5 @@ standings_validate_games <- function(games, call = rlang::caller_env()) {
       call = call
     )
   }
-  if (any(is.na(games$result))) {
-    cli::cli_abort(
-      "The {.arg games} table includes {.val NA} results! Please fix and rerun.",
-      call = call
-    )
-  }
-  if (uses_season) {
-    colnames(games)[colnames(games) == "season"] <- "sim"
-  }
-
-  games
+  invisible(NULL)
 }
