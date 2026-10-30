@@ -30,6 +30,7 @@ nfl_simulations(
   byes_per_conf = 1L,
   tiebreaker_depth = c("SOS", "PRE-SOV", "RANDOM"),
   sim_include = c("DRAFT", "REG", "POST"),
+  return_games = TRUE,
   verbosity = c("MIN", "MAX", "NONE")
 )
 ```
@@ -156,6 +157,14 @@ nfl_simulations(
 
   - `"DRAFT"` (default): Do `"POST"` + compute draft order
 
+- return_games:
+
+  If `TRUE` (the default), the output includes the tables `games` and
+  `game_summary`. Set it to `FALSE` to save memory if you only need
+  standings. The games table holds every game of every simulation and is
+  usually much larger than the standings. With `FALSE`, `games` and
+  `game_summary` are `NULL`.
+
 - verbosity:
 
   One of `"MIN"`, `"MAX"`, or `"NONE"` allowing the user to set the
@@ -171,9 +180,10 @@ nfl_simulations(
 ## Value
 
 An `nflseedR_simulation` object containing a list of 6 data frames with
-the results of all simulated games, the final standings in each
-simulated season, summary statistics across all simulated seasons, and
-the simulation parameters. For a full list, please see [the package
+the results of all simulated games (unless `return_games = FALSE`), the
+final standings in each simulated season, summary statistics across all
+simulated seasons, and the simulation parameters. For a full list,
+please see [the package
 website](https://nflseedr.com/articles/articles/nflsim2.html#simulation-output).
 
 ## Details
@@ -293,20 +303,20 @@ sim <- nflseedR::nfl_simulations(
 #>   documentation for further information.
 #> ℹ Will go on sequentially...
 #> This message is displayed once every 8 hours.
-#> ℹ 14:49:26 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
-#> ℹ 14:49:27 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 19:15:08 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
+#> ℹ 19:15:08 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 14:49:27 | Compute standings
-#> ℹ 14:49:27 | CHUNK #1: Start simulation of post season weeks "WC" and "SB"
-#> ℹ 14:49:27 | Compute Draft Order
-#> ℹ 14:49:27 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 19:15:09 | Compute standings
+#> ℹ 19:15:09 | CHUNK #1: Start simulation of post season weeks "WC" and "SB"
+#> ℹ 19:15:09 | Compute Draft Order
+#> ℹ 19:15:09 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 14:49:28 | Compute standings
-#> ℹ 14:49:28 | CHUNK #2: Start simulation of post season weeks "WC" and "SB"
-#> ℹ 14:49:28 | Compute Draft Order
-#> ℹ 14:49:28 | Combine simulation data
-#> ℹ 14:49:28 | Aggregate across simulations
-#> ℹ 14:49:28 | DONE!
+#> ℹ 19:15:09 | Compute standings
+#> ℹ 19:15:09 | CHUNK #2: Start simulation of post season weeks "WC" and "SB"
+#> ℹ 19:15:09 | Compute Draft Order
+#> ℹ 19:15:09 | Combine simulation data
+#> ℹ 19:15:09 | Aggregate across simulations
+#> ℹ 19:15:09 | DONE!
 
 # Overview output
 str(sim, max.level = 3)
@@ -372,7 +382,7 @@ str(sim, max.level = 3)
 #>   ..$ games_played   : int [1:284] 4 4 4 4 4 4 4 4 4 4 ...
 #>   ..$ away_percentage: num [1:284] 0 0 1 0 0 0 1 0.75 1 0 ...
 #>   ..$ home_percentage: num [1:284] 1 1 0 1 1 1 0 0.25 0 1 ...
-#>  $ sim_params  :List of 10
+#>  $ sim_params  :List of 11
 #>   ..$ nfl_season      : int 2022
 #>   ..$ playoff_seeds   : int 7
 #>   ..$ simulations     : num 4
@@ -380,10 +390,11 @@ str(sim, max.level = 3)
 #>   ..$ byes_per_conf   : int 1
 #>   ..$ tiebreaker_depth: chr "SOS"
 #>   ..$ sim_include     : chr "DRAFT"
+#>   ..$ return_games    : logi TRUE
 #>   ..$ verbosity       : chr "MIN"
 #>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1
 #>   .. ..$ : int [1:4] 2 0 2 9002
-#>   ..$ finished_at     : POSIXct[1:1], format: "2026-10-30 14:49:28"
+#>   ..$ finished_at     : POSIXct[1:1], format: "2026-10-30 19:15:09"
 #>  - attr(*, "class")= chr "nflseedR_simulation"
 # }
 ```

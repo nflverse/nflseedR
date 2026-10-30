@@ -62,6 +62,10 @@
 <li>
 <code><a href="../reference/nfl_simulations.html">nfl_simulations()</a></code>, <code><a href="../reference/nfl_standings.html">nfl_standings()</a></code>, and <code><a href="../reference/nflseedR_compute_results.html">nflseedR_compute_results()</a></code> are significantly faster thanks to efficiency optimization. (<a href="https://github.com/nflverse/nflseedR/issues/66" class="external-link">#66</a>)</li>
 <li>
+<code><a href="../reference/nfl_simulations.html">nfl_simulations()</a></code> gains the argument <code>return_games</code>. Set it to <code>FALSE</code> to drop the tables <code>games</code> and <code>game_summary</code> from the output and save a lot of memory if you only need standings.</li>
+<li>
+<code><a href="../reference/nfl_simulations.html">nfl_simulations()</a></code> starts faster and sends much less data to parallel workers, so small simulations no longer spend most of their time preparing chunks and parallel plans scale better. It also checks team abbreviations and <code>playoff_seeds</code> before it starts simulating.</li>
+<li>
 <code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> computes standings with a new C++ engine. It is 18 to 46 times faster than before and no longer aborts with “Entered infinite loop in draft tiebreaking procedure” when many teams are tied for draft picks. Ties decided by coin toss use R’s random number generator differently, so results with a given <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> differ from previous versions.</li>
 <li>
 <code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> follows the NFL tiebreaking rules more closely: only one team advances per tiebreaking step in division ties, the remaining teams restart at the first step; conference and draft ties use common games only if the tied teams have at least four common opponents; draft ties go on to combined points ranking and net points after strength of victory and respect <code>tiebreaker_depth</code>; two separately tied groups in one division are no longer mixed in the combined points ranking step.</li>

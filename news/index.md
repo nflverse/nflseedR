@@ -18,6 +18,15 @@
   [`nflseedR_compute_results()`](https://nflseedr.com/reference/nflseedR_compute_results.md)
   are significantly faster thanks to efficiency optimization.
   ([\#66](https://github.com/nflverse/nflseedR/issues/66))
+- [`nfl_simulations()`](https://nflseedr.com/reference/nfl_simulations.md)
+  gains the argument `return_games`. Set it to `FALSE` to drop the
+  tables `games` and `game_summary` from the output and save a lot of
+  memory if you only need standings.
+- [`nfl_simulations()`](https://nflseedr.com/reference/nfl_simulations.md)
+  starts faster and sends much less data to parallel workers, so small
+  simulations no longer spend most of their time preparing chunks and
+  parallel plans scale better. It also checks team abbreviations and
+  `playoff_seeds` before it starts simulating.
 - [`nfl_standings()`](https://nflseedr.com/reference/nfl_standings.md)
   computes standings with a new C++ engine. It is 18 to 46 times faster
   than before and no longer aborts with “Entered infinite loop in draft

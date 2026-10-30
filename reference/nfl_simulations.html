@@ -108,6 +108,7 @@ Please see the below given section "Details" for further information.</p>
 <span>  byes_per_conf <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  tiebreaker_depth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SOS"</span>, <span class="st">"PRE-SOV"</span>, <span class="st">"RANDOM"</span><span class="op">)</span>,</span>
 <span>  sim_include <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DRAFT"</span>, <span class="st">"REG"</span>, <span class="st">"POST"</span><span class="op">)</span>,</span>
+<span>  return_games <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbosity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MIN"</span>, <span class="st">"MAX"</span>, <span class="st">"NONE"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -211,6 +212,14 @@ Simulation will behave as follows:</p><ul><li><p><code>"REG"</code>: Simulate th
 </ul></dd>
 
 
+<dt id="arg-return-games">return_games<a class="anchor" aria-label="anchor" href="#arg-return-games"></a></dt>
+<dd><p>If <code>TRUE</code> (the default), the output includes the tables
+<code>games</code> and <code>game_summary</code>. Set it to <code>FALSE</code> to save memory if you only
+need standings. The games table holds every game of every simulation and is
+usually much larger than the standings. With <code>FALSE</code>, <code>games</code> and
+<code>game_summary</code> are <code>NULL</code>.</p></dd>
+
+
 <dt id="arg-verbosity">verbosity<a class="anchor" aria-label="anchor" href="#arg-verbosity"></a></dt>
 <dd><p>One of <code>"MIN"</code>, <code>"MAX"</code>, or <code>"NONE"</code> allowing the user
 to set the grade of verbosity of status reports. They mean:</p><ul><li><p><code>"MIN"</code> (default): Prints main steps of the process.</p></li>
@@ -222,8 +231,8 @@ to set the grade of verbosity of status reports. They mean:</p><ul><li><p><code>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An <code>nflseedR_simulation</code> object containing a list of 6
-data frames with the results of all simulated games,
-the final standings in each simulated season,
+data frames with the results of all simulated games (unless
+<code>return_games = FALSE</code>), the final standings in each simulated season,
 summary statistics across all simulated seasons, and the simulation parameters. For a full list,
 please see <a href="https://nflseedr.com/articles/articles/nflsim2.html#simulation-output">the package website</a>.</p>
     </div>
@@ -327,20 +336,20 @@ generation (RNG)" in <a href="https://furrr.futureverse.org/reference/furrr_opti
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   documentation for further information.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Will go on sequentially...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #555555;">This message is displayed once every 8 hours.</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:26 | Start simulation of <span style="color: #0000BB;">4</span> seasons in <span style="color: #0000BB;">2</span> chunks with a chunk size of <span style="color: #0000BB;">2</span>.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:27 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:08 | Start simulation of <span style="color: #0000BB;">4</span> seasons in <span style="color: #0000BB;">2</span> chunks with a chunk size of <span style="color: #0000BB;">2</span>.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:08 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> …, <span style="color: #0000BB;">"17"</span>, and <span style="color: #0000BB;">"18"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:27 | Compute standings</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:27 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:27 | Compute Draft Order</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:27 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:09 | Compute standings</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:09 | CHUNK #<span style="color: #0000BB;">1</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:09 | Compute Draft Order</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:09 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of regular season weeks <span style="color: #0000BB;">"1"</span>, <span style="color: #0000BB;">"2"</span>, <span style="color: #0000BB;">"3"</span>,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> …, <span style="color: #0000BB;">"17"</span>, and <span style="color: #0000BB;">"18"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | Compute standings</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | Compute Draft Order</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | Combine simulation data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | Aggregate across simulations</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 14:49:28 | DONE!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:09 | Compute standings</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:09 | CHUNK #<span style="color: #0000BB;">2</span>: Start simulation of post season weeks <span style="color: #0000BB;">"WC"</span> and <span style="color: #0000BB;">"SB"</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:09 | Compute Draft Order</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:09 | Combine simulation data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:09 | Aggregate across simulations</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 19:15:09 | DONE!</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Overview output</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">sim</span>, max.level <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
@@ -406,7 +415,7 @@ generation (RNG)" in <a href="https://furrr.futureverse.org/reference/furrr_opti
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ games_played   : int [1:284] 4 4 4 4 4 4 4 4 4 4 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ away_percentage: num [1:284] 0 0 1 0 0 0 1 0.75 1 0 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ home_percentage: num [1:284] 1 1 0 1 1 1 0 0.25 0 1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ sim_params  :List of 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ sim_params  :List of 11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nfl_season      : int 2022</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ playoff_seeds   : int 7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ simulations     : num 4</span>
@@ -414,10 +423,11 @@ generation (RNG)" in <a href="https://furrr.futureverse.org/reference/furrr_opti
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ byes_per_conf   : int 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ tiebreaker_depth: chr "SOS"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim_include     : chr "DRAFT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ return_games    : logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ verbosity       : chr "MIN"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : int [1:4] 2 0 2 9002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ finished_at     : POSIXct[1:1], format: "2026-10-30 14:49:28"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ finished_at     : POSIXct[1:1], format: "2026-10-30 19:15:09"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr "nflseedR_simulation"</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>

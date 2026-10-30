@@ -54,14 +54,16 @@ Carl (in nflseedR 2.0).
 
 ``` r
 g <- nflseedR::sims_games_example
-# The functions expects the variable "sim" instead of "season"
-g$sim <- g$season
+# The functions expects the variable "sim" instead of "season". The example
+# teams hold simulations 1 and 2, so we simulate the games as sim 1
+g$sim <- 1L
 t <- nflseedR::sims_teams_example
 
+# Week 6 has a game without result
 out <- nflseedR_compute_results(
   teams = t,
   games = g,
-  week_num = 5L
+  week_num = "6"
 )
 
 str(out, max.level = 2)
@@ -72,8 +74,8 @@ str(out, max.level = 2)
 #>   ..$ conf    : chr [1:64] "NFC" "NFC" "AFC" "AFC" ...
 #>   ..$ division: chr [1:64] "NFC West" "NFC South" "AFC North" "AFC East" ...
 #>   ..$ sdiv    : chr [1:64] "NFCW" "NFCS" "AFCN" "AFCE" ...
-#>   ..$ elo     : num [1:64] 1376 1642 1404 1174 1467 ...
-#>   ..- attr(*, ".internal.selfref")=<pointer: 0x6488c9234580> 
+#>   ..$ elo     : num [1:64] 1369 1644 1396 1192 1452 ...
+#>   ..- attr(*, ".internal.selfref")=<pointer: 0x5afe60d6a580> 
 #>  $ games:Classes ‘data.table’ and 'data.frame':  284 obs. of  10 variables:
 #>   ..$ season   : int [1:284] 2022 2022 2022 2022 2022 2022 2022 2022 2022 2022 ...
 #>   ..$ game_type: chr [1:284] "REG" "REG" "REG" "REG" ...
@@ -84,14 +86,6 @@ str(out, max.level = 2)
 #>   ..$ home_rest: int [1:284] 7 7 7 7 7 7 7 7 7 7 ...
 #>   ..$ location : chr [1:284] "Home" "Home" "Home" "Home" ...
 #>   ..$ result   : int [1:284] NA -1 -2 NA -3 -3 0 NA -15 6 ...
-#>   ..$ sim      : int [1:284] 2022 2022 2022 2022 2022 2022 2022 2022 2022 2022 ...
-#>   ..- attr(*, ".internal.selfref")=<pointer: 0x6488c9234580> 
-#>   ..- attr(*, "index")= int(0) 
-#>   .. ..- attr(*, "__week__location__game_type")= int [1:284] 1 2 3 4 5 6 7 8 9 10 ...
-#>   .. .. ..- attr(*, "starts")= int [1:27] 1 17 33 49 64 65 80 81 95 109 ...
-#>   .. .. ..- attr(*, "maxgrpn")= int 16
-#>   .. .. ..- attr(*, "anyna")= int 0
-#>   .. .. ..- attr(*, "anyinfnan")= int 0
-#>   .. .. ..- attr(*, "anynotascii")= int 0
-#>   .. .. ..- attr(*, "anynotutf8")= int 0
+#>   ..$ sim      : int [1:284] 1 1 1 1 1 1 1 1 1 1 ...
+#>   ..- attr(*, ".internal.selfref")=<pointer: 0x5afe60d6a580> 
 ```

@@ -64,8 +64,8 @@ nflseedR's default function `nflseedR_compute_results`.
 
 The function passed to `compute_results` is required to support the
 arguments `"teams"`, `"games"`, and `"week_num"`. The two leading ones
-are already described above. The latter is a factor with a length of 1,
-which identifies the current week. Regular season weeks are labeled
+are already described above. The latter is a character string of length
+1, which identifies the current week. Regular season weeks are labeled
 `"1"`, `"2"`, etc. Playoff weeks are labeled `"WC"`, `"DIV"`, `"CON"`,
 and `"SB"`.
 
@@ -103,6 +103,5 @@ they must not be in the playoffs.
 
 ``` r
 simulations_verify_fct(nflseedR_compute_results)
-#> Warning: A shallow copy of this data.table was taken so that := can add or remove 1 columns by reference. At an earlier point, this data.table was copied by R (or was created manually using structure() or similar). Avoid names<- and attr<- which in R currently (and oddly) may copy the whole data.table. Use set* syntax instead to avoid copying: ?set, ?setnames and ?setattr. It's also not unusual for data.table-agnostic packages to produce tables affected by this issue. If this message doesn't help, please report your use case to the data.table issue tracker so the root cause can be fixed or this message improved.
 #> ✔ No problems found!
 ```

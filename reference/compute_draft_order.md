@@ -118,50 +118,50 @@ s <- games |> nflseedR::compute_division_ranks()
 s <- nflseedR::compute_conference_seeds(s, h2h = s$h2h, playoff_seeds = 6)
 nflseedR::compute_draft_order(s, games = games, h2h = s$h2h)
 })
-#> ℹ 14:49:21 | Calculating team data
-#> ℹ 14:49:21 | Calculating head to head
-#> ℹ 14:49:21 | Calculating division rank #1
-#> ℹ 14:49:21 | Calculating division rank #2
-#> ℹ 14:49:22 | Calculating division rank #3
-#> ℹ 14:49:22 | Calculating division rank #4
-#> ℹ 14:49:22 | Calculating seed #1
-#> ℹ 14:49:22 | Calculating seed #2
-#> ℹ 14:49:22 | Calculating seed #3
-#> ℹ 14:49:22 | Calculating seed #4
-#> ℹ 14:49:22 | Calculating seed #5
-#> ℹ 14:49:22 | Calculating seed #6
-#> ℹ 14:49:22 | Calculating draft order #32
-#> ℹ 14:49:22 | Calculating draft order #31
-#> ℹ 14:49:22 | Calculating draft order #30
-#> ℹ 14:49:22 | Calculating draft order #29
-#> ℹ 14:49:22 | Calculating draft order #28
-#> ℹ 14:49:22 | Calculating draft order #27
-#> ℹ 14:49:22 | Calculating draft order #26
-#> ℹ 14:49:22 | Calculating draft order #25
-#> ℹ 14:49:22 | Calculating draft order #24
-#> ℹ 14:49:22 | Calculating draft order #23
-#> ℹ 14:49:22 | Calculating draft order #22
-#> ℹ 14:49:22 | Calculating draft order #21
-#> ℹ 14:49:22 | Calculating draft order #20
-#> ℹ 14:49:22 | Calculating draft order #19
-#> ℹ 14:49:22 | Calculating draft order #18
-#> ℹ 14:49:22 | Calculating draft order #17
-#> ℹ 14:49:22 | Calculating draft order #16
-#> ℹ 14:49:22 | Calculating draft order #15
-#> ℹ 14:49:22 | Calculating draft order #14
-#> ℹ 14:49:22 | Calculating draft order #13
-#> ℹ 14:49:22 | Calculating draft order #12
-#> ℹ 14:49:22 | Calculating draft order #11
-#> ℹ 14:49:22 | Calculating draft order #10
-#> ℹ 14:49:23 | Calculating draft order #9
-#> ℹ 14:49:23 | Calculating draft order #8
-#> ℹ 14:49:23 | Calculating draft order #7
-#> ℹ 14:49:23 | Calculating draft order #6
-#> ℹ 14:49:23 | Calculating draft order #5
-#> ℹ 14:49:23 | Calculating draft order #4
-#> ℹ 14:49:23 | Calculating draft order #3
-#> ℹ 14:49:23 | Calculating draft order #2
-#> ℹ 14:49:23 | Calculating draft order #1
+#> ℹ 19:15:05 | Calculating team data
+#> ℹ 19:15:05 | Calculating head to head
+#> ℹ 19:15:05 | Calculating division rank #1
+#> ℹ 19:15:05 | Calculating division rank #2
+#> ℹ 19:15:05 | Calculating division rank #3
+#> ℹ 19:15:05 | Calculating division rank #4
+#> ℹ 19:15:05 | Calculating seed #1
+#> ℹ 19:15:05 | Calculating seed #2
+#> ℹ 19:15:05 | Calculating seed #3
+#> ℹ 19:15:05 | Calculating seed #4
+#> ℹ 19:15:05 | Calculating seed #5
+#> ℹ 19:15:05 | Calculating seed #6
+#> ℹ 19:15:06 | Calculating draft order #32
+#> ℹ 19:15:06 | Calculating draft order #31
+#> ℹ 19:15:06 | Calculating draft order #30
+#> ℹ 19:15:06 | Calculating draft order #29
+#> ℹ 19:15:06 | Calculating draft order #28
+#> ℹ 19:15:06 | Calculating draft order #27
+#> ℹ 19:15:06 | Calculating draft order #26
+#> ℹ 19:15:06 | Calculating draft order #25
+#> ℹ 19:15:06 | Calculating draft order #24
+#> ℹ 19:15:06 | Calculating draft order #23
+#> ℹ 19:15:06 | Calculating draft order #22
+#> ℹ 19:15:06 | Calculating draft order #21
+#> ℹ 19:15:06 | Calculating draft order #20
+#> ℹ 19:15:06 | Calculating draft order #19
+#> ℹ 19:15:06 | Calculating draft order #18
+#> ℹ 19:15:06 | Calculating draft order #17
+#> ℹ 19:15:06 | Calculating draft order #16
+#> ℹ 19:15:06 | Calculating draft order #15
+#> ℹ 19:15:06 | Calculating draft order #14
+#> ℹ 19:15:06 | Calculating draft order #13
+#> ℹ 19:15:06 | Calculating draft order #12
+#> ℹ 19:15:06 | Calculating draft order #11
+#> ℹ 19:15:06 | Calculating draft order #10
+#> ℹ 19:15:06 | Calculating draft order #9
+#> ℹ 19:15:06 | Calculating draft order #8
+#> ℹ 19:15:06 | Calculating draft order #7
+#> ℹ 19:15:06 | Calculating draft order #6
+#> ℹ 19:15:06 | Calculating draft order #5
+#> ℹ 19:15:06 | Calculating draft order #4
+#> ℹ 19:15:06 | Calculating draft order #3
+#> ℹ 19:15:06 | Calculating draft order #2
+#> ℹ 19:15:06 | Calculating draft order #1
 #> # A tibble: 64 × 18
 #>      sim team  conf  division games  wins true_wins losses  ties win_pct div_pct
 #>    <int> <chr> <chr> <chr>    <int> <dbl>     <int>  <int> <int>   <dbl>   <dbl>

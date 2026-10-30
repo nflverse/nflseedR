@@ -84,22 +84,22 @@ sims <- nflseedR::nfl_simulations(
   simulations = 4,
   chunks = 2
 )
-#> ℹ 14:58:24 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
-#> ℹ 14:58:25 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 19:20:08 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
+#> ℹ 19:20:08 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 14:58:26 | Compute standings
-#> ℹ 14:58:26 | CHUNK #1: Start simulation of post season weeks "WC", "DIV",
+#> ℹ 19:20:08 | Compute standings
+#> ℹ 19:20:08 | CHUNK #1: Start simulation of post season weeks "WC", "DIV",
 #> "CON", and "SB"
-#> ℹ 14:58:26 | Compute Draft Order
-#> ℹ 14:58:25 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 19:20:08 | Compute Draft Order
+#> ℹ 19:20:08 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 14:58:26 | Compute standings
-#> ℹ 14:58:26 | CHUNK #2: Start simulation of post season weeks "WC", "DIV",
+#> ℹ 19:20:08 | Compute standings
+#> ℹ 19:20:08 | CHUNK #2: Start simulation of post season weeks "WC", "DIV",
 #> "CON", and "SB"
-#> ℹ 14:58:26 | Compute Draft Order
-#> ℹ 14:58:26 | Combine simulation data
-#> ℹ 14:58:26 | Aggregate across simulations
-#> ℹ 14:58:26 | DONE!
+#> ℹ 19:20:08 | Compute Draft Order
+#> ℹ 19:20:09 | Combine simulation data
+#> ℹ 19:20:09 | Aggregate across simulations
+#> ℹ 19:20:09 | DONE!
 ```
 
 Before we take a closer look at the contents of a simulation, we will
@@ -112,7 +112,10 @@ The output of
 [`nfl_simulations()`](https://nflseedr.com/reference/nfl_simulations.md)
 is a list of class `"nflseedR_simulation"` that holds five data frames
 with simulation results as well as a list of parameters used in the
-simulation. Here are the contents of each:
+simulation. The `games` table holds every game of every simulation and
+needs a lot of memory. If you only need standings, set
+`return_games = FALSE` and `games` and `game_summary` will be `NULL`.
+Here are the contents of each:
 
 **standings**
 
@@ -238,8 +241,8 @@ sims <- nflseedR::nfl_simulations(
   chunks = 20,
   verbosity = "NONE"
 )
-#> ℹ 14:58:27 | Start simulation of 50 000 seasons in 20 chunks with a chunk size of 2 500.
-#> ℹ 14:59:09 | DONE!
+#> ℹ 19:20:09 | Start simulation of 50 000 seasons in 20 chunks with a chunk size of 2 500.
+#> ℹ 19:20:21 | DONE!
 ```
 
 Please pay attention to how we pass the team ratings to the simulation.
@@ -275,90 +278,90 @@ details can be found in the source code of the function
     #>   }
     #>   if (!data.table::is.data.table(games)) data.table::setDT(games)
     #>   if (!data.table::is.data.table(teams)) data.table::setDT(teams)
-    #>   games_indices <- data.table::indices(games)
-    #>   if (is.null(games_indices) || !"week" %chin% games_indices){
-    #>     data.table::setindexv(games, c("week", "location", "game_type"))
-    #>   }
     #>   # get elo if not in teams data already
     #>   # elo is expected to be a named vector of elo ratings where
     #>   # names are NFL team abbreviations
-    #>   if (!"elo" %chin% colnames(teams)) {
+    #>   if (!"elo" %in% colnames(teams)) {
     #>     # Query arguments in dots and see if elo is in there
     #>     # if not, set it to random values
     #>     args <- list(...)
-    #>     if ("elo" %chin% names(args)) {
+    #>     if ("elo" %in% names(args)) {
     #>       # pull from custom arguments
     #>       ratings <- args$elo
-    #>       teams[, elo := ratings[team]]
     #>     } else {
     #>       # if custom elo is missing in dots, start everyone at a random elo
     #>       ratings <- setNames(
     #>         rnorm(length(unique(teams$team)), 1500, 150),
     #>         unique(teams$team)
     #>       )
-    #>       teams[, elo := ratings[team]]
     #>     }
+    #>     # set() adds the column by reference like `:=`
+    #>     data.table::set(teams, j = "elo", value = unname(ratings[teams$team]))
     #>   }
-    #>   # Row numbers of the current week's games. We compute them once and reuse
-    #>   # them below instead of joining on "week" in every step.
-    #>   idx <- sort(games[list(week_num), which = TRUE, on = "week", nomatch = NULL])
-    #>   idx_home <- idx[games[["location"]][idx] %in% "Home"]
-    #>   idx_post <- idx[games[["game_type"]][idx] %in% c("WC", "DIV", "CON", "SB")]
-    #>   # At this point, there is a column named "elo" in the teams data
-    #>   # We join it to home and away teams in the games data by sim and team to
-    #>   # make sure we don't mix elo values of one team across simulations
-    #>   week_sim <- games[["sim"]][idx]
-    #>   games[idx, away_elo := teams[list(week_sim, away_team), x.elo, on = c("sim", "team"), mult = "first"]]
-    #>   games[idx, home_elo := teams[list(week_sim, home_team), x.elo, on = c("sim", "team"), mult = "first"]]
+    #>   # Row numbers of the current week's games. We compute them once and work
+    #>   # on these rows only.
+    #>   idx <- which(games$week == week_num)
+    #>   # Rows of the away and home teams in the teams data. A row is identified by
+    #>   # sim and team, so elo values of one team aren't mixed across simulations.
+    #>   # We combine both into one integer key and match() the keys.
+    #>   team_ids <- unique(teams$team)
+    #>   team_key <- function(sim, team) {
+    #>     sim * length(team_ids) + data.table::chmatch(team, team_ids)
+    #>   }
+    #>   teams_key <- team_key(teams$sim, teams$team)
+    #>   away_row <- match(team_key(games$sim[idx], games$away_team[idx]), teams_key)
+    #>   home_row <- match(team_key(games$sim[idx], games$home_team[idx]), teams_key)
     #>   # create elo diff
-    #>   games[idx, elo_diff := home_elo - away_elo + (home_rest - away_rest) / 7 * 25]
+    #>   elo_diff <- teams$elo[home_row] - teams$elo[away_row] +
+    #>     (games$home_rest[idx] - games$away_rest[idx]) / 7 * 25
     #>   # adjust elo diff for location = HOME
     #>   # we estimate roughly 25 elo points per actual point
     #>   # with ~1.8 points home field advantage leads, we get 25 * 1.8 = 45 elo points
-    #>   games[idx_home, elo_diff := elo_diff + 45]
+    #>   home <- games$location[idx] %in% "Home"
+    #>   elo_diff[home] <- elo_diff[home] + 45
     #>   # adjust elo_diff for postseason game types
-    #>   games[idx_post, elo_diff := elo_diff * 1.2]
+    #>   post <- games$game_type[idx] %in% c("WC", "DIV", "CON", "SB")
+    #>   elo_diff[post] <- elo_diff[post] * 1.2
     #>   # create wp and estimate
-    #>   games[idx, `:=`(wp = 1 / (10^(-elo_diff / 400) + 1),
-    #>                   estimate = elo_diff / 25)]
-    #>   # adjust result in current week
-    #>   idx_missing <- idx[is.na(games[["result"]][idx])]
-    #>   games[idx_missing, result := round_out(rnorm(.N, estimate, 13))]
-    #>   # compute elo shift
-    #>   games[idx, `:=`(
-    #>     outcome = data.table::fcase(
-    #>       is.na(result), NA_real_,
-    #>       result > 0, 1,
-    #>       result < 0, 0,
-    #>       default = 0.5
-    #>     ),
-    #>     elo_input = data.table::fcase(
-    #>       is.na(result), NA_real_,
-    #>       result > 0, elo_diff * 0.001 + 2.2,
-    #>       result < 0, -elo_diff * 0.001 + 2.2,
-    #>       default = 1.0
+    #>   wp <- 1 / (10^(-elo_diff / 400) + 1)
+    #>   estimate <- elo_diff / 25
+    #>   # simulate results of games that don't have one yet. set() changes games
+    #>   # by reference like `:=`
+    #>   missing <- is.na(games$result[idx])
+    #>   if (any(missing)) {
+    #>     data.table::set(
+    #>       games,
+    #>       i = idx[missing],
+    #>       j = "result",
+    #>       value = round_out(stats::rnorm(sum(missing), estimate[missing], 13))
     #>     )
-    #>   )]
-    #>   games[idx, elo_mult := log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input]
-    #>   games[idx, elo_shift := 20 * elo_mult * (outcome - wp)]
-    #>   # Build elo_shift table based on results of home and away teams
-    #>   elo_change <- games[idx, list(
-    #>     sim = c(sim, sim),
-    #>     team = c(away_team, home_team),
-    #>     elo_shift = c(-elo_shift, elo_shift)
-    #>   )]
-    #>   # drop helper columns
-    #>   drop_cols <- c("away_elo", "home_elo", "elo_diff", "wp", "estimate",
-    #>                  "outcome", "elo_input", "elo_mult", "elo_shift")
-    #>   games[, (drop_cols) := NULL]
-    #>   # apply elo shift in teams data to transport new elo values to next week
-    #>   teams[, elo_shift := elo_change[teams, x.elo_shift, on = c("sim", "team"), mult = "first"]]
-    #>   # teams that didn't play that week are missing in elo_change. Their shift
-    #>   # value will be NA. We set it to 0 to be able to add the shift for all teams
-    #>   teams[, elo_shift := data.table::fifelse(is.na(elo_shift), 0, elo_shift)]
-    #>   teams[, elo := elo + elo_shift]
-    #>   # remove the shift variable for this round
-    #>   teams[, elo_shift := NULL]
+    #>   }
+    #>   result <- games$result[idx]
+    #>   # compute elo shift
+    #>   outcome <- data.table::fcase(
+    #>     is.na(result), NA_real_,
+    #>     result > 0, 1,
+    #>     result < 0, 0,
+    #>     default = 0.5
+    #>   )
+    #>   elo_input <- data.table::fcase(
+    #>     is.na(result), NA_real_,
+    #>     result > 0, elo_diff * 0.001 + 2.2,
+    #>     result < 0, -elo_diff * 0.001 + 2.2,
+    #>     default = 1.0
+    #>   )
+    #>   elo_mult <- log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input
+    #>   elo_shift <- 20 * elo_mult * (outcome - wp)
+    #>   # apply elo shift in teams data to transport new elo values to next week.
+    #>   # Teams that didn't play that week (or aren't in the teams data) keep their
+    #>   # elo (shift 0)
+    #>   team_shift <- numeric(nrow(teams))
+    #>   found <- !is.na(away_row)
+    #>   team_shift[away_row[found]] <- -elo_shift[found]
+    #>   found <- !is.na(home_row)
+    #>   team_shift[home_row[found]] <- elo_shift[found]
+    #>   team_shift[is.na(team_shift)] <- 0
+    #>   data.table::set(teams, j = "elo", value = teams$elo + team_shift)
     #>   list("teams" = teams, "games" = games)
     #> }
 
@@ -480,9 +483,9 @@ sims2 <- nflseedR::nfl_simulations(
 #> ℹ To maximize performance, `nfl_simulations()` does not control the output of
 #>   your function during the simulation. Please use `simulations_verify_fct()` in
 #>   advance to ensure that you do not get any unexpected results or errors.
-#> ℹ 14:59:11 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
+#> ℹ 19:20:22 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
 #> 
-#> ℹ 14:59:13 | DONE!
+#> ℹ 19:20:23 | DONE!
 #> 
 #> This message is displayed once every 8 hours.
 
@@ -583,8 +586,8 @@ sims3 <- nflseedR::nfl_simulations(
   worst = "GB",
   verbosity = "NONE"
 )
-#> ℹ 14:59:13 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
-#> ℹ 14:59:16 | DONE!
+#> ℹ 19:20:23 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
+#> ℹ 19:20:24 | DONE!
 sims3$overall |> 
   dplyr::arrange(-wins) |> 
   gt::gt_preview(top_n = 5, bottom_n = 5)

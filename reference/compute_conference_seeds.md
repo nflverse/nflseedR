@@ -98,19 +98,19 @@ s <- nflseedR::load_sharpe_games() |>
 })
 #> Warning: `load_sharpe_games()` was deprecated in nflseedR 2.0.0.
 #> ℹ Please use `nflreadr::load_schedules()` instead.
-#> ℹ 14:49:19 | Calculating team data
-#> ℹ 14:49:19 | Calculating head to head
-#> ℹ 14:49:19 | Calculating division rank #1
-#> ℹ 14:49:19 | Calculating division rank #2
-#> ℹ 14:49:19 | Calculating division rank #3
-#> ℹ 14:49:19 | Calculating division rank #4
-#> ℹ 14:49:19 | Calculating seed #1
-#> ℹ 14:49:19 | Calculating seed #2
-#> ℹ 14:49:19 | Calculating seed #3
-#> ℹ 14:49:20 | Calculating seed #4
-#> ℹ 14:49:20 | Calculating seed #5
-#> ℹ 14:49:20 | Calculating seed #6
-#> ℹ 14:49:20 | Calculating seed #7
+#> ℹ 19:15:03 | Calculating team data
+#> ℹ 19:15:03 | Calculating head to head
+#> ℹ 19:15:03 | Calculating division rank #1
+#> ℹ 19:15:03 | Calculating division rank #2
+#> ℹ 19:15:03 | Calculating division rank #3
+#> ℹ 19:15:03 | Calculating division rank #4
+#> ℹ 19:15:03 | Calculating seed #1
+#> ℹ 19:15:03 | Calculating seed #2
+#> ℹ 19:15:03 | Calculating seed #3
+#> ℹ 19:15:03 | Calculating seed #4
+#> ℹ 19:15:03 | Calculating seed #5
+#> ℹ 19:15:03 | Calculating seed #6
+#> ℹ 19:15:04 | Calculating seed #7
 #> # A tibble: 64 × 17
 #>      sim conf  division team  games  wins true_wins losses  ties win_pct div_pct
 #>    <int> <chr> <chr>    <chr> <int> <dbl>     <int>  <int> <int>   <dbl>   <dbl>

@@ -114,14 +114,16 @@ by Sebastian Carl (in nflseedR 2.0).</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="va"><a href="sims_games_example.html">sims_games_example</a></span></span></span>
-<span class="r-in"><span><span class="co"># The functions expects the variable "sim" instead of "season"</span></span></span>
-<span class="r-in"><span><span class="va">g</span><span class="op">$</span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="va">g</span><span class="op">$</span><span class="va">season</span></span></span>
+<span class="r-in"><span><span class="co"># The functions expects the variable "sim" instead of "season". The example</span></span></span>
+<span class="r-in"><span><span class="co"># teams hold simulations 1 and 2, so we simulate the games as sim 1</span></span></span>
+<span class="r-in"><span><span class="va">g</span><span class="op">$</span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fl">1L</span></span></span>
 <span class="r-in"><span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="va"><a href="sims_teams_example.html">sims_teams_example</a></span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Week 6 has a game without result</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">nflseedR_compute_results</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  teams <span class="op">=</span> <span class="va">t</span>,</span></span>
 <span class="r-in"><span>  games <span class="op">=</span> <span class="va">g</span>,</span></span>
-<span class="r-in"><span>  week_num <span class="op">=</span> <span class="fl">5L</span></span></span>
+<span class="r-in"><span>  week_num <span class="op">=</span> <span class="st">"6"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">out</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
@@ -132,8 +134,8 @@ by Sebastian Carl (in nflseedR 2.0).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conf    : chr [1:64] "NFC" "NFC" "AFC" "AFC" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ division: chr [1:64] "NFC West" "NFC South" "AFC North" "AFC East" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sdiv    : chr [1:64] "NFCW" "NFCS" "AFCN" "AFCE" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elo     : num [1:64] 1376 1642 1404 1174 1467 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, ".internal.selfref")=&lt;pointer: 0x6488c9234580&gt; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elo     : num [1:64] 1369 1644 1396 1192 1452 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, ".internal.selfref")=&lt;pointer: 0x5afe60d6a580&gt; </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ games:Classes ‘data.table’ and 'data.frame':	284 obs. of  10 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ season   : int [1:284] 2022 2022 2022 2022 2022 2022 2022 2022 2022 2022 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ game_type: chr [1:284] "REG" "REG" "REG" "REG" ...</span>
@@ -144,16 +146,8 @@ by Sebastian Carl (in nflseedR 2.0).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ home_rest: int [1:284] 7 7 7 7 7 7 7 7 7 7 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ location : chr [1:284] "Home" "Home" "Home" "Home" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ result   : int [1:284] NA -1 -2 NA -3 -3 0 NA -15 6 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim      : int [1:284] 2022 2022 2022 2022 2022 2022 2022 2022 2022 2022 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, ".internal.selfref")=&lt;pointer: 0x6488c9234580&gt; </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "index")= int(0) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "__week__location__game_type")= int [1:284] 1 2 3 4 5 6 7 8 9 10 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..- attr(*, "starts")= int [1:27] 1 17 33 49 64 65 80 81 95 109 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..- attr(*, "maxgrpn")= int 16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..- attr(*, "anyna")= int 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..- attr(*, "anyinfnan")= int 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..- attr(*, "anynotascii")= int 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..- attr(*, "anynotutf8")= int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sim      : int [1:284] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, ".internal.selfref")=&lt;pointer: 0x5afe60d6a580&gt; </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
