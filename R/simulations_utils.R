@@ -226,33 +226,35 @@ nflseedR_compute_results <- function(teams, games, week_num, ...) {
     }
   }
 
-  # At this point, there is a column named "elo" in the teams data
-  # We use that column to create a elo lookup vector that we use to
-  # add those elo ratings to home and away teams in the games data
-  # Names of that vector are built off sim and team to make sure
-  # we don't mix elo values of one team across simulations
-  ratings <- teams[, setNames(elo, paste(sim, team, sep = "-"))]
+  # Row numbers of the current week's games. We compute them once and reuse
+  # them below instead of joining on "week" in every step.
+  idx <- sort(games[list(week_num), which = TRUE, on = "week", nomatch = NULL])
+  idx_home <- idx[games[["location"]][idx] %in% "Home"]
+  idx_post <- idx[games[["game_type"]][idx] %in% c("WC", "DIV", "CON", "SB")]
 
-  # fill elo values of home and away teams
-  games[list(week_num), away_elo := ratings[paste(sim, away_team, sep = "-")], on = "week"]
-  games[list(week_num), home_elo := ratings[paste(sim, home_team, sep = "-")], on = "week"]
+  # At this point, there is a column named "elo" in the teams data
+  # We join it to home and away teams in the games data by sim and team to
+  # make sure we don't mix elo values of one team across simulations
+  week_sim <- games[["sim"]][idx]
+  games[idx, away_elo := teams[list(week_sim, away_team), x.elo, on = c("sim", "team"), mult = "first"]]
+  games[idx, home_elo := teams[list(week_sim, home_team), x.elo, on = c("sim", "team"), mult = "first"]]
 
   # create elo diff
-  games[list(week_num), elo_diff := home_elo - away_elo + (home_rest - away_rest) / 7 * 25, on = "week"]
+  games[idx, elo_diff := home_elo - away_elo + (home_rest - away_rest) / 7 * 25]
   # adjust elo diff for location = HOME
   # we estimate roughly 25 elo points per actual point
   # with ~1.8 points home field advantage leads, we get 25 * 1.8 = 45 elo points
-  games[list(week_num, "Home"), elo_diff := elo_diff + 45, on = c("week", "location")]
+  games[idx_home, elo_diff := elo_diff + 45]
   # adjust elo_diff for postseason game types
-  games[list(week_num, c("WC", "DIV", "CON", "SB")), elo_diff := elo_diff * 1.2, on = c("week", "game_type")]
+  games[idx_post, elo_diff := elo_diff * 1.2]
   # create wp and estimate
-  games[list(week_num), `:=`(wp = 1 / (10^(-elo_diff / 400) + 1),
-                       estimate = elo_diff / 25), on = "week"]
+  games[idx, `:=`(wp = 1 / (10^(-elo_diff / 400) + 1),
+                  estimate = elo_diff / 25)]
   # adjust result in current week
-  games[list(week_num) == week & is.na(result),
-        result := round_out(rnorm(.N, estimate, 13))]
+  idx_missing <- idx[is.na(games[["result"]][idx])]
+  games[idx_missing, result := round_out(rnorm(.N, estimate, 13))]
   # compute elo shift
-  games[list(week_num), `:=`(
+  games[idx, `:=`(
     outcome = data.table::fcase(
       is.na(result), NA_real_,
       result > 0, 1,
@@ -265,14 +267,16 @@ nflseedR_compute_results <- function(teams, games, week_num, ...) {
       result < 0, -elo_diff * 0.001 + 2.2,
       default = 1.0
     )
-  ), on = "week"]
-  games[list(week_num), elo_mult := log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input, on = "week"]
-  games[list(week_num), elo_shift := 20 * elo_mult * (outcome - wp), on = "week"]
+  )]
+  games[idx, elo_mult := log(pmax(abs(result), 1) + 1.0) * 2.2 / elo_input]
+  games[idx, elo_shift := 20 * elo_mult * (outcome - wp)]
 
-  # Build elo_shift vector based on results if home and away teams
-  elo_change_away <- games[list(week_num), setNames(-elo_shift, paste(sim, away_team, sep = "-")), on = "week"]
-  elo_change_home <- games[list(week_num), setNames(elo_shift,  paste(sim, home_team, sep = "-")), on = "week"]
-  elo_change <- c(elo_change_away, elo_change_home)
+  # Build elo_shift table based on results of home and away teams
+  elo_change <- games[idx, list(
+    sim = c(sim, sim),
+    team = c(away_team, home_team),
+    elo_shift = c(-elo_shift, elo_shift)
+  )]
 
   # drop helper columns
   drop_cols <- c("away_elo", "home_elo", "elo_diff", "wp", "estimate",
@@ -280,7 +284,7 @@ nflseedR_compute_results <- function(teams, games, week_num, ...) {
   games[, (drop_cols) := NULL]
 
   # apply elo shift in teams data to transport new elo values to next week
-  teams[, elo_shift := elo_change[paste(sim, team, sep = "-")]]
+  teams[, elo_shift := elo_change[teams, x.elo_shift, on = c("sim", "team"), mult = "first"]]
   # teams that didn't play that week are missing in elo_change. Their shift
   # value will be NA. We set it to 0 to be able to add the shift for all teams
   teams[, elo_shift := data.table::fifelse(is.na(elo_shift), 0, elo_shift)]
