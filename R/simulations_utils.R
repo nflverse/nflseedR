@@ -39,6 +39,27 @@ sims_check_chunk_size <- function(nsims, nchunks, chunk_size){
   invisible(NULL)
 }
 
+# Integer key of a team in a simulation. Team ids are 1..32, so keys are unique
+sims_team_key <- function(sim, team) {
+  sim * 32L + chmatch(team, standings_league()$team)
+}
+
+# Position of a playoff seed in a vector of 16 seeds per conference (1 AFC,
+# 2 NFC) and simulation (1..chunk size)
+sims_playoff_slot <- function(sim, conf, seed) {
+  ((sim - 1L) * 2L + conf - 1L) * 16L + seed
+}
+
+# Rows of a week. `week` is a factor in simulations. Comparing the integer
+# codes avoids turning millions of rows into strings.
+sims_week_rows <- function(week, week_num) {
+  if (is.factor(week)) {
+    which(as.integer(week) == match(week_num, levels(week)))
+  } else {
+    which(week == week_num)
+  }
+}
+
 # Played games of a simulation chunk, encoded for the standings engine
 sims_encode_played_games <- function(games, sims) {
   played <- which(!is.na(games$result))
