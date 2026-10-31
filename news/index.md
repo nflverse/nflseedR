@@ -3,6 +3,16 @@
 ## nflseedR (development version)
 
 - Added new function
+  [`cpp_compute_results()`](https://nflseedr.com/reference/cpp_compute_results.md),
+  a C++ port of
+  [`nflseedR_compute_results()`](https://nflseedr.com/reference/nflseedR_compute_results.md).
+  It computes the same results for the same random seed about 2 times
+  faster, which makes
+  `nfl_simulations(compute_results = cpp_compute_results)` about a third
+  faster.
+  [`nflseedR_compute_results()`](https://nflseedr.com/reference/nflseedR_compute_results.md)
+  remains the default.
+- Added new function
   [`nfl_regular_season()`](https://nflseedr.com/reference/nfl_regular_season.md)
   which computes regular season matchups based on previous season
   standings and NFL regular season rules.
