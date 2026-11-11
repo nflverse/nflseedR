@@ -2,7 +2,7 @@
 
 Plan for a new exported function that says, for every team, whether it has
 clinched or been eliminated from a division title, a playoff berth and the
-No. 1 seed, given the games played so far. Status: **milestones 1 and 2
+No. 1 seed, given the games played so far. Status: **milestones 1–3
 done** (2026-11-11), internal `clinching_status_compute()` only. Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
@@ -254,6 +254,25 @@ division record (milestone 4).
    win their other games for a higher SOV). No exhaustive search (P5).
 4. Not settled within the budget → undecided.
 
+As built (milestone 3): no quick scenarios, because the flows are fast
+enough (all 345 weekly states of 2006–2025 in about 2.5s in a debug build).
+Every yes from a strict flow (or from the sweep rule) keeps its flow's
+completion as the scenario, without running the engine. The gray zone
+search, per allowed or forced set that is weak feasible:
+
+- tightening: starting from the weak caps (or pushes), make the teams that
+  can tie X strictly behind (or ahead) one at a time if the flow stays
+  feasible, in up to 4 orders (rotations of the team list). Deterministic,
+  no randomness, so the result doesn't depend on the seed.
+- the games no check constrains go to the home team, then to the away
+  team.
+- each completion runs through `rank_divisions()` and `rank_conferences()`
+  (depth SOS, conference ranks only through the playoff seeds) for every
+  coin toss sequence, at most 64 runs.
+- at most 32 completions per question.
+
+Flipping games to help X's tiebreakers (e.g. higher SOV) isn't done.
+
 ### Season over
 
 With no games left, the status comes straight from the final standings:
@@ -272,7 +291,9 @@ R/clinching_status.R      clinching_status_compute() (internal, milestone 2;
 src/engine/flow.hpp       small Dinic max-flow (vectors reused across flows)
 src/flow.cpp
 src/engine/status.hpp     compute_clinching_status(): season loop, checks per
-src/status.cpp            goal, scenario search, uses procedures.hpp
+src/status.cpp            goal, gray zone search
+src/engine/scenario.hpp   ScenarioRunner: a completion through the procedures
+src/scenario.cpp          for every coin toss sequence
 src/bindings.cpp          clinching_status_cpp()
 ```
 
@@ -280,9 +301,10 @@ src/bindings.cpp          clinching_status_cpp()
   `EngineError`, interrupt checks between seasons, `RandomSource` only if
   the scenario search uses randomness (seeded, reproducible with
   `set.seed()`).
-- The procedures need to report coin tosses that affect a goal, and to take
-  forced coin toss results for the reruns (internal only, no change to
-  `nfl_standings()`).
+- Coin tosses: the procedures are unchanged. `ScenarioRunner`
+  (`src/engine/scenario.hpp`) passes a scripted `RandomSource` that records
+  every toss and forces given results, and tries the other results of every
+  toss depth-first. No R RNG is used.
 - Seeds per season from the league formats table
   (`clinching_status_seeds()`).
 - `check_league()`, `group_games()` and `GamesBySeason` moved from
@@ -428,6 +450,39 @@ week of 2006–2025 (345 states, about 1s in a debug build). Snapshot:
   turn undecided into alive (about 400 undecided team-weeks per goal with
   games left).
 
+### Results of milestone 3
+
+- **Season over** is exact: every coin toss sequence of the final standings
+  (at most 4,096 runs). The final week of every season 2006–2025 matches the
+  final standings, without an undecided status (no coin toss decided a
+  goal). When a coin toss does decide a goal with no games left, the status
+  is undecided, not alive (see [season over](#season-over)); also when the
+  coin tosses exceed the budget and the normal search finds both answers.
+  Tested with a season of only week 1.
+- **Undecided** team-weeks dropped from 416 / 445 / 422 (division /
+  playoffs / No. 1 seed) to 141 / 181 / 184.
+- **Check 3 (scenarios)**: all 56,983 scenarios of 2006–2025 reach or miss
+  the goal in `nfl_standings()` as they claim (one needs a coin toss and
+  isn't checked). The test runs 2012, 2019 and 2023. Checks 2 and 5 still
+  hold.
+- **Check 1 (NFL flags)**: all 56 NFL-only cases (final week) now match.
+  141 differences remain (snapshot): the 2 BUF/CIN cases and 139 where we're
+  later and undecided in the NFL's week, all with games left. Scenarios
+  can't settle these (they need proofs of no), so only milestone 4 can.
+
+  | goal | same | earlier | later |
+  |---|---|---|---|
+  | division | 145 | 1 | 14 |
+  | playoffs | 206 | 1 | 45 |
+  | eliminated | 312 | 0 | 76 |
+  | No. 1 seed | 36 | 0 | 4 |
+- **Scenario output** (internal, `scenarios = TRUE`): a list of the status
+  table and a scenario table with one row per scenario and remaining game:
+  `scenario` (id), `season`, `team`, `goal`, `proves`, `coin_toss`, then the
+  columns of `games` with the scenario's results (1, 0, -1). `scenario` and
+  `coin_toss` go beyond P6 (see P6). A season with no games left has no
+  rows.
+
 ## Milestones
 
 1. Fixture with the official NFL flags, and a look at what they mean week
@@ -437,7 +492,8 @@ week of 2006–2025 (345 states, about 1s in a debug build). Snapshot:
    to see how big the gray zone is. **Done** (2026-11-11), see
    [results of milestone 2](#results-of-milestone-2).
 3. Scenarios through the engine (alive, and possible outcomes through
-   tiebreakers and coin tosses).
+   tiebreakers and coin tosses). **Done** (2026-11-11), see
+   [results of milestone 3](#results-of-milestone-3).
 4. Only if the NFL comparison shows it's worth it: later tiebreaking steps
    that played games have already decided (e.g. a finished division record),
    which need a careful look at who else can be in the tie.
@@ -476,7 +532,10 @@ tiebreakers and the scenario budget can't decide stays undecided.
 season, team, goal, what the scenario proves (`"reach"` or `"miss"`) and the
 results of the remaining games, in the format of `games` so it can go
 straight into `nfl_standings()`. Still to settle while implementing: an
-attribute or a list element.
+attribute or a list element. Milestone 3 added two columns that P6 doesn't
+list: `scenario` (to tell scenarios apart) and `coin_toss` (the scenario
+needs a coin toss, so `nfl_standings()` reproduces it only with the right
+toss). Open: keep them in the exported output?
 
 **P7 Output column names. Decided by the maintainer (2026-11-11):**
 `div_status`, `playoffs_status`, `seed1_status`.

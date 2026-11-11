@@ -265,12 +265,14 @@ cpp11::writable::list elo_week_cpp(SEXP game_sim, SEXP away, SEXP home,
 cpp11::writable::list clinching_status_cpp(const cpp11::list& played,
                                            const cpp11::list& remaining,
                                            const cpp11::integers& seeds,
-                                           const cpp11::logicals& goals) {
+                                           const cpp11::logicals& goals,
+                                           bool scenarios) {
   const nflseedr::GamesInput played_games = make_games(played);
   const nflseedr::GamesInput remaining_games = make_games(remaining);
   const nflseedr::League league = make_league(played);
   nflseedr::StatusOptions options;
   options.seeds = int_span(seeds);
+  options.scenarios = scenarios;
   const std::span<const int32_t> goal_flags = lgl_span(goals);
   if (goal_flags.size() != options.goals.size()) {
     throw nflseedr::EngineError("Need one flag per goal");
@@ -292,5 +294,11 @@ cpp11::writable::list clinching_status_cpp(const cpp11::list& played,
       "div_status"_nm = to_r(rows.status[0]),
       "playoffs_status"_nm = to_r(rows.status[1]),
       "seed1_status"_nm = to_r(rows.status[2]),
+      "scenario_sim"_nm = to_r(rows.scenarios.sim),
+      "scenario_team"_nm = to_r(rows.scenarios.team),
+      "scenario_goal"_nm = to_r(rows.scenarios.goal),
+      "scenario_proves"_nm = to_r(rows.scenarios.proves),
+      "scenario_coin_toss"_nm = to_r(rows.scenarios.coin_toss),
+      "scenario_result"_nm = results_to_r(rows.scenarios.result),
   });
 }

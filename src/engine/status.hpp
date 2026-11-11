@@ -26,8 +26,19 @@ enum class Status : int32_t {
 struct StatusOptions {
   // Which goals to compute, indexed by Goal
   std::array<bool, kGoals> goals{};
+  // Also return the scenarios that prove the answers
+  bool scenarios = false;
   // Playoff seeds per conference, one value per season
   std::span<const int32_t> seeds;
+};
+
+// Completions of the remaining games that prove that a team can reach
+// (proves = 1) or miss (proves = 2) a goal. `coin_toss` is 1 if a coin toss
+// was needed. `result` holds the results (home - away: 1, 0 or -1) of all
+// remaining games of the season, one block per scenario in row order.
+struct ScenarioRows {
+  std::vector<int32_t> sim, team, goal, proves, coin_toss;
+  std::vector<int32_t> result;
 };
 
 // One row per season and team with a played or remaining game, sorted by
@@ -35,6 +46,7 @@ struct StatusOptions {
 struct StatusRows {
   std::vector<int32_t> sim, team, wins, losses, ties, games_left;
   std::array<std::vector<int32_t>, kGoals> status;
+  ScenarioRows scenarios;
 };
 
 // `played` are all games with a result, `remaining` the regular season games

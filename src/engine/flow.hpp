@@ -11,10 +11,13 @@ class MaxFlow {
  public:
   // Remove all edges and use the nodes 0..nodes-1. Keeps the memory.
   void reset(int32_t nodes);
-  void add_edge(int32_t from, int32_t to, int32_t capacity);
+  // Returns the edge id for flow()
+  int32_t add_edge(int32_t from, int32_t to, int32_t capacity);
   // Maximum flow from `source` to `sink`. Uses up the capacities, so call
   // reset() before the next problem.
   [[nodiscard]] int32_t run(int32_t source, int32_t sink);
+  // Flow on an edge after run()
+  [[nodiscard]] int32_t flow(int32_t edge) const;
 
  private:
   struct Edge {
