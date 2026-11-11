@@ -22,6 +22,13 @@
   from 20 points to 45 points, which reflects roughly 1.8 actual points
   in home field advantage.
   ([\#65](https://github.com/nflverse/nflseedR/issues/65))
+- [`nflseedR_compute_results()`](https://nflseedr.com/reference/nflseedR_compute_results.md)
+  and
+  [`cpp_compute_results()`](https://nflseedr.com/reference/cpp_compute_results.md)
+  add the columns `away_elo` and `home_elo` to `games`, the elo ratings
+  of both teams going into each game.
+  [`nfl_simulations()`](https://nflseedr.com/reference/nfl_simulations.md)
+  therefore returns them in its `games` table.
 - [`nfl_simulations()`](https://nflseedr.com/reference/nfl_simulations.md),
   [`nfl_standings()`](https://nflseedr.com/reference/nfl_standings.md),
   and

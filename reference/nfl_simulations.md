@@ -305,20 +305,20 @@ sim <- nflseedR::nfl_simulations(
 #>   documentation for further information.
 #> ℹ Will go on sequentially...
 #> This message is displayed once every 8 hours.
-#> ℹ 13:03:10 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
-#> ℹ 13:03:10 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 17:26:45 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
+#> ℹ 17:26:45 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 13:03:11 | Compute standings
-#> ℹ 13:03:11 | CHUNK #1: Start simulation of post season weeks "WC" and "SB"
-#> ℹ 13:03:11 | Compute Draft Order
-#> ℹ 13:03:11 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 17:26:46 | Compute standings
+#> ℹ 17:26:46 | CHUNK #1: Start simulation of post season weeks "WC" and "SB"
+#> ℹ 17:26:46 | Compute Draft Order
+#> ℹ 17:26:46 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 13:03:11 | Compute standings
-#> ℹ 13:03:11 | CHUNK #2: Start simulation of post season weeks "WC" and "SB"
-#> ℹ 13:03:11 | Compute Draft Order
-#> ℹ 13:03:11 | Combine simulation data
-#> ℹ 13:03:11 | Aggregate across simulations
-#> ℹ 13:03:11 | DONE!
+#> ℹ 17:26:46 | Compute standings
+#> ℹ 17:26:46 | CHUNK #2: Start simulation of post season weeks "WC" and "SB"
+#> ℹ 17:26:46 | Compute Draft Order
+#> ℹ 17:26:46 | Combine simulation data
+#> ℹ 17:26:46 | Aggregate across simulations
+#> ℹ 17:26:46 | DONE!
 
 # Overview output
 str(sim, max.level = 3)
@@ -345,7 +345,7 @@ str(sim, max.level = 3)
 #>   ..$ exit               : chr [1:128] "DIV" "REG" "REG" "REG" ...
 #>   ..$ draft_rank         : int [1:128] 27 15 17 13 29 22 31 6 24 16 ...
 #>   ..$ draft_tie_broken_by: chr [1:128] NA NA NA NA ...
-#>  $ games       :'data.frame':    1136 obs. of  9 variables:
+#>  $ games       :'data.frame':    1136 obs. of  11 variables:
 #>   ..$ game_type: chr [1:1136] "REG" "REG" "REG" "REG" ...
 #>   ..$ week     : int [1:1136] 1 1 1 1 1 1 1 1 1 1 ...
 #>   ..$ away_team: chr [1:1136] "BUF" "NO" "CLE" "SF" ...
@@ -355,6 +355,8 @@ str(sim, max.level = 3)
 #>   ..$ location : chr [1:1136] "Home" "Home" "Home" "Home" ...
 #>   ..$ result   : int [1:1136] -4 -1 -2 13 -3 -3 0 -18 -15 6 ...
 #>   ..$ sim      : int [1:1136] 1 1 1 1 1 1 1 1 1 1 ...
+#>   ..$ away_elo : num [1:1136] 1698 1616 1188 1245 1732 ...
+#>   ..$ home_elo : num [1:1136] 1512 1561 1426 1516 1317 ...
 #>  $ overall     :'data.frame':    32 obs. of  11 variables:
 #>   ..$ conf    : chr [1:32] "AFC" "AFC" "AFC" "AFC" ...
 #>   ..$ division: chr [1:32] "AFC East" "AFC East" "AFC East" "AFC East" ...
@@ -395,8 +397,8 @@ str(sim, max.level = 3)
 #>   ..$ return_games    : logi TRUE
 #>   ..$ verbosity       : chr "MIN"
 #>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1
-#>   .. ..$ : int [1:4] 2 0 2 9003
-#>   ..$ finished_at     : POSIXct[1:1], format: "2026-10-31 13:03:11"
+#>   .. ..$ : int [1:4] 2 0 2 9004
+#>   ..$ finished_at     : POSIXct[1:1], format: "2026-11-11 17:26:46"
 #>  - attr(*, "class")= chr "nflseedR_simulation"
 # }
 ```

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2.9004</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,6 +60,8 @@
 <ul><li>Added new function <code><a href="../reference/cpp_compute_results.html">cpp_compute_results()</a></code>, a C++ port of <code><a href="../reference/nflseedR_compute_results.html">nflseedR_compute_results()</a></code>. It computes the same results for the same random seed about 2 times faster, which makes <code>nfl_simulations(compute_results = cpp_compute_results)</code> about a third faster. <code><a href="../reference/nflseedR_compute_results.html">nflseedR_compute_results()</a></code> remains the default.</li>
 <li>Added new function <code><a href="../reference/nfl_regular_season.html">nfl_regular_season()</a></code> which computes regular season matchups based on previous season standings and NFL regular season rules. (<a href="https://github.com/nflverse/nflseedR/issues/64" class="external-link">#64</a>)</li>
 <li>Changed home field elo point adjustment in <code><a href="../reference/nflseedR_compute_results.html">nflseedR_compute_results()</a></code> from 20 points to 45 points, which reflects roughly 1.8 actual points in home field advantage. (<a href="https://github.com/nflverse/nflseedR/issues/65" class="external-link">#65</a>)</li>
+<li>
+<code><a href="../reference/nflseedR_compute_results.html">nflseedR_compute_results()</a></code> and <code><a href="../reference/cpp_compute_results.html">cpp_compute_results()</a></code> add the columns <code>away_elo</code> and <code>home_elo</code> to <code>games</code>, the elo ratings of both teams going into each game. <code><a href="../reference/nfl_simulations.html">nfl_simulations()</a></code> therefore returns them in its <code>games</code> table.</li>
 <li>
 <code><a href="../reference/nfl_simulations.html">nfl_simulations()</a></code>, <code><a href="../reference/nfl_standings.html">nfl_standings()</a></code>, and <code><a href="../reference/nflseedR_compute_results.html">nflseedR_compute_results()</a></code> are significantly faster thanks to efficiency optimization. (<a href="https://github.com/nflverse/nflseedR/issues/66" class="external-link">#66</a>)</li>
 <li>

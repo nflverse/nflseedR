@@ -27,11 +27,33 @@ sims <- simulate_nfl(
   fresh_season = TRUE,
   simulations = 100
 )
-#> ℹ 13:08:37 | Loading games data
-#> ℹ 13:08:38 | Beginning simulation of 100 seasons in 1 round
-#> ℹ 13:08:53 | Combining simulation data
-#> ℹ 13:08:53 | Aggregating across simulations
-#> ℹ 13:08:53 | DONE!
+#> Warning in warn_future_reexport_deprecation("availableCores"):
+#> future::availableCores() is deprecated. Please use the identical
+#> parallelly::availableCores() instead [base::tryCatch() -> tryCatchList() ->
+#> tryCatchOne() -> doTryCatch() -> tryCatchList() -> tryCatchOne() ->
+#> doTryCatch() -> base::withCallingHandlers() -> base::saveRDS() ->
+#> base::do.call() -> base::(function (what, args, quote = FALSE, envir =
+#> parent.frame()) { if (!is.list(args)) stop("second argument must be a list") if
+#> (quote) args <- lapply(args, enquote) .Internal(do.call(what, args, envir))
+#> })() -> (function (..., seed = NULL) { if (!is.null(seed)) { set.seed(seed) if
+#> (requireNamespace("htmlwidgets", quietly = TRUE)) {
+#> htmlwidgets::setWidgetIdSeed(seed) } } options(knitr.graphics.rel_path = FALSE)
+#> rmarkdown::render(envir = globalenv(), ...) })() -> rmarkdown::render() ->
+#> knitr::knit() -> knitr::process_file() -> xfun:::handle_error() ->
+#> knitr::with_options() -> base::withCallingHandlers() -> knitr::process_group()
+#> -> knitr::call_block() -> knitr::block_exec() -> knitr::eng_r() ->
+#> knitr::in_input_dir() -> knitr::in_dir() -> knitr::evaluate() ->
+#> evaluate::evaluate() -> base::withRestarts() -> withRestartList() ->
+#> withOneRestart() -> doWithOneRestart() -> withRestartList() -> withOneRestart()
+#> -> doWithOneRestart() -> evaluate::with_handlers() -> base::eval() -> eval() ->
+#> base::withCallingHandlers() -> base::withVisible() -> base::eval() -> eval() ->
+#> nflseedR::simulate_nfl() -> nflseedR::is_single_digit_numeric() ->
+#> future::availableCores()]
+#> ℹ 17:32:25 | Loading games data
+#> ℹ 17:32:26 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 17:32:42 | Combining simulation data
+#> ℹ 17:32:42 | Aggregating across simulations
+#> ℹ 17:32:42 | DONE!
 ```
 
 The output contains a lot of pre-aggregated information, as well as the
@@ -167,11 +189,11 @@ sims2 <- simulate_nfl(
   fresh_season = TRUE,
   simulations = 100
 )
-#> ℹ 13:08:53 | Loading games data
-#> ℹ 13:08:53 | Beginning simulation of 100 seasons in 1 round
-#> ℹ 13:09:06 | Combining simulation data
-#> ℹ 13:09:06 | Aggregating across simulations
-#> ℹ 13:09:06 | DONE!
+#> ℹ 17:32:43 | Loading games data
+#> ℹ 17:32:43 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 17:32:57 | Combining simulation data
+#> ℹ 17:32:57 | Aggregating across simulations
+#> ℹ 17:32:57 | DONE!
 
 sims2$overall |> dplyr::arrange(team) |> utils::head() |> knitr::kable()
 ```
@@ -279,11 +301,11 @@ sims3 <- simulate_nfl(
   best = "CHI", 
   worst = "GB"
 )
-#> ℹ 13:09:06 | Loading games data
-#> ℹ 13:09:06 | Beginning simulation of 100 seasons in 1 round
-#> ℹ 13:09:19 | Combining simulation data
-#> ℹ 13:09:19 | Aggregating across simulations
-#> ℹ 13:09:19 | DONE!
+#> ℹ 17:32:57 | Loading games data
+#> ℹ 17:32:57 | Beginning simulation of 100 seasons in 1 round
+#> ℹ 17:33:11 | Combining simulation data
+#> ℹ 17:33:11 | Aggregating across simulations
+#> ℹ 17:33:11 | DONE!
 ```
 
 Now let nflseedR summarize the simulation for you by using
@@ -487,9 +509,9 @@ test <- simulate_nfl(
   fresh_season = TRUE,
   test_week = 3
 )
-#> ℹ 13:09:20 | Loading games data
-#> ℹ 13:09:20 | Beginning simulation of 1000 seasons in 1 round
-#> ℹ 13:09:23 | Aborting and returning your `process_games` function's results
+#> ℹ 17:33:13 | Loading games data
+#> ℹ 17:33:13 | Beginning simulation of 1000 seasons in 1 round
+#> ℹ 17:33:16 | Aborting and returning your `process_games` function's results
 #> from Week 3
 ```
 
@@ -525,7 +547,7 @@ test$games |>
   filter(sim == 1) |>
   filter(away_team == "CHI" | home_team == "CHI")
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-10-31 13:09:20 UTC
+#> ℹ Data updated: 2026-11-11 17:33:13 UTC
 #> # A tibble: 16 × 9
 #>      sim game_type  week away_team home_team away_rest home_rest location result
 #>    <dbl> <chr>     <int> <chr>     <chr>         <int>     <int> <chr>     <int>
