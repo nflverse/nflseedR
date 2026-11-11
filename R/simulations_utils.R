@@ -248,7 +248,9 @@ sims_compute_playoff_dummy <- function(num_byes){
 #' by Lee Sharpe (in nflseedR 1.0) and for performance rewritten
 #' by Sebastian Carl (in nflseedR 2.0).
 #'
-#' @return A list of updated `teams` and `games` tables.
+#' @return A list of updated `teams` and `games` tables. The `games` table gets
+#' the columns `away_elo` and `home_elo`, the elo ratings of both teams going
+#' into the game. They are `NA` in weeks the function hasn't computed.
 #' @export
 #' @keywords internal
 #' @examples
@@ -321,6 +323,18 @@ nflseedR_compute_results <- function(teams, games, week_num, ...) {
   teams_key <- team_key(teams$sim, teams$team)
   away_row <- match(team_key(games$sim[idx], games$away_team[idx]), teams_key)
   home_row <- match(team_key(games$sim[idx], games$home_team[idx]), teams_key)
+
+  # Save the elo ratings of both teams going into the game. Rows of other
+  # weeks stay NA until their week is computed.
+  if (!all(c("away_elo", "home_elo") %in% colnames(games))) {
+    data.table::set(
+      games,
+      j = c("away_elo", "home_elo"),
+      value = list(NA_real_, NA_real_)
+    )
+  }
+  data.table::set(games, i = idx, j = "away_elo", value = teams$elo[away_row])
+  data.table::set(games, i = idx, j = "home_elo", value = teams$elo[home_row])
 
   # create elo diff
   elo_diff <- teams$elo[home_row] - teams$elo[away_row] +
@@ -425,6 +439,14 @@ cpp_compute_results <- function(teams, games, week_num, ...) {
     data.table::set(teams, j = "elo", value = unname(ratings[teams$team]))
   }
 
+  if (!all(c("away_elo", "home_elo") %chin% colnames(games))) {
+    data.table::set(
+      games,
+      j = c("away_elo", "home_elo"),
+      value = list(NA_real_, NA_real_)
+    )
+  }
+
   idx <- sims_week_rows(games$week, week_num)
   if (length(idx) == 0L) {
     return(list("teams" = teams, "games" = games))
@@ -447,6 +469,8 @@ cpp_compute_results <- function(teams, games, week_num, ...) {
   if (anyNA(games$result[idx])) {
     data.table::set(games, i = idx, j = "result", value = out$result)
   }
+  data.table::set(games, i = idx, j = "away_elo", value = out$away_elo)
+  data.table::set(games, i = idx, j = "home_elo", value = out$home_elo)
   data.table::set(teams, j = "elo", value = out$elo)
   list("teams" = teams, "games" = games)
 }
