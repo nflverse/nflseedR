@@ -104,6 +104,32 @@ test_that("nflseedR_compute_results() transports elo shifts correctly", {
   )
 })
 
+test_that("compute_results functions return the elo going into each game", {
+  input <- new_compute_results_input()
+  # an unknown team in a game with a result gets a missing elo
+  unknown <- input$games[, which(week == 10L & away_team == "ATL")]
+  input$games[unknown, c("away_team", "result") := list("XXX", 3L)]
+  for (fun in list(nflseedR_compute_results, cpp_compute_results)) {
+    out <- fun(
+      teams = data.table::copy(input$teams),
+      games = data.table::copy(input$games),
+      week_num = 10L
+    )
+    week <- out$games$week == 10L
+    expected <- function(team) {
+      input$teams$elo[match(
+        paste(out$games$sim[week], team[week]),
+        paste(input$teams$sim, input$teams$team)
+      )]
+    }
+    expect_identical(out$games$away_elo[week], expected(out$games$away_team))
+    expect_identical(out$games$home_elo[week], expected(out$games$home_team))
+    expect_identical(out$games$away_elo[unknown], rep(NA_real_, 2))
+    expect_all_true(is.na(out$games$away_elo[!week]))
+    expect_all_true(is.na(out$games$home_elo[!week]))
+  }
+})
+
 test_that("cpp_compute_results() matches nflseedR_compute_results()", {
   input <- new_compute_results_input()
   # existing results of the week, including -1, stay
@@ -132,7 +158,10 @@ test_that("cpp_compute_results() matches nflseedR_compute_results()", {
     run(cpp_compute_results, "10"),
     run(nflseedR_compute_results, "10")
   )
-  expect_identical(run(cpp_compute_results, "99")$games, input$games)
+  expect_identical(
+    run(cpp_compute_results, "99")$games,
+    run(nflseedR_compute_results, "99")$games
+  )
 })
 
 test_that("cpp_compute_results() starts with the same elo values", {

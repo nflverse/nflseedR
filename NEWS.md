@@ -3,6 +3,7 @@
 * Added new function `cpp_compute_results()`, a C++ port of `nflseedR_compute_results()`. It computes the same results for the same random seed about 2 times faster, which makes `nfl_simulations(compute_results = cpp_compute_results)` about a third faster. `nflseedR_compute_results()` remains the default.
 * Added new function `nfl_regular_season()` which computes regular season matchups based on previous season standings and NFL regular season rules. (#64)
 * Changed home field elo point adjustment in `nflseedR_compute_results()` from 20 points to 45 points, which reflects roughly 1.8 actual points in home field advantage. (#65)
+* `nflseedR_compute_results()` and `cpp_compute_results()` add the columns `away_elo` and `home_elo` to `games`, the elo ratings of both teams going into each game. `nfl_simulations()` therefore returns them in its `games` table.
 * `nfl_simulations()`, `nfl_standings()`, and `nflseedR_compute_results()` are significantly faster thanks to efficiency optimization. (#66)
 * `nfl_simulations()` gains the argument `return_games`. Set it to `FALSE` to drop the tables `games` and `game_summary` from the output and save a lot of memory if you only need standings.
 * `nfl_simulations()` starts faster and sends much less data to parallel workers, so small simulations no longer spend most of their time preparing chunks and parallel plans scale better. It also checks team abbreviations and `playoff_seeds` before it starts simulating.

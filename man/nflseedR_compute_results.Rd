@@ -28,7 +28,9 @@ initial elo ratings, which are then updated after each week based on the
 results and transported to the next week.}
 }
 \value{
-A list of updated \code{teams} and \code{games} tables.
+A list of updated \code{teams} and \code{games} tables. The \code{games} table gets
+the columns \code{away_elo} and \code{home_elo}, the elo ratings of both teams going
+into the game. They are \code{NA} in weeks the function hasn't computed.
 }
 \description{
 This is the default nflseedR function to compute game results in season
