@@ -41,17 +41,20 @@ the results of the remaining games that prove the answers (see Value).}
 \item{verbosity}{One of \code{"MIN"}, \code{"MAX"}, or \code{"NONE"}.
 \itemize{
 \item \code{"MIN"} (default): Prints the main steps.
-\item \code{"MAX"}: Also prints how many teams got each status.
+\item \code{"MAX"}: Also prints all steps of the tiebreaking process of the
+current standings and how many teams got each status.
 \item \code{"NONE"}: No status reports.
 }}
 }
 \value{
-A data.table with one row per season (or sim) and team: \code{season}
-(or \code{sim}), \code{team}, \code{conf}, \code{division}, \code{wins}, \code{losses}, \code{ties} (games
-played so far), \code{games_left}, and one status column per requested goal:
+The current standings: the output of \code{\link[=nfl_standings]{nfl_standings()}} for the
+games played so far (with conference ranks and tiebreakers through
+strength of schedule), followed by \code{games_left} (regular season games
+still to be played) and one status column per requested goal:
 \code{div_status}, \code{playoffs_status} and \code{seed1_status}. Each status is one of
-\code{"clinched"}, \code{"alive"}, \code{"eliminated"} or \code{"undecided"}. Sorted by
-season, division and team.
+\code{"clinched"}, \code{"alive"}, \code{"eliminated"} or \code{"undecided"}. Like
+\code{\link[=nfl_standings]{nfl_standings()}}, there is only a row for teams that have played at least
+one game, and the rows are sorted the same way.
 
 With \code{scenarios = TRUE}, the attribute \code{"scenarios"} is a data.table with
 one row per scenario and remaining game of its season: \code{scenario} (an
