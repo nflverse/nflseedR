@@ -119,6 +119,22 @@ test_that("first clinching and elimination weeks match the NFL", {
   expect_snapshot_file(path, "nfl_status_differences.csv")
 })
 
+test_that("clinching sees past a third team in a division tie", {
+  # SEA can end 11-5 with SF and ARI: SF wins the division, SEA beats ARI
+  games <- load_games_2006_2025()[season == 2013]
+  games[week > 13, result := NA]
+  s <- clinching_status_compute(games, status = "PLAYOFFS", verify = TRUE)
+  expect_identical(s[team == "SEA", playoffs_status], "clinched")
+})
+
+test_that("division winners don't break wild card ties", {
+  # SEA beats ATL at 9-7; WAS can end 9-7 too, but then wins its division
+  games <- load_games_2006_2025()[season == 2015]
+  games[week > 16, result := NA]
+  s <- clinching_status_compute(games, status = "PLAYOFFS", verify = TRUE)
+  expect_identical(s[team == "SEA", playoffs_status], "clinched")
+})
+
 test_that("clinching status only computes the requested goals", {
   games <- load_games_2006_2025()[season == 2023]
   games[week > 15, result := NA]

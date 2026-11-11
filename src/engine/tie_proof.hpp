@@ -34,9 +34,11 @@ class TieProof {
   // Teams of `tied` (the teams that can end with X's win percentage) that
   // X ranks ahead of whenever they are tied with X, and teams X ranks behind
   // whenever tied. Division sides use the division ranking among rivals,
-  // conference sides the conference ranking.
+  // conference sides the conference ranking. With `wild_card`, only ties
+  // for a wild card count: teams of other divisions that win their division
+  // whenever they are level with X never are in one.
   [[nodiscard]] TieSides division_sides(TeamMask tied);
-  [[nodiscard]] TieSides conference_sides(TeamMask tied);
+  [[nodiscard]] TieSides conference_sides(TeamMask tied, bool wild_card);
 
  private:
   enum class Procedure : int8_t { kDivision = 0, kConference = 1 };
@@ -74,6 +76,18 @@ class TieProof {
   [[nodiscard]] bool wins(TeamMask group, Procedure procedure);
   [[nodiscard]] bool loses(TeamMask group, Procedure procedure);
 
+  // Teams of `group` that one pick of a procedure can pick (a superset)
+  [[nodiscard]] TeamMask possible_picks(TeamMask group, Procedure procedure);
+
+  // X ranks ahead of (behind) rival y in the division ranking of `group`,
+  // which holds both: the picks go on until one of them is picked
+  [[nodiscard]] bool ranks_ahead(TeamMask group, TeamId y);
+  [[nodiscard]] bool ranks_behind(TeamMask group, TeamId y);
+
+  // y wins its division whenever it ends with X's win percentage: no other
+  // team of its division can get there
+  [[nodiscard]] bool wins_division_when_level(TeamId y) const;
+
   // Calls f(r) for every nonempty set r of at most one team per division of
   // `teams` outside X's division, until f returns false. True if it never
   // did.
@@ -99,6 +113,10 @@ class TieProof {
   TeamArray<int32_t> tie_half_wins_{};
   // Results of wins() and loses() per procedure and group
   std::array<std::array<std::unordered_map<TeamMask, bool>, 2>, 2> cache_{};
+  // Results of possible_picks() per procedure and group
+  std::array<std::unordered_map<TeamMask, TeamMask>, 2> picks_cache_{};
+  // Results of ranks_ahead() and ranks_behind() per group and rival
+  std::array<std::unordered_map<uint64_t, bool>, 2> rank_cache_{};
 };
 
 }  // namespace nflseedr
