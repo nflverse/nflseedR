@@ -19,3 +19,4 @@
 ^AGENTS\.md$
 ^dev$
 ^\.clang-format$
+^\.clang-tidy$

@@ -230,6 +230,54 @@ Also summarized in `AGENTS.md`.
 - Run `clang-format -i` on changed C++ files (`.clang-format`: Google
   style, 80 columns).
 
+### Idiomatic C++20
+
+Follow the [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/)
+and write C++20, not C++98 with a newer flag. The engine code shows the
+style:
+
+- Value types and RAII. No raw `new`/`delete`, no owning raw pointers. Prefer
+  `std::array` and stack objects; `std::vector` only for sizes not known at
+  compile time.
+- Pass views, not pointer + length: `std::span` for ranges,
+  `std::string_view` for strings. Small types by value, the rest by
+  `const&`.
+- `constexpr` and `inline constexpr` constants instead of macros or magic
+  numbers; `enum class` instead of plain enums or int codes.
+- `[[nodiscard]]` on functions whose result must be used, `noexcept` where a
+  function can't throw, `const` wherever possible.
+- Use the standard library and C++20 features where they make code clearer:
+  ranged `for`, `<algorithm>` and `std::ranges`, `<=>` with `= default`
+  comparisons, designated initializers, concepts for templates.
+- Initialize every variable and member (`{}`), use `auto` where the type is
+  obvious, `static_cast` instead of C casts, single-argument constructors
+  `explicit`.
+- Small functions with one job, names that say what they do, comments that
+  explain why.
+- Errors: throw `EngineError` (see above), never return error codes.
+
+### Checks
+
+`dev/check-cpp.sh` checks the C++ files changed against `master` (or the
+files given as arguments):
+
+1. formatting with `clang-format --dry-run --Werror`,
+2. compiler warnings: `-Wall -Wextra -Wpedantic -Wshadow -Werror`, R and
+   cpp11 headers included as system headers so their warnings don't count,
+3. static analysis with `clang-tidy` and `.clang-tidy` (bugprone, Core
+   Guidelines, modernize, performance, readability; noisy checks off). Needs
+   LLVM's clang-tidy (macOS: `brew install llvm`).
+
+Fix every finding in code you write or change; leave unrelated existing
+code alone. The existing code had 16 findings when clang-tidy was set up
+(2026-11-11), e.g. cpp11 vectors passed by value in `bindings.cpp`, missing
+`explicit` on `Value`, and the rule of five for `RandomSource` and
+`RRandom`. They show up whenever their file is checked, and aren't new
+problems. On macOS the script passes the current SDK to Homebrew's
+clang-tidy, which otherwise picks an old one. Warning flags can't go into
+`src/Makevars` (not portable, CRAN). Before a release, also run the sanitizer builds CRAN uses, e.g.
+`rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))`.
+
 ## Tests
 
 Top-level snapshot tests only. The weekly comparison with the NFL is the
