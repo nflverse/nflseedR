@@ -89,6 +89,8 @@ EloWeek simulate_elo_week(const EloGames& games, const EloTeams& teams,
   const TeamRows rows(teams);
   EloWeek out;
   out.result.assign(games.result.begin(), games.result.end());
+  out.away_elo.resize(n);
+  out.home_elo.resize(n);
   std::vector<int32_t> away_row(n), home_row(n);
   std::vector<double> shift(n);
 
@@ -99,6 +101,8 @@ EloWeek simulate_elo_week(const EloGames& games, const EloTeams& teams,
         home_row[i] == kMissing ? kNaN : teams.elo[home_row[i]];
     const double away_elo =
         away_row[i] == kMissing ? kNaN : teams.elo[away_row[i]];
+    out.home_elo[i] = home_elo;
+    out.away_elo[i] = away_elo;
     // 25 elo points per point. Home field is worth about 1.8 points.
     double elo_diff = home_elo - away_elo + games.rest_diff[i] / 7 * 25;
     if (games.home_field[i]) elo_diff += 45;
