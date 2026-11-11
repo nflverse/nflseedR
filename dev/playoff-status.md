@@ -2,8 +2,8 @@
 
 Plan for a new exported function that says, for every team, whether it has
 clinched or been eliminated from a division title, a playoff berth and the
-No. 1 seed, given the games played so far. Status: **plan, no code yet**
-(2026-11-11). Built on the C++ standings engine, so read
+No. 1 seed, given the games played so far. Status: **milestone 1 done, no
+function code yet** (2026-11-11). Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
 
@@ -328,10 +328,25 @@ Known special case: the 2022 BUF-CIN game (week 17) is not in
 at that time it was still a remaining game. Expect differences for AFC teams
 around 2022 weeks 16–17.
 
-Fixture: extend `data-raw/build_nfl_standings_2006_2025.R` (or add a sibling
-script) to keep the flags, e.g. `nfl_clinch_2006_2025.rds`. First check what
-a week's flags mean (after all of that week's games?) with well-known clinch
-dates.
+Fixture: `tests/testthat/nfl_clinch_2006_2025.rds` (built by
+`data-raw/build_nfl_clinch_2006_2025.R`): season, week, team and the four
+flags above, every team and week of 2006–2025, no missing values.
+
+What the flags mean (checked 2026-11-11 on the whole fixture):
+
+- Week n's flags include all of week n's games, like the standings of week
+  n in `nfl_standings_2006_2025.rds`. Every division clinch that wins alone
+  prove (current wins above every rival's maximum) is flagged in that very
+  week (326 of 326 team-weeks), so the flags don't lag behind.
+- No flag ever turns off again. None of the implications of the invariants
+  (check 5) is violated, nor the per-conference and per-division counts.
+- Final week: all four flags match the final standings exactly (640
+  team-seasons).
+- First week with a flag: weeks 12–18 for division, playoffs and No. 1 seed,
+  weeks 11–18 for eliminated. Of the 141 teams that clinched their division
+  by wins alone at some point, the NFL flagged 32 one or two weeks earlier
+  (through multi-team flows or tiebreakers), which is roughly what our
+  version has to match.
 
 ### 2. The real season as a scenario
 
@@ -369,7 +384,7 @@ Plus short synthetic tests: tie games, the cancelled 2022 BUF-CIN game,
 ## Milestones
 
 1. Fixture with the official NFL flags, and a look at what they mean week
-   to week.
+   to week. **Done** (2026-11-11), see check 1.
 2. Max-flow + win-percentage checks for all three goals, with the sweep
    rule (clinched, eliminated, undecided only). Compare with the NFL flags
    to see how big the gray zone is.
