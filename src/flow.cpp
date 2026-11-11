@@ -21,12 +21,18 @@ void MaxFlow::reset(int32_t nodes) {
   next_edge_.assign(nodes, -1);
 }
 
-void MaxFlow::add_edge(int32_t from, int32_t to, int32_t capacity) {
+int32_t MaxFlow::add_edge(int32_t from, int32_t to, int32_t capacity) {
   const auto index = static_cast<int32_t>(edges_.size());
   edges_.push_back({.to = to, .capacity = capacity, .next = first_edge_[from]});
   first_edge_[from] = index;
   edges_.push_back({.to = from, .capacity = 0, .next = first_edge_[to]});
   first_edge_[to] = index + 1;
+  return index;
+}
+
+// The reverse edge starts at capacity 0 and gains what flows forward
+int32_t MaxFlow::flow(int32_t edge) const {
+  return edges_[reverse(edge)].capacity;
 }
 
 // Breadth-first search for the distances from the source in the residual

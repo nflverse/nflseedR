@@ -11,6 +11,31 @@ test_that("clinched and eliminated teams really reached or missed the goal", {
   expect_false(1L %in% s[seed1_status == "eliminated", conf_rank])
 })
 
+test_that("clinching status follows the final standings once no games are left", {
+  s <- clinching_status_weekly()
+  final <- s[, .SD[week == max(week)], by = "season"]
+  expect_all_equal(final$games_left, 0L)
+  expect_identical(final$div_status == "clinched", final$div_rank == 1L)
+  expect_identical(
+    final$playoffs_status == "clinched",
+    final$conf_rank <= final$seeds
+  )
+  expect_identical(final$seed1_status == "clinched", final$conf_rank == 1L)
+  expect_false(any(
+    c(final$div_status, final$playoffs_status, final$seed1_status) ==
+      "undecided"
+  ))
+})
+
+test_that("clinching status is undecided when only a coin toss decides", {
+  # A season of one week has no games left and lots of coin tosses
+  games <- load_games_2006_2025()[season == 2023 & week == 1]
+  s <- clinching_status_compute(games)
+  status <- c(s$div_status, s$playoffs_status, s$seed1_status)
+  expect_false("alive" %in% status)
+  expect_contains(status, c("clinched", "eliminated", "undecided"))
+})
+
 test_that("clinching status follows the invariants", {
   s <- clinching_status_weekly()
   decided <- c("clinched", "eliminated")
@@ -131,4 +156,94 @@ test_that("clinching status uses 6 seeds through 2019 and 7 since 2020", {
 test_that("clinching status rejects invalid goals", {
   games <- load_games_2006_2025()[season == 2023]
   expect_snapshot(clinching_status_compute(games, status = "WC"), error = TRUE)
+})
+
+test_that("scenarios really reach or miss the goal", {
+  games <- load_games_2006_2025()[game_type == "REG"]
+  checked <- 0L
+  for (season_id in c(2012L, 2019L, 2023L)) {
+    season_games <- games[season == season_id]
+    for (last_week in sort(unique(season_games$week))) {
+      g <- data.table::copy(season_games)
+      g[week > last_week, result := NA]
+      scenarios <- clinching_status_compute(g, scenarios = TRUE)$scenarios
+      if (nrow(scenarios) == 0L) {
+        next
+      }
+      # A coin toss in nfl_standings() can go either way
+      meta <- unique(scenarios[
+        coin_toss == FALSE,
+        list(scenario, team, goal, proves)
+      ])
+      played <- g[
+        !is.na(result),
+        list(week, game_type, away_team, home_team, result)
+      ]
+      full <- rbind(
+        played[rep(seq_len(.N), nrow(meta))][,
+          sim := rep(meta$scenario, each = nrow(played))
+        ],
+        scenarios[
+          scenario %in% meta$scenario,
+          list(sim = scenario, week, game_type, away_team, home_team, result)
+        ],
+        use.names = TRUE
+      )
+      standings <- nfl_standings(full, verbosity = "NONE")
+      m <- merge(
+        meta,
+        standings[, list(scenario = sim, team, div_rank, conf_rank)],
+        by = c("scenario", "team")
+      )
+      seeds <- clinching_status_seeds(season_id, uses_season = TRUE)
+      m[,
+        reached := data.table::fcase(
+          goal == "DIV"      ,
+          div_rank == 1L     ,
+          goal == "PLAYOFFS" ,
+          conf_rank <= seeds ,
+          goal == "1SEED"    ,
+          conf_rank == 1L
+        )
+      ]
+      expect_identical(nrow(m), nrow(meta))
+      expect_identical(m$reached, m$proves == "reach")
+      checked <- checked + nrow(m)
+    }
+  }
+  expect_gt(checked, 5000L)
+})
+
+test_that("clinching status returns scenarios in the format of games", {
+  games <- load_games_2006_2025()[season == 2023]
+  games[week > 16, result := NA]
+  out <- clinching_status_compute(games, scenarios = TRUE)
+  expect_named(out, c("status", "scenarios"))
+  expect_identical(out$status, clinching_status_compute(games))
+  scenarios <- out$scenarios
+  expect_named(
+    scenarios,
+    c(
+      "scenario",
+      "season",
+      "team",
+      "goal",
+      "proves",
+      "coin_toss",
+      setdiff(names(games), "season")
+    )
+  )
+  n_left <- games[game_type == "REG" & is.na(result), .N]
+  expect_all_equal(scenarios[, .N, by = scenario]$N, n_left)
+  expect_in(scenarios$result, c(-1L, 0L, 1L))
+  # Alive teams have a scenario for both answers, clinched and eliminated
+  # teams only for the possible one
+  playoffs <- out$status[, list(team, status = playoffs_status)]
+  proofs <- unique(scenarios[goal == "PLAYOFFS", list(team, proves)])
+  reach <- proofs[proves == "reach", team]
+  miss <- proofs[proves == "miss", team]
+  expect_contains(reach, playoffs[status %in% c("alive", "clinched"), team])
+  expect_contains(miss, playoffs[status %in% c("alive", "eliminated"), team])
+  expect_false(any(reach %in% playoffs[status == "eliminated", team]))
+  expect_false(any(miss %in% playoffs[status == "clinched", team]))
 })
