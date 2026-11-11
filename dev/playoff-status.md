@@ -2,7 +2,7 @@
 
 Plan for a new exported function that says, for every team, whether it has
 clinched or been eliminated from a division title, a playoff berth and the
-No. 1 seed, given the games played so far. Status: **milestones 1–3
+No. 1 seed, given the games played so far. Status: **milestones 1–4
 done** (2026-11-11), internal `clinching_status_compute()` only. Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
@@ -273,6 +273,62 @@ search, per allowed or forced set that is weak feasible:
 
 Flipping games to help X's tiebreakers (e.g. higher SOV) isn't done.
 
+### Tie proofs (milestone 4)
+
+Replace the sweep rule (which they include). `TieProof` works per check,
+with X's remaining games fixed (all won for "can reach", all lost for "can
+miss").
+
+**Ranges.** For every step through SOS (division: head-to-head, division,
+common games and conference percentage, SOV, SOS; conference: head-to-head
+sweep, conference percentage, common games with at least four common
+opponents, SOV, SOS) the lowest and highest value a team of a tie group can
+end with. Every team of a tie group ends with exactly X's win percentage, so
+its remaining games bring a known number of half-wins; a record against
+some opponents gets at least what the other remaining games can't bring.
+Opponents in the group count with exactly that level in SOV and SOS. SOV of
+a team with games left is unknown (0 to 1).
+
+**One pick.** X is picked first from a group if a step makes X best for
+sure. If X is at least as good as everyone for sure, the step can also
+leave X with the teams that can be level with X, and X must be picked first
+from each of these smaller groups (the procedure restarts with them;
+induction, cached per group). Not picked: some team is better for sure, or
+the teams at least as good as X for sure stay with X in every smaller group.
+A coin toss (all steps passed) proves nothing.
+
+**Sides.** Of the teams that can tie X in the check:
+
+- a rival is *behind X* if X is picked first from every division group with
+  it (X ranks ahead in the division), *ahead of X* if X is never picked
+  from such a group.
+- the teams of another division are all *behind X* if X wins every division
+  tie (X survives every reduction) and X is picked first in the conference
+  procedure from every set of one team per other division that includes one
+  of them; *ahead of X* if X is never picked from such a set.
+
+The division goal uses the rival sides, the playoffs and the No. 1 seed the
+conference sides.
+
+**Flows with sides.** Every cap and push takes the teams that must be
+strictly behind (ahead), the others may tie:
+
+- can reach yes: cap with only the teams behind X allowed to tie; no: cap
+  infeasible even with only the teams ahead of X strict.
+- can miss yes: push with only the teams ahead of X allowed to tie; no:
+  push infeasible even with only the teams behind X strict.
+
+Fixing X's games is sound: changing one of X's results to a win only turns
+ties with X into X being strictly ahead, and the conditions are monotone in
+the set of teams ahead of X.
+
+**Self-check.** With `verify = TRUE` (tests only), every no that needed the
+tie proofs (weak flow feasible) runs the weak flow's completion, the one
+with the most ties at X's level, through the procedures for every coin toss
+sequence and throws if X reaches (misses) the goal. It runs in the weekly
+tests; in 103 of the 160 states of weeks 10–17 it checks at least one
+answer.
+
 ### Season over
 
 With no games left, the status comes straight from the final standings:
@@ -294,6 +350,8 @@ src/engine/status.hpp     compute_clinching_status(): season loop, checks per
 src/status.cpp            goal, gray zone search
 src/engine/scenario.hpp   ScenarioRunner: a completion through the procedures
 src/scenario.cpp          for every coin toss sequence
+src/engine/tie_proof.hpp  TieProof: which tied teams X always ranks ahead of
+src/tie_proof.cpp         or behind (milestone 4)
 src/bindings.cpp          clinching_status_cpp()
 ```
 
@@ -483,6 +541,31 @@ week of 2006–2025 (345 states, about 1s in a debug build). Snapshot:
   `coin_toss` go beyond P6 (see P6). A season with no games left has no
   rows.
 
+### Results of milestone 4
+
+- **Check 1 (NFL flags)**: 94 of the 139 later cases now match the NFL's
+  week. 45 differences remain later (snapshot, 47 rows with BUF/CIN), all
+  undecided in the NFL's week:
+
+  | goal | same | earlier | later |
+  |---|---|---|---|
+  | division | 157 | 1 | 2 |
+  | playoffs | 223 | 1 | 28 |
+  | eliminated | 373 | 0 | 15 |
+  | No. 1 seed | 40 | 0 | 0 |
+- **Undecided** team-weeks: 27 / 86 / 117 (division / playoffs / No. 1
+  seed), from 141 / 181 / 184.
+- **Soundness**: checks 2, 3 and 5 hold, the self-check passes on every
+  week of 2006–2025, and about 62,000 random completions of weeks 9–17
+  (half of them the worst case of a decided team, 1% and 10% tie games) never
+  contradict a clinch or elimination. The test runs a smaller version
+  (check 4 without `nfl_simulations()`: random results instead of the elo
+  model).
+- Remaining gaps are mostly SOV of teams with games left (unknown), ties
+  among teams that X never played, and the per-team sides being
+  conservative (e.g. a team of another division counts only if X wins or
+  loses against every set of representatives with it).
+
 ## Milestones
 
 1. Fixture with the official NFL flags, and a look at what they mean week
@@ -496,7 +579,8 @@ week of 2006–2025 (345 states, about 1s in a debug build). Snapshot:
    [results of milestone 3](#results-of-milestone-3).
 4. Only if the NFL comparison shows it's worth it: later tiebreaking steps
    that played games have already decided (e.g. a finished division record),
-   which need a careful look at who else can be in the tie.
+   which need a careful look at who else can be in the tie. **Done**
+   (2026-11-11), see [tie proofs](#tie-proofs-milestone-4).
 5. R interface, docs, `_pkgdown.yml`, NEWS, benchmark.
 
 ## Decisions

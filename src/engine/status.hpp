@@ -28,6 +28,9 @@ struct StatusOptions {
   std::array<bool, kGoals> goals{};
   // Also return the scenarios that prove the answers
   bool scenarios = false;
+  // Tests only: check every "no" that needed tie proofs against the engine
+  // (throws EngineError if it fails)
+  bool verify = false;
   // Playoff seeds per conference, one value per season
   std::span<const int32_t> seeds;
 };

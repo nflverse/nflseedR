@@ -75,7 +75,9 @@ clinching_status_weekly_build <- function() {
   status <- data.table::rbindlist(lapply(seq_len(nrow(weeks)), function(i) {
     g <- games[season == weeks$season[i]]
     g[week > weeks$week[i], result := NA]
-    clinching_status_compute(g)[, week := weeks$week[i]]
+    # verify: every clinch or elimination that needed tie proofs is checked
+    # against the engine
+    clinching_status_compute(g, verify = TRUE)[, week := weeks$week[i]]
   }))
   nfl <- load_nfl_standings_2006_2025()
   final <- nfl[,

@@ -8,6 +8,7 @@
 #include "engine/flow.hpp"
 #include "engine/scenario.hpp"
 #include "engine/season.hpp"
+#include "engine/tie_proof.hpp"
 
 namespace nflseedr {
 
@@ -30,19 +31,17 @@ enum class Tie : int8_t { kStrict, kWeak };
 // Answer to "can X reach the goal?" or "can X miss it?"
 enum class Answer : int8_t { kUnknown, kYes, kNo };
 
-// Who wins a tie in win percentage with X, by the sweep rule
-enum class TieWinner : int8_t { kUnknown, kX, kOthers };
-
-// Set of team ids as bits
-using TeamMask = uint32_t;
-static_assert(kTeams <= 32);
-
 [[nodiscard]] constexpr TeamMask team_bit(TeamId t) noexcept {
   return TeamMask{1} << static_cast<uint32_t>(t);
 }
 
 [[nodiscard]] constexpr bool has(TeamMask mask, TeamId t) noexcept {
   return (mask & team_bit(t)) != 0;
+}
+
+// Strictly behind (ahead of) X for teams in `strict`, possibly tied else
+[[nodiscard]] Tie tie_of(TeamMask strict, TeamId y) noexcept {
+  return has(strict, y) ? Tie::kStrict : Tie::kWeak;
 }
 
 // Calls f(t) for every team in `mask`
@@ -90,6 +89,7 @@ struct Answers {
 // Played games and remaining games of one season
 struct Season {
   SeasonData played;
+  std::span<const Game> played_games;
   const League* league = nullptr;
   std::span<const Game> remaining;
   TeamArray<int32_t> left{};
@@ -99,10 +99,11 @@ struct Season {
   int32_t seeds = 0;
   int32_t wild_cards = 0;
 
-  void build(std::span<const Game> played_games,
+  void build(std::span<const Game> played_games_in,
              std::span<const Game> remaining_games, const League& lg,
              int32_t n_seeds) {
-    played.build(played_games, lg, false, true);
+    played.build(played_games_in, lg, false, true);
+    played_games = played_games_in;
     league = &lg;
     remaining = remaining_games;
     left = {};
@@ -122,12 +123,6 @@ struct Season {
 
   [[nodiscard]] bool present(TeamId t) const noexcept {
     return final_games[t] > 0;
-  }
-
-  // All games between a and b are played and a won every one
-  [[nodiscard]] bool swept(TeamId a, TeamId b) const noexcept {
-    return played.h2h_games[a][b] > 0 && left_vs[a][b] == 0 &&
-           played.h2h_half_wins[a][b] == 2 * played.h2h_games[a][b];
   }
 
   // Did X reach the goal in these final ranks?
@@ -206,8 +201,7 @@ class Check {
     TeamArray<int32_t> room{};
     bool ok = true;
     for_each_team(capped, [&](TeamId y) {
-      room[y] =
-          limit(y, has(strict, y) ? Tie::kStrict : Tie::kWeak) - current_[y];
+      room[y] = limit(y, tie_of(strict, y)) - current_[y];
       if (room[y] < 0) ok = false;
     });
     if (!ok) return false;
@@ -260,8 +254,7 @@ class Check {
     int32_t total = 0;
     bool ok = true;
     for_each_team(pushed, [&](TeamId y) {
-      need[y] =
-          target(y, has(strict, y) ? Tie::kStrict : Tie::kWeak) - current_[y];
+      need[y] = target(y, tie_of(strict, y)) - current_[y];
       if (need[y] > maximum_[y] - current_[y]) ok = false;
       if (need[y] > 0) {
         needy |= team_bit(y);
@@ -357,10 +350,6 @@ class Check {
   int32_t x_half_wins_ = 0;
 };
 
-[[nodiscard]] TeamMask strict_if(Tie tie, TeamMask mask) noexcept {
-  return tie == Tie::kStrict ? mask : 0;
-}
-
 [[nodiscard]] Status to_status(Answer reach, Answer miss) {
   if (reach == Answer::kNo && miss == Answer::kNo) {
     throw EngineError("A team can neither reach nor miss a goal");
@@ -417,14 +406,17 @@ struct SeasonOver {
 class TeamStatus {
  public:
   TeamStatus(const Season& s, TeamId x, MaxFlow& flow, ScenarioRunner& runner,
-             const SeasonOver& season_over)
+             const SeasonOver& season_over, bool verify)
       : s_(&s),
         x_(x),
         flow_(&flow),
         runner_(&runner),
         season_over_(&season_over),
         reach_(s, x, true),
-        miss_(s, x, false) {
+        miss_(s, x, false),
+        reach_ties_(s.played, s.played_games, s.remaining, *s.league, x, true),
+        miss_ties_(s.played, s.played_games, s.remaining, *s.league, x, false),
+        verify_(verify) {
     const League& league = *s.league;
     for (TeamId y = 0; y < kTeams; ++y) {
       if (y == x || !s.present(y) ||
@@ -500,63 +492,112 @@ class TeamStatus {
     return *cached;
   }
 
-  // Strict feasible proves yes and weak infeasible proves no, whatever the
-  // tiebreakers say. In between, the sweep rule may say who wins ties with X.
-  // Otherwise search for a scenario in the gray zone.
-  using Feasible = std::function<bool(Tie, Completion*)>;
-  [[nodiscard]] Proof decide(const Feasible& feasible, TieWinner ties,
-                             TieWinner ties_help,
+  // `feasible(strict, c)`: can the check hold with the teams of `strict`
+  // strictly behind (ahead of) X and the others possibly tied?
+  //
+  // Yes if it holds with only the teams X ranks ahead of when tied allowed
+  // to tie (`yes_strict` = the others), whatever the other tiebreakers say.
+  // No if it fails even with only the teams X ranks behind when tied held
+  // strictly (`no_strict`). Otherwise search for a scenario in the gray zone.
+  using Feasible = std::function<bool(TeamMask, Completion*)>;
+  [[nodiscard]] Proof decide(Goal goal, bool reach, const Feasible& feasible,
+                             TeamMask yes_strict, TeamMask no_strict,
                              const std::function<Proof()>& gray) {
     Completion c;
-    if (feasible(Tie::kStrict, &c)) {
+    if (feasible(yes_strict, &c)) {
       return {.answer = Answer::kYes, .scenario = filled(c, kHomeWin)};
     }
-    if (!feasible(Tie::kWeak, &c)) return {.answer = Answer::kNo};
-    if (ties == ties_help) {
-      return {.answer = Answer::kYes, .scenario = filled(c, kHomeWin)};
+    if (!feasible(no_strict, nullptr)) {
+      if (verify_ && feasible(0, &c)) verify_no(goal, reach, c);
+      return {.answer = Answer::kNo};
     }
-    if (ties != TieWinner::kUnknown) return {.answer = Answer::kNo};
     budget_ = kScenarioBudget;
     return gray();
+  }
+
+  // Self-check for tests: a "no" that needed tie proofs must hold in the
+  // weak completion, the one with the most ties at X's level, for every
+  // coin toss sequence
+  void verify_no(Goal goal, bool reach, const Completion& c) {
+    for (const int8_t fill : {kHomeWin, kAwayWin}) {
+      (void)runner_->run(
+          filled(c, fill), kSeasonOverBudget,
+          [&](const RankResult& div, const RankResult& conf, bool) {
+            if (s_->reached(goal, x_, div, conf) == reach) {
+              throw EngineError("A clinching proof failed its self-check");
+            }
+            return false;
+          });
+    }
+  }
+
+  // Ties with the teams of `teams` that can end with X's win percentage in
+  // this check. Division ties use the division ranking, all others the
+  // conference ranking.
+  [[nodiscard]] static TieSides tie_sides(const Check& check, TeamMask teams,
+                                          TieProof& ties, bool conference) {
+    TeamMask tied = 0;
+    for_each_team(teams, [&](TeamId y) {
+      if (check.can_tie(y)) tied |= team_bit(y);
+    });
+    if (tied == 0) return {};
+    return conference ? ties.conference_sides(tied) : ties.division_sides(tied);
+  }
+
+  // "Can reach": teams X beats in ties may tie X, teams that beat X in ties
+  // must stay strictly behind
+  [[nodiscard]] Proof decide_reach(Goal goal, const Feasible& feasible,
+                                   TeamMask teams, bool conference,
+                                   const std::function<Proof()>& gray) {
+    const TieSides sides = tie_sides(reach_, teams, reach_ties_, conference);
+    return decide(goal, true, feasible, ~sides.x_ahead, sides.x_behind, gray);
+  }
+
+  // "Can miss": teams that beat X in ties only need to tie X, teams X beats
+  // in ties must get strictly ahead
+  [[nodiscard]] Proof decide_miss(Goal goal, const Feasible& feasible,
+                                  TeamMask teams, bool conference,
+                                  const std::function<Proof()>& gray) {
+    const TieSides sides = tie_sides(miss_, teams, miss_ties_, conference);
+    return decide(goal, false, feasible, ~sides.x_behind, sides.x_ahead, gray);
   }
 
   [[nodiscard]] Proof reach_answer(Goal goal) {
     switch (goal) {
       case Goal::kDivision:
-        return decide(
-            [&](Tie tie, Completion* c) {
-              return reach_.cap(rivals_, strict_if(tie, rivals_), *flow_, c);
+        return decide_reach(
+            goal,
+            [&](TeamMask strict, Completion* c) {
+              return reach_.cap(rivals_, strict & rivals_, *flow_, c);
             },
-            tie_winner(reach_, rivals_), TieWinner::kX,
-            [&] { return gray_reach(goal, rivals_); });
+            rivals_, false, [&] { return gray_reach(goal, rivals_); });
       case Goal::kFirstSeed:
         // X is the No. 1 seed iff X is ahead of every other conference team:
         // a team ahead of X puts its division winner ahead of X too.
-        return decide(
-            [&](Tie tie, Completion* c) {
-              return reach_.cap(conference_, strict_if(tie, conference_),
-                                *flow_, c);
+        return decide_reach(
+            goal,
+            [&](TeamMask strict, Completion* c) {
+              return reach_.cap(conference_, strict & conference_, *flow_, c);
             },
-            tie_winner(reach_, conference_), TieWinner::kX,
-            [&] { return gray_reach(goal, conference_); });
+            conference_, true, [&] { return gray_reach(goal, conference_); });
       case Goal::kPlayoffs:
         // X makes the playoffs iff no rival is ahead of X (division title),
         // or at most wild_cards - 1 teams that don't win their division are
         // ahead of X.
-        return decide(
-            [&](Tie tie, Completion* c) {
-              return reach_.cap(rivals_, strict_if(tie, rivals_), *flow_, c) ||
-                     wild_card_sets(tie, [&](TeamMask capped) {
-                       return reach_.cap(capped, strict_if(tie, capped), *flow_,
-                                         c);
+        return decide_reach(
+            goal,
+            [&](TeamMask strict, Completion* c) {
+              return reach_.cap(rivals_, strict & rivals_, *flow_, c) ||
+                     wild_card_sets(strict, [&](TeamMask capped) {
+                       return reach_.cap(capped, strict & capped, *flow_, c);
                      });
             },
-            tie_winner(reach_, conference_), TieWinner::kX,
+            conference_, true,
             [&] {
               Proof p = gray_reach(goal, rivals_);
               if (p.answer == Answer::kYes) return p;
               Proof found;
-              (void)wild_card_sets(Tie::kWeak, [&](TeamMask capped) {
+              (void)wild_card_sets(0, [&](TeamMask capped) {
                 found = gray_reach(goal, capped);
                 return found.answer == Answer::kYes || budget_ <= 0;
               });
@@ -569,28 +610,32 @@ class TeamStatus {
   [[nodiscard]] Proof miss_answer(Goal goal) {
     switch (goal) {
       case Goal::kDivision:
-        return decide(
-            [&](Tie tie, Completion* c) { return any_passes(rivals_, tie, c); },
-            tie_winner(miss_, rivals_), TieWinner::kOthers,
-            [&] { return gray_miss_single(goal, rivals_); });
-      case Goal::kFirstSeed:
-        return decide(
-            [&](Tie tie, Completion* c) {
-              return any_passes(conference_, tie, c);
+        return decide_miss(
+            goal,
+            [&](TeamMask strict, Completion* c) {
+              return any_passes(rivals_, strict, c);
             },
-            tie_winner(miss_, conference_), TieWinner::kOthers,
+            rivals_, false, [&] { return gray_miss_single(goal, rivals_); });
+      case Goal::kFirstSeed:
+        return decide_miss(
+            goal,
+            [&](TeamMask strict, Completion* c) {
+              return any_passes(conference_, strict, c);
+            },
+            conference_, true,
             [&] { return gray_miss_single(goal, conference_); });
       case Goal::kPlayoffs:
-        return decide(
-            [&](Tie tie, Completion* c) {
-              return forced_sets(tie, [&](TeamMask pushed) {
-                return miss_.push(pushed, strict_if(tie, pushed), *flow_, c);
+        return decide_miss(
+            goal,
+            [&](TeamMask strict, Completion* c) {
+              return forced_sets(strict, [&](TeamMask pushed) {
+                return miss_.push(pushed, strict & pushed, *flow_, c);
               });
             },
-            tie_winner(miss_, conference_), TieWinner::kOthers,
+            conference_, true,
             [&] {
               Proof found;
-              (void)forced_sets(Tie::kWeak, [&](TeamMask pushed) {
+              (void)forced_sets(0, [&](TeamMask pushed) {
                 found = gray_miss(goal, pushed);
                 return found.answer == Answer::kYes || budget_ <= 0;
               });
@@ -600,28 +645,13 @@ class TeamStatus {
     return {};
   }
 
-  // Sweep rule (dev/playoff-status.md): if X swept every team of `teams` that
-  // can tie X, X wins every tie among them. If they all swept X, X loses.
-  [[nodiscard]] TieWinner tie_winner(const Check& check, TeamMask teams) const {
-    bool x_swept_all = true;
-    bool all_swept_x = true;
-    for_each_team(teams, [&](TeamId y) {
-      if (!check.can_tie(y)) return;
-      x_swept_all = x_swept_all && s_->swept(x_, y);
-      all_swept_x = all_swept_x && s_->swept(y, x_);
-    });
-    if (x_swept_all) return TieWinner::kX;
-    if (all_swept_x) return TieWinner::kOthers;
-    return TieWinner::kUnknown;
-  }
-
-  // Some team of `teams` gets ahead of X (strict) or ties X (weak) on its
-  // own while X loses out
-  [[nodiscard]] bool any_passes(TeamMask teams, Tie tie, Completion* c) {
+  // Some team of `teams` gets ahead of X on its own while X loses out:
+  // strictly ahead if it's in `strict`, otherwise at least level
+  [[nodiscard]] bool any_passes(TeamMask teams, TeamMask strict,
+                                Completion* c) {
     bool any = false;
     for_each_team(teams, [&](TeamId y) {
-      any = any ||
-            miss_.push(team_bit(y), strict_if(tie, team_bit(y)), *flow_, c);
+      any = any || miss_.push(team_bit(y), strict & team_bit(y), *flow_, c);
     });
     return any;
   }
@@ -720,14 +750,14 @@ class TeamStatus {
   // wild_cards - 1) until it returns true. `capped` are the other teams that
   // can get ahead of X (strict) or tie X (weak).
   [[nodiscard]] bool wild_card_sets(
-      Tie tie, const std::function<bool(TeamMask)>& visit) const {
+      TeamMask strict, const std::function<bool(TeamMask)>& visit) const {
     // Per division: teams that are always ahead of X (must be allowed) and
     // teams that may or may not be. The others can never get ahead.
     std::array<TeamMask, kDivisions> forced{};
     std::array<TeamMask, kDivisions> open{};
     for (int32_t i = 0; i < n_divisions_; ++i) {
       for_each_team(division_teams(divisions_[i]), [&](TeamId y) {
-        const int32_t limit = reach_.limit(y, tie);
+        const int32_t limit = reach_.limit(y, tie_of(strict, y));
         if (reach_.current(y) > limit) {
           forced[i] |= team_bit(y);
         } else if (reach_.maximum(y) > limit) {
@@ -763,7 +793,7 @@ class TeamStatus {
   // don't win their division) until it returns true. Teams already ahead
   // of X are in `pushed` too.
   [[nodiscard]] bool forced_sets(
-      Tie tie, const std::function<bool(TeamMask)>& visit) const {
+      TeamMask strict, const std::function<bool(TeamMask)>& visit) const {
     // Per division: teams already ahead of X and teams that can get there
     std::array<TeamMask, kDivisions> already{};
     std::array<TeamMask, kDivisions> able{};
@@ -771,6 +801,7 @@ class TeamStatus {
     for (int32_t i = 0; i < n_divisions_; ++i) {
       own[i] = divisions_[i] == s_->league->division[x_];
       for_each_team(division_teams(divisions_[i]), [&](TeamId y) {
+        const Tie tie = tie_of(strict, y);
         if (miss_.current(y) >= miss_.target(y, tie)) {
           already[i] |= team_bit(y);
         } else if (miss_.can_pass(y, tie)) {
@@ -809,6 +840,9 @@ class TeamStatus {
   const SeasonOver* season_over_;
   Check reach_;
   Check miss_;
+  // Ties at X's level when X wins out and loses out
+  TieProof reach_ties_;
+  TieProof miss_ties_;
   TeamMask rivals_ = 0;
   TeamMask conference_ = 0;
   // Divisions of X's conference
@@ -817,6 +851,7 @@ class TeamStatus {
   std::array<std::optional<Answers>, kGoals> answers_{};
   // Completions left for the current gray zone search
   int32_t budget_ = 0;
+  bool verify_ = false;
 };
 
 void add_scenario(ScenarioRows& out, int32_t sim, TeamId team, int32_t goal,
@@ -880,7 +915,7 @@ StatusRows compute_clinching_status(const GamesInput& played,
       out.losses.push_back(season.played.losses[x]);
       out.ties.push_back(season.played.ties[x]);
       out.games_left.push_back(season.left[x]);
-      TeamStatus team(season, x, flow, runner, season_over);
+      TeamStatus team(season, x, flow, runner, season_over, options.verify);
       for (int32_t goal = 0; goal < kGoals; ++goal) {
         if (!options.goals[goal]) {
           out.status[goal].push_back(kMissing);
