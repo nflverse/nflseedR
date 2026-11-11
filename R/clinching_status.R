@@ -1,10 +1,125 @@
-# Clinching and elimination status of every team (dev/playoff-status.md). The
-# work happens in the C++ engine (src/status.cpp). Internal until the
-# exported nfl_clinching_status() is added.
-#
-# With `scenarios = TRUE`, returns a list of the status table and the
-# scenarios (clinching_status_scenarios()). `verify = TRUE` (tests) checks
-# every clinch and elimination that needed tie proofs against the engine.
+#' Compute NFL Clinching and Elimination Status
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' Determine for every team whether it has clinched, can still reach, or has
+#' been eliminated from a division title, a playoff berth and the No. 1 seed,
+#' given the games played so far.
+#'
+#' @inheritParams nfl_standings
+#' @param games A data frame of played and remaining games, like
+#'   [nflreadr::load_schedules()]. It needs the variables `sim` or `season`,
+#'   `game_type`, `week`, `away_team`, `home_team` and `result` (see
+#'   [nfl_standings()]). Games with a `result` are played, regular season
+#'   games with `result = NA` are still to be played. To get the status after
+#'   a given week, set `result` of all later games to `NA`.
+#'
+#'   Cancelled games must be removed from `games`, otherwise they count as
+#'   games still to be played.
+#' @param status One or more of `"DIV"`, `"PLAYOFFS"` and `"1SEED"`: the
+#'   goals to compute.
+#'   - `"DIV"`: win the division.
+#'   - `"PLAYOFFS"`: make the playoffs, as division winner or wild card.
+#'   - `"1SEED"`: be the No. 1 seed of the conference.
+#'
+#'   Only the requested goals are computed. `"PLAYOFFS"` takes the most time.
+#' @param scenarios If `TRUE`, the result gets the attribute `"scenarios"`,
+#'   the results of the remaining games that prove the answers (see Value).
+#' @param verbosity One of `"MIN"`, `"MAX"`, or `"NONE"`.
+#'   - `"MIN"` (default): Prints the main steps.
+#'   - `"MAX"`: Also prints how many teams got each status.
+#'   - `"NONE"`: No status reports.
+#'
+#' @details
+#' For every goal, the function answers two questions: can the team still
+#' reach the goal, and can it still miss it, over all possible results (win,
+#' loss or tie) of the remaining games. The status follows from the answers:
+#'
+#' | Can reach | Can miss | Status |
+#' |---|---|---|
+#' | no | yes | `"eliminated"` |
+#' | yes | no | `"clinched"` |
+#' | yes | yes | `"alive"` |
+#' | not proven | | `"undecided"` |
+#'
+#' Every answer is proven, either by showing that no results of the remaining
+#' games can do it, or by a concrete set of results run through the standings
+#' (see `scenarios`). The function never tries every combination of results,
+#' so a few teams can be `"undecided"`, usually late in the season, when the
+#' answer depends on tiebreakers it can't settle in advance.
+#'
+#' Tiebreakers through strength of schedule are applied as in
+#' [nfl_standings()]. Coin tosses and tiebreakers based on points can't be
+#' known before they happen, so both of their outcomes count as possible. A
+#' goal that only a coin toss decides after the last game is `"undecided"`.
+#'
+#' Seasons through 2019 have 6 playoff seeds per conference, later seasons 7.
+#' With `sim` instead of `season`, 7 seeds are used.
+#'
+#' The results are compared with the official clinching flags of the NFL for
+#' every week of 2006 to 2025: no status contradicts them, and most teams
+#' clinch or are eliminated in the same week as in the NFL. Some are still
+#' `"undecided"` a week or two longer.
+#'
+#' @return A data.table with one row per season (or sim) and team: `season`
+#'   (or `sim`), `team`, `conf`, `division`, `wins`, `losses`, `ties` (games
+#'   played so far), `games_left`, and one status column per requested goal:
+#'   `div_status`, `playoffs_status` and `seed1_status`. Each status is one of
+#'   `"clinched"`, `"alive"`, `"eliminated"` or `"undecided"`. Sorted by
+#'   season, division and team.
+#'
+#'   With `scenarios = TRUE`, the attribute `"scenarios"` is a data.table with
+#'   one row per scenario and remaining game of its season: `scenario` (an
+#'   id), `season` (or `sim`), `team`, `goal` (`"DIV"`, `"PLAYOFFS"` or
+#'   `"1SEED"`), `proves` (`"reach"` or `"miss"`: the team reaches or misses
+#'   the goal with these results), `coin_toss` (`TRUE` if it does so only
+#'   with a particular coin toss), followed by the columns of `games` with the
+#'   results of the scenario. Played games together with the rows of one
+#'   scenario can go straight into [nfl_standings()]. Seasons without
+#'   remaining games have no rows.
+#' @export
+#'
+#' @seealso For the implemented tiebreakers, see
+#'   <https://nflseedr.com/articles/tiebreaker.html>
+#'
+#' @examples
+#' \donttest{
+#' try({#to avoid CRAN test problems
+#'   games <- nflreadr::load_schedules(2023)
+#' })
+#' # Status after week 15
+#' games$result[games$week > 15] <- NA
+#' status <- nflseedR::nfl_clinching_status(games)
+#' status
+#' }
+nfl_clinching_status <- function(
+  games,
+  ...,
+  status = c("DIV", "PLAYOFFS", "1SEED"),
+  scenarios = FALSE,
+  verbosity = c("MIN", "MAX", "NONE")
+) {
+  rlang::check_dots_empty()
+  status <- rlang::arg_match(status, multiple = TRUE)
+  verbosity <- rlang::arg_match(verbosity)
+  if (!rlang::is_bool(scenarios)) {
+    cli::cli_abort("{.arg scenarios} must be {.code TRUE} or {.code FALSE}.")
+  }
+  if (verbosity != "NONE") {
+    report("Compute clinching status")
+  }
+  out <- clinching_status_compute(games, status = status, scenarios = scenarios)
+  if (verbosity == "MAX") {
+    clinching_status_report(out)
+  }
+  out
+}
+
+# The work of nfl_clinching_status() after argument checks
+# (dev/playoff-status.md). The C++ engine is in src/status.cpp.
+# `verify = TRUE` (tests) checks every clinch and elimination that needed
+# tie proofs against the engine.
 clinching_status_compute <- function(
   games,
   status = c("DIV", "PLAYOFFS", "1SEED"),
@@ -13,6 +128,12 @@ clinching_status_compute <- function(
   call = rlang::caller_env()
 ) {
   status <- rlang::arg_match(status, multiple = TRUE, error_call = call)
+  # A plain data.table copy: tibbles keep their class through setDT(), and
+  # the user's table stays as it is
+  games <- as.data.table(games)
+  # Playoff games that aren't played yet don't matter (and their teams may
+  # be unknown)
+  games <- games[!(games$game_type != "REG" & is.na(games$result))]
   games <- standings_validate_games(
     games,
     allow_missing_results = TRUE,
@@ -64,9 +185,10 @@ clinching_status_compute <- function(
   if (!scenarios) {
     return(status_table[])
   }
-  list(
-    status = status_table[],
-    scenarios = clinching_status_scenarios(
+  setattr(
+    status_table,
+    "scenarios",
+    clinching_status_scenarios(
       out,
       games[remaining],
       sims,
@@ -74,6 +196,25 @@ clinching_status_compute <- function(
       uses_season = attr(games, "uses_season")
     )
   )
+  status_table[]
+}
+
+# verbosity = "MAX": how many teams got each status per goal
+clinching_status_report <- function(status) {
+  cols <- intersect(
+    c("div_status", "playoffs_status", "seed1_status"),
+    names(status)
+  )
+  for (col in cols) {
+    counts <- table(factor(
+      status[[col]],
+      c("clinched", "alive", "eliminated", "undecided")
+    ))
+    report(
+      "{sub('_status', '', col)}: \\
+      {paste(names(counts), counts, sep = ' x ', collapse = ', ')}"
+    )
+  }
 }
 
 # One row per scenario and remaining game of its season: the remaining games
