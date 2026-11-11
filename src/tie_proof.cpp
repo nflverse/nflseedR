@@ -356,6 +356,92 @@ bool TieProof::loses(TeamMask group, Procedure procedure) {
   return result;
 }
 
+// One pick drops the teams that lose a step and restarts with the others
+// until one is left (procedures.cpp). A step drops every team some other team
+// beats for sure and keeps every team no team can beat, so the survivors are
+// between these two sets. If every step can leave all teams level, a coin
+// toss can pick any of them.
+TeamMask TieProof::possible_picks(TeamMask group, Procedure procedure) {
+  if (std::popcount(group) == 1) return group;
+  auto& cache = picks_cache_[static_cast<size_t>(procedure)];
+  if (const auto it = cache.find(group); it != cache.end()) return it->second;
+  TeamMask out = 0;
+  bool all_level = true;
+  for (const Step step : steps(procedure)) {
+    const StepRanges r = ranges(step, group, procedure);
+    if (!r.applies) continue;
+    TeamMask can_survive = 0;
+    TeamMask must_survive = 0;
+    for_each_team(group, [&](TeamId t) {
+      bool beaten = false;
+      bool unbeatable = true;
+      for_each_team(group & ~team_bit(t), [&](TeamId u) {
+        beaten = beaten || r.range[u].low > r.range[t].high;
+        unbeatable = unbeatable && r.range[t].low >= r.range[u].high;
+      });
+      if (!beaten) can_survive |= team_bit(t);
+      if (unbeatable) must_survive |= team_bit(t);
+    });
+    const TeamMask optional = can_survive & ~must_survive;
+    (void)all_subsets(optional, [&](TeamMask s) {
+      const TeamMask survivors = must_survive | s;
+      if (survivors != 0 && survivors != group) {
+        out |= possible_picks(survivors, procedure);
+      }
+      return true;
+    });
+    if (can_survive != group) {
+      all_level = false;
+      break;
+    }
+  }
+  if (all_level) out |= group;
+  cache[group] = out;
+  return out;
+}
+
+bool TieProof::ranks_ahead(TeamMask group, TeamId y) {
+  const uint64_t key = (static_cast<uint64_t>(y) << 32U) | group;
+  auto& cache = rank_cache_[0];
+  if (const auto it = cache.find(key); it != cache.end()) return it->second;
+  bool result = wins(group, Procedure::kDivision);
+  if (!result) {
+    const TeamMask picks = possible_picks(group, Procedure::kDivision);
+    result = !has(picks, y);
+    for_each_team(picks & ~team_bit(x_), [&](TeamId p) {
+      result = result && ranks_ahead(group & ~team_bit(p), y);
+    });
+  }
+  cache[key] = result;
+  return result;
+}
+
+bool TieProof::ranks_behind(TeamMask group, TeamId y) {
+  const uint64_t key = (static_cast<uint64_t>(y) << 32U) | group;
+  auto& cache = rank_cache_[1];
+  if (const auto it = cache.find(key); it != cache.end()) return it->second;
+  const TeamMask picks = possible_picks(group, Procedure::kDivision);
+  bool result = !has(picks, x_) || loses(group, Procedure::kDivision);
+  for_each_team(picks & ~team_bit(x_) & ~team_bit(y), [&](TeamId p) {
+    result = result && ranks_behind(group & ~team_bit(p), y);
+  });
+  cache[key] = result;
+  return result;
+}
+
+bool TieProof::wins_division_when_level(TeamId y) const {
+  const int64_t x_half_wins = half_wins_low_[x_];
+  const int64_t x_games = final_games_[x_];
+  bool alone = true;
+  for_each_team(division_of(y) & ~team_bit(y), [&](TeamId z) {
+    if (final_games_[z] == 0) return;
+    // z's best win percentage is below X's
+    alone = alone && static_cast<int64_t>(half_wins_high_[z]) * x_games <
+                         x_half_wins * final_games_[z];
+  });
+  return alone;
+}
+
 template <typename F>
 bool TieProof::all_representatives(TeamMask teams, F f) const {
   // Teams per division, without X's division
@@ -383,23 +469,21 @@ bool TieProof::wins_division_ties(TeamMask teams) {
   });
 }
 
-// A rival is behind X for sure if X is picked first from every group with
-// it (X ranks ahead in the division), and ahead of X for sure if X is never
-// picked from such a group.
+// A rival is behind X for sure if X ranks ahead of it in the division
+// ranking of every group with it, and ahead of X for sure if X always ranks
+// behind it. Other teams of the group may be picked before both.
 TieSides TieProof::division_sides(TeamMask tied) {
   TieSides out;
   const TeamMask rivals = tied & division_ & ~team_bit(x_);
   for_each_team(rivals, [&](TeamId y) {
     const TeamMask with_y = team_bit(x_) | team_bit(y);
     const TeamMask rest = rivals & ~team_bit(y);
-    if (all_subsets(rest, [&](TeamMask s) {
-          return wins(with_y | s, Procedure::kDivision);
-        })) {
+    if (all_subsets(rest,
+                    [&](TeamMask s) { return ranks_ahead(with_y | s, y); })) {
       out.x_ahead |= team_bit(y);
     }
-    if (all_subsets(rest, [&](TeamMask s) {
-          return loses(with_y | s, Procedure::kDivision);
-        })) {
+    if (all_subsets(rest,
+                    [&](TeamMask s) { return ranks_behind(with_y | s, y); })) {
       out.x_behind |= team_bit(y);
     }
   });
@@ -411,11 +495,18 @@ TieSides TieProof::division_sides(TeamMask tied) {
 // while one of them is in the tied group if X loses the conference
 // procedure against every set of division representatives that includes
 // one of d. X is always picked before them if X also survives every
-// reduction, i.e. wins every division tie.
-TieSides TieProof::conference_sides(TeamMask tied) {
+// reduction, i.e. wins every division tie. For a wild card, teams that win
+// their division whenever they are level with X are never in the tie, and
+// their side doesn't matter (one team of a division ahead of X is free).
+TieSides TieProof::conference_sides(TeamMask tied, bool wild_card) {
   TieSides out = division_sides(tied);
   const bool never_reduced = wins_division_ties(tied);
-  const TeamMask others = tied & conference_ & ~division_;
+  TeamMask others = tied & conference_ & ~division_;
+  if (wild_card) {
+    for_each_team(others, [&](TeamId y) {
+      if (wins_division_when_level(y)) others &= ~team_bit(y);
+    });
+  }
   for (int32_t d = 0; d < kDivisions; ++d) {
     TeamMask in_d = 0;
     for_each_team(others, [&](TeamId t) {

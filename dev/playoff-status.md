@@ -3,7 +3,7 @@
 Plan for a new exported function that says, for every team, whether it has
 clinched or been eliminated from a division title, a playoff berth and the
 No. 1 seed, given the games played so far. Status: **milestones 1–5
-done** (2026-11-11): exported as `nfl_clinching_status()`, experimental. Built on the C++ standings engine, so read
+done** (2026-11-11), milestone 6 (tighter tie proofs) partly done: exported as `nfl_clinching_status()`, experimental. Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
 
@@ -299,13 +299,21 @@ A coin toss (all steps passed) proves nothing.
 
 **Sides.** Of the teams that can tie X in the check:
 
-- a rival is *behind X* if X is picked first from every division group with
-  it (X ranks ahead in the division), *ahead of X* if X is never picked
-  from such a group.
+- a rival is *behind X* if X ranks ahead of it in the division ranking of
+  every division group with it, *ahead of X* if X always ranks behind it.
+  "Ranks ahead" follows the picks (milestone 6): from the teams one pick can
+  pick, X must be one, or every other one must leave a group where X still
+  ranks ahead. So in a three-way tie X can lose the first pick to a third
+  team and still be ahead of the rival.
 - the teams of another division are all *behind X* if X wins every division
   tie (X survives every reduction) and X is picked first in the conference
   procedure from every set of one team per other division that includes one
-  of them; *ahead of X* if X is never picked from such a set.
+  of them; *ahead of X* if X is never picked from such a set. For the
+  playoffs (milestone 6), teams that win their division whenever they are
+  level with X (no other team of their division can reach X's win
+  percentage) are left out of these sets: division winners are ranked apart
+  from the wild cards, and one team of a division ahead of X is free in the
+  playoff count, so their own side doesn't matter either.
 
 The division goal uses the rival sides, the playoffs and the No. 1 seed the
 conference sides.
@@ -589,6 +597,78 @@ week of 2006–2025 (345 states, about 1s in a debug build). Snapshot:
   | the same, `scenarios = TRUE` | 3.5ms |
   | 1,000 simulated seasons after week 12, one call | 0.95s |
 
+### Results of milestone 6
+
+Why we're later than the NFL, from the three cases that were two weeks late
+(2013 SEA playoffs, 2015 SEA playoffs, 2023 NYJ eliminated). Method: biased
+random completions in the NFL's week (`nfl_standings()`, the threatening
+teams win or lose with probability 0.8) to find the tie that decides, then
+counterfactuals: take one competitor out of the tie (lose out for a clinch,
+win out for an elimination, so the true answer stays) and see whether the
+proof goes through. No completion contradicted the NFL (40,000 per case).
+
+Three gaps, all in `TieProof` (`src/tie_proof.cpp`):
+
+1. **Division winners in wild card tie groups. Fixed.** 2015 after week 16:
+   SEA (9-7 losing out) beats ATL on common games, but WAS can also end 9-7,
+   and then wins the NFC East. The set `{SEA, ATL, WAS}` went through the
+   conference procedure, WAS has the best conference record (.667 vs .500),
+   so SEA wasn't "picked first" and ATL's side stayed unknown. Now
+   `conference_sides(tied, wild_card = true)` (playoffs goal only) drops
+   teams that win their division whenever level with X
+   (`wins_division_when_level()`). The No. 1 seed keeps the old sets.
+2. **"Ranks ahead" meant "picked first". Fixed.** 2013 after week 13: if SEA
+   (11-1) loses out, SF and ARI can tie it at 11-5. SF wins the three-way
+   division tie, then SEA always beats ARI, but the proof needed SEA picked
+   first from `{SEA, SF, ARI}`. Now `division_sides()` uses
+   `ranks_ahead()` / `ranks_behind()`: recursive over `possible_picks()`, a
+   superset of the teams one pick of a procedure can pick (same step ranges
+   as `wins()`; survivors of a step lie between the teams nobody can beat
+   and the teams nobody beats for sure). `wins()` / `loses()` stay as
+   shortcuts, so the new sides are never weaker than the old ones. Only the
+   division ranking uses it; the conference procedure re-reduces divisions
+   after each pick, which `possible_picks()` doesn't model.
+3. **Position in a tie, not pairwise sides. Open.** The flows only take
+   per-team sides (X always ahead of y, or always behind). Some ties need
+   "X is never last of these teams":
+   - 2015 after week 15: SEA, ATL and MIN can all end 9-7 for two wild
+     cards. SEA always gets in (2,441 of 2,441 sampled three-way ties), but
+     beats ATL in some completions and MIN in others, so neither side is
+     known. Proven only with both WAS (gap 1) and MIN out of the tie. Since
+     milestone 6 we're one week late (16 vs 15) instead of two.
+   - 2023 after week 15, NYJ eliminated (NFL 15, ours 17, unchanged): NYJ
+     (8-9 winning out) can be level with up to ten AFC teams and beats HOU
+     and DEN head-to-head, so they're not "always ahead". Whenever NYJ wins
+     such a tie, enough other teams are ahead anyway. Exactly one team short:
+     any one of CIN, PIT, HOU, JAX, DEN or LV winning out proves it. The
+     exact blocking group isn't traced yet; start there.
+
+   Ideas, not decided: let the flows count "at least k of this set of tied
+   teams are ahead of X" (a set constraint instead of per-team sides), or
+   enumerate the tie groups at X's level that the flow's weak completion
+   allows and prove X's position in each. Both need the maintainer.
+
+Results (check 1, NFL flags): 6 of the 45 later cases now match the NFL's
+week, 2015 SEA moved from two weeks to one. 39 later cases remain, all
+undecided in the NFL's week (snapshot, 41 rows with BUF/CIN).
+
+| fix | cases now matching the NFL |
+|---|---|
+| ranks ahead (gap 2) | 2009 PHI, 2011 PIT, 2012 BAL, 2013 SEA, 2023 BAL (playoffs) |
+| wild card sets (gap 1) | 2012 SEA (playoffs); 2015 SEA 17 → 16 |
+
+Checks 2–5 and the self-check (`verify = TRUE`) pass on every week of
+2006–2025; full test suite passes. Benchmark unchanged (all weeks 0.58s).
+`dev/check-cpp.sh` reports nothing in the changed code (its findings in
+`types.hpp` and `procedures.hpp` predate this work).
+
+Scripts used for the analysis (not in the repo): biased completions with
+`nfl_standings(sims, playoff_seeds = seeds)` (teams out of the playoffs have
+`conf_rank = NA`), and counterfactuals that fix a team's remaining results
+and rerun `clinching_status_compute(g, status = "PLAYOFFS")`. Take a team out
+of a tie in the direction that moves it *away* from X's level: making a 9-5
+team lose out can put it exactly at X's 9-7.
+
 ## Milestones
 
 1. Fixture with the official NFL flags, and a look at what they mean week
@@ -606,6 +686,9 @@ week of 2006–2025 (345 states, about 1s in a debug build). Snapshot:
    (2026-11-11), see [tie proofs](#tie-proofs-milestone-4).
 5. R interface, docs, `_pkgdown.yml`, NEWS, benchmark. **Done**
    (2026-11-11), see [results of milestone 5](#results-of-milestone-5).
+6. Tighter tie proofs from the cases where we're later than the NFL (P8).
+   Gaps 1 and 2 **done** (2026-11-11), gap 3 open, see
+   [results of milestone 6](#results-of-milestone-6).
 
 ## Decisions
 
@@ -648,3 +731,10 @@ it only with that toss).
 
 **P7 Output column names. Decided by the maintainer (2026-11-11):**
 `div_status`, `playoffs_status`, `seed1_status`.
+
+**P8 Tie proofs closer to the NFL. Decided by the maintainer (2026-11-11):**
+fix gaps 1 (division winners out of wild card tie groups) and 2 (rank ahead
+through the picks, not only picked first) of
+[milestone 6](#results-of-milestone-6), in the clinching code only (no
+changes to the tiebreakers in `procedures.cpp`). Gap 3 is open and needs a
+new decision.

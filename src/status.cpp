@@ -31,6 +31,10 @@ enum class Tie : int8_t { kStrict, kWeak };
 // Answer to "can X reach the goal?" or "can X miss it?"
 enum class Answer : int8_t { kUnknown, kYes, kNo };
 
+// Ranking that breaks ties with X: the division (division title), the
+// conference (No. 1 seed) or the wild cards (playoffs)
+enum class Ranking : int8_t { kDivision, kConference, kWildCard };
+
 [[nodiscard]] constexpr TeamMask team_bit(TeamId t) noexcept {
   return TeamMask{1} << static_cast<uint32_t>(t);
 }
@@ -532,33 +536,33 @@ class TeamStatus {
   }
 
   // Ties with the teams of `teams` that can end with X's win percentage in
-  // this check. Division ties use the division ranking, all others the
-  // conference ranking.
+  // this check, in `ranking`
   [[nodiscard]] static TieSides tie_sides(const Check& check, TeamMask teams,
-                                          TieProof& ties, bool conference) {
+                                          TieProof& ties, Ranking ranking) {
     TeamMask tied = 0;
     for_each_team(teams, [&](TeamId y) {
       if (check.can_tie(y)) tied |= team_bit(y);
     });
     if (tied == 0) return {};
-    return conference ? ties.conference_sides(tied) : ties.division_sides(tied);
+    if (ranking == Ranking::kDivision) return ties.division_sides(tied);
+    return ties.conference_sides(tied, ranking == Ranking::kWildCard);
   }
 
   // "Can reach": teams X beats in ties may tie X, teams that beat X in ties
   // must stay strictly behind
   [[nodiscard]] Proof decide_reach(Goal goal, const Feasible& feasible,
-                                   TeamMask teams, bool conference,
+                                   TeamMask teams, Ranking ranking,
                                    const std::function<Proof()>& gray) {
-    const TieSides sides = tie_sides(reach_, teams, reach_ties_, conference);
+    const TieSides sides = tie_sides(reach_, teams, reach_ties_, ranking);
     return decide(goal, true, feasible, ~sides.x_ahead, sides.x_behind, gray);
   }
 
   // "Can miss": teams that beat X in ties only need to tie X, teams X beats
   // in ties must get strictly ahead
   [[nodiscard]] Proof decide_miss(Goal goal, const Feasible& feasible,
-                                  TeamMask teams, bool conference,
+                                  TeamMask teams, Ranking ranking,
                                   const std::function<Proof()>& gray) {
-    const TieSides sides = tie_sides(miss_, teams, miss_ties_, conference);
+    const TieSides sides = tie_sides(miss_, teams, miss_ties_, ranking);
     return decide(goal, false, feasible, ~sides.x_behind, sides.x_ahead, gray);
   }
 
@@ -570,7 +574,8 @@ class TeamStatus {
             [&](TeamMask strict, Completion* c) {
               return reach_.cap(rivals_, strict & rivals_, *flow_, c);
             },
-            rivals_, false, [&] { return gray_reach(goal, rivals_); });
+            rivals_, Ranking::kDivision,
+            [&] { return gray_reach(goal, rivals_); });
       case Goal::kFirstSeed:
         // X is the No. 1 seed iff X is ahead of every other conference team:
         // a team ahead of X puts its division winner ahead of X too.
@@ -579,7 +584,8 @@ class TeamStatus {
             [&](TeamMask strict, Completion* c) {
               return reach_.cap(conference_, strict & conference_, *flow_, c);
             },
-            conference_, true, [&] { return gray_reach(goal, conference_); });
+            conference_, Ranking::kConference,
+            [&] { return gray_reach(goal, conference_); });
       case Goal::kPlayoffs:
         // X makes the playoffs iff no rival is ahead of X (division title),
         // or at most wild_cards - 1 teams that don't win their division are
@@ -592,7 +598,7 @@ class TeamStatus {
                        return reach_.cap(capped, strict & capped, *flow_, c);
                      });
             },
-            conference_, true,
+            conference_, Ranking::kWildCard,
             [&] {
               Proof p = gray_reach(goal, rivals_);
               if (p.answer == Answer::kYes) return p;
@@ -615,14 +621,15 @@ class TeamStatus {
             [&](TeamMask strict, Completion* c) {
               return any_passes(rivals_, strict, c);
             },
-            rivals_, false, [&] { return gray_miss_single(goal, rivals_); });
+            rivals_, Ranking::kDivision,
+            [&] { return gray_miss_single(goal, rivals_); });
       case Goal::kFirstSeed:
         return decide_miss(
             goal,
             [&](TeamMask strict, Completion* c) {
               return any_passes(conference_, strict, c);
             },
-            conference_, true,
+            conference_, Ranking::kConference,
             [&] { return gray_miss_single(goal, conference_); });
       case Goal::kPlayoffs:
         return decide_miss(
@@ -632,7 +639,7 @@ class TeamStatus {
                 return miss_.push(pushed, strict & pushed, *flow_, c);
               });
             },
-            conference_, true,
+            conference_, Ranking::kWildCard,
             [&] {
               Proof found;
               (void)forced_sets(0, [&](TeamMask pushed) {
