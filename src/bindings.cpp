@@ -11,6 +11,7 @@
 
 #include "engine/elo.hpp"
 #include "engine/engine.hpp"
+#include "engine/status.hpp"
 
 namespace {
 
@@ -254,5 +255,42 @@ cpp11::writable::list elo_week_cpp(SEXP game_sim, SEXP away, SEXP home,
       "elo"_nm = to_r(week.elo),
       "away_elo"_nm = na_to_r(week.away_elo),
       "home_elo"_nm = na_to_r(week.home_elo),
+  });
+}
+
+// Clinching status of every team in every season. `played` and `remaining`
+// come from standings_encode_games(), `seeds` has one value per season and
+// `goals` says which goals to compute. See R/clinching_status.R.
+[[cpp11::register]]
+cpp11::writable::list clinching_status_cpp(const cpp11::list& played,
+                                           const cpp11::list& remaining,
+                                           const cpp11::integers& seeds,
+                                           const cpp11::logicals& goals) {
+  const nflseedr::GamesInput played_games = make_games(played);
+  const nflseedr::GamesInput remaining_games = make_games(remaining);
+  const nflseedr::League league = make_league(played);
+  nflseedr::StatusOptions options;
+  options.seeds = int_span(seeds);
+  const std::span<const int32_t> goal_flags = lgl_span(goals);
+  if (goal_flags.size() != options.goals.size()) {
+    throw nflseedr::EngineError("Need one flag per goal");
+  }
+  std::ranges::transform(goal_flags, options.goals.begin(),
+                         [](int32_t flag) { return flag == TRUE; });
+
+  const nflseedr::StatusRows rows = nflseedr::compute_clinching_status(
+      played_games, remaining_games, league, options, check_interrupt);
+
+  using namespace cpp11::literals;
+  return cpp11::writable::list({
+      "sim"_nm = to_r(rows.sim),
+      "team"_nm = to_r(rows.team),
+      "wins"_nm = to_r(rows.wins),
+      "losses"_nm = to_r(rows.losses),
+      "ties"_nm = to_r(rows.ties),
+      "games_left"_nm = to_r(rows.games_left),
+      "div_status"_nm = to_r(rows.status[0]),
+      "playoffs_status"_nm = to_r(rows.status[1]),
+      "seed1_status"_nm = to_r(rows.status[2]),
   });
 }

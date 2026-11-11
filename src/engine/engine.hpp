@@ -11,6 +11,17 @@
 
 namespace nflseedr {
 
+// Games grouped by season: games of season s (1-based) are
+// sorted[offset[s - 1] .. offset[s]).
+struct GamesBySeason {
+  std::vector<Game> sorted;
+  std::vector<int32_t> offset;
+
+  [[nodiscard]] std::span<const Game> season(int32_t s) const {
+    return std::span(sorted).subspan(offset[s - 1], offset[s] - offset[s - 1]);
+  }
+};
+
 // Games of all seasons. `sim` holds dense season ids 1..n_sims, teams are ids
 // 0..31 and `type` a GameType.
 struct GamesInput {
@@ -24,6 +35,13 @@ struct GamesInput {
   bool has_scores = false;
   int32_t n_sims = 0;
 };
+
+// Throws EngineError unless the league has 32 teams in 2 conferences of 4
+// divisions of 4 teams.
+void check_league(const League& league);
+
+// Checks the game columns and groups the games by season.
+[[nodiscard]] GamesBySeason group_games(const GamesInput& in);
 
 enum class Ranks : int32_t {
   kNone = 0,

@@ -55,3 +55,35 @@ with_reference_seed <- function(seed, code) {
     .rng_sample_kind = "Rejection"
   )
 }
+
+load_nfl_clinch_2006_2025 <- function() {
+  data.table::as.data.table(readRDS(test_path("nfl_clinch_2006_2025.rds")))
+}
+
+# Clinching status after every week of 2006-2025 (results of later weeks set
+# to NA), with the final ranks of the official standings. Cached, because
+# several tests use it.
+the_tests <- new.env(parent = emptyenv())
+clinching_status_weekly <- function() {
+  the_tests$weekly <- the_tests$weekly %||% clinching_status_weekly_build()
+  data.table::copy(the_tests$weekly)
+}
+
+clinching_status_weekly_build <- function() {
+  games <- load_games_2006_2025()[game_type == "REG"]
+  weeks <- unique(games[, list(season, week)])
+  status <- data.table::rbindlist(lapply(seq_len(nrow(weeks)), function(i) {
+    g <- games[season == weeks$season[i]]
+    g[week > weeks$week[i], result := NA]
+    clinching_status_compute(g)[, week := weeks$week[i]]
+  }))
+  nfl <- load_nfl_standings_2006_2025()
+  final <- nfl[,
+    .SD[week == max(week), list(team, div_rank, conf_rank)],
+    by = season
+  ]
+  out <- merge(status, final, by = c("season", "team"))
+  out[, seeds := clinching_status_seeds(season, TRUE)]
+  data.table::setorderv(out, c("season", "team", "week"))
+  out[]
+}
