@@ -266,13 +266,14 @@ cpp11::writable::list clinching_status_cpp(const cpp11::list& played,
                                            const cpp11::list& remaining,
                                            const cpp11::integers& seeds,
                                            const cpp11::logicals& goals,
-                                           bool scenarios) {
+                                           bool scenarios, bool verify) {
   const nflseedr::GamesInput played_games = make_games(played);
   const nflseedr::GamesInput remaining_games = make_games(remaining);
   const nflseedr::League league = make_league(played);
   nflseedr::StatusOptions options;
   options.seeds = int_span(seeds);
   options.scenarios = scenarios;
+  options.verify = verify;
   const std::span<const int32_t> goal_flags = lgl_span(goals);
   if (goal_flags.size() != options.goals.size()) {
     throw nflseedr::EngineError("Need one flag per goal");

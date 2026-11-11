@@ -16,6 +16,6 @@ elo_week_cpp <- function(game_sim, away, home, rest_diff, home_field, postseason
   .Call(`_nflseedR_elo_week_cpp`, game_sim, away, home, rest_diff, home_field, postseason, result, team_sim, team, elo)
 }
 
-clinching_status_cpp <- function(played, remaining, seeds, goals, scenarios) {
-  .Call(`_nflseedR_clinching_status_cpp`, played, remaining, seeds, goals, scenarios)
+clinching_status_cpp <- function(played, remaining, seeds, goals, scenarios, verify) {
+  .Call(`_nflseedR_clinching_status_cpp`, played, remaining, seeds, goals, scenarios, verify)
 }

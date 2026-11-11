@@ -3,11 +3,13 @@
 # exported nfl_clinching_status() is added.
 #
 # With `scenarios = TRUE`, returns a list of the status table and the
-# scenarios (clinching_status_scenarios()).
+# scenarios (clinching_status_scenarios()). `verify = TRUE` (tests) checks
+# every clinch and elimination that needed tie proofs against the engine.
 clinching_status_compute <- function(
   games,
   status = c("DIV", "PLAYOFFS", "1SEED"),
   scenarios = FALSE,
+  verify = FALSE,
   call = rlang::caller_env()
 ) {
   status <- rlang::arg_match(status, multiple = TRUE, error_call = call)
@@ -31,7 +33,8 @@ clinching_status_compute <- function(
     remaining = encode(games[remaining][, result := 0]),
     seeds = clinching_status_seeds(sims, attr(games, "uses_season")),
     goals = c("DIV", "PLAYOFFS", "1SEED") %in% status,
-    scenarios = scenarios
+    scenarios = scenarios,
+    verify = verify
   )
 
   team <- out$team + 1L

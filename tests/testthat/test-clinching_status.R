@@ -247,3 +247,87 @@ test_that("clinching status returns scenarios in the format of games", {
   expect_false(any(reach %in% playoffs[status == "eliminated", team]))
   expect_false(any(miss %in% playoffs[status == "clinched", team]))
 })
+
+test_that("clinched and eliminated teams hold in random completions", {
+  games <- load_games_2006_2025()[game_type == "REG"]
+  violations <- 0L
+  checked <- 0L
+  with_reference_seed(20261111, {
+    for (season_id in c(2008L, 2014L, 2022L)) {
+      for (last_week in 10:16) {
+        g <- data.table::copy(games[season == season_id])
+        g[week > last_week, result := NA]
+        status <- clinching_status_compute(g)
+        decided <- data.table::melt(
+          status[, list(
+            team,
+            DIV = div_status,
+            PLAYOFFS = playoffs_status,
+            `1SEED` = seed1_status
+          )],
+          id.vars = "team",
+          variable.name = "goal",
+          value.name = "status"
+        )[status %chin% c("clinched", "eliminated")]
+        left <- g[is.na(result)]
+        played <- g[
+          !is.na(result),
+          list(week, game_type, away_team, home_team, result)
+        ]
+        # Random completions, and the worst case of every decided team
+        worst <- unique(decided[, list(
+          fix = team,
+          win = status == "eliminated"
+        )])
+        specs <- rbind(
+          data.table::data.table(fix = rep(NA_character_, 20L), win = NA),
+          worst[rep(seq_len(.N), each = 3L)]
+        )
+        specs[, sim := .I]
+        completions <- specs[,
+          {
+            outcome <- sample(
+              c(-1L, 0L, 1L),
+              nrow(left),
+              replace = TRUE,
+              prob = c(0.45, 0.1, 0.45)
+            )
+            if (!is.na(fix)) {
+              outcome[left$home_team == fix] <- if (win) 1L else -1L
+              outcome[left$away_team == fix] <- if (win) -1L else 1L
+            }
+            left[, list(week, game_type, away_team, home_team, result = outcome)]
+          },
+          by = sim
+        ]
+        full <- rbind(
+          played[rep(seq_len(.N), nrow(specs))][,
+            sim := rep(specs$sim, each = nrow(played))
+          ],
+          completions,
+          use.names = TRUE
+        )
+        standings <- nfl_standings(full, verbosity = "NONE")
+        seeds <- clinching_status_seeds(season_id, uses_season = TRUE)
+        reached <- data.table::melt(
+          standings[, list(
+            sim,
+            team,
+            DIV = div_rank == 1L,
+            PLAYOFFS = conf_rank <= seeds,
+            `1SEED` = conf_rank == 1L
+          )],
+          id.vars = c("sim", "team"),
+          variable.name = "goal",
+          value.name = "reached"
+        )
+        m <- merge(reached, decided, by = c("team", "goal"))
+        violations <- violations +
+          m[(status == "clinched") != reached, .N]
+        checked <- checked + nrow(m)
+      }
+    }
+  })
+  expect_identical(violations, 0L)
+  expect_gt(checked, 20000L)
+})
