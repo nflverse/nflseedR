@@ -13,6 +13,12 @@ namespace {
 
 constexpr int32_t kInterruptEvery = 1000;
 
+double pct(int32_t half_wins, int32_t games) {
+  return games == 0 ? 0.0 : (half_wins * 0.5) / games;
+}
+
+}  // namespace
+
 void check_league(const League& league) {
   std::array<int32_t, kDivisions> div_size{};
   std::array<int32_t, kConferences> conf_size{};
@@ -34,17 +40,6 @@ void check_league(const League& league) {
     }
   }
 }
-
-// Games grouped by season: games of season s (1-based) are
-// sorted[offset[s - 1] .. offset[s]).
-struct GamesBySeason {
-  std::vector<Game> sorted;
-  std::vector<int32_t> offset;
-
-  [[nodiscard]] std::span<const Game> season(int32_t s) const {
-    return std::span(sorted).subspan(offset[s - 1], offset[s] - offset[s - 1]);
-  }
-};
 
 GamesBySeason group_games(const GamesInput& in) {
   const size_t n = in.sim.size();
@@ -86,12 +81,6 @@ GamesBySeason group_games(const GamesInput& in) {
   }
   return out;
 }
-
-double pct(int32_t half_wins, int32_t games) {
-  return games == 0 ? 0.0 : (half_wins * 0.5) / games;
-}
-
-}  // namespace
 
 void StandingsRows::reserve(size_t n) {
   for (auto* v :

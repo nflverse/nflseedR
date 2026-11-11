@@ -33,13 +33,21 @@ extern "C" SEXP _nflseedR_elo_week_cpp(SEXP game_sim, SEXP away, SEXP home, SEXP
     return cpp11::as_sexp(elo_week_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(game_sim), cpp11::as_cpp<cpp11::decay_t<SEXP>>(away), cpp11::as_cpp<cpp11::decay_t<SEXP>>(home), cpp11::as_cpp<cpp11::decay_t<SEXP>>(rest_diff), cpp11::as_cpp<cpp11::decay_t<SEXP>>(home_field), cpp11::as_cpp<cpp11::decay_t<SEXP>>(postseason), cpp11::as_cpp<cpp11::decay_t<SEXP>>(result), cpp11::as_cpp<cpp11::decay_t<SEXP>>(team_sim), cpp11::as_cpp<cpp11::decay_t<SEXP>>(team), cpp11::as_cpp<cpp11::decay_t<SEXP>>(elo)));
   END_CPP11
 }
+// bindings.cpp
+cpp11::writable::list clinching_status_cpp(const cpp11::list& played, const cpp11::list& remaining, const cpp11::integers& seeds, const cpp11::logicals& goals);
+extern "C" SEXP _nflseedR_clinching_status_cpp(SEXP played, SEXP remaining, SEXP seeds, SEXP goals) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(clinching_status_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(played), cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(remaining), cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(seeds), cpp11::as_cpp<cpp11::decay_t<const cpp11::logicals&>>(goals)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_nflseedR_draft_ranks_cpp",  (DL_FUNC) &_nflseedR_draft_ranks_cpp,   7},
-    {"_nflseedR_elo_week_cpp",     (DL_FUNC) &_nflseedR_elo_week_cpp,     10},
-    {"_nflseedR_positions_of_cpp", (DL_FUNC) &_nflseedR_positions_of_cpp,  2},
-    {"_nflseedR_standings_cpp",    (DL_FUNC) &_nflseedR_standings_cpp,     5},
+    {"_nflseedR_clinching_status_cpp", (DL_FUNC) &_nflseedR_clinching_status_cpp,  4},
+    {"_nflseedR_draft_ranks_cpp",      (DL_FUNC) &_nflseedR_draft_ranks_cpp,       7},
+    {"_nflseedR_elo_week_cpp",         (DL_FUNC) &_nflseedR_elo_week_cpp,         10},
+    {"_nflseedR_positions_of_cpp",     (DL_FUNC) &_nflseedR_positions_of_cpp,      2},
+    {"_nflseedR_standings_cpp",        (DL_FUNC) &_nflseedR_standings_cpp,         5},
     {NULL, NULL, 0}
 };
 }

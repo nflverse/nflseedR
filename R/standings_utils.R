@@ -1,6 +1,10 @@
 # A games files is valid if we can perform all necessary steps in the tiebreaking
 # process.
-standings_validate_games <- function(games, call = rlang::caller_env()) {
+standings_validate_games <- function(
+  games,
+  allow_missing_results = FALSE,
+  call = rlang::caller_env()
+) {
   if (!is.data.table(games)) {
     setDT(games)
   }
@@ -37,7 +41,7 @@ standings_validate_games <- function(games, call = rlang::caller_env()) {
     )
   }
   standings_check_teams(games$away_team, games$home_team, call = call)
-  if (any(is.na(games$result))) {
+  if (!allow_missing_results && anyNA(games$result)) {
     cli::cli_abort(
       "The {.arg games} table includes {.val NA} results! Please fix and rerun.",
       call = call

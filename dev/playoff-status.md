@@ -2,8 +2,8 @@
 
 Plan for a new exported function that says, for every team, whether it has
 clinched or been eliminated from a division title, a playoff berth and the
-No. 1 seed, given the games played so far. Status: **milestone 1 done, no
-function code yet** (2026-11-11). Built on the C++ standings engine, so read
+No. 1 seed, given the games played so far. Status: **milestones 1 and 2
+done** (2026-11-11), internal `clinching_status_compute()` only. Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
 
@@ -264,9 +264,12 @@ are known at that point but still not used (depth SOS, P2).
 ## Architecture
 
 ```
-R/clinching_status.R      nfl_clinching_status(): validate, encode (reuses
-                          standings_encode_games()), call C++, decode
-src/engine/flow.hpp       small Dinic max-flow, fixed-size arrays
+R/clinching_status.R      clinching_status_compute() (internal, milestone 2;
+                          nfl_clinching_status() in milestone 5): validate
+                          (standings_validate_games(allow_missing_results =
+                          TRUE)), encode played and remaining games with
+                          standings_encode_games(), call C++, decode
+src/engine/flow.hpp       small Dinic max-flow (vectors reused across flows)
 src/flow.cpp
 src/engine/status.hpp     compute_clinching_status(): season loop, checks per
 src/status.cpp            goal, scenario search, uses procedures.hpp
@@ -280,7 +283,11 @@ src/bindings.cpp          clinching_status_cpp()
 - The procedures need to report coin tosses that affect a goal, and to take
   forced coin toss results for the reruns (internal only, no change to
   `nfl_standings()`).
-- Seeds per season from the league formats table.
+- Seeds per season from the league formats table
+  (`clinching_status_seeds()`).
+- `check_league()`, `group_games()` and `GamesBySeason` moved from
+  `engine.cpp`'s anonymous namespace to `engine.hpp`, shared with the
+  standings engine.
 - The C++ side always keeps the proving scenario per team and goal; R only
   decodes it with `scenarios = TRUE` (P6) and in tests.
 
@@ -326,7 +333,8 @@ So compare the **first week** per team, season and goal, not every week:
 Known special case: the 2022 BUF-CIN game (week 17) is not in
 `games_2006_2025.rds` (P3). So in the week 16 state it's missing, although
 at that time it was still a remaining game. Expect differences for AFC teams
-around 2022 weeks 16–17.
+around 2022 weeks 16–17. (Milestone 2: BUF's division and CIN's playoff
+berth are clinched in week 15, a week before the NFL.)
 
 Fixture: `tests/testthat/nfl_clinch_2006_2025.rds` (built by
 `data-raw/build_nfl_clinch_2006_2025.R`): season, week, team and the four
@@ -381,13 +389,53 @@ weeks.
 Plus short synthetic tests: tie games, the cancelled 2022 BUF-CIN game,
 2019 (6 seeds) vs 2020 (7 seeds), input errors.
 
+### Results of milestone 2
+
+`tests/testthat/test-clinching_status.R` runs checks 1, 2 and 5 on every
+week of 2006–2025 (345 states, about 1s in a debug build). Snapshot:
+`_snaps/clinching_status/nfl_status_differences.csv`.
+
+- **Check 2 (real season)** and **check 5 (invariants)**: no violations.
+- **Alive** already comes out of milestone 2: a feasible strict flow is a
+  completion where X reaches (or misses) the goal whatever the tiebreakers
+  say, so it proves the answer without the engine.
+- **Nested goals.** No. 1 seed ⇒ division ⇒ playoffs, so an answer left
+  open by one goal's checks is taken from another goal where that is sound
+  (e.g. can't miss the division ⇒ can't miss the playoffs). Without it,
+  20 team-weeks had the division clinched but the playoffs undecided,
+  because the playoff sweep rule needs every conference team that can tie
+  X, not only the rivals. Unrequested goals are computed only when needed
+  for this.
+- **Check 1 (NFL flags)**, first week per team, season and goal (840 NFL
+  first weeks):
+
+  | goal | same | earlier | later | NFL only |
+  |---|---|---|---|---|
+  | division | 136 | 1 | 11 | 12 |
+  | playoffs | 185 | 1 | 43 | 23 |
+  | eliminated | 289 | 0 | 72 | 27 |
+  | No. 1 seed | 33 | 0 | 1 | 6 |
+
+  Never a contradiction: in every later or NFL-only case we're undecided
+  in the NFL's week. The two earlier cases are 2022 BUF and CIN (the
+  missing BUF-CIN game).
+- **Gray zone.** Of the 195 later or NFL-only cases, 56 are in the final
+  state with no games left (division 9, playoffs 21, eliminated 23, No. 1
+  seed 3); milestone 3 settles those from the final standings. The other
+  139 have games left. Scenarios (milestone 3) only prove "can reach" and
+  "can miss", so they can't produce these clinches and eliminations; only
+  more tiebreakers in the proofs (milestone 4) can. Milestone 3 will mostly
+  turn undecided into alive (about 400 undecided team-weeks per goal with
+  games left).
+
 ## Milestones
 
 1. Fixture with the official NFL flags, and a look at what they mean week
    to week. **Done** (2026-11-11), see check 1.
 2. Max-flow + win-percentage checks for all three goals, with the sweep
    rule (clinched, eliminated, undecided only). Compare with the NFL flags
-   to see how big the gray zone is.
+   to see how big the gray zone is. **Done** (2026-11-11), see
+   [results of milestone 2](#results-of-milestone-2).
 3. Scenarios through the engine (alive, and possible outcomes through
    tiebreakers and coin tosses).
 4. Only if the NFL comparison shows it's worth it: later tiebreaking steps
