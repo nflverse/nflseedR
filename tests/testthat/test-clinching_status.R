@@ -153,9 +153,61 @@ test_that("clinching status uses 6 seeds through 2019 and 7 since 2020", {
   expect_identical(clinching_status_seeds(1:2, uses_season = FALSE), c(7L, 7L))
 })
 
-test_that("clinching status rejects invalid goals", {
+test_that("nfl_clinching_status() checks its arguments", {
   games <- load_games_2006_2025()[season == 2023]
-  expect_snapshot(clinching_status_compute(games, status = "WC"), error = TRUE)
+  expect_snapshot(error = TRUE, {
+    nfl_clinching_status(games, status = "WC", verbosity = "NONE")
+    nfl_clinching_status(games, scenarios = NA, verbosity = "NONE")
+    nfl_clinching_status(games, "DIV", verbosity = "NONE")
+    nfl_clinching_status(games, verbosity = "ALL")
+  })
+})
+
+test_that("nfl_clinching_status() reports by verbosity", {
+  games <- load_games_2006_2025()[season == 2023]
+  expect_silent(nfl_clinching_status(games, verbosity = "NONE"))
+  messages <- testthat::capture_messages(
+    nfl_clinching_status(games, status = "DIV", verbosity = "MAX")
+  )
+  expect_length(messages, 2L)
+  expect_match(messages[1], "Compute clinching status")
+  expect_match(
+    messages[2],
+    "div: clinched x 8, alive x 0, eliminated x 24, undecided x 0"
+  )
+})
+
+test_that("nfl_clinching_status() takes tibbles and leaves them as they are", {
+  games <- load_games_2006_2025()[season == 2023]
+  games[week > 15, result := NA]
+  tbl <- tibble::as_tibble(games)
+  before <- data.table::copy(tbl)
+  expect_identical(
+    nfl_clinching_status(tbl, verbosity = "NONE"),
+    nfl_clinching_status(games, verbosity = "NONE")
+  )
+  expect_identical(tbl, before)
+})
+
+test_that("nfl_clinching_status() ignores playoff games not played yet", {
+  games <- load_games_2006_2025()[season == 2023]
+  games[week > 15, result := NA]
+  with_playoffs <- rbind(
+    games,
+    data.table::data.table(
+      season = 2023L,
+      week = 19L,
+      game_type = "WC",
+      away_team = NA_character_,
+      home_team = NA_character_,
+      result = NA_integer_
+    ),
+    fill = TRUE
+  )
+  expect_identical(
+    nfl_clinching_status(with_playoffs, verbosity = "NONE"),
+    nfl_clinching_status(games, verbosity = "NONE")
+  )
 })
 
 test_that("scenarios really reach or miss the goal", {
@@ -166,7 +218,10 @@ test_that("scenarios really reach or miss the goal", {
     for (last_week in sort(unique(season_games$week))) {
       g <- data.table::copy(season_games)
       g[week > last_week, result := NA]
-      scenarios <- clinching_status_compute(g, scenarios = TRUE)$scenarios
+      scenarios <- attr(
+        clinching_status_compute(g, scenarios = TRUE),
+        "scenarios"
+      )
       if (nrow(scenarios) == 0L) {
         next
       }
@@ -217,10 +272,12 @@ test_that("scenarios really reach or miss the goal", {
 test_that("clinching status returns scenarios in the format of games", {
   games <- load_games_2006_2025()[season == 2023]
   games[week > 16, result := NA]
-  out <- clinching_status_compute(games, scenarios = TRUE)
-  expect_named(out, c("status", "scenarios"))
-  expect_identical(out$status, clinching_status_compute(games))
-  scenarios <- out$scenarios
+  out <- nfl_clinching_status(games, scenarios = TRUE, verbosity = "NONE")
+  scenarios <- attr(out, "scenarios")
+  expect_identical(
+    data.table::setattr(data.table::copy(out), "scenarios", NULL),
+    nfl_clinching_status(games, verbosity = "NONE")
+  )
   expect_named(
     scenarios,
     c(
@@ -238,7 +295,7 @@ test_that("clinching status returns scenarios in the format of games", {
   expect_in(scenarios$result, c(-1L, 0L, 1L))
   # Alive teams have a scenario for both answers, clinched and eliminated
   # teams only for the possible one
-  playoffs <- out$status[, list(team, status = playoffs_status)]
+  playoffs <- out[, list(team, status = playoffs_status)]
   proofs <- unique(scenarios[goal == "PLAYOFFS", list(team, proves)])
   reach <- proofs[proves == "reach", team]
   miss <- proofs[proves == "miss", team]
@@ -296,7 +353,13 @@ test_that("clinched and eliminated teams hold in random completions", {
               outcome[left$home_team == fix] <- if (win) 1L else -1L
               outcome[left$away_team == fix] <- if (win) -1L else 1L
             }
-            left[, list(week, game_type, away_team, home_team, result = outcome)]
+            left[, list(
+              week,
+              game_type,
+              away_team,
+              home_team,
+              result = outcome
+            )]
           },
           by = sim
         ]

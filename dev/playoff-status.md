@@ -2,8 +2,8 @@
 
 Plan for a new exported function that says, for every team, whether it has
 clinched or been eliminated from a division title, a playoff berth and the
-No. 1 seed, given the games played so far. Status: **milestones 1–4
-done** (2026-11-11), internal `clinching_status_compute()` only. Built on the C++ standings engine, so read
+No. 1 seed, given the games played so far. Status: **milestones 1–5
+done** (2026-11-11): exported as `nfl_clinching_status()`, experimental. Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
 
@@ -339,8 +339,8 @@ are known at that point but still not used (depth SOS, P2).
 ## Architecture
 
 ```
-R/clinching_status.R      clinching_status_compute() (internal, milestone 2;
-                          nfl_clinching_status() in milestone 5): validate
+R/clinching_status.R      nfl_clinching_status(): argument checks, then
+                          clinching_status_compute(): validate
                           (standings_validate_games(allow_missing_results =
                           TRUE)), encode played and remaining games with
                           standings_encode_games(), call C++, decode
@@ -566,6 +566,29 @@ week of 2006–2025 (345 states, about 1s in a debug build). Snapshot:
   conservative (e.g. a team of another division counts only if X wins or
   loses against every set of representatives with it).
 
+### Results of milestone 5
+
+- `nfl_clinching_status(games, ..., status, scenarios, verbosity)`, marked
+  experimental with `lifecycle::badge("experimental")`. Arguments are
+  checked up front (`rlang::check_dots_empty()`, `rlang::arg_match()`, and
+  `rlang::is_bool()` for `scenarios`, since the package has no standalone
+  `check_*` functions). `verbosity = "MAX"` reports how many teams got each
+  status.
+- Input: a plain `data.table` copy of `games`, so tibbles work (their class
+  survives `setDT()`) and the user's table isn't changed. Playoff games
+  without a result are dropped before validation (their teams may be
+  missing).
+- Scenarios are the attribute `"scenarios"` (P6).
+- `data-raw/bench_clinching_status.R`, Apple Silicon, optimized build:
+
+  | case | median |
+  |---|---|
+  | every week of 2006–2025 (345 calls) | 0.56s |
+  | 2023 after week 15, all goals | 2.1ms |
+  | the same, `status = "PLAYOFFS"` | 1.7ms |
+  | the same, `scenarios = TRUE` | 3.5ms |
+  | 1,000 simulated seasons after week 12, one call | 0.95s |
+
 ## Milestones
 
 1. Fixture with the official NFL flags, and a look at what they mean week
@@ -581,7 +604,8 @@ week of 2006–2025 (345 states, about 1s in a debug build). Snapshot:
    that played games have already decided (e.g. a finished division record),
    which need a careful look at who else can be in the tie. **Done**
    (2026-11-11), see [tie proofs](#tie-proofs-milestone-4).
-5. R interface, docs, `_pkgdown.yml`, NEWS, benchmark.
+5. R interface, docs, `_pkgdown.yml`, NEWS, benchmark. **Done**
+   (2026-11-11), see [results of milestone 5](#results-of-milestone-5).
 
 ## Decisions
 
@@ -615,11 +639,12 @@ tiebreakers and the scenario budget can't decide stays undecided.
 `scenarios = FALSE`. With `TRUE`, the result also includes a table with
 season, team, goal, what the scenario proves (`"reach"` or `"miss"`) and the
 results of the remaining games, in the format of `games` so it can go
-straight into `nfl_standings()`. Still to settle while implementing: an
-attribute or a list element. Milestone 3 added two columns that P6 doesn't
-list: `scenario` (to tell scenarios apart) and `coin_toss` (the scenario
-needs a coin toss, so `nfl_standings()` reproduces it only with the right
-toss). Open: keep them in the exported output?
+straight into `nfl_standings()`. Decided by the maintainer
+(2026-11-11): the table is the attribute `"scenarios"` of the result, so the
+return type doesn't depend on the argument. It keeps the two columns added
+in milestone 3: `scenario` (an id to tell scenarios apart) and `coin_toss`
+(the scenario needs a particular coin toss, so `nfl_standings()` reproduces
+it only with that toss).
 
 **P7 Output column names. Decided by the maintainer (2026-11-11):**
 `div_status`, `playoffs_status`, `seed1_status`.

@@ -68,9 +68,11 @@ reference:
 
 - title: Main Functions
   desc: >
-    Calculate NFL standings (incl. deep tiebreakers) and simulate NFL seasons.
+    Calculate NFL standings (incl. deep tiebreakers), clinching and
+    elimination status, and simulate NFL seasons.
   contents:
   - nfl_standings
+  - nfl_clinching_status
   - nfl_simulations
 
 - title: Utilities
