@@ -13,7 +13,7 @@ test_that("clinched and eliminated teams really reached or missed the goal", {
 
 test_that("clinching status follows the final standings once no games are left", {
   s <- clinching_status_weekly()
-  final <- s[, .SD[week == max(week)], by = "season"]
+  final <- s[s[, .I[week == max(week)], by = "season"]$V1]
   expect_all_equal(final$games_left, 0L)
   expect_identical(final$div_status == "clinched", final$div_rank == 1L)
   expect_identical(
@@ -60,10 +60,9 @@ test_that("clinching status follows the invariants", {
   counts <- s[,
     list(
       playoffs = sum(playoffs_status == "clinched"),
-      seed1 = sum(seed1_status == "clinched"),
-      seeds = seeds[1]
+      seed1 = sum(seed1_status == "clinched")
     ),
-    by = c("season", "week", "conf")
+    by = c("season", "week", "conf", "seeds")
   ]
   expect_all_true(counts$playoffs <= counts$seeds)
   expect_all_true(counts$seed1 <= 1L)
@@ -107,7 +106,7 @@ test_that("first clinching and elimination weeks match the NFL", {
   # Later than the NFL only where we can't decide yet. Earlier only for the
   # cancelled 2022 BUF-CIN game, which is missing from the remaining games.
   expect_all_equal(
-    differences[!is.na(nfl) & (is.na(ours) | ours > nfl)]$ours_in_nfl_week,
+    differences[!is.na(nfl) & (is.na(ours) | ours > nfl), ours_in_nfl_week],
     "undecided"
   )
   earlier <- differences[!is.na(ours) & (is.na(nfl) | ours < nfl)]
@@ -312,7 +311,7 @@ test_that("clinched and eliminated teams hold in random completions", {
   with_reference_seed(20261111, {
     for (season_id in c(2008L, 2014L, 2022L)) {
       for (last_week in 10:16) {
-        g <- data.table::copy(games[season == season_id])
+        g <- games[season == season_id]
         g[week > last_week, result := NA]
         status <- clinching_status_compute(g)
         decided <- data.table::melt(

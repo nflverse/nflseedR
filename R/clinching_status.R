@@ -132,7 +132,8 @@ clinching_status_compute <- function(
   # the user's table stays as it is
   games <- as.data.table(games)
   # Playoff games that aren't played yet don't matter (and their teams may
-  # be unknown)
+  # be unknown). `$` because the columns are only validated below: a missing
+  # column gives zero rows here and the validation error below
   games <- games[!(games$game_type != "REG" & is.na(games$result))]
   games <- standings_validate_games(
     games,

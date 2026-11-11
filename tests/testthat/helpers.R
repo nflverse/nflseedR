@@ -80,9 +80,9 @@ clinching_status_weekly_build <- function() {
     clinching_status_compute(g, verify = TRUE)[, week := weeks$week[i]]
   }))
   nfl <- load_nfl_standings_2006_2025()
-  final <- nfl[,
-    .SD[week == max(week), list(team, div_rank, conf_rank)],
-    by = season
+  final <- nfl[
+    nfl[, .I[week == max(week)], by = "season"]$V1,
+    list(season, team, div_rank, conf_rank)
   ]
   out <- merge(status, final, by = c("season", "team"))
   out[, seeds := clinching_status_seeds(season, TRUE)]
