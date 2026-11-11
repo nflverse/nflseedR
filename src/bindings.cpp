@@ -4,6 +4,7 @@
 #include <Rmath.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cpp11.hpp>
 #include <span>
 #include <vector>
@@ -87,6 +88,14 @@ cpp11::writable::integers results_to_r(const std::vector<int32_t>& x) {
 cpp11::writable::doubles to_r(const std::vector<double>& x) {
   cpp11::writable::doubles out(static_cast<R_xlen_t>(x.size()));
   std::ranges::copy(x, REAL(out));
+  return out;
+}
+
+// Like to_r(), but NaN becomes NA as in R's indexing with a missing row
+cpp11::writable::doubles na_to_r(const std::vector<double>& x) {
+  cpp11::writable::doubles out(static_cast<R_xlen_t>(x.size()));
+  std::ranges::transform(x, REAL(out),
+                         [](double v) { return std::isnan(v) ? NA_REAL : v; });
   return out;
 }
 
@@ -243,5 +252,7 @@ cpp11::writable::list elo_week_cpp(SEXP game_sim, SEXP away, SEXP home,
   return cpp11::writable::list({
       "result"_nm = results_to_r(week.result),
       "elo"_nm = to_r(week.elo),
+      "away_elo"_nm = na_to_r(week.away_elo),
+      "home_elo"_nm = na_to_r(week.home_elo),
   });
 }

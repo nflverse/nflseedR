@@ -40,6 +40,10 @@ struct EloWeek {
   std::vector<int32_t> result;
   // New elo of all team rows
   std::vector<double> elo;
+  // Elo of the away and home team of each game before the week (NaN if the
+  // team isn't in the team table)
+  std::vector<double> away_elo;
+  std::vector<double> home_elo;
 };
 
 // Simulates missing results with normal draws from `rng` (in game order, like
