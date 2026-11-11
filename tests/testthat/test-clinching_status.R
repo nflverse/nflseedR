@@ -182,14 +182,80 @@ test_that("nfl_clinching_status() reports by verbosity", {
   games <- load_games_2006_2025()[season == 2023]
   expect_silent(nfl_clinching_status(games, verbosity = "NONE"))
   messages <- testthat::capture_messages(
-    nfl_clinching_status(games, status = "DIV", verbosity = "MAX")
+    nfl_clinching_status(games, status = "DIV", verbosity = "MIN")
   )
   expect_length(messages, 2L)
   expect_match(messages[1], "Compute clinching status")
+  expect_match(messages[2], "Compute standings")
+  messages <- testthat::capture_messages(
+    nfl_clinching_status(games, status = "DIV", verbosity = "MAX")
+  )
+  expect_gt(length(messages), 3L)
   expect_match(
-    messages[2],
+    messages[length(messages)],
     "div: clinched x 8, alive x 0, eliminated x 24, undecided x 0"
   )
+})
+
+test_that("nfl_clinching_status() returns the current standings with status", {
+  games <- load_games_2006_2025()[season %in% 2022:2023]
+  games[week > 15, result := NA]
+  out <- nfl_clinching_status(
+    games,
+    status = c("DIV", "1SEED"),
+    verbosity = "NONE"
+  )
+  standings <- nfl_standings(games[!is.na(result)], verbosity = "NONE")
+  expect_named(
+    out,
+    c(names(standings), "games_left", "div_status", "seed1_status")
+  )
+  expect_identical(out[, names(standings), with = FALSE], standings)
+  status <- clinching_status_compute(games, status = c("DIV", "1SEED"))
+  expect_identical(
+    out[, list(season, team, games_left, div_status, seed1_status)],
+    status[
+      out,
+      list(season, team, games_left, div_status, seed1_status),
+      on = c("season", "team")
+    ]
+  )
+})
+
+test_that("nfl_clinching_status() only returns teams that have played", {
+  games <- load_games_2006_2025()[season %in% 2022:2023]
+  games[season == 2023 | week > 1, result := NA]
+  out <- nfl_clinching_status(games, verbosity = "NONE")
+  expect_identical(unique(out$season), 2022L)
+  expect_setequal(
+    out$team,
+    games[!is.na(result), c(away_team, home_team)]
+  )
+  games[, result := NA]
+  expect_identical(nrow(nfl_clinching_status(games, verbosity = "NONE")), 0L)
+})
+
+test_that("nfl_clinching_status() ranks unfinished seasons as unfinished", {
+  # Weeks 1-2 and one game of the final week are played. Net wins break ties
+  # of equal win percentages only during the season.
+  games <- load_games_2006_2025()[season == 2023]
+  games[week > 2 & !(week == 18 & home_team == "BAL"), result := NA]
+  played <- games[!is.na(result)]
+  out <- with_reference_seed(1, nfl_clinching_status(games, verbosity = "NONE"))
+  in_season <- with_reference_seed(
+    1,
+    standings_compute(
+      played,
+      ranks = "CONF",
+      tiebreaker_depth = "SOS",
+      playoff_seeds = NULL,
+      verbosity = "NONE",
+      season_complete = FALSE
+    )
+  )
+  expect_identical(out[, names(in_season), with = FALSE], in_season)
+  complete <- with_reference_seed(1, nfl_standings(played, verbosity = "NONE"))
+  expect_false(identical(in_season$team, complete$team))
 })
 
 test_that("nfl_clinching_status() takes tibbles and leaves them as they are", {

@@ -3,7 +3,7 @@
 Plan for a new exported function that says, for every team, whether it has
 clinched or been eliminated from a division title, a playoff berth and the
 No. 1 seed, given the games played so far. Status: **milestones 1–5
-done** (2026-11-11), milestone 6 (tighter tie proofs) partly done: exported as `nfl_clinching_status()`, experimental. Built on the C++ standings engine, so read
+done** (2026-11-11), milestone 6 (tighter tie proofs) partly done: exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
 
@@ -78,15 +78,27 @@ nfl_clinching_status(
 - No `tiebreaker_depth`: P2 fixes it (all steps through SOS; anything after
   that is unknown).
 
-Output: a data.table with one row per season and team:
+Output (P9): the current standings, i.e. `nfl_standings()` of the played
+games (`ranks = "CONF"`, `tiebreaker_depth = "SOS"`, all 16 conference
+ranks), with these columns added at the end:
 
-`season, team, conf, division, wins, losses, ties, games_left <int>,
-div_status, playoffs_status, seed1_status <chr>`
+`games_left <int>, div_status, playoffs_status, seed1_status <chr>`
 
 Column names can't start with a digit, so `"1SEED"` becomes `seed1_status`.
 
-Only the status columns for the requested goals are included. Sorted like
-`nfl_standings()` (season, division, team).
+Only the status columns for the requested goals are included. Rows and
+order are those of `nfl_standings()`: only teams that have played a game,
+sorted by season, division and division rank. `verbosity` is passed on to
+`nfl_standings()`. The standings get `season_complete` from the remaining
+games (complete iff none are left), not from the last week with a played
+game, so a partly played final week is ranked as in-season (net wins break
+ties of equal percentages).
+
+The internal `clinching_status_compute()` keeps its own table (one row per
+season and team, all 32 teams: `season, team, conf, division, wins, losses,
+ties, games_left` and the status columns, sorted by season, division and
+team); the tests use it. `clinching_status_standings()` joins it onto the
+standings.
 
 ## Algorithm
 
@@ -738,3 +750,12 @@ through the picks, not only picked first) of
 [milestone 6](#results-of-milestone-6), in the clinching code only (no
 changes to the tiebreakers in `procedures.cpp`). Gap 3 is open and needs a
 new decision.
+
+**P9 Output as current standings. Decided by the maintainer
+(2026-11-11):** `nfl_clinching_status()` returns `nfl_standings()` of the
+played games with `games_left` and the status columns added at the end
+(see [interface](#interface)). The standings arguments aren't exposed:
+always `ranks = "CONF"`, `tiebreaker_depth = "SOS"` (as P2) and all 16
+conference ranks. Sorted like `nfl_standings()`. Only teams that have
+played a game get a row, as in `nfl_standings()` (zero rows before
+kickoff). `verbosity` is passed on to `nfl_standings()`.

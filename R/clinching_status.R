@@ -28,7 +28,8 @@
 #'   the results of the remaining games that prove the answers (see Value).
 #' @param verbosity One of `"MIN"`, `"MAX"`, or `"NONE"`.
 #'   - `"MIN"` (default): Prints the main steps.
-#'   - `"MAX"`: Also prints how many teams got each status.
+#'   - `"MAX"`: Also prints all steps of the tiebreaking process of the
+#'     current standings and how many teams got each status.
 #'   - `"NONE"`: No status reports.
 #'
 #' @details
@@ -62,12 +63,14 @@
 #' clinch or are eliminated in the same week as in the NFL. Some are still
 #' `"undecided"` a week or two longer.
 #'
-#' @return A data.table with one row per season (or sim) and team: `season`
-#'   (or `sim`), `team`, `conf`, `division`, `wins`, `losses`, `ties` (games
-#'   played so far), `games_left`, and one status column per requested goal:
+#' @return The current standings: the output of [nfl_standings()] for the
+#'   games played so far (with conference ranks and tiebreakers through
+#'   strength of schedule), followed by `games_left` (regular season games
+#'   still to be played) and one status column per requested goal:
 #'   `div_status`, `playoffs_status` and `seed1_status`. Each status is one of
-#'   `"clinched"`, `"alive"`, `"eliminated"` or `"undecided"`. Sorted by
-#'   season, division and team.
+#'   `"clinched"`, `"alive"`, `"eliminated"` or `"undecided"`. Like
+#'   [nfl_standings()], there is only a row for teams that have played at least
+#'   one game, and the rows are sorted the same way.
 #'
 #'   With `scenarios = TRUE`, the attribute `"scenarios"` is a data.table with
 #'   one row per scenario and remaining game of its season: `scenario` (an
@@ -109,11 +112,55 @@ nfl_clinching_status <- function(
   if (verbosity != "NONE") {
     report("Compute clinching status")
   }
-  out <- clinching_status_compute(games, status = status, scenarios = scenarios)
+  status_table <- clinching_status_compute(
+    games,
+    status = status,
+    scenarios = scenarios
+  )
+  out <- clinching_status_standings(games, status_table, verbosity = verbosity)
   if (verbosity == "MAX") {
     clinching_status_report(out)
   }
   out
+}
+
+# Current standings (nfl_standings() of the played games) with the columns
+# `games_left` and the status columns of `status_table` added. Only teams
+# that have played a game have a row.
+clinching_status_standings <- function(
+  games,
+  status_table,
+  verbosity,
+  call = rlang::caller_env()
+) {
+  id <- names(status_table)[1]
+  played <- as.data.table(games)
+  played <- played[!is.na(played$result)]
+  # clinching_status_compute() already warned about both `sim` and `season`
+  if (id == "sim") {
+    played$season <- NULL
+  }
+  # A season is complete when no games are left, not when the last week has
+  # a played game
+  complete <- status_table[, list(complete = all(games_left == 0L)), by = id]
+  sims <- sort(unique(played[[id]]))
+  standings <- standings_compute(
+    played,
+    ranks = "CONF",
+    tiebreaker_depth = "SOS",
+    playoff_seeds = NULL,
+    verbosity = verbosity,
+    season_complete = complete$complete[match(sims, complete[[id]])],
+    call = call
+  )
+  cols <- setdiff(names(status_table), c(id, "team", names(standings)))
+  standings[
+    status_table,
+    on = c(id, "team"),
+    (cols) := mget(paste0("i.", cols))
+  ]
+  setattr(standings, "scenarios", attr(status_table, "scenarios"))
+  standings[]
 }
 
 # The work of nfl_clinching_status() after argument checks
