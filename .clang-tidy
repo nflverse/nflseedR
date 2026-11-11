@@ -1,0 +1,42 @@
+# Static analysis for src/. Run with dev/check-cpp.sh (changed files only).
+# Noisy checks that don't fit the engine (fixed-size arrays indexed by team
+# id, short loop variables, small numeric constants) or Google style (single
+# statement ifs without braces) are turned off. Also off for cpp11:
+# registered functions need external linkage (src/cpp11.cpp calls them) and
+# `using namespace cpp11::literals` is the documented way to get `_nm`.
+# google-build-using-namespace is therefore not enabled; don't use other
+# using-directives.
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-avoid-do-while,
+  google-explicit-constructor,
+  google-readability-casting,
+  misc-*,
+  -misc-use-internal-linkage,
+  -misc-const-correctness,
+  -misc-include-cleaner,
+  -misc-non-private-member-variables-in-classes,
+  -misc-no-recursion,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  -modernize-use-designated-initializers,
+  performance-*,
+  -performance-enum-size,
+  readability-*,
+  -readability-braces-around-statements,
+  -readability-math-missing-parentheses,
+  -readability-trailing-comma,
+  -readability-identifier-length,
+  -readability-magic-numbers,
+  -readability-function-cognitive-complexity,
+  -readability-implicit-bool-conversion
+HeaderFilterRegex: 'src/engine/.*'
+FormatStyle: file

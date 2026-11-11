@@ -20,8 +20,14 @@ record the answer in the decision log.
   `nflseedr::EngineError` and use `cpp11::check_user_interrupt()`.
 - No printing, `exit()`, `abort()`, `rand()` or non-portable `Makevars` flags
   (CRAN). Random numbers only through `nflseedr::RandomSource`.
-- Run `clang-format -i` on changed C++ files. Review standings snapshot
-  changes carefully (see `dev/cpp-standings-engine.md`).
+- Write idiomatic, modern C++20 following the C++ Core Guidelines (details
+  in the C++ conventions of `dev/cpp-standings-engine.md`).
+- Run `clang-format -i` on changed C++ files, then `dev/check-cpp.sh`
+  (formatting, `-Wall -Wextra` warnings, clang-tidy with `.clang-tidy`) and
+  fix everything it reports in code you wrote or changed. Don't refactor
+  unrelated existing code to satisfy it.
+- Review standings snapshot changes carefully (see
+  `dev/cpp-standings-engine.md`).
 
 ## Package development
 
