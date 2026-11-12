@@ -61,6 +61,7 @@ utils::globalVariables(
     "exit",
     "game_type",
     "games",
+    "games_left",
     "games_opp",
     "games_played",
     "h2h_games",
