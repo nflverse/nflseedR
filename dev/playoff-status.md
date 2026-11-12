@@ -4,7 +4,8 @@ Plan for a new exported function that says, for every team, whether it has
 clinched or been eliminated from a division title, a playoff berth and the
 No. 1 seed, given the games played so far. Status: **milestones 1–5
 done** (2026-11-11), milestone 6 (tighter tie proofs) partly done, milestone 7
-(pairwise strength and wild card sides) done (2026-11-12): exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
+(pairwise strength and wild card sides) done (2026-11-12), milestone 8 (gap 3,
+per-team part) done (2026-11-12), set constraints open (P11): exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
 
@@ -62,6 +63,7 @@ nfl_clinching_status(
   ...,
   status = c("DIV", "PLAYOFFS", "1SEED"),
   scenarios = FALSE,
+  search = FALSE,
   verbosity = c("MIN", "MAX", "NONE")
 )
 ```
@@ -76,6 +78,12 @@ nfl_clinching_status(
   the requested goals are computed, because the playoff goal is by far the
   most expensive.
 - `scenarios`: also return the completions that prove each answer (P6).
+- `search`: run the budgeted search for open answers (P12, milestone 9).
+  Off by default (decided by the maintainer, 2026-11-12), because it makes
+  calls with many open answers several times slower. With `FALSE` and
+  `verbosity` not `"NONE"`, a hint says how many statuses
+  of teams with games left are undecided, that `search = TRUE` might decide
+  them, and that it helps most with 5 or fewer games left per team.
 - No `tiebreaker_depth`: P2 fixes it (all steps through SOS; anything after
   that is unknown).
 
@@ -788,32 +796,103 @@ check. Some proofs need a statement about the group instead: "of these tied
 teams, X is never last" or "at least k of them are ahead of X". No
 per-team side can express that.
 
-**The 9 open cases** (snapshot `nfl_status_differences.csv`, all one week
-late, all undecided in the NFL's week). Sampled with `tie_sides()`, 1,500
-completions in the NFL's week, X at its worst case, none contradicting the
-NFL. "Both sides" are teams that rank ahead of X in some ties and behind in
-others (ahead / ties):
+**Per-team part (milestone 8, done 2026-11-12).** Some of the 9 cases left
+by milestone 7 had teams that were always on one side in the samples, so
+they fall under P10. Changes, all in `src/tie_proof.cpp`:
 
-| case | NFL week | teams on both sides | deciding steps |
+| rule | case |
+|---|---|
+| a step only counts where the earlier steps are equal | 2021 CHI eliminated: CAR is never behind CHI on common games and has the better SOV whenever they're equal there; the SOV comparison used to include the completions where common games already decided |
+| opponents' tie levels bound records | a team in the tie group ends at its tie level too, which bounds what it can win or lose against another team of the group (`pct_range()`, and the enumeration below checks every group member). A group that can't all end level has no possible picks |
+| a rival only represents X's division in the wild card pool if another rival can win the division | 2011 NO clinched: ATL (which NO can't always beat) only takes a wild card if NO wins the NFC South, so CHI only meets NO. Wild card sides may assume X isn't its division winner: the division path is a separate cap with the rival sides, and every forced set has a rival ahead of X. Also needed: DAL only ends 10-6 by beating NYG, so `{DAL, NYG}` can't be level and DAL wins its division whenever level |
+| a team that can win its division while level with X isn't behind X in the wild card count, unless no other team of its division can be ahead of X at the same time (`level_division_winners()`) | soundness fix, see below |
+
+**Soundness bug found and fixed.** The first version of these rules
+clinched 2021 DAL after week 15, a week before the NFL. It was wrong
+(pointed out by the maintainer with
+[nflplayoffscenarios.com](https://nflplayoffscenarios.com/2021/week/16/DAL-has-not-clinched-a-playoff-berth/),
+written after all week 15 games): DAL loses out to 10-7, PHI wins out and
+takes the NFC East on SOV, NO wins out and the NFC South over TB on
+head-to-head, SF wins out. Then ARI, LA and SF are above 10-7, TB beat DAL,
+and DAL is 8th (302 of 20,000 completions with these teams fixed). The
+proof had NO behind DAL (DAL beats NO, and the wild card rules of milestone
+7 only look at the pool), so NO had to end strictly above 10-7. But NO wins
+its division at 10-7 and is ahead of DAL as a division winner; one team per
+division ahead of X is free in the count, but TB is ahead too. The flaw is
+in the wild card rules of milestones 4 and 7 (`x_first`,
+`never_picked_before_x()`); the representative rule above only exposed it
+(before, PHI in `x_reps` blocked NO's side by accident). Fix: a team y of
+another division keeps "behind X" only if a team of its division always
+ends above X, or every other team z of its division that may be level is
+behind X in the pool too, wins its division whenever level, or always ranks
+ahead of y in their division (then y isn't the winner while z is level).
+
+The fix costs three clinches of milestone 7 that the NFL confirms (now one
+week later than the NFL, undecided in the NFL's week): 2023 SF after week
+14, 2024 PHI after week 14, 2025 LA after week 15. In 2023, GB can win the
+NFC North at 10-7 while MIN, which beat SF, is 10-7 in the pool, so GB's
+side is mixed; SF still clinched, but only because GB counts ahead only as
+the division winner. That is a statement about a group again (P11).
+
+Random team strengths didn't find the DAL counterexample: it needs about
+ten teams to win or lose out together. The self-check and the stress test
+only find violations in completions that are likely enough to sample.
+
+`lead()` enumerates the results of both teams' open games (at most 4, as
+for SOV in milestone 7) for every step after the first, keeps those that
+leave the group at its tie levels and the two teams equal at every earlier
+record step (the procedure only reaches a step with the whole group if no
+earlier step separated them), and compares the step's values (records
+exactly, SOV and SOS with the linear bound). If no result is left, the step
+is never reached with both, and either answer holds.
+
+Results (check 1): 2011 NO and 2021 CHI match the NFL's week; 2023 SF,
+2024 PHI and 2025 LA are now a week later (see the soundness fix). Compared
+with milestone 7 on every week of 2006–2025: 1 undecided to clinched (2011
+NO playoffs), 4 to eliminated (2021 CHI playoffs; 2023 NYJ division in weeks
+13 and 14, 2023 CHI division in week 14), 3 clinched to undecided (above).
+Each new answer held in 20,000 completions with X at its worst case, random
+team strengths (sd 3) and 6% tie games (100,000 in all, no violation; the
+same check finds violations for each of 8 alive teams treated as
+eliminated). Checks 2–5, the self-check and the full test suite pass. One
+test per rule (`verify = TRUE`), all failing before (2021 DAL after week 15
+is undecided).
+
+Benchmark (`data-raw/bench_clinching_status.R`, same session):
+
+| case | milestone 7 | milestone 8 |
+|---|---|---|
+| every week of 2006–2025 | 1.41s | 1.53s |
+| 2023 after week 15, all goals | 4.1ms | 5.6ms |
+| 1,000 simulated seasons after week 12 | 1.94s | 2.26s |
+
+The time goes to the enumeration in `lead()`. The first version was twice
+as slow on the late state; skipping the first step (nothing to condition
+on), fixed-size arrays and precomputed division and conference masks
+brought it down.
+
+**The open cases** (snapshot `nfl_status_differences.csv`, all one week
+late, all undecided in the NFL's week): the 7 below, and 2023 SF, 2024 PHI
+and 2025 LA (playoffs) from the soundness fix. To see what each needs, the sides
+the samples show (`tie_groups()`, 4,000 completions with X at its worst
+case) were forced into the flows with a temporary debug hook (never
+committed): first only teams that were always on one side, then also the
+mixed teams by their majority side (unsound, only to see whether set
+reasoning would be enough).
+
+| case | NFL week | one-sided teams enough | what it needs |
 |---|---|---|---|
-| 2008 DET eliminated | 11 | SF 320/337, LA 270/285, SEA 156/257, NO, MIN, PHI | division tiebreaker, head-to-head sweep, SOV |
-| 2009 KC eliminated | 13 | TEN, HOU, MIA, NYJ, PIT, LV 217/301, NE | conference record |
-| 2011 NO playoffs | 14 | ATL 319/639 (a rival), NYG 71/169 | head-to-head sweep |
-| 2012 TB eliminated | 15 | NYG 367/369, DAL 334/343, CHI 221/336, MIN 67/327 | head-to-head sweep, division tiebreaker |
-| 2015 SEA playoffs | 15 | ATL 71/347, MIN 4/337 | head-to-head sweep, common games |
-| 2019 NYJ eliminated | 14 | IND, LV, PIT, TEN, HOU, LAC | head-to-head sweep, common games |
-| 2021 CHI eliminated | 15 | NO 100/134 | conference record, head-to-head sweep |
-| 2023 CAR eliminated | 13 | WAS, CHI 350/360, TB, GB, LA | division tiebreaker, conference record |
-| 2023 PHI playoffs | 15 | SEA 140/162, LA 8/158, DET 84/156, MIN 79/145 | head-to-head sweep, common games |
+| 2008 DET eliminated | 11 | no (not even with the mixed ones) | the division path stays feasible: CHI and GB below 6-10, MIN level. DET only wins that tie on division record if MIN loses to CHI, which puts CHI at 6-10. Tie proofs would need the flow's caps (teams strictly behind X have few wins left) |
+| 2009 KC eliminated | 13 | yes (JAX) | JAX ahead of KC in `{BAL, JAX, KC, NYJ}` at 7-9. KC could be picked there on SOV if NYJ's SOV were below KC's; never in 197 sampled groups. Needs SOV bounds in a four-team group |
+| 2012 TB eliminated | 15 | no | set constraint (MIN, DAL, CHI, NYG mixed) |
+| 2015 SEA playoffs | 15 | no | set constraint: SEA is never last of `{SEA, ATL, MIN}`, and ATL and MIN are both mixed |
+| 2019 NYJ eliminated | 14 | no | set constraint (IND, LV, PIT, HOU, LAC, TEN mixed) |
+| 2023 CAR eliminated | 13 | yes (MIN or SEA) | MIN ahead of CAR at 6-11: CHI only represents the NFC North ahead of MIN if it beats DET and GB, and then its conference record beats CAR's. Needs ranges conditioned on the division ranking. SEA: the same with LA |
+| 2023 PHI playoffs | 15 | no | set constraint (LA, MIN, SEA mixed) |
 
-2015 SEA is the best-understood one (see gap 3 of milestone 6): SEA, ATL
-and MIN can all end 9-7 for two wild cards. SEA always gets in, but beats
-ATL in some completions and MIN in others. Look at the tables carefully
-before you start: some "both sides" teams are nearly one-sided (NYG 367/369
-for 2012 TB, CHI 350/360 for 2023 CAR). Their rare other side may come from
-one special tie group that a new per-team rule could exclude (as the
-milestone 7 rules did), so it may not need a set constraint. Try that
-first, because it fits the current design.
+So per-team rules can't settle more than 2009 KC and 2023 CAR, and each of
+those needs a rule that fits one case. Four cases need set reasoning, and
+2008 DET needs tie proofs that know the flow's caps.
 
 **Where it lives in the code.**
 
@@ -829,9 +908,10 @@ first, because it fits the current design.
   `ranks_behind()` (division), `conference_sides()` and the wild card rules
   of milestone 7 (`never_picked_before_x()`, `x_never_picked_before()`,
   `survives_wild_card_reduction()`, `wins_division_when_level()`).
-  Everything compares two teams through `lead()`.
+  Everything compares two teams through `lead()`, which enumerates the two
+  teams' open games (`lowest_difference()`).
 
-**Ideas (need a decision by the maintainer, see P5 and P10).**
+**Ideas for the set constraints (need a decision by the maintainer, P11).**
 
 1. *Set constraints in the flows.* For a group G of teams that can tie X,
    prove "X is never behind more than m of G whenever they are level" and
@@ -839,15 +919,19 @@ first, because it fits the current design.
    per team. The playoff count (`sum_d max(k_d - 1, 0) <= w - 1`) already
    works with counts, so this fits the allowed/forced set enumeration. The
    proof of "at most m" is an induction over the picks like `wins()`.
-2. *Enumerate the tie groups at X's level.* Take the weak flow's completion
-   (or all completions the flow allows, by fixing who is at X's level) and
-   prove X's position in each concrete tie group with the existing
-   `wins()`/`loses()` machinery. Bounded, but it's partial enumeration, so
-   check it against P5 (no exhaustive search).
-3. Start with the eliminations (6 of 9). Their milestone 7 mirror rule is
-   the weaker one: `x_never_picked_before()` has no counterpart to the
-   "rivals ahead of X are ahead anyway" argument of
-   `never_picked_before_x()`.
+2. *Enumerate the tie groups at X's level.* For every set T of teams that
+   can tie X, take T as exactly the teams level with X and prove which
+   subsets of T can rank ahead of X (picks of the conference procedure
+   until X is picked, as `possible_picks()` does). Then the flows don't
+   need exact levels: "can miss" no needs, for every T, no forced set B
+   with B ∩ T a possible ahead-set and `push(T ∪ B)` feasible (T weak, B
+   outside T strict); "can reach" no likewise with `cap`. Teams outside T
+   are free, which only relaxes, so it's sound. Only in the gray zone (weak
+   flow feasible, no proof yet), with at most 2^|tied| sets (up to 11 tied
+   teams in these cases). Partial enumeration, so check it against P5.
+3. 2008 DET is different from both: it needs tie proofs that use the
+   caps of the flow (a team that must stay strictly behind X has a bound on
+   its remaining wins, which bounds its results against tied teams).
 
 **Tools** (`dev/clinching-diagnostics.R`, run from the package root):
 
@@ -855,8 +939,13 @@ first, because it fits the current design.
 - `single_team_fixes(case)`: fixes each competitor to win or lose out and
   lists the fixes that prove the case. Every one of the 39 cases of
   milestone 7 had at least one; it shows which teams the proof is short of.
-- `tie_sides(case)`: the sampling behind the table above (`$teams`,
+- `tie_sides(case)`: who ends level with X and on which side (`$teams`,
   `$steps`, `$wrong` must be 0).
+- `tie_groups(case)`: the tie groups at X's level, who in them is ranked
+  ahead of X, and X's rank. Shows the groups behind a mixed side.
+- `level_with(...)`: completions where given teams all end level with X
+  (others fixed to win or lose out to reach rare groups), and how often X
+  ranks ahead of team y. Use it to check a suspected per-team side.
 - `show_completion(season, week, winners)`: one completion through the
   engine, to check a suspected counterexample. Both suspected
   counterexamples of milestone 7 (2006 DAL, 2022 DAL) turned out to be
@@ -865,6 +954,11 @@ first, because it fits the current design.
   `tied`, `x_ahead`, `x_behind` at the end of `conference_sides()`) to
   `stderr`, guarded by an environment variable with X's team id (ids are
   `standings_league()$team` order, 0-based). Never commit it (CRAN).
+  Milestone 8 printed, in `decide()`, the masks and the first allowed or
+  forced set whose flow stayed feasible, and in `x_never_picked_before()` /
+  `never_picked_before_x()` the representative sets that failed. An
+  environment variable with a team mask OR'd into the sides in
+  `tie_sides()` (the oracle above) shows whether a side would be enough.
 
 **Soundness checks before committing** (what milestone 7 did):
 
@@ -895,6 +989,69 @@ first, because it fits the current design.
 1.93s). If that matters: skip the new wild card rules for teams whose side
 the flows don't need, or compute sides lazily from the flows' failing sets.
 
+### Results of milestone 9
+
+`GameSearch` (`src/status.cpp`, P12) runs for every team and goal the checks
+leave open while games are left, once per open question ("can reach", "can
+miss"). It fixes one remaining game at a time (home win, away win, tie) and
+reruns the checks of that team on each part (`Season`, `ScenarioRunner` and
+`TeamStatus` rebuilt with the fixed games played); a part answering yes
+gives a completion of the whole season, the answer is no if every part says
+no. The next game is the one with the most teams that can end level with X
+(at X's best or worst case), then conference teams; X's own games last.
+Parts run the gray zone with 2 completions instead of 32 (the search splits
+further anyway): that cut the simulation benchmark by a quarter and settles
+the same cases. Budget: 200 parts per question (`kSearchBudget`); interrupt
+checks every 64 parts.
+
+Budgets on the 10 open cases of milestone 8 (debug build): 200 and 1,000
+settle 5, 20,000 settles 7 (2023 SF needs about 5,000), 100,000 still 7.
+The other 3 (2012 TB, 2015 SEA, 2019 NYJ) and 2025 LA are the "X is never
+last" kind (P11): splitting on games pins down who ends level too slowly.
+A prototype in R (each part about 3 ms) found the same.
+
+Results, compared with milestone 8 on every week of 2006–2025: 101
+undecided statuses settled, 92 to alive (each with a completion) and 9 to
+clinched or eliminated: 2008 DET, 2009 KC and 2023 CAR eliminated, 2023 and
+2024 PHI clinched (all five now in the NFL's week), plus 2006 NYG, 2008 DET
+and 2017 DEN division and 2023 NO No. 1 seed eliminated. Each of the 9 held
+in 20,000 completions with X at its worst case, random team strengths (sd 3)
+and 6% tie games. 2021 DAL after week 15 is now alive: the search finds the
+completion of the soundness bug of milestone 8 (PHI takes the NFC East on
+SOV, NO the NFC South, SF, LA and TB the wild cards). Check 1: 5 later cases
+left (2012 TB, 2015 SEA, 2019 NYJ, 2023 SF, 2025 LA) plus BUF/CIN. Checks
+2–5, the self-check and the full test suite pass.
+
+The search is off by default (`search = FALSE`, decided by the maintainer,
+2026-11-12); the function then hints at it if teams with games left are
+undecided. The tests run the NFL comparison, the scenario check and the
+random completions with `search = TRUE`, the tests of single proofs without
+it (so the search can't hide a proof that got weaker). The "5 or fewer
+games left" in the hint comes from every week of 2006–2025: share of
+undecided statuses the search settled, by the team's games left:
+
+| games left | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---|---|---|---|---|---|---|---|
+| undecided without search | 8 | 20 | 34 | 41 | 28 | 28 | 17 | 2 |
+| settled by the search | 100% | 70% | 56% | 63% | 61% | 43% | 29% | 0% |
+
+The search only combines the checks, so it's exactly as sound as they are:
+a wrong proof (like the one in milestone 8) gives a wrong answer at the
+first part, before any split.
+
+Benchmark (`data-raw/bench_clinching_status.R`, optimized build):
+
+| case | milestone 8 | milestone 9 |
+|---|---|---|
+| every week of 2006–2025 | 1.53s | 2.28s |
+| 2023 after week 15, all goals | 5.6ms | 19.2ms |
+| 1,000 simulated seasons after week 12 | 2.26s | 11.1s |
+
+Almost all of the time goes to questions the search can't settle within
+the budget (weeks 10–13 with many open answers): every part rebuilds the
+season and reruns the flows and tie proofs, about 15–50 µs. With a budget of
+5,000, every week took 13.6s and 1,000 simulated seasons about 160s.
+
 ## Milestones
 
 1. Fixture with the official NFL flags, and a look at what they mean week
@@ -917,6 +1074,12 @@ the flows don't need, or compute sides lazily from the flows' failing sets.
    [results of milestone 6](#results-of-milestone-6).
 7. Pairwise SOV/SOS bounds and per-team wild card sides (P10). **Done**
    (2026-11-12), see [results of milestone 7](#results-of-milestone-7).
+8. Gap 3, the per-team part (P10): conditioned steps, opponents' tie
+   levels, wild card representatives. **Done** (2026-11-12), see
+   [gap 3](#gap-3-xs-position-in-a-tie-handoff). The set constraints are
+   open (P11).
+9. Budgeted search for open answers (P12). **Done** (2026-11-12), see
+   [results of milestone 9](#results-of-milestone-9).
 
 ## Decisions
 
@@ -982,3 +1145,23 @@ kickoff). `verbosity` is passed on to `nfl_standings()`.
 every team was always on one side, in the clinching code only. Done as
 [milestone 7](#results-of-milestone-7). Gap 3 (set constraints in the flows)
 is still open.
+
+**P11 Gap 3 set constraints. Open, needs the maintainer.** After
+milestone 8, four of the open cases (2012 TB, 2015 SEA, 2019 NYJ, 2023 PHI)
+need statements about a group of tied teams, not per-team sides, and so do
+the three clinches the soundness fix of milestone 8 gave up (a team counts
+ahead of X only as its division's winner). Two
+designs in [gap 3](#gap-3-xs-position-in-a-tie-handoff): set constraints
+in the flows (idea 1) or enumerating the tie groups at X's level (idea 2,
+partial enumeration, see P5). Also open: whether to go after 2009 KC and
+2023 CAR with rules that fit one case each, and 2008 DET (tie proofs that
+use the flow's caps).
+
+**P12 Budgeted search for undecided answers. Decided by the maintainer
+(2026-11-12): yes.** Relaxes P5. When the proofs leave "can reach" or "can
+miss" open and games are left, split on one remaining game at a time (home
+win, away win, tie) and run the existing checks on each part, games of teams
+that can end level with X first. A part answering yes gives a completion; the
+answer is no if every part answers no. Within a fixed node budget per
+question, then undecided as before. Implemented in C++ (`GameSearch` in
+`src/status.cpp`). P11 (set constraints) stays open.

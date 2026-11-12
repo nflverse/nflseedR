@@ -57,6 +57,20 @@ class TieProof {
     bool applies = true;
     Step step = Step::kHeadToHead;
     TeamMask group = 0;
+    Procedure procedure = Procedure::kDivision;
+    // Common opponents of the group (common games step only)
+    TeamMask common = 0;
+  };
+
+  // One result of the open games of two teams a and b: everyone's half-wins
+  // with these results, a's and b's half-wins and wins against each
+  // opponent
+  struct OwnResults {
+    TeamArray<int32_t> half_wins{};
+    TeamArray<int32_t> half_wins_a{};
+    TeamArray<int32_t> half_wins_b{};
+    TeamArray<int32_t> wins_a{};
+    TeamArray<int32_t> wins_b{};
   };
 
   // How a team's step value compares with another's in every completion
@@ -72,7 +86,8 @@ class TieProof {
   [[nodiscard]] static std::span<const Step> steps(Procedure procedure);
   [[nodiscard]] StepRanges ranges(Step step, TeamMask group,
                                   Procedure procedure) const;
-  [[nodiscard]] Range pct_range(TeamId t, TeamMask opponents) const;
+  [[nodiscard]] Range pct_range(TeamId t, TeamMask opponents,
+                                TeamMask group) const;
   [[nodiscard]] Range sweep_range(TeamId t, TeamMask group) const;
   [[nodiscard]] Range sos_range(TeamId t, TeamMask group) const;
   [[nodiscard]] Range sov_range(TeamId t, TeamMask group) const;
@@ -81,8 +96,28 @@ class TieProof {
       const TeamArray<int32_t>& weight_a, const TeamArray<int32_t>& weight_b,
       const TeamArray<int32_t>& half_wins, TeamMask group,
       TeamMask settled) const;
-  [[nodiscard]] std::optional<int64_t> lowest_strength_difference(
-      Step step, TeamId a, TeamId b, TeamMask group) const;
+  [[nodiscard]] std::optional<int64_t> lowest_difference(const StepRanges& r,
+                                                         TeamId a,
+                                                         TeamId b) const;
+  [[nodiscard]] Ratio value(Step step, TeamId t,
+                            const TeamArray<int32_t>& half_wins, TeamMask group,
+                            TeamMask common) const;
+  // The record steps before a step, with their common opponents. At most
+  // the division procedure's six steps through SOS.
+  static constexpr size_t kMaxSteps = 6;
+  struct EarlierStep {
+    Step step = Step::kHeadToHead;
+    TeamMask common = 0;
+  };
+  struct EarlierSteps {
+    std::array<EarlierStep, kMaxSteps> steps;
+    size_t size = 0;
+  };
+  [[nodiscard]] EarlierSteps earlier_steps(const StepRanges& r) const;
+  [[nodiscard]] bool equal_before(const EarlierSteps& earlier, TeamMask group,
+                                  TeamId a, TeamId b,
+                                  const OwnResults& own) const;
+  [[nodiscard]] TeamMask common_opponents(TeamMask group) const;
   [[nodiscard]] int32_t low_in(TeamId t, TeamMask group) const;
   [[nodiscard]] int32_t high_in(TeamId t, TeamMask group) const;
   [[nodiscard]] TeamMask division_of(TeamId t) const;
@@ -111,6 +146,16 @@ class TieProof {
 
   // Rival z can end with a higher win percentage than X
   [[nodiscard]] bool can_end_above_x(TeamId z) const;
+  // Team z ends with a higher win percentage than X in every completion
+  [[nodiscard]] bool always_above_x(TeamId z) const;
+
+  // Wild card: teams of `x_ahead` (of `others`, other divisions) that may
+  // win their division while level with X, next to a team of `others` from
+  // that division that may rank ahead of X. `winners` win their division
+  // whenever level with X.
+  [[nodiscard]] TeamMask level_division_winners(TeamMask tied, TeamMask winners,
+                                                TeamMask x_ahead,
+                                                TeamMask others);
 
   // X is picked first (wins) or not (loses) from `group` by one pick of a
   // procedure. Proven by induction over the smaller groups a step can leave.
@@ -137,6 +182,8 @@ class TieProof {
   const League* league_;
   TeamId x_;
   TeamMask division_ = 0;  // X's division, with X
+  TeamArray<TeamMask> division_of_{};
+  TeamArray<TeamMask> conference_of_{};
   TeamMask conference_ = 0;
   // Games of t against u, and what's known of them: played, or X's games
   // (fixed by the check). Open games are the other remaining ones.

@@ -28,6 +28,8 @@ struct StatusOptions {
   std::array<bool, kGoals> goals{};
   // Also return the scenarios that prove the answers
   bool scenarios = false;
+  // Search the answers the checks leave open by fixing remaining games (P12)
+  bool search = true;
   // Tests only: check every "no" that needed tie proofs against the engine
   // (throws EngineError if it fails)
   bool verify = false;

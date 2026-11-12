@@ -9,6 +9,7 @@ nfl_clinching_status(
   ...,
   status = c("DIV", "PLAYOFFS", "1SEED"),
   scenarios = FALSE,
+  search = FALSE,
   verbosity = c("MIN", "MAX", "NONE")
 )
 }
@@ -37,6 +38,12 @@ Only the requested goals are computed. \code{"PLAYOFFS"} takes the most time.}
 
 \item{scenarios}{If \code{TRUE}, the result gets the attribute \code{"scenarios"},
 the results of the remaining games that prove the answers (see Value).}
+
+\item{search}{If \code{TRUE}, answers the proofs leave open are searched by
+fixing the results of remaining games one at a time, within a fixed
+budget (see Details). This decides more teams but takes more time, mostly
+with many games left. With \code{FALSE} (default), the function says how many
+statuses are \code{"undecided"} and whether the search might help.}
 
 \item{verbosity}{One of \code{"MIN"}, \code{"MAX"}, or \code{"NONE"}.
 \itemize{
@@ -90,6 +97,11 @@ games can do it, or by a concrete set of results run through the standings
 (see \code{scenarios}). The function never tries every combination of results,
 so a few teams can be \code{"undecided"}, usually late in the season, when the
 answer depends on tiebreakers it can't settle in advance.
+
+With \code{search = TRUE}, an open answer is searched further: the function
+fixes the result of one remaining game at a time (home win, away win, tie)
+and proves the answer for each case, up to 200 cases per answer. This
+helps most with 5 or fewer games left per team.
 
 Tiebreakers through strength of schedule are applied as in
 \code{\link[=nfl_standings]{nfl_standings()}}. Coin tosses and tiebreakers based on points can't be

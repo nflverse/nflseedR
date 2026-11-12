@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <bit>
 #include <functional>
+#include <limits>
 #include <optional>
 
 #include "engine/flow.hpp"
@@ -70,7 +71,18 @@ template <typename F>
 // Results of a completion that no check constrains
 constexpr int8_t kFree = -1;
 constexpr int8_t kHomeWin = 2;
+constexpr int8_t kTie = 1;
 constexpr int8_t kAwayWin = 0;
+
+// Parts of the season the search for an open answer may check (P12)
+constexpr int32_t kSearchBudget = 200;
+// Gray zone completions per question in each part: the search itself
+// splits the season further
+constexpr int32_t kSearchScenarioBudget = 2;
+// Interrupt checks during the search, every this many parts
+constexpr int32_t kInterruptEvery = 64;
+// Splitting on X's own games comes last: the checks already fix them
+constexpr int32_t kOwnGamePenalty = 10;
 
 [[nodiscard]] Completion filled(Completion c, int8_t free_result) {
   std::ranges::replace(c, kFree, free_result);
@@ -410,7 +422,8 @@ struct SeasonOver {
 class TeamStatus {
  public:
   TeamStatus(const Season& s, TeamId x, MaxFlow& flow, ScenarioRunner& runner,
-             const SeasonOver& season_over, bool verify)
+             const SeasonOver& season_over, bool verify,
+             int32_t scenario_budget = kScenarioBudget)
       : s_(&s),
         x_(x),
         flow_(&flow),
@@ -420,7 +433,8 @@ class TeamStatus {
         miss_(s, x, false),
         reach_ties_(s.played, s.played_games, s.remaining, *s.league, x, true),
         miss_ties_(s.played, s.played_games, s.remaining, *s.league, x, false),
-        verify_(verify) {
+        verify_(verify),
+        scenario_budget_(scenario_budget) {
     const League& league = *s.league;
     for (TeamId y = 0; y < kTeams; ++y) {
       if (y == x || !s.present(y) ||
@@ -515,7 +529,7 @@ class TeamStatus {
       if (verify_ && feasible(0, &c)) verify_no(goal, reach, c);
       return {.answer = Answer::kNo};
     }
-    budget_ = kScenarioBudget;
+    budget_ = scenario_budget_;
     return gray();
   }
 
@@ -859,6 +873,143 @@ class TeamStatus {
   // Completions left for the current gray zone search
   int32_t budget_ = 0;
   bool verify_ = false;
+  int32_t scenario_budget_ = kScenarioBudget;
+};
+
+// Budgeted search for answers the checks leave open (P12): split on one
+// remaining game at a time (home win, away win, tie) and run the checks on
+// each part. A part where they answer yes gives a completion of the whole
+// season; the answer is no if every part answers no. Games of teams that
+// can end level with X go first, X's own games last.
+class GameSearch {
+ public:
+  GameSearch(const Season& root, TeamId x, Goal goal, MaxFlow& flow,
+             bool verify, const InterruptCheck& interrupt)
+      : root_(&root),
+        x_(x),
+        goal_(goal),
+        flow_(&flow),
+        verify_(verify),
+        interrupt_(&interrupt) {}
+
+  // Answer to "can X reach the goal?" (`want_reach`) or "can X miss it?"
+  [[nodiscard]] Proof run(bool want_reach) {
+    nodes_ = 0;
+    fixed_.assign(root_->remaining.size(), kFree);
+    return visit(want_reach);
+  }
+
+ private:
+  // The checks on one part: their answer and, if it's open, the game to
+  // split on next (an index into the root's remaining games)
+  struct Node {
+    Proof proof;
+    std::optional<size_t> split;
+  };
+
+  [[nodiscard]] Proof visit(bool want_reach) {
+    if (nodes_ >= kSearchBudget) return {};
+    if (++nodes_ % kInterruptEvery == 0) (*interrupt_)();
+    const Node node = evaluate(want_reach);
+    if (node.proof.answer != Answer::kUnknown || !node.split) {
+      return node.proof;
+    }
+    const size_t split = *node.split;
+    bool unknown = false;
+    for (const int8_t result : {kHomeWin, kAwayWin, kTie}) {
+      fixed_[split] = result;
+      Proof child = visit(want_reach);
+      if (child.answer == Answer::kYes) {
+        fixed_[split] = kFree;
+        return child;
+      }
+      unknown = unknown || child.answer == Answer::kUnknown;
+    }
+    fixed_[split] = kFree;
+    if (unknown) return {};
+    return {.answer = Answer::kNo};
+  }
+
+  // Runs the checks with the fixed games played
+  [[nodiscard]] Node evaluate(bool want_reach) {
+    std::vector<Game> played(root_->played_games.begin(),
+                             root_->played_games.end());
+    std::vector<Game> remaining;
+    std::vector<size_t> index;  // root index of each remaining game
+    for (size_t i = 0; i < fixed_.size(); ++i) {
+      if (fixed_[i] == kFree) {
+        remaining.push_back(root_->remaining[i]);
+        index.push_back(i);
+      } else {
+        Game g = root_->remaining[i];
+        g.result = fixed_[i] - 1;  // home - away: 1, 0 or -1
+        played.push_back(g);
+      }
+    }
+    Season part;
+    part.build(played, remaining, *root_->league, root_->seeds);
+    ScenarioRunner runner(played, remaining, *root_->league, part.seeds);
+    SeasonOver over;
+    if (remaining.empty()) over.build(part, runner);
+    TeamStatus team(part, x_, *flow_, runner, over, verify_,
+                    kSearchScenarioBudget);
+    const Answers a = team.final_answers(goal_);
+    Node out{.proof = want_reach ? a.reach : a.miss};
+    if (out.proof.answer == Answer::kYes) {
+      // The part's completion fills the games that are still open
+      Completion c = fixed_;
+      if (out.proof.scenario && !out.proof.scenario->empty()) {
+        for (size_t j = 0; j < index.size(); ++j) {
+          c[index[j]] = (*out.proof.scenario)[j];
+        }
+      }
+      out.proof.scenario = std::move(c);
+      return out;
+    }
+    if (out.proof.answer == Answer::kUnknown && !remaining.empty()) {
+      out.split = index[pick(part, remaining, want_reach)];
+    }
+    return out;
+  }
+
+  // The open game that most likely changes who ends level with X
+  [[nodiscard]] size_t pick(const Season& part, std::span<const Game> remaining,
+                            bool want_reach) const {
+    const Check check(part, x_, want_reach);
+    const League& league = *part.league;
+    const auto conference = [&](TeamId t) {
+      return league.conference[t] == league.conference[x_];
+    };
+    const auto level = [&](TeamId t) {
+      return t != x_ && conference(t) && check.can_tie(t);
+    };
+    size_t best = 0;
+    int32_t best_score = std::numeric_limits<int32_t>::min();
+    for (size_t j = 0; j < remaining.size(); ++j) {
+      const Game& g = remaining[j];
+      const int32_t score =
+          2 * (static_cast<int32_t>(level(g.away)) +
+               static_cast<int32_t>(level(g.home))) +
+          static_cast<int32_t>(conference(g.away)) +
+          static_cast<int32_t>(conference(g.home)) -
+          (g.away == x_ || g.home == x_ ? kOwnGamePenalty : 0);
+      if (score > best_score) {
+        best = j;
+        best_score = score;
+      }
+    }
+    return best;
+  }
+
+  const Season* root_;
+  TeamId x_;
+  Goal goal_;
+  MaxFlow* flow_;
+  bool verify_;
+  const InterruptCheck* interrupt_;
+  // Results fixed so far (home half-wins), kFree for open games
+  Completion fixed_;
+  int32_t nodes_ = 0;
 };
 
 void add_scenario(ScenarioRows& out, int32_t sim, TeamId team, int32_t goal,
@@ -928,7 +1079,15 @@ StatusRows compute_clinching_status(const GamesInput& played,
           out.status[goal].push_back(kMissing);
           continue;
         }
-        const Answers a = team.final_answers(static_cast<Goal>(goal));
+        Answers a = team.final_answers(static_cast<Goal>(goal));
+        if (options.search && !season_remaining.empty() &&
+            (a.reach.answer == Answer::kUnknown ||
+             a.miss.answer == Answer::kUnknown)) {
+          GameSearch search(season, x, static_cast<Goal>(goal), flow,
+                            options.verify, interrupt);
+          if (a.reach.answer == Answer::kUnknown) a.reach = search.run(true);
+          if (a.miss.answer == Answer::kUnknown) a.miss = search.run(false);
+        }
         Status status = to_status(a.reach.answer, a.miss.answer);
         // With no games left, only a coin toss can make both possible: the
         // goal is undecided until the NFL tosses the coin

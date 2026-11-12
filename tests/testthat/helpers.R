@@ -83,8 +83,10 @@ clinching_status_weekly_build <- function() {
     g <- games[season == weeks$season[i]]
     g[week > weeks$week[i], result := NA]
     # verify: every clinch or elimination that needed tie proofs is checked
-    # against the engine
-    clinching_status_compute(g, verify = TRUE)[, week := weeks$week[i]]
+    # against the engine. With the search, as far as it gets.
+    clinching_status_compute(g, search = TRUE, verify = TRUE)[,
+      week := weeks$week[i]
+    ]
   }))
   nfl <- load_nfl_standings_2006_2025()
   final <- nfl[

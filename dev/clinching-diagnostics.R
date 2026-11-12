@@ -8,6 +8,9 @@
 #   single_team_fixes(x)   # which competitor fixed to win/lose out proves it
 #   sides <- tie_sides(x)  # who ends level with X and on which side
 #   sides$teams[mixed == TRUE] # both sides: gap 3, no per-team side exists
+#   tie_groups(x)          # the tie groups at X's level and X's rank in them
+#   level_with(2009, 13, "KC", x_wins = TRUE, lose_out = "JAX",
+#              level = c("JAX", "BAL", "NYJ"), y = "JAX") # one group only
 #   show_completion(x$season, x$nfl, winners = c("PHI", "ATL"))
 
 devtools::load_all(quiet = TRUE)
@@ -152,6 +155,109 @@ tie_sides <- function(case, n = 2000, tie_prob = 0.06) {
     teams = teams[],
     steps = sort(table(steps), decreasing = TRUE)
   )
+}
+
+# Random completions of a state with some teams' remaining games fixed:
+# `x` wins out (`x_wins`) or loses out, `win_out` and `lose_out` teams too.
+# Returns the conference standings of all completions with X's win_pct.
+random_completions <- function(
+  season_id,
+  last_week,
+  x,
+  x_wins,
+  win_out = character(),
+  lose_out = character(),
+  n = 2000,
+  tie_prob = 0.06
+) {
+  g <- fix_team(state_after(season_id, last_week), x, win = x_wins)
+  for (t in win_out) {
+    g <- fix_team(g, t, win = TRUE)
+  }
+  for (t in lose_out) {
+    g <- fix_team(g, t, win = FALSE)
+  }
+  rem <- which(is.na(g$result))
+  sims <- g[rep(seq_len(.N), n)][, sim := rep(seq_len(n), each = nrow(g))]
+  sims[, result := as.numeric(result)]
+  idx <- rep(rem, n) + rep((seq_len(n) - 1) * nrow(g), each = length(rem))
+  sims[
+    idx,
+    result := sample(
+      c(3, -3, 0),
+      length(idx),
+      TRUE,
+      c((1 - tie_prob) / 2, (1 - tie_prob) / 2, tie_prob)
+    )
+  ]
+  sims[, season := NULL]
+  st <- as.data.table(nfl_standings(
+    sims,
+    verbosity = "NONE",
+    playoff_seeds = 16
+  ))
+  xs <- st[team == x, list(sim, xpct = win_pct, xconf = conf_rank)]
+  st <- merge(st[conf == st[team == x, conf][1]], xs, by = "sim")
+  st[]
+}
+
+# Every tie group at X's level in random completions with X at its worst
+# case, with X's conference rank and whether X reached the playoffs. In
+# `group`, "+" marks teams ranked ahead of X, "r" rivals, "*" division
+# winners. Shows which groups put a team of both sides on which side.
+tie_groups <- function(case, n = 4000) {
+  clinch <- case$goal != "eliminated"
+  st <- random_completions(case$season, case$nfl, case$team, !clinch, n = n)
+  xs <- unique(st[team == case$team, list(sim, xconf, xdivision = division)])
+  lv <- merge(st[team != case$team & win_pct == xpct], xs[, -"xconf"], "sim")
+  lv[,
+    lab := paste0(
+      team,
+      ifelse(conf_rank < xconf, "+", "-"),
+      ifelse(division == xdivision, "r", ""),
+      ifelse(div_rank == 1L, "*", "")
+    )
+  ]
+  groups <- lv[order(team), list(group = paste(lab, collapse = " ")), by = sim]
+  seeds <- if (case$season >= 2020) 7L else 6L
+  out <- merge(xs, groups, by = "sim")
+  out[, reached := xconf <= seeds]
+  out[, list(n = .N), by = c("group", "xconf", "reached")][order(-n)]
+}
+
+# Completions where all `level` teams end level with X (others may too):
+# how often X ranks ahead of team y. Fix teams with `win_out` and `lose_out`
+# to reach a rare group, e.g. to test a suspected per-team side.
+level_with <- function(
+  season_id,
+  last_week,
+  x,
+  x_wins,
+  win_out = character(),
+  lose_out = character(),
+  level,
+  y,
+  n = 20000
+) {
+  st <- random_completions(
+    season_id,
+    last_week,
+    x,
+    x_wins,
+    win_out,
+    lose_out,
+    n = n
+  )
+  sims <- st[team %in% level, list(all = all(win_pct == xpct)), by = sim][
+    all == TRUE,
+    sim
+  ]
+  w <- dcast(
+    st[sim %in% sims & team %in% c(x, y)],
+    sim ~ team,
+    value.var = "conf_rank"
+  )
+  list(completions = length(sims), x_ahead = sum(w[[x]] < w[[y]]))
 }
 
 # One completion through the engine: `winners` win all their remaining games
