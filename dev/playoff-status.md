@@ -685,12 +685,11 @@ Three gaps, all in `TieProof` (`src/tie_proof.cpp`):
      beats ATL in some completions and MIN in others, so neither side is
      known. Proven only with both WAS (gap 1) and MIN out of the tie. Since
      milestone 6 we're one week late (16 vs 15) instead of two.
-   - 2023 after week 15, NYJ eliminated (NFL 15, ours 17, unchanged): NYJ
+   - 2023 after week 15, NYJ eliminated (NFL 15, ours 17 at the time): NYJ
      (8-9 winning out) can be level with up to ten AFC teams and beats HOU
-     and DEN head-to-head, so they're not "always ahead". Whenever NYJ wins
-     such a tie, enough other teams are ahead anyway. Exactly one team short:
-     any one of CIN, PIT, HOU, JAX, DEN or LV winning out proves it. The
-     exact blocking group isn't traced yet; start there.
+     and DEN head-to-head, so they're not "always ahead". Any one of CIN,
+     PIT, HOU, JAX, DEN or LV winning out proved it. **Solved in milestone
+     7** by per-team sides, not a set constraint.
 
    Ideas, not decided: let the flows count "at least k of this set of tied
    teams are ahead of X" (a set constraint instead of per-team sides), or
@@ -779,27 +778,108 @@ recomputing them.
 
 ### Still to do
 
-**The 9 later cases are all gap 3.** Same sampling as above (1,500
-completions in the NFL's week, X at its worst case): in every case at least
-one team that can end level with X ranks ahead of X in some tie groups and
-behind it in others, so no per-team side exists. Examples (team ahead of X /
-tie groups with it):
+#### Gap 3: X's position in a tie (handoff)
 
-| case | teams on both sides |
-|---|---|
-| 2011 NO playoffs | ATL 319/639 (a rival), NYG 71/169 |
-| 2015 SEA playoffs | ATL 71/347, MIN 4/337 (the example of milestone 6) |
-| 2021 CHI eliminated | NO 100/134 |
-| 2023 PHI playoffs | SEA 140/162, LA 8/158, DET 84/156, MIN 79/145 |
-| 2009 KC eliminated | 7 teams, mostly conference record |
+**Problem.** The max-flow checks take tie results only as per-team sides
+(`TieSides`: teams X always ranks ahead of, teams X always ranks behind).
+Every other team that can end level with X counts as either way: tied but
+ahead of X in the "can miss" check, tied but behind X in the "can reach"
+check. Some proofs need a statement about the group instead: "of these tied
+teams, X is never last" or "at least k of them are ahead of X". No
+per-team side can express that.
 
-Closing them needs the flows to count positions in a tie ("at least k of
-these tied teams are ahead of X") or an enumeration of the tie groups at
-X's level that the weak completion allows, with X's position proven in
-each. Both are open ideas from milestone 6 and need a decision (gap 3).
-Six of the nine are eliminations: the mirror rules of milestone 7 are
-simpler than the clinching ones (`x_never_picked_before()` keeps the old
-"X survives every reduction" view), so look there first.
+**The 9 open cases** (snapshot `nfl_status_differences.csv`, all one week
+late, all undecided in the NFL's week). Sampled with `tie_sides()`, 1,500
+completions in the NFL's week, X at its worst case, none contradicting the
+NFL. "Both sides" are teams that rank ahead of X in some ties and behind in
+others (ahead / ties):
+
+| case | NFL week | teams on both sides | deciding steps |
+|---|---|---|---|
+| 2008 DET eliminated | 11 | SF 320/337, LA 270/285, SEA 156/257, NO, MIN, PHI | division tiebreaker, head-to-head sweep, SOV |
+| 2009 KC eliminated | 13 | TEN, HOU, MIA, NYJ, PIT, LV 217/301, NE | conference record |
+| 2011 NO playoffs | 14 | ATL 319/639 (a rival), NYG 71/169 | head-to-head sweep |
+| 2012 TB eliminated | 15 | NYG 367/369, DAL 334/343, CHI 221/336, MIN 67/327 | head-to-head sweep, division tiebreaker |
+| 2015 SEA playoffs | 15 | ATL 71/347, MIN 4/337 | head-to-head sweep, common games |
+| 2019 NYJ eliminated | 14 | IND, LV, PIT, TEN, HOU, LAC | head-to-head sweep, common games |
+| 2021 CHI eliminated | 15 | NO 100/134 | conference record, head-to-head sweep |
+| 2023 CAR eliminated | 13 | WAS, CHI 350/360, TB, GB, LA | division tiebreaker, conference record |
+| 2023 PHI playoffs | 15 | SEA 140/162, LA 8/158, DET 84/156, MIN 79/145 | head-to-head sweep, common games |
+
+2015 SEA is the best-understood one (see gap 3 of milestone 6): SEA, ATL
+and MIN can all end 9-7 for two wild cards. SEA always gets in, but beats
+ATL in some completions and MIN in others. Look at the tables carefully
+before you start: some "both sides" teams are nearly one-sided (NYG 367/369
+for 2012 TB, CHI 350/360 for 2023 CAR). Their rare other side may come from
+one special tie group that a new per-team rule could exclude (as the
+milestone 7 rules did), so it may not need a set constraint. Try that
+first, because it fits the current design.
+
+**Where it lives in the code.**
+
+- `src/status.cpp`: `decide()` takes `yes_strict` / `no_strict` masks;
+  `decide_reach()` / `decide_miss()` build them from `tie_sides()`, which
+  calls `TieProof::division_sides()` or `conference_sides()`.
+  `reach_answer()` / `miss_answer()` run the cap and push flows; for the
+  playoffs they go through `wild_card_sets()` (allowed sets A) and the
+  forced sets B. A set constraint would have to enter here: per allowed or
+  forced set, or as an extra condition on the flow's completion.
+- `src/tie_proof.cpp`: `wins()`, `loses()`, `possible_picks()` (one pick of
+  a procedure, proven by induction over subgroups), `ranks_ahead()` /
+  `ranks_behind()` (division), `conference_sides()` and the wild card rules
+  of milestone 7 (`never_picked_before_x()`, `x_never_picked_before()`,
+  `survives_wild_card_reduction()`, `wins_division_when_level()`).
+  Everything compares two teams through `lead()`.
+
+**Ideas (need a decision by the maintainer, see P5 and P10).**
+
+1. *Set constraints in the flows.* For a group G of teams that can tie X,
+   prove "X is never behind more than m of G whenever they are level" and
+   let the flow count G's members ahead of X as at most m instead of
+   per team. The playoff count (`sum_d max(k_d - 1, 0) <= w - 1`) already
+   works with counts, so this fits the allowed/forced set enumeration. The
+   proof of "at most m" is an induction over the picks like `wins()`.
+2. *Enumerate the tie groups at X's level.* Take the weak flow's completion
+   (or all completions the flow allows, by fixing who is at X's level) and
+   prove X's position in each concrete tie group with the existing
+   `wins()`/`loses()` machinery. Bounded, but it's partial enumeration, so
+   check it against P5 (no exhaustive search).
+3. Start with the eliminations (6 of 9). Their milestone 7 mirror rule is
+   the weaker one: `x_never_picked_before()` has no counterpart to the
+   "rivals ahead of X are ahead anyway" argument of
+   `never_picked_before_x()`.
+
+**Tools** (`dev/clinching-diagnostics.R`, run from the package root):
+
+- `later_cases()`: the open cases of the snapshot.
+- `single_team_fixes(case)`: fixes each competitor to win or lose out and
+  lists the fixes that prove the case. Every one of the 39 cases of
+  milestone 7 had at least one; it shows which teams the proof is short of.
+- `tie_sides(case)`: the sampling behind the table above (`$teams`,
+  `$steps`, `$wrong` must be 0).
+- `show_completion(season, week, winners)`: one completion through the
+  engine, to check a suspected counterexample. Both suspected
+  counterexamples of milestone 7 (2006 DAL, 2022 DAL) turned out to be
+  wrong, and they showed which rule was missing.
+- To see what the proof derives, temporarily print from `TieProof` (e.g.
+  `tied`, `x_ahead`, `x_behind` at the end of `conference_sides()`) to
+  `stderr`, guarded by an environment variable with X's team id (ids are
+  `standings_league()$team` order, 0-based). Never commit it (CRAN).
+
+**Soundness checks before committing** (what milestone 7 did):
+
+1. `devtools::test(filter = "clinching_status")`: the weekly tests run the
+   self-check (`verify = TRUE`), scenarios and random completions.
+2. Compare every week of 2006–2025 with the previous code (a `git
+   worktree` of the last commit, `clinching_status_compute()` per week):
+   only undecided statuses may change.
+3. For every newly decided team-week, run thousands of completions with X
+   at its worst case, random team strengths (so that varied groups end
+   level) and about 6% tie games, through `nfl_standings(playoff_seeds =
+   seeds)`, and count contradictions. Also run it on some alive teams
+   treated as decided, to see that it finds violations.
+4. `data-raw/bench_clinching_status.R` against the previous commit in the
+   same session (the machine's speed varies a lot between sessions).
 
 **Other gaps, not seen in the NFL comparison:**
 
