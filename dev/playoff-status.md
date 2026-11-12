@@ -5,7 +5,8 @@ clinched or been eliminated from a division title, a playoff berth and the
 No. 1 seed, given the games played so far. Status: **milestones 1–5
 done** (2026-11-11), milestone 6 (tighter tie proofs) partly done, milestone 7
 (pairwise strength and wild card sides) done (2026-11-12), milestone 8 (gap 3,
-per-team part) done (2026-11-12), set constraints open (P11): exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
+per-team part) done (2026-11-12), milestone 9 (budgeted search, off by
+default) done (2026-11-12), set constraints open (P11): exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
 
@@ -412,7 +413,8 @@ R/clinching_status.R      nfl_clinching_status(): argument checks, then
 src/engine/flow.hpp       small Dinic max-flow (vectors reused across flows)
 src/flow.cpp
 src/engine/status.hpp     compute_clinching_status(): season loop, checks per
-src/status.cpp            goal, gray zone search
+src/status.cpp            goal, gray zone search, GameSearch (budgeted
+                          search over remaining games, `search = TRUE`)
 src/engine/scenario.hpp   ScenarioRunner: a completion through the procedures
 src/scenario.cpp          for every coin toss sequence
 src/engine/tie_proof.hpp  TieProof: which tied teams X always ranks ahead of
@@ -784,6 +786,75 @@ simulations 15x slower; depth first with pruning and at most 4 games fixed
 that. Caching the ranges or the pairwise bounds per group was slower than
 recomputing them.
 
+### Results of milestone 8
+
+In [gap 3](#gap-3-xs-position-in-a-tie-handoff) under "Per-team part": the
+new rules, the soundness bug (2021 DAL) and its fix, the open cases and
+what each needs.
+
+### Results of milestone 9
+
+`GameSearch` (`src/status.cpp`, P12) runs for every team and goal the checks
+leave open while games are left, once per open question ("can reach", "can
+miss"). It fixes one remaining game at a time (home win, away win, tie) and
+reruns the checks of that team on each part (`Season`, `ScenarioRunner` and
+`TeamStatus` rebuilt with the fixed games played); a part answering yes
+gives a completion of the whole season, the answer is no if every part says
+no. The next game is the one with the most teams that can end level with X
+(at X's best or worst case), then conference teams; X's own games last.
+Parts run the gray zone with 2 completions instead of 32 (the search splits
+further anyway): that cut the simulation benchmark by a quarter and settles
+the same cases. Budget: 200 parts per question (`kSearchBudget`); interrupt
+checks every 64 parts.
+
+Budgets on the 10 open cases of milestone 8 (debug build): 200 and 1,000
+settle 5, 20,000 settles 7 (2023 SF needs about 5,000), 100,000 still 7.
+The other 3 (2012 TB, 2015 SEA, 2019 NYJ) and 2025 LA are the "X is never
+last" kind (P11): splitting on games pins down who ends level too slowly.
+A prototype in R (each part about 3 ms) found the same.
+
+Results, compared with milestone 8 on every week of 2006–2025: 101
+undecided statuses settled, 92 to alive (each with a completion) and 9 to
+clinched or eliminated: 2008 DET, 2009 KC and 2023 CAR eliminated, 2023 and
+2024 PHI clinched (all five now in the NFL's week), plus 2006 NYG, 2008 DET
+and 2017 DEN division and 2023 NO No. 1 seed eliminated. Each of the 9 held
+in 20,000 completions with X at its worst case, random team strengths (sd 3)
+and 6% tie games. 2021 DAL after week 15 is now alive: the search finds the
+completion of the soundness bug of milestone 8 (PHI takes the NFC East on
+SOV, NO the NFC South, SF, LA and TB the wild cards). Check 1: 5 later cases
+left (2012 TB, 2015 SEA, 2019 NYJ, 2023 SF, 2025 LA) plus BUF/CIN. Checks
+2–5, the self-check and the full test suite pass.
+
+The search is off by default (`search = FALSE`, decided by the maintainer,
+2026-11-12); the function then hints at it if teams with games left are
+undecided. The tests run the NFL comparison, the scenario check and the
+random completions with `search = TRUE`, the tests of single proofs without
+it (so the search can't hide a proof that got weaker). The "5 or fewer
+games left" in the hint comes from every week of 2006–2025: share of
+undecided statuses the search settled, by the team's games left:
+
+| games left | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---|---|---|---|---|---|---|---|
+| undecided without search | 8 | 20 | 34 | 41 | 28 | 28 | 17 | 2 |
+| settled by the search | 100% | 70% | 56% | 63% | 61% | 43% | 29% | 0% |
+
+The search only combines the checks, so it's exactly as sound as they are:
+a wrong proof (like the one in milestone 8) gives a wrong answer at the
+first part, before any split.
+
+Benchmark (`data-raw/bench_clinching_status.R`, optimized build):
+
+| case | milestone 8 | milestone 9 |
+|---|---|---|
+| every week of 2006–2025 | 1.53s | 2.28s |
+| 2023 after week 15, all goals | 5.6ms | 19.2ms |
+| 1,000 simulated seasons after week 12 | 2.26s | 11.1s |
+
+Almost all of the time goes to questions the search can't settle within
+the budget (weeks 10–13 with many open answers): every part rebuilds the
+season and reruns the flows and tie proofs, about 15–50 µs. With a budget of
+5,000, every week took 13.6s and 1,000 simulated seasons about 160s.
+
 ### Still to do
 
 #### Gap 3: X's position in a tie (handoff)
@@ -871,9 +942,15 @@ as slow on the late state; skipping the first step (nothing to condition
 on), fixed-size arrays and precomputed division and conference masks
 brought it down.
 
-**The open cases** (snapshot `nfl_status_differences.csv`, all one week
-late, all undecided in the NFL's week): the 7 below, and 2023 SF, 2024 PHI
-and 2025 LA (playoffs) from the soundness fix. To see what each needs, the sides
+**The open cases.** The NFL snapshot (`nfl_status_differences.csv`) is
+computed with `search = TRUE`. After milestone 9 these are left, all one
+week late and undecided in the NFL's week: 2012 TB eliminated, 2015 SEA
+playoffs, 2019 NYJ eliminated, 2023 SF playoffs and 2025 LA playoffs. The
+search settles 2008 DET, 2009 KC, 2023 CAR, 2023 PHI and 2024 PHI; with the
+default `search = FALSE` they are still late. The table below is the
+analysis of milestone 8 (before the search), still useful for what the
+proofs alone lack; 2023 SF, 2024 PHI and 2025 LA came from the soundness
+fix and need "counts ahead only as the division winner". To see what each needs, the sides
 the samples show (`tie_groups()`, 4,000 completions with X at its worst
 case) were forced into the flows with a temporary debug hook (never
 committed): first only teams that were always on one side, then also the
@@ -896,6 +973,10 @@ those needs a rule that fits one case. Four cases need set reasoning, and
 
 **Where it lives in the code.**
 
+- `src/status.cpp`: `GameSearch` (milestone 9) wraps everything below:
+  it reruns `TeamStatus` with remaining games fixed, so every improvement
+  of the proofs also makes the search settle more, and every unsound proof
+  makes it wrong too.
 - `src/status.cpp`: `decide()` takes `yes_strict` / `no_strict` masks;
   `decide_reach()` / `decide_miss()` build them from `tie_sides()`, which
   calls `TieProof::division_sides()` or `conference_sides()`.
@@ -960,7 +1041,7 @@ those needs a rule that fits one case. Four cases need set reasoning, and
   environment variable with a team mask OR'd into the sides in
   `tie_sides()` (the oracle above) shows whether a side would be enough.
 
-**Soundness checks before committing** (what milestone 7 did):
+**Soundness checks before committing** (what milestones 7–9 did):
 
 1. `devtools::test(filter = "clinching_status")`: the weekly tests run the
    self-check (`verify = TRUE`), scenarios and random completions.
@@ -974,6 +1055,21 @@ those needs a rule that fits one case. Four cases need set reasoning, and
    treated as decided, to see that it finds violations.
 4. `data-raw/bench_clinching_status.R` against the previous commit in the
    same session (the machine's speed varies a lot between sessions).
+5. Don't trust checks 1–3 alone. In milestone 8 they all passed on a wrong
+   clinch (2021 DAL after week 15): its counterexample needs about ten
+   teams to win or lose out together, which random completions never hit.
+   For every newly decided status, and every status earlier than the NFL,
+   look for an independent answer: nflplayoffscenarios.com has a page per
+   team and week since 2021 (e.g. `/2021/week/16/DAL-has-not-clinched-a-playoff-berth/`,
+   written after the previous week's games), and the NFL flags in check 1.
+   An "earlier than the NFL" case is a bug until shown otherwise; don't
+   explain it away with timing.
+6. If a status looks wrong, rebuild the scenario from the external
+   explanation with `fix_team()` and `random_completions()` (fix the named
+   teams, randomize the rest) and trace which side the proof used: print
+   the masks in `decide()` and the failing sets (see the tools above).
+   `search = TRUE` can also find the counterexample once the proof is
+   fixed.
 
 **Other gaps, not seen in the NFL comparison:**
 
@@ -988,69 +1084,6 @@ those needs a rule that fits one case. Four cases need set reasoning, and
 **Speed.** Milestone 7 made 1,000 simulated seasons 1.8x slower (1.05s →
 1.93s). If that matters: skip the new wild card rules for teams whose side
 the flows don't need, or compute sides lazily from the flows' failing sets.
-
-### Results of milestone 9
-
-`GameSearch` (`src/status.cpp`, P12) runs for every team and goal the checks
-leave open while games are left, once per open question ("can reach", "can
-miss"). It fixes one remaining game at a time (home win, away win, tie) and
-reruns the checks of that team on each part (`Season`, `ScenarioRunner` and
-`TeamStatus` rebuilt with the fixed games played); a part answering yes
-gives a completion of the whole season, the answer is no if every part says
-no. The next game is the one with the most teams that can end level with X
-(at X's best or worst case), then conference teams; X's own games last.
-Parts run the gray zone with 2 completions instead of 32 (the search splits
-further anyway): that cut the simulation benchmark by a quarter and settles
-the same cases. Budget: 200 parts per question (`kSearchBudget`); interrupt
-checks every 64 parts.
-
-Budgets on the 10 open cases of milestone 8 (debug build): 200 and 1,000
-settle 5, 20,000 settles 7 (2023 SF needs about 5,000), 100,000 still 7.
-The other 3 (2012 TB, 2015 SEA, 2019 NYJ) and 2025 LA are the "X is never
-last" kind (P11): splitting on games pins down who ends level too slowly.
-A prototype in R (each part about 3 ms) found the same.
-
-Results, compared with milestone 8 on every week of 2006–2025: 101
-undecided statuses settled, 92 to alive (each with a completion) and 9 to
-clinched or eliminated: 2008 DET, 2009 KC and 2023 CAR eliminated, 2023 and
-2024 PHI clinched (all five now in the NFL's week), plus 2006 NYG, 2008 DET
-and 2017 DEN division and 2023 NO No. 1 seed eliminated. Each of the 9 held
-in 20,000 completions with X at its worst case, random team strengths (sd 3)
-and 6% tie games. 2021 DAL after week 15 is now alive: the search finds the
-completion of the soundness bug of milestone 8 (PHI takes the NFC East on
-SOV, NO the NFC South, SF, LA and TB the wild cards). Check 1: 5 later cases
-left (2012 TB, 2015 SEA, 2019 NYJ, 2023 SF, 2025 LA) plus BUF/CIN. Checks
-2–5, the self-check and the full test suite pass.
-
-The search is off by default (`search = FALSE`, decided by the maintainer,
-2026-11-12); the function then hints at it if teams with games left are
-undecided. The tests run the NFL comparison, the scenario check and the
-random completions with `search = TRUE`, the tests of single proofs without
-it (so the search can't hide a proof that got weaker). The "5 or fewer
-games left" in the hint comes from every week of 2006–2025: share of
-undecided statuses the search settled, by the team's games left:
-
-| games left | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-|---|---|---|---|---|---|---|---|---|
-| undecided without search | 8 | 20 | 34 | 41 | 28 | 28 | 17 | 2 |
-| settled by the search | 100% | 70% | 56% | 63% | 61% | 43% | 29% | 0% |
-
-The search only combines the checks, so it's exactly as sound as they are:
-a wrong proof (like the one in milestone 8) gives a wrong answer at the
-first part, before any split.
-
-Benchmark (`data-raw/bench_clinching_status.R`, optimized build):
-
-| case | milestone 8 | milestone 9 |
-|---|---|---|
-| every week of 2006–2025 | 1.53s | 2.28s |
-| 2023 after week 15, all goals | 5.6ms | 19.2ms |
-| 1,000 simulated seasons after week 12 | 2.26s | 11.1s |
-
-Almost all of the time goes to questions the search can't settle within
-the budget (weeks 10–13 with many open answers): every part rebuilds the
-season and reruns the flows and tie proofs, about 15–50 µs. With a budget of
-5,000, every week took 13.6s and 1,000 simulated seasons about 160s.
 
 ## Milestones
 
@@ -1105,7 +1138,8 @@ counts are fine.
 `status = c("DIV", "PLAYOFFS", "1SEED")` (one or more goals) and the states
 clinched, alive, eliminated, undecided.
 
-**P5 Exhaustive search. Decided by the maintainer (2026-11-11): no.** The
+**P5 Exhaustive search. Decided by the maintainer (2026-11-11): no.
+Relaxed by P12 (a budgeted search, off by default).** The
 function never enumerates all completions. What the flows, settled
 tiebreakers and the scenario budget can't decide stays undecided.
 
