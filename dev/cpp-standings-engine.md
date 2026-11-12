@@ -280,7 +280,9 @@ code alone. The existing code had 16 findings when clang-tidy was set up
 problems. On macOS the script passes the current SDK to Homebrew's
 clang-tidy, which otherwise picks an old one. Warning flags can't go into
 `src/Makevars` (not portable, CRAN). Before a release, also run the sanitizer builds CRAN uses, e.g.
-`rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))`.
+`rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))`. For the
+clinching engine alone, `dev/sanitize-cpp.sh` does it locally without R (a
+driver in `dev/sanitize/` built with ASan and UBSan).
 
 ## Tests
 

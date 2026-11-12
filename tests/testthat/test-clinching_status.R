@@ -103,12 +103,10 @@ test_that("first clinching and elimination weeks match the NFL", {
   differences <- differences[
     !(is.na(ours) & is.na(nfl)) & (is.na(ours) | is.na(nfl) | ours != nfl)
   ]
-  # Later than the NFL only where we can't decide yet. Earlier only for the
-  # cancelled 2022 BUF-CIN game, which is missing from the remaining games.
-  expect_all_equal(
-    differences[!is.na(nfl) & (is.na(ours) | ours > nfl), ours_in_nfl_week],
-    "undecided"
-  )
+  # Never later than the NFL. Earlier only for the cancelled 2022 BUF-CIN
+  # game, which is missing from the remaining games.
+  later <- differences[!is.na(nfl) & (is.na(ours) | ours > nfl)]
+  expect_identical(nrow(later), 0L)
   earlier <- differences[!is.na(ours) & (is.na(nfl) | ours < nfl)]
   expect_setequal(earlier$team, c("BUF", "CIN"))
   expect_all_equal(earlier$season, 2022L)
@@ -200,10 +198,33 @@ test_that("a division winner level with X counts as ahead of X", {
   expect_identical(s[team == "DAL", playoffs_status], "alive")
 })
 
+test_that("X is never last of a group of tied teams", {
+  # SEA, ATL and MIN can all end 9-7 for two wild cards. SEA beats ATL in
+  # some of these ties and MIN in the others, but is never behind both.
+  s <- clinching_status_after(2015, 15, "PLAYOFFS")
+  expect_identical(s[team == "SEA", playoffs_status], "clinched")
+  # TB (8-8 at best) can beat some of the teams that end 8-8, never enough
+  s <- clinching_status_after(2012, 15, "PLAYOFFS")
+  expect_identical(s[team == "TB", playoffs_status], "eliminated")
+})
+
+test_that("a team level with X can be ahead only as its division's winner", {
+  # GB can win the NFC North at 10-7 while MIN, which beat SF, is 10-7 too.
+  # GB then takes the title, not a wild card.
+  s <- clinching_status_after(2023, 14, "PLAYOFFS")
+  expect_identical(s[team == "SF", playoffs_status], "clinched")
+})
+
+test_that("tie groups settle the division title and the No. 1 seed", {
+  s <- clinching_status_after(2014, 14, c("DIV", "1SEED"))
+  expect_identical(s[team == "SF", div_status], "eliminated")
+  expect_identical(s[team == "SF", seed1_status], "eliminated")
+})
+
 test_that("the search settles answers the proofs leave open", {
-  # KC (7-9 at best) is out after week 13, which the proofs only show once
-  # the search fixes a few games of the teams that can end 7-9
-  games <- load_games_2006_2025()[season == 2009]
+  # CAR (6-11 at best) is out after week 13, which the proofs only show once
+  # the search fixes a few games of the teams that can end 6-11
+  games <- load_games_2006_2025()[season == 2023]
   games[week > 13, result := NA]
   s <- clinching_status_compute(
     games,
@@ -211,12 +232,12 @@ test_that("the search settles answers the proofs leave open", {
     search = TRUE,
     verify = TRUE
   )
-  expect_identical(s[team == "KC", playoffs_status], "eliminated")
+  expect_identical(s[team == "CAR", playoffs_status], "eliminated")
 })
 
 test_that("search = FALSE (default) leaves open answers undecided", {
-  s <- clinching_status_after(2009, 13, "PLAYOFFS")
-  expect_identical(s[team == "KC", playoffs_status], "undecided")
+  s <- clinching_status_after(2023, 13, "PLAYOFFS")
+  expect_identical(s[team == "CAR", playoffs_status], "undecided")
 })
 
 test_that("nfl_clinching_status() hints at the search", {

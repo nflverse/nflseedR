@@ -940,6 +940,137 @@ TeamMask TieProof::level_division_winners(TeamMask tied, TeamMask winners,
   return out;
 }
 
+TieOutcome TieProof::playoff_outcome(TeamMask above, TeamMask level,
+                                     int32_t wild_cards) {
+  // Every team above X but one per division takes a wild card
+  int32_t slots = wild_cards;
+  for (TeamMask rest = above; rest != 0;) {
+    const TeamMask in_d = rest & division_of(std::countr_zero(rest));
+    slots -= std::popcount(in_d) - 1;
+    rest &= ~in_d;
+  }
+  const TeamMask pool = level | team_bit(x_);
+  // Divisions whose title goes to a level team
+  TeamMask divisions = 0;
+  for (TeamMask rest = pool; rest != 0;) {
+    const TeamId t = std::countr_zero(rest);
+    if ((above & division_of(t)) == 0) divisions |= team_bit(t);
+    rest &= ~division_of(t);
+  }
+  Berth out;
+  division_titles(divisions, pool, slots, out);
+  return outcome_of(out);
+}
+
+TieOutcome TieProof::outcome_of(const Berth& berth) {
+  if (berth.reached && berth.missed) return TieOutcome::kEither;
+  if (berth.reached) return TieOutcome::kReached;
+  if (berth.missed) return TieOutcome::kMissed;
+  return TieOutcome::kImpossible;
+}
+
+TieOutcome TieProof::division_outcome(TeamMask above, TeamMask level) {
+  if ((above & division_) != 0) return TieOutcome::kMissed;
+  const TeamMask picks =
+      possible_picks((level & division_) | team_bit(x_), Procedure::kDivision);
+  return outcome_of(
+      {.reached = has(picks, x_), .missed = (picks & ~team_bit(x_)) != 0});
+}
+
+TieOutcome TieProof::first_seed_outcome(TeamMask above, TeamMask level) {
+  // A team above X puts its division's winner above X (or is a rival)
+  if (above != 0) return TieOutcome::kMissed;
+  const TeamMask picks =
+      possible_picks((level & division_) | team_bit(x_), Procedure::kDivision);
+  Berth out{.missed = (picks & ~team_bit(x_)) != 0};
+  if (has(picks, x_)) {
+    // The other divisions with level teams
+    TeamMask divisions = 0;
+    for (TeamMask rest = level & ~division_; rest != 0;) {
+      const TeamId t = std::countr_zero(rest);
+      divisions |= team_bit(t);
+      rest &= ~division_of(t);
+    }
+    first_seed_picks(divisions, level, team_bit(x_), out);
+  }
+  return outcome_of(out);
+}
+
+void TieProof::first_seed_picks(TeamMask divisions, TeamMask level,
+                                TeamMask winners, Berth& out) {
+  if (out.reached && out.missed) return;
+  if (divisions == 0) {
+    const TeamMask picks = possible_picks(winners, Procedure::kConference);
+    out.reached = out.reached || has(picks, x_);
+    out.missed = out.missed || (picks & ~team_bit(x_)) != 0;
+    return;
+  }
+  const TeamId t = std::countr_zero(divisions);
+  for_each_team(possible_picks(level & division_of(t), Procedure::kDivision),
+                [&](TeamId winner) {
+                  first_seed_picks(divisions & (divisions - 1), level,
+                                   winners | team_bit(winner), out);
+                });
+}
+
+void TieProof::division_titles(TeamMask divisions, TeamMask pool, int32_t slots,
+                               Berth& out) {
+  if (divisions == 0) {
+    const Berth picks = wild_card_picks(pool, slots);
+    out.reached = out.reached || picks.reached;
+    out.missed = out.missed || picks.missed;
+    return;
+  }
+  const TeamId t = std::countr_zero(divisions);
+  const TeamMask rest = divisions & (divisions - 1);
+  const TeamMask in_d = pool & division_of(t);
+  for_each_team(possible_picks(in_d, Procedure::kDivision), [&](TeamId winner) {
+    if (winner == x_) {
+      out.reached = true;
+    } else {
+      division_titles(rest, pool & ~team_bit(winner), slots, out);
+    }
+  });
+}
+
+TieProof::Berth TieProof::wild_card_picks(TeamMask pool, int32_t slots) {
+  if (slots <= 0) return {.missed = true};
+  const uint64_t key = (static_cast<uint64_t>(slots) << 32U) | pool;
+  if (const auto it = berth_cache_.find(key); it != berth_cache_.end()) {
+    return it->second;
+  }
+  // The teams that can be the best of their division in the pool
+  std::array<TeamMask, kDivisions> candidates{};
+  size_t n = 0;
+  for (TeamMask rest = pool; rest != 0;) {
+    const TeamMask in_d = rest & division_of(std::countr_zero(rest));
+    candidates[n++] = possible_picks(in_d, Procedure::kDivision);
+    rest &= ~in_d;
+  }
+  Berth out;
+  // One team per division, then one pick of the conference procedure
+  const auto visit = [&](const auto& self, size_t i, TeamMask reps) -> void {
+    if (out.reached && out.missed) return;
+    if (i < n) {
+      for_each_team(candidates[i],
+                    [&](TeamId t) { self(self, i + 1, reps | team_bit(t)); });
+      return;
+    }
+    for_each_team(possible_picks(reps, Procedure::kConference), [&](TeamId p) {
+      if (p == x_) {
+        out.reached = true;
+        return;
+      }
+      const Berth next = wild_card_picks(pool & ~team_bit(p), slots - 1);
+      out.reached = out.reached || next.reached;
+      out.missed = out.missed || next.missed;
+    });
+  };
+  visit(visit, 0, 0);
+  berth_cache_[key] = out;
+  return out;
+}
+
 bool TieProof::always_above_x(TeamId z) const {
   if (final_games_[z] == 0) return false;
   return static_cast<int64_t>(half_wins_low_[z]) * final_games_[x_] >
