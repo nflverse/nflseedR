@@ -3,7 +3,8 @@
 Plan for a new exported function that says, for every team, whether it has
 clinched or been eliminated from a division title, a playoff berth and the
 No. 1 seed, given the games played so far. Status: **milestones 1–5
-done** (2026-11-11), milestone 6 (tighter tie proofs) partly done: exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
+done** (2026-11-11), milestone 6 (tighter tie proofs) partly done, milestone 7
+(pairwise strength and wild card sides) done (2026-11-12): exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
 
@@ -301,6 +302,19 @@ some opponents gets at least what the other remaining games can't bring.
 Opponents in the group count with exactly that level in SOV and SOS. SOV of
 a team with games left is unknown (0 to 1).
 
+**Pairwise comparisons** (milestone 7). Every use of the ranges compares two
+teams (`lead(a, b)`: a ahead for sure, never behind, or neither). For SOV and
+SOS it also bounds the difference of the two values directly
+(`lowest_strength_difference()`), because separate ranges count a shared
+opponent low for one team and high for the other at the same time. With the
+weights fixed (games per opponent for SOS, wins per opponent for SOV), the
+difference is linear in the opponents' half-wins: tied teams end at their
+tie level, every open game goes the way that lowers the difference most.
+For SOV the results of the two teams' own open games are enumerated (depth
+first, only results that leave both at their tie level, at most 4 open
+games); with more, SOV stays unknown. All of this is a relaxation of the
+real completions, so it's sound, and never weaker than the ranges.
+
 **One pick.** X is picked first from a group if a step makes X best for
 sure. If X is at least as good as everyone for sure, the step can also
 leave X with the teams that can be level with X, and X must be picked first
@@ -326,6 +340,29 @@ A coin toss (all steps passed) proves nothing.
   percentage) are left out of these sets: division winners are ranked apart
   from the wild cards, and one team of a division ahead of X is free in the
   playoff count, so their own side doesn't matter either.
+- milestone 7 refines the sides of teams of another division, per team
+  instead of per division, and for the wild card in four ways (each one is
+  tried after the existing rule, so sides only grow):
+  - *behind X* if X survives every reduction and is picked first from every
+    set of representatives in which this team represents its division. It
+    can only be picked while it does.
+  - wild card, *behind X*: the conference procedure reduces again after
+    every pick, and a rival that ranks ahead of X in the division is ahead
+    of X anyway (the flows count it). So team y is behind X if y can't be
+    picked (`possible_picks()`) from any set of representatives in which y
+    represents its division and X's division is represented by X or by a
+    tied rival that X doesn't always rank ahead of and that doesn't always
+    win the division when level.
+  - wild card, *ahead of X* (the mirror): X can't be picked from any set of
+    representatives in which y's division is represented by y or by a tied
+    team of y's division that may rank ahead of y.
+  - "survives every reduction" for the wild card: X wins every division tie
+    with its tied rivals, or no other rival can end above X and X wins the
+    tie that is left after any first pick (the division winner isn't in the
+    pool).
+  - "wins its division whenever level with X" also counts teams that win
+    every division tie with the teams of their division that can be level
+    (before: only teams no division rival could reach).
 
 The division goal uses the rival sides, the playoffs and the No. 1 seed the
 conference sides.
@@ -681,6 +718,103 @@ and rerun `clinching_status_compute(g, status = "PLAYOFFS")`. Take a team out
 of a tie in the direction that moves it *away* from X's level: making a 9-5
 team lose out can put it exactly at X's 9-7.
 
+### Results of milestone 7
+
+From the analysis of the 39 remaining later cases (P10): fixing all of
+one competitor's remaining games proves every one of them in the NFL's week,
+so each case was one tie short. Biased random completions in the NFL's week
+(X at its worst case) never contradicted the NFL. They sorted the cases into
+SOV with games left (4 cases), X's position in the tie (gap 3, 30), and ties
+where every team was always on one side but the proof didn't see it (5).
+
+Fixes (all in `src/tie_proof.cpp`, no changes to `procedures.cpp`):
+
+| fix | example |
+|---|---|
+| pairwise SOV/SOS | 2024 LA and SEA after week 17: both can end 10-7, LA's SOV is 0.009 to 0.062 ahead, but LA's lowest SOV (0.424) was below SEA's highest (0.441) |
+| SOV with games left | 2015 NE after week 14 (division and playoffs): NYJ's own open games enumerated |
+| per-team sides of another division | 2013 CAR after week 16: ARI beat CAR, but CAR beats SF and only one of them can represent the NFC West |
+| re-reduction after every pick | 2006 DAL after week 15: NYG ranks ahead of DAL, takes a wild card, then DAL beats ATL |
+| division winners when level | 2022 DAL after week 15: SF wins every NFC West tie with SEA |
+| mirror for elimination | 2012 NYJ after week 15: CIN only ends 8-8 by losing to PIT, which then represents the AFC North and beats NYJ |
+
+Many cases of gap 3 went away too: they needed exactly these per-team sides,
+not a set constraint.
+
+Results (check 1, NFL flags): 30 of the 39 later cases now match the NFL's
+week, including 2023 NYJ eliminated (two weeks late before). 9 remain, all
+one week late and undecided in the NFL's week (snapshot, 11 rows with
+BUF/CIN): playoffs 2011 NO, 2015 SEA, 2023 PHI; eliminated 2008 DET, 2009
+KC, 2012 TB, 2019 NYJ, 2021 CHI, 2023 CAR.
+
+| goal | same | earlier | later |
+|---|---|---|---|
+| division | 159 | 1 | 0 |
+| playoffs | 248 | 1 | 3 |
+| eliminated | 382 | 0 | 6 |
+| No. 1 seed | 40 | 0 | 0 |
+
+Soundness: compared with milestone 6 on every week of 2006–2025, only
+undecided statuses changed (37 to clinched or eliminated, 4 to alive). Each
+of the 37 held in 5,000 completions with X at its worst case, random team
+strengths and 6% tie games (185,000 in all, no violation; the same check
+finds violations for each of 20 alive teams treated as clinched). Checks
+2–5 and the self-check pass. One test per fix (`verify = TRUE`), all failing
+before.
+
+Benchmark (`data-raw/bench_clinching_status.R`, same machine and session;
+the machine was slower than for milestone 5):
+
+| case | milestone 6 | milestone 7 |
+|---|---|---|
+| every week of 2006–2025 | 1.11s | 1.41s |
+| 2023 after week 15, all goals | 3.6ms | 4.1ms |
+| 1,000 simulated seasons after week 12 | 1.05s | 1.93s |
+
+Most of the extra time is `ranges()` and `possible_picks()` for the new
+groups. Enumerating SOV results over all 3^6 combinations made the
+simulations 15x slower; depth first with pruning and at most 4 games fixed
+that. Caching the ranges or the pairwise bounds per group was slower than
+recomputing them.
+
+### Still to do
+
+**The 9 later cases are all gap 3.** Same sampling as above (1,500
+completions in the NFL's week, X at its worst case): in every case at least
+one team that can end level with X ranks ahead of X in some tie groups and
+behind it in others, so no per-team side exists. Examples (team ahead of X /
+tie groups with it):
+
+| case | teams on both sides |
+|---|---|
+| 2011 NO playoffs | ATL 319/639 (a rival), NYG 71/169 |
+| 2015 SEA playoffs | ATL 71/347, MIN 4/337 (the example of milestone 6) |
+| 2021 CHI eliminated | NO 100/134 |
+| 2023 PHI playoffs | SEA 140/162, LA 8/158, DET 84/156, MIN 79/145 |
+| 2009 KC eliminated | 7 teams, mostly conference record |
+
+Closing them needs the flows to count positions in a tie ("at least k of
+these tied teams are ahead of X") or an enumeration of the tie groups at
+X's level that the weak completion allows, with X's position proven in
+each. Both are open ideas from milestone 6 and need a decision (gap 3).
+Six of the nine are eliminations: the mirror rules of milestone 7 are
+simpler than the clinching ones (`x_never_picked_before()` keeps the old
+"X survives every reduction" view), so look there first.
+
+**Other gaps, not seen in the NFL comparison:**
+
+- SOV of a tied team with more than 4 open games stays unknown
+  (`kMaxEnumeratedGames`). Only matters early in the season.
+- The pairwise SOV/SOS bound treats opponents' open games independently
+  of the tie (a team of the group needing wins doesn't make its opponents
+  lose). Sound, but loose.
+- `possible_picks()` is a superset per step; the new wild card rules use
+  it for groups without X, so a loose superset there costs proofs.
+
+**Speed.** Milestone 7 made 1,000 simulated seasons 1.8x slower (1.05s →
+1.93s). If that matters: skip the new wild card rules for teams whose side
+the flows don't need, or compute sides lazily from the flows' failing sets.
+
 ## Milestones
 
 1. Fixture with the official NFL flags, and a look at what they mean week
@@ -701,6 +835,8 @@ team lose out can put it exactly at X's 9-7.
 6. Tighter tie proofs from the cases where we're later than the NFL (P8).
    Gaps 1 and 2 **done** (2026-11-11), gap 3 open, see
    [results of milestone 6](#results-of-milestone-6).
+7. Pairwise SOV/SOS bounds and per-team wild card sides (P10). **Done**
+   (2026-11-12), see [results of milestone 7](#results-of-milestone-7).
 
 ## Decisions
 
@@ -759,3 +895,10 @@ always `ranks = "CONF"`, `tiebreaker_depth = "SOS"` (as P2) and all 16
 conference ranks. Sorted like `nfl_standings()`. Only teams that have
 played a game get a row, as in `nfl_standings()` (zero rows before
 kickoff). `verbosity` is passed on to `nfl_standings()`.
+
+**P10 Pairwise strength and per-team sides. Decided by the maintainer
+(2026-11-12):** from the analysis of the 39 later cases, do the SOV cases
+(bound SOV and SOS beyond "unknown" with games left) and the cases where
+every team was always on one side, in the clinching code only. Done as
+[milestone 7](#results-of-milestone-7). Gap 3 (set constraints in the flows)
+is still open.

@@ -56,6 +56,13 @@ with_reference_seed <- function(seed, code) {
   )
 }
 
+# Clinching status of one goal after `week` of a real season, self-checked
+clinching_status_after <- function(season_id, last_week, status) {
+  games <- load_games_2006_2025()[season == season_id]
+  games[week > last_week, result := NA]
+  clinching_status_compute(games, status = status, verify = TRUE)
+}
+
 load_nfl_clinch_2006_2025 <- function() {
   data.table::as.data.table(readRDS(test_path("nfl_clinch_2006_2025.rds")))
 }

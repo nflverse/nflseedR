@@ -135,6 +135,45 @@ test_that("division winners don't break wild card ties", {
   expect_identical(s[team == "SEA", playoffs_status], "clinched")
 })
 
+test_that("clinching compares SOV and SOS of two tied teams directly", {
+  # LA and SEA can end 10-7, LA has the better SOV whatever week 18 does
+  s <- clinching_status_after(2024, 17, "DIV")
+  expect_identical(
+    s[team %chin% c("LA", "SEA"), div_status],
+    c("clinched", "eliminated")
+  )
+})
+
+test_that("clinching compares SOV of a tied team with games left", {
+  # NE and NYJ can end 11-5, NE has the better SOV however NYJ gets there
+  s <- clinching_status_after(2015, 14, "DIV")
+  expect_identical(s[team == "NE", div_status], "clinched")
+})
+
+test_that("X only needs to beat one team of a division for a wild card", {
+  # CAR loses to ARI but beats SF, and only one of them can take a wild card
+  s <- clinching_status_after(2013, 16, "PLAYOFFS")
+  expect_identical(s[team == "CAR", playoffs_status], "clinched")
+})
+
+test_that("wild card ties reduce divisions again after every pick", {
+  # NYG ranks ahead of DAL, but after NYG's pick DAL beats ATL
+  s <- clinching_status_after(2006, 15, "PLAYOFFS")
+  expect_identical(s[team == "DAL", playoffs_status], "clinched")
+})
+
+test_that("teams that win every division tie never take a wild card", {
+  # SF can end 10-7 with DAL, but then wins the NFC West over SEA
+  s <- clinching_status_after(2022, 15, "PLAYOFFS")
+  expect_identical(s[team == "DAL", playoffs_status], "clinched")
+})
+
+test_that("elimination sees which team represents a division", {
+  # CIN only ends 8-8 by losing to PIT, which then ranks ahead of CIN
+  s <- clinching_status_after(2012, 15, "PLAYOFFS")
+  expect_identical(s[team == "NYJ", playoffs_status], "eliminated")
+})
+
 test_that("clinching status only computes the requested goals", {
   games <- load_games_2006_2025()[season == 2023]
   games[week > 15, result := NA]

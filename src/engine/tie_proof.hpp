@@ -5,8 +5,10 @@
 
 #include <array>
 #include <cstdint>
+#include <optional>
 #include <span>
 #include <unordered_map>
+#include <vector>
 
 #include "season.hpp"
 #include "types.hpp"
@@ -53,6 +55,18 @@ class TieProof {
   struct StepRanges {
     TeamArray<Range> range{};
     bool applies = true;
+    Step step = Step::kHeadToHead;
+    TeamMask group = 0;
+  };
+
+  // How a team's step value compares with another's in every completion
+  enum class Lead : int8_t { kNone, kNeverBehind, kAhead };
+
+  // Open games between two teams (`count` of them)
+  struct OpenGames {
+    TeamId first = 0;
+    TeamId second = 0;
+    int32_t count = 0;
   };
 
   [[nodiscard]] static std::span<const Step> steps(Procedure procedure);
@@ -62,6 +76,13 @@ class TieProof {
   [[nodiscard]] Range sweep_range(TeamId t, TeamMask group) const;
   [[nodiscard]] Range sos_range(TeamId t, TeamMask group) const;
   [[nodiscard]] Range sov_range(TeamId t, TeamMask group) const;
+  [[nodiscard]] Lead lead(const StepRanges& r, TeamId a, TeamId b) const;
+  [[nodiscard]] int64_t linear_strength_difference(
+      const TeamArray<int32_t>& weight_a, const TeamArray<int32_t>& weight_b,
+      const TeamArray<int32_t>& half_wins, TeamMask group,
+      TeamMask settled) const;
+  [[nodiscard]] std::optional<int64_t> lowest_strength_difference(
+      Step step, TeamId a, TeamId b, TeamMask group) const;
   [[nodiscard]] int32_t low_in(TeamId t, TeamMask group) const;
   [[nodiscard]] int32_t high_in(TeamId t, TeamMask group) const;
   [[nodiscard]] TeamMask division_of(TeamId t) const;
@@ -70,6 +91,26 @@ class TieProof {
   // X wins every division tie with teams of `teams`, so X survives every
   // division reduction of the conference ranking
   [[nodiscard]] bool wins_division_ties(TeamMask teams);
+
+  // X survives the division reduction of every wild card pool with teams of
+  // `tied` (the division winner isn't in the pool)
+  [[nodiscard]] bool survives_wild_card_reduction(TeamMask tied);
+
+  // Wild card: team y of another division (`in_d`, its tied teams) is never
+  // picked before X from the sets of representatives `reps`, whichever team
+  // of `x_reps` represents X's division
+  [[nodiscard]] bool never_picked_before_x(TeamId y, TeamMask in_d,
+                                           std::span<const TeamMask> reps,
+                                           TeamMask x_reps);
+
+  // Wild card, the mirror: X is never picked before team y of another
+  // division, whichever tied team of y's division represents it
+  [[nodiscard]] bool x_never_picked_before(TeamId y, TeamMask in_d,
+                                           std::span<const TeamMask> reps,
+                                           TeamMask tied);
+
+  // Rival z can end with a higher win percentage than X
+  [[nodiscard]] bool can_end_above_x(TeamId z) const;
 
   // X is picked first (wins) or not (loses) from `group` by one pick of a
   // procedure. Proven by induction over the smaller groups a step can leave.
@@ -85,14 +126,13 @@ class TieProof {
   [[nodiscard]] bool ranks_behind(TeamMask group, TeamId y);
 
   // y wins its division whenever it ends with X's win percentage: no other
-  // team of its division can get there
-  [[nodiscard]] bool wins_division_when_level(TeamId y) const;
+  // team of its division can end above X, and y wins every division tie
+  // with teams of `tied` (and X, if y is a rival)
+  [[nodiscard]] bool wins_division_when_level(TeamId y, TeamMask tied);
 
-  // Calls f(r) for every nonempty set r of at most one team per division of
-  // `teams` outside X's division, until f returns false. True if it never
-  // did.
-  template <typename F>
-  [[nodiscard]] bool all_representatives(TeamMask teams, F f) const;
+  // Every nonempty set of at most one team per division of `teams` outside
+  // X's division
+  [[nodiscard]] std::vector<TeamMask> representative_sets(TeamMask teams) const;
 
   const League* league_;
   TeamId x_;
@@ -105,6 +145,7 @@ class TieProof {
   TeamMatrix<int32_t> known_half_wins_{};
   TeamMatrix<int32_t> known_wins_{};
   TeamMatrix<int32_t> open_{};
+  std::vector<OpenGames> open_pairs_;
   TeamArray<int32_t> final_games_{};
   TeamArray<int32_t> open_games_{};
   TeamArray<int32_t> half_wins_low_{};
