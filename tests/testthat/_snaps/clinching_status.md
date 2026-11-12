@@ -1,3 +1,11 @@
+# nfl_clinching_status() hints at the search
+
+    Code
+      clinching_status_search_hint(s)
+    Message
+      i 3 statuses are "undecided" (teams with 3 games left). `search = TRUE` might decide them.
+        The search helps most with 5 or fewer games left per team.
+
 # nfl_clinching_status() checks its arguments
 
     Code
@@ -10,6 +18,11 @@
     Condition
       Error in `nfl_clinching_status()`:
       ! `scenarios` must be `TRUE` or `FALSE`.
+    Code
+      nfl_clinching_status(games, search = "no", verbosity = "NONE")
+    Condition
+      Error in `nfl_clinching_status()`:
+      ! `search` must be `TRUE` or `FALSE`.
     Code
       nfl_clinching_status(games, "DIV", verbosity = "NONE")
     Condition

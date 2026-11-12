@@ -174,6 +174,66 @@ test_that("elimination sees which team represents a division", {
   expect_identical(s[team == "NYJ", playoffs_status], "eliminated")
 })
 
+test_that("a tiebreaking step only counts where the earlier ones are equal", {
+  # CAR can end 7-10 with CHI: CAR is never behind on common games and has
+  # the better SOV whenever they are equal there
+  s <- clinching_status_after(2021, 15, "PLAYOFFS")
+  expect_identical(s[team == "CHI", playoffs_status], "eliminated")
+})
+
+test_that("a rival only takes a wild card if another rival can win", {
+  # NO, ATL and CHI can end 10-6. ATL only takes a wild card if NO wins the
+  # NFC South, and DAL only ends 10-6 by beating NYG, then wins its division.
+  s <- clinching_status_after(2011, 14, "PLAYOFFS")
+  expect_identical(s[team == "NO", playoffs_status], "clinched")
+})
+
+test_that("a division winner level with X counts as ahead of X", {
+  # DAL can end 10-7 behind PHI on SOV. DAL beats NO, but NO can win the NFC
+  # South at 10-7 while TB, which beat DAL, takes a wild card. The search
+  # finds that completion.
+  s <- clinching_status_after(2021, 15, "PLAYOFFS")
+  expect_identical(s[team == "DAL", playoffs_status], "undecided")
+  games <- load_games_2006_2025()[season == 2021]
+  games[week > 15, result := NA]
+  s <- clinching_status_compute(games, status = "PLAYOFFS", search = TRUE)
+  expect_identical(s[team == "DAL", playoffs_status], "alive")
+})
+
+test_that("the search settles answers the proofs leave open", {
+  # KC (7-9 at best) is out after week 13, which the proofs only show once
+  # the search fixes a few games of the teams that can end 7-9
+  games <- load_games_2006_2025()[season == 2009]
+  games[week > 13, result := NA]
+  s <- clinching_status_compute(
+    games,
+    status = "PLAYOFFS",
+    search = TRUE,
+    verify = TRUE
+  )
+  expect_identical(s[team == "KC", playoffs_status], "eliminated")
+})
+
+test_that("search = FALSE (default) leaves open answers undecided", {
+  s <- clinching_status_after(2009, 13, "PLAYOFFS")
+  expect_identical(s[team == "KC", playoffs_status], "undecided")
+})
+
+test_that("nfl_clinching_status() hints at the search", {
+  games <- load_games_2006_2025()[season == 2015]
+  games[week > 14, result := NA]
+  s <- clinching_status_compute(games, search = FALSE)
+  expect_snapshot(clinching_status_search_hint(s))
+  # No games left: nothing for the search to do
+  finished <- load_games_2006_2025()[season == 2015]
+  expect_silent(
+    clinching_status_search_hint(clinching_status_compute(finished))
+  )
+  expect_silent(
+    nfl_clinching_status(games, search = FALSE, verbosity = "NONE")
+  )
+})
+
 test_that("clinching status only computes the requested goals", {
   games <- load_games_2006_2025()[season == 2023]
   games[week > 15, result := NA]
@@ -212,6 +272,7 @@ test_that("nfl_clinching_status() checks its arguments", {
   expect_snapshot(error = TRUE, {
     nfl_clinching_status(games, status = "WC", verbosity = "NONE")
     nfl_clinching_status(games, scenarios = NA, verbosity = "NONE")
+    nfl_clinching_status(games, search = "no", verbosity = "NONE")
     nfl_clinching_status(games, "DIV", verbosity = "NONE")
     nfl_clinching_status(games, verbosity = "ALL")
   })
@@ -339,7 +400,7 @@ test_that("scenarios really reach or miss the goal", {
       g <- data.table::copy(season_games)
       g[week > last_week, result := NA]
       scenarios <- attr(
-        clinching_status_compute(g, scenarios = TRUE),
+        clinching_status_compute(g, scenarios = TRUE, search = TRUE),
         "scenarios"
       )
       if (nrow(scenarios) == 0L) {
@@ -434,7 +495,7 @@ test_that("clinched and eliminated teams hold in random completions", {
       for (last_week in 10:16) {
         g <- games[season == season_id]
         g[week > last_week, result := NA]
-        status <- clinching_status_compute(g)
+        status <- clinching_status_compute(g, search = TRUE)
         decided <- data.table::melt(
           status[, list(
             team,

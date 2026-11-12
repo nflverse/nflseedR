@@ -26,6 +26,11 @@
 #'   Only the requested goals are computed. `"PLAYOFFS"` takes the most time.
 #' @param scenarios If `TRUE`, the result gets the attribute `"scenarios"`,
 #'   the results of the remaining games that prove the answers (see Value).
+#' @param search If `TRUE`, answers the proofs leave open are searched by
+#'   fixing the results of remaining games one at a time, within a fixed
+#'   budget (see Details). This decides more teams but takes more time, mostly
+#'   with many games left. With `FALSE` (default), the function says how many
+#'   statuses are `"undecided"` and whether the search might help.
 #' @param verbosity One of `"MIN"`, `"MAX"`, or `"NONE"`.
 #'   - `"MIN"` (default): Prints the main steps.
 #'   - `"MAX"`: Also prints all steps of the tiebreaking process of the
@@ -49,6 +54,11 @@
 #' (see `scenarios`). The function never tries every combination of results,
 #' so a few teams can be `"undecided"`, usually late in the season, when the
 #' answer depends on tiebreakers it can't settle in advance.
+#'
+#' With `search = TRUE`, an open answer is searched further: the function
+#' fixes the result of one remaining game at a time (home win, away win, tie)
+#' and proves the answer for each case, up to 200 cases per answer. This
+#' helps most with 5 or fewer games left per team.
 #'
 #' Tiebreakers through strength of schedule are applied as in
 #' [nfl_standings()]. Coin tosses and tiebreakers based on points can't be
@@ -101,6 +111,7 @@ nfl_clinching_status <- function(
   ...,
   status = c("DIV", "PLAYOFFS", "1SEED"),
   scenarios = FALSE,
+  search = FALSE,
   verbosity = c("MIN", "MAX", "NONE")
 ) {
   rlang::check_dots_empty()
@@ -109,19 +120,53 @@ nfl_clinching_status <- function(
   if (!rlang::is_bool(scenarios)) {
     cli::cli_abort("{.arg scenarios} must be {.code TRUE} or {.code FALSE}.")
   }
+  if (!rlang::is_bool(search)) {
+    cli::cli_abort("{.arg search} must be {.code TRUE} or {.code FALSE}.")
+  }
   if (verbosity != "NONE") {
     report("Compute clinching status")
   }
   status_table <- clinching_status_compute(
     games,
     status = status,
-    scenarios = scenarios
+    scenarios = scenarios,
+    search = search
   )
   out <- clinching_status_standings(games, status_table, verbosity = verbosity)
   if (verbosity == "MAX") {
     clinching_status_report(out)
   }
+  if (!search && verbosity != "NONE") {
+    clinching_status_search_hint(status_table)
+  }
   out
+}
+
+# Games left per team up to which the search decided most open answers
+# (dev/playoff-status.md, milestone 9)
+clinching_status_search_games_left <- 5L
+
+# search = FALSE: a hint if statuses of teams with games left are undecided
+clinching_status_search_hint <- function(status_table) {
+  cols <- intersect(
+    c("div_status", "playoffs_status", "seed1_status"),
+    names(status_table)
+  )
+  open <- status_table[games_left > 0L]
+  undecided <- rowSums(as.matrix(open[, cols, with = FALSE]) == "undecided")
+  n <- sum(undecided)
+  if (n == 0L) {
+    return(invisible())
+  }
+  left <- range(open$games_left[undecided > 0L])
+  left <- if (left[1] == left[2]) left[1] else paste0(left[1], " to ", left[2])
+  max_left <- clinching_status_search_games_left
+  cli::cli_inform(c(
+    "i" = "{n} status{?es} {?is/are} {.val undecided} (teams with {left} \\
+      games left). {.code search = TRUE} might decide {?it/them}.",
+    " " = "The search helps most with {max_left} or fewer games left per \\
+      team."
+  ))
 }
 
 # Current standings (nfl_standings() of the played games) with the columns
@@ -171,6 +216,7 @@ clinching_status_compute <- function(
   games,
   status = c("DIV", "PLAYOFFS", "1SEED"),
   scenarios = FALSE,
+  search = FALSE,
   verify = FALSE,
   call = rlang::caller_env()
 ) {
@@ -203,6 +249,7 @@ clinching_status_compute <- function(
     seeds = clinching_status_seeds(sims, attr(games, "uses_season")),
     goals = c("DIV", "PLAYOFFS", "1SEED") %in% status,
     scenarios = scenarios,
+    search = search,
     verify = verify
   )
 

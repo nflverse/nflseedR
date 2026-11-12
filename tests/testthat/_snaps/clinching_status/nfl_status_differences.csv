@@ -1,12 +1,8 @@
 season,team,goal,ours,nfl,ours_in_nfl_week
-2008,DET,eliminated,12,11,undecided
-2009,KC,eliminated,14,13,undecided
-2011,NO,playoffs,15,14,undecided
 2012,TB,eliminated,16,15,undecided
 2015,SEA,playoffs,16,15,undecided
 2019,NYJ,eliminated,15,14,undecided
-2021,CHI,eliminated,16,15,undecided
 2022,BUF,div,15,16,clinched
 2022,CIN,playoffs,15,16,clinched
-2023,CAR,eliminated,14,13,undecided
-2023,PHI,playoffs,16,15,undecided
+2023,SF,playoffs,15,14,undecided
+2025,LA,playoffs,16,15,undecided
