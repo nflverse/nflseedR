@@ -51,8 +51,10 @@
 #'
 #' Every answer is proven, either by showing that no results of the remaining
 #' games can do it, or by a concrete set of results run through the standings
-#' (see `scenarios`). The function never tries every combination of results,
-#' so a few teams can be `"undecided"`, usually late in the season, when the
+#' (see `scenarios`). Where tiebreakers decide, the function goes through the
+#' ways the teams of the conference can end above, level with or below the
+#' team, and proves who wins each of these ties. It never tries every
+#' combination of results, so a few teams can be `"undecided"` when the
 #' answer depends on tiebreakers it can't settle in advance.
 #'
 #' With `search = TRUE`, an open answer is searched further: the function
@@ -69,9 +71,9 @@
 #' With `sim` instead of `season`, 7 seeds are used.
 #'
 #' The results are compared with the official clinching flags of the NFL for
-#' every week of 2006 to 2025: no status contradicts them, and most teams
-#' clinch or are eliminated in the same week as in the NFL. Some are still
-#' `"undecided"` a week or two longer.
+#' every week of 2006 to 2025: no status contradicts them. With
+#' `search = TRUE`, every team clinches or is eliminated in the same week as
+#' in the NFL. Without it, three teams are `"undecided"` a week longer.
 #'
 #' @return The current standings: the output of [nfl_standings()] for the
 #'   games played so far (with conference ranks and tiebreakers through

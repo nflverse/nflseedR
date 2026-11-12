@@ -25,6 +25,15 @@ struct TieSides {
   TeamMask x_behind = 0;
 };
 
+// Whether X gets a playoff berth when the teams above X and level with X
+// are known (P11)
+enum class TieOutcome : int8_t {
+  kReached,     // in every completion
+  kMissed,      // in every completion
+  kEither,      // not proven
+  kImpossible,  // the level teams can't all end level with X
+};
+
 class TieProof {
  public:
   // X's remaining games are all wins (`x_wins_out`) or all losses, like the
@@ -41,6 +50,23 @@ class TieProof {
   // whenever they are level with X never are in one.
   [[nodiscard]] TieSides division_sides(TeamMask tied);
   [[nodiscard]] TieSides conference_sides(TeamMask tied, bool wild_card);
+
+  // Playoff berth of X in the completions where exactly the teams of `above`
+  // (of X's conference) end with a higher win percentage than X and exactly
+  // the teams of `level` with the same. Follows the procedures: the
+  // divisions rank their level teams, a division without a team above X
+  // gives its first one the title, and the others go through the wild card
+  // picks (one team per division at a time) until X is picked or the wild
+  // cards the teams above X leave are gone. Every pick is a superset
+  // (possible_picks()), so kReached and kMissed are proven.
+  [[nodiscard]] TieOutcome playoff_outcome(TeamMask above, TeamMask level,
+                                           int32_t wild_cards);
+  // The same for the division title: no rival above X, and X is the first
+  // of the level rivals
+  [[nodiscard]] TieOutcome division_outcome(TeamMask above, TeamMask level);
+  // And for the No. 1 seed: no team above X, X wins its division and is
+  // picked first from the level division winners
+  [[nodiscard]] TieOutcome first_seed_outcome(TeamMask above, TeamMask level);
 
  private:
   enum class Procedure : int8_t { kDivision = 0, kConference = 1 };
@@ -175,6 +201,24 @@ class TieProof {
   // with teams of `tied` (and X, if y is a rival)
   [[nodiscard]] bool wins_division_when_level(TeamId y, TeamMask tied);
 
+  // What X can get in playoff_outcome()
+  struct Berth {
+    bool reached = false;
+    bool missed = false;
+  };
+  // The division titles of the level teams, one division of `divisions`
+  // (a team of each) at a time, then the wild card picks from `pool`
+  void division_titles(TeamMask divisions, TeamMask pool, int32_t slots,
+                       Berth& out);
+  // Wild card picks from the level teams left (`pool`, with X) while
+  // `slots` wild cards are left
+  [[nodiscard]] Berth wild_card_picks(TeamMask pool, int32_t slots);
+  // The No. 1 seed from the level division winners: `winners` so far, then
+  // one of each division of `divisions` (a team of each), `level` its teams
+  void first_seed_picks(TeamMask divisions, TeamMask level, TeamMask winners,
+                        Berth& out);
+  [[nodiscard]] static TieOutcome outcome_of(const Berth& berth);
+
   // Every nonempty set of at most one team per division of `teams` outside
   // X's division
   [[nodiscard]] std::vector<TeamMask> representative_sets(TeamMask teams) const;
@@ -205,6 +249,8 @@ class TieProof {
   std::array<std::unordered_map<TeamMask, TeamMask>, 2> picks_cache_{};
   // Results of ranks_ahead() and ranks_behind() per group and rival
   std::array<std::unordered_map<uint64_t, bool>, 2> rank_cache_{};
+  // Results of wild_card_picks() per pool and slots
+  std::unordered_map<uint64_t, Berth> berth_cache_;
 };
 
 }  // namespace nflseedr
