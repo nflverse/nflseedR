@@ -857,6 +857,41 @@ season and reruns the flows and tie proofs, about 15–50 µs. With a budget of
 
 ### Still to do
 
+**Next steps** (2026-11-12, after milestone 9), roughly in order. Details
+in the sections below.
+
+1. **P11, needs the maintainer.** Set constraints for ties where X is
+   "never last" of a group: 2012 TB, 2015 SEA, 2019 NYJ (the search doesn't
+   settle them either), and "a team counts ahead of X only as its division's
+   winner": 2023 SF, 2025 LA. Two designs in
+   [gap 3](#gap-3-xs-position-in-a-tie-handoff), ideas 1 and 2.
+2. **Better search (within P12).** Split on who ends level with X instead
+   of single games (idea 2 as a branching rule), and make a part cheaper:
+   each one rebuilds `Season`, `ScenarioRunner` and both `TieProof`s from
+   scratch (about 15–50 µs). Faster parts would allow a larger budget,
+   which settles 2023 SF at about 5,000 parts. See
+   [results of milestone 9](#results-of-milestone-9).
+3. **Proofs the search covers for now.** Without the search, 2008 DET
+   (tie proofs that know the flow's caps), 2009 KC (SOV in a four-team
+   group) and 2023 CAR (ranges conditioned on the division ranking) stay
+   late. Only worth it if the search stays off by default; each rule fits
+   one case.
+4. **Independent verification.** The random-completion checks missed the
+   wrong 2021 DAL clinch of milestone 8. Comparing with
+   nflplayoffscenarios.com (2021 on) is manual so far; a fixture built from
+   it (like the NFL flags of check 1) would need the maintainer: it's an
+   external site.
+5. **Speed.** Milestone 8 made the late state 36% slower (4.1 → 5.6 ms),
+   1,000 simulated seasons 17% (1.94 → 2.26 s). The search adds much more,
+   but it's off by default. Ideas under "Speed" below.
+6. **Before a release.** `devtools::check()` was clean after milestone 9
+   (2026-11-12: 0 errors, warnings, notes; the tests and examples pass).
+   Still to run: the sanitizer builds
+   (`rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))`, see
+   `dev/cpp-standings-engine.md`). The search recurses once per fixed game
+   (at most the remaining games of a season), so stack depth stays small.
+7. The smaller gaps under "Other gaps, not seen in the NFL comparison".
+
 #### Gap 3: X's position in a tie (handoff)
 
 **Problem.** The max-flow checks take tie results only as per-team sides
@@ -1082,8 +1117,10 @@ those needs a rule that fits one case. Four cases need set reasoning, and
   it for groups without X, so a loose superset there costs proofs.
 
 **Speed.** Milestone 7 made 1,000 simulated seasons 1.8x slower (1.05s →
-1.93s). If that matters: skip the new wild card rules for teams whose side
-the flows don't need, or compute sides lazily from the flows' failing sets.
+1.93s), milestone 8 another 17% (2.26s; the late state 4.1 → 5.6 ms, from
+the enumeration in `lead()`). If that matters: skip the new wild card rules
+for teams whose side the flows don't need, compute sides lazily from the
+flows' failing sets, or cache `lowest_difference()` per pair and group.
 
 ## Milestones
 
