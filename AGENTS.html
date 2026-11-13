@@ -69,7 +69,9 @@
 <li>Only <code>src/bindings.cpp</code> includes R or cpp11 headers. The engine is pure C++.</li>
 <li>Never call the R API while C++ objects with destructors are alive; throw <code>nflseedr::EngineError</code> and use <code>cpp11::check_user_interrupt()</code>.</li>
 <li>No printing, <code>exit()</code>, <code>abort()</code>, <code>rand()</code> or non-portable <code>Makevars</code> flags (CRAN). Random numbers only through <code>nflseedr::RandomSource</code>.</li>
-<li>Run <code>clang-format -i</code> on changed C++ files. Review standings snapshot changes carefully (see <code>dev/cpp-standings-engine.md</code>).</li>
+<li>Write idiomatic, modern C++20 following the C++ Core Guidelines (details in the C++ conventions of <code>dev/cpp-standings-engine.md</code>).</li>
+<li>Run <code>clang-format -i</code> on changed C++ files, then <code>dev/check-cpp.sh</code> (formatting, <code>-Wall -Wextra</code> warnings, clang-tidy with <code>.clang-tidy</code>) and fix everything it reports in code you wrote or changed. Don’t refactor unrelated existing code to satisfy it.</li>
+<li>Review standings snapshot changes carefully (see <code>dev/cpp-standings-engine.md</code>).</li>
 </ul></div>
 </div>
 <div class="section level2">

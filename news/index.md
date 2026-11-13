@@ -12,6 +12,19 @@
   faster.
   [`nflseedR_compute_results()`](https://nflseedr.com/reference/nflseedR_compute_results.md)
   remains the default.
+- Added new experimental function
+  [`nfl_clinching_status()`](https://nflseedr.com/reference/nfl_clinching_status.md).
+  It determines for every team whether it has clinched, is alive in, or
+  has been eliminated from the division title, a playoff berth and the
+  No. 1 seed, given the games played so far. It returns the current
+  standings of
+  [`nfl_standings()`](https://nflseedr.com/reference/nfl_standings.md)
+  with the number of remaining games and the status columns added, and
+  can return the results of the remaining games that prove each answer.
+  With `search = TRUE`, it searches answers its proofs leave open by
+  fixing remaining games, which decides more teams late in the season at
+  the cost of time. It agrees with the official NFL clinching flags of
+  every week of 2006 to 2025.
 - Added new function
   [`nfl_regular_season()`](https://nflseedr.com/reference/nfl_regular_season.md)
   which computes regular season matchups based on previous season

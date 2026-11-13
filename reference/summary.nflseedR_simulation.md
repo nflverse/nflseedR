@@ -40,11 +40,11 @@ sim <- nflseedR::simulate_nfl(
   simulations = 20
 )
 #> Warning: future::availableCores() is deprecated. Please use the identical parallelly::availableCores() instead [pkgdown::build_site_github_pages() -> pkgdown::build_site() -> pkgdown::build_site_local() -> pkgdown::build_reference() -> pkgdown::unwrap_purrr_error() -> base::withCallingHandlers() -> purrr::map() -> purrr::map_() -> purrr::with_indexed_errors() -> base::withCallingHandlers() -> purrr::call_with_cleanup() -> pkgdown::.f() -> base::withCallingHandlers() -> pkgdown::data_reference_topic() -> pkgdown::run_examples() -> pkgdown::highlight_examples() -> downlit::evaluate_and_highlight() -> evaluate::evaluate() -> base::withRestarts() -> withRestartList() -> withOneRestart() -> doWithOneRestart() -> withRestartList() -> withOneRestart() -> doWithOneRestart() -> evaluate::with_handlers() -> base::eval() -> eval() -> base::withCallingHandlers() -> base::withVisible() -> base::eval() -> eval() -> nflseedR::simulate_nfl() -> nflseedR::is_single_digit_numeric() -> future::availableCores()]
-#> ℹ 17:27:01 | Loading games data
-#> ℹ 17:27:01 | Beginning simulation of 20 seasons in 1 round
-#> ℹ 17:27:09 | Combining simulation data
-#> ℹ 17:27:09 | Aggregating across simulations
-#> ℹ 17:27:09 | DONE!
+#> ℹ 08:54:58 | Loading games data
+#> ℹ 08:54:58 | Beginning simulation of 20 seasons in 1 round
+#> ℹ 08:55:07 | Combining simulation data
+#> ℹ 08:55:07 | Aggregating across simulations
+#> ℹ 08:55:07 | DONE!
 
 # Create Summary Tables
 tbl <- summary(sim)

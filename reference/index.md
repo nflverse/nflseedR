@@ -2,11 +2,13 @@
 
 ## Main Functions
 
-Calculate NFL standings (incl. deep tiebreakers) and simulate NFL
-seasons.
+Calculate NFL standings (incl. deep tiebreakers), clinching and
+elimination status, and simulate NFL seasons.
 
 - [`nfl_standings()`](https://nflseedr.com/reference/nfl_standings.md) :
   Compute NFL Standings
+- [`nfl_clinching_status()`](https://nflseedr.com/reference/nfl_clinching_status.md)
+  **\[experimental\]** : Compute NFL Clinching and Elimination Status
 - [`nfl_simulations()`](https://nflseedr.com/reference/nfl_simulations.md)
   : Simulate an NFL Season
 
