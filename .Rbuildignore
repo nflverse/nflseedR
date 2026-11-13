@@ -20,3 +20,4 @@
 ^dev$
 ^\.clang-format$
 ^\.clang-tidy$
+^wasm$
