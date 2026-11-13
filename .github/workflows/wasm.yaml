@@ -1,0 +1,114 @@
+# Build the clinching engine as WebAssembly, test it against fixtures written
+# by R, and publish it as assets of the rolling release `wasm-latest`
+# (pushes to master only). See wasm/README.md and dev/wasm-build.md.
+on:
+  push:
+    branches: [master]
+    paths:
+      - "src/**"
+      - "R/clinching_status.R"
+      - "R/standings*.R"
+      - "wasm/**"
+      - ".github/workflows/wasm.yaml"
+  pull_request:
+    paths:
+      - "src/**"
+      - "R/clinching_status.R"
+      - "R/standings*.R"
+      - "wasm/**"
+      - ".github/workflows/wasm.yaml"
+  workflow_dispatch:
+
+name: wasm
+
+permissions: read-all
+
+env:
+  # Pinned emsdk version, also written to manifest.json
+  EMSDK_VERSION: "4.0.10"
+
+jobs:
+  wasm:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: ${{ env.EMSDK_VERSION }}
+          actions-cache-folder: emsdk-cache
+
+      - name: Build
+        run: wasm/build.sh wasm/dist
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+          extra-packages: any::jsonlite, local::.
+
+      - name: Write fixtures
+        run: Rscript wasm/fixtures/make-fixtures.R wasm/fixtures/json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Test against the R fixtures
+        run: |
+          set -o pipefail
+          node --test --test-reporter=spec wasm/test/clinching.test.mjs | tee test.log
+          {
+            echo '### wasm build'
+            echo '```'
+            ls -l wasm/dist
+            grep -E 'KiB$|ms$' test.log | grep -v -E '^\s*(✔|✖)'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write manifest
+        run: |
+          version=$(grep '^Version:' DESCRIPTION | cut -d ' ' -f 2)
+          cat > wasm/dist/manifest.json <<EOF
+          {
+            "nflseedr_version": "$version",
+            "git_sha": "$GITHUB_SHA",
+            "emsdk_version": "$EMSDK_VERSION"
+          }
+          EOF
+          cat wasm/dist/manifest.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nflseedr-clinching-wasm
+          path: |
+            wasm/dist/clinching.wasm
+            wasm/dist/clinching.js
+            wasm/dist/nflseedr-clinching.js
+            wasm/dist/manifest.json
+
+      - name: Publish to the release wasm-latest
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=wasm-latest
+          if gh release view "$tag" > /dev/null 2>&1; then
+            # Move the tag to this commit
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$tag" \
+              -f sha="$GITHUB_SHA" -F force=true > /dev/null
+          else
+            gh release create "$tag" --target "$GITHUB_SHA" --prerelease \
+              --title "Clinching engine (WebAssembly, rolling)" \
+              --notes "WebAssembly build of nfl_clinching_status(), rebuilt on every push to master that touches the engine. See wasm/README.md and manifest.json for the version."
+          fi
+          gh release upload "$tag" --clobber \
+            wasm/dist/clinching.wasm \
+            wasm/dist/clinching.js \
+            wasm/dist/nflseedr-clinching.js \
+            wasm/dist/manifest.json

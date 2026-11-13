@@ -1,0 +1,9 @@
+{
+  "name": "nflseedr-clinching",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "sh build.sh",
+    "test": "node --test test/clinching.test.mjs"
+  }
+}
