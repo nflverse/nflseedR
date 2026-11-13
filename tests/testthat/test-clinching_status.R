@@ -256,6 +256,20 @@ test_that("only a single season gets the large budget for tie groups", {
   )
 })
 
+test_that("clinches and eliminations hold in completions of every tie group", {
+  games <- load_games_2006_2025()[season == 2021]
+  games[week > 15, result := NA]
+  plain <- clinching_status_compute(games)
+  with_reference_seed(20261113, {
+    checked <- clinching_status_compute(games, group_samples = 4L)
+  })
+  expect_identical(
+    attr(checked, "group_check"),
+    c(complete = 34L, incomplete = 0L)
+  )
+  expect_equal(checked, plain, ignore_attr = "group_check")
+})
+
 test_that("the search settles answers the proofs leave open", {
   # DEN is out of the AFC West race after week 13, which the proofs only
   # show once the search fixes a few games

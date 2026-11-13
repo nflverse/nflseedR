@@ -218,13 +218,18 @@ clinching_status_standings <- function(
 # The work of nfl_clinching_status() after argument checks
 # (dev/playoff-status.md). The C++ engine is in src/status.cpp.
 # `verify = TRUE` (tests) checks every clinch and elimination that needed
-# tie proofs against the engine.
+# tie proofs against the engine. `group_samples` (tests and diagnostics)
+# checks every clinch and elimination without the tie proofs: that many random
+# completions of every tie group at the team's level go through the engine.
+# An error if one contradicts the status; the attribute `"group_check"` counts
+# the checked answers and those where the check ran out of budget.
 clinching_status_compute <- function(
   games,
   status = c("DIV", "PLAYOFFS", "1SEED"),
   scenarios = FALSE,
   search = FALSE,
   verify = FALSE,
+  group_samples = 0L,
   call = rlang::caller_env()
 ) {
   status <- rlang::arg_match(status, multiple = TRUE, error_call = call)
@@ -257,7 +262,8 @@ clinching_status_compute <- function(
     goals = c("DIV", "PLAYOFFS", "1SEED") %in% status,
     scenarios = scenarios,
     search = search,
-    verify = verify
+    verify = verify,
+    group_samples = group_samples
   )
 
   team <- out$team + 1L
@@ -284,6 +290,13 @@ clinching_status_compute <- function(
   }
   status_table <- setDT(cols)
   setorderv(status_table, c(names(cols)[1], "division", "team"))
+  if (group_samples > 0L) {
+    setattr(
+      status_table,
+      "group_check",
+      c(complete = out$group_checks, incomplete = out$group_checks_incomplete)
+    )
+  }
   if (!scenarios) {
     return(status_table[])
   }
