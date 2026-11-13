@@ -231,15 +231,15 @@ sim <- nflseedR::simulate_nfl(
 # Overview output
 dplyr::glimpse(sim)
 })
-#> ℹ 19:22:28 | Loading games data
+#> ℹ 19:49:21 | Loading games data
 #> ℹ Computation in multiple rounds can be accelerated with parallel processing.
 #> ℹ You should consider calling a `future::plan()`. Please see the function
 #>   documentation for further information.
 #> ℹ Will go on sequentially...
-#> ℹ 19:22:28 | Beginning simulation of 4 seasons in 2 rounds
-#> ℹ 19:22:36 | Combining simulation data
-#> ℹ 19:22:36 | Aggregating across simulations
-#> ℹ 19:22:36 | DONE!
+#> ℹ 19:49:21 | Beginning simulation of 4 seasons in 2 rounds
+#> ℹ 19:49:26 | Combining simulation data
+#> ℹ 19:49:26 | Aggregating across simulations
+#> ℹ 19:49:26 | DONE!
 #> List of 6
 #>  $ teams       :Classes ‘data.table’ and 'data.frame':   128 obs. of  18 variables:
 #>   ..$ sim        : num [1:128] 1 1 1 1 1 1 1 1 1 1 ...
@@ -260,7 +260,7 @@ dplyr::glimpse(sim)
 #>   ..$ seed       : num [1:128] NA 4 NA NA 7 NA 2 NA 3 NA ...
 #>   ..$ exit       : num [1:128] 17 18 17 17 18 17 20 17 19 17 ...
 #>   ..$ draft_order: num [1:128] 1 19 17 6 20 14 30 7 25 9 ...
-#>   ..- attr(*, ".internal.selfref")=<pointer: 0x5b0e211be580> 
+#>   ..- attr(*, ".internal.selfref")=<pointer: 0x5cc24bc65580> 
 #>  $ games       :Classes ‘data.table’ and 'data.frame':   1076 obs. of  9 variables:
 #>   ..$ sim      : num [1:1076] 1 2 1 2 1 2 1 2 1 2 ...
 #>   ..$ game_type: chr [1:1076] "REG" "REG" "REG" "REG" ...
@@ -271,7 +271,7 @@ dplyr::glimpse(sim)
 #>   ..$ home_rest: num [1:1076] 7 7 7 7 7 7 7 7 7 7 ...
 #>   ..$ location : chr [1:1076] "Home" "Home" "Home" "Home" ...
 #>   ..$ result   : int [1:1076] 4 -25 24 -7 -22 19 -4 14 -12 -12 ...
-#>   ..- attr(*, ".internal.selfref")=<pointer: 0x5b0e211be580> 
+#>   ..- attr(*, ".internal.selfref")=<pointer: 0x5cc24bc65580> 
 #>  $ overall     : tibble [32 × 11] (S3: tbl_df/tbl/data.frame)
 #>   ..$ conf    : chr [1:32] "AFC" "AFC" "AFC" "AFC" ...
 #>   ..$ division: chr [1:32] "AFC East" "AFC East" "AFC East" "AFC East" ...
@@ -316,7 +316,7 @@ dplyr::glimpse(sim)
 #>   ..$ sim_include     : chr "DRAFT"
 #>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1
 #>   .. ..$ : int [1:4] 2 0 2 9005
-#>   ..$ finished_at     : POSIXct[1:1], format: "2026-11-13 19:22:36"
+#>   ..$ finished_at     : POSIXct[1:1], format: "2026-11-13 19:49:26"
 #>  - attr(*, "class")= chr "nflseedR_simulation"
 # }
 ```
