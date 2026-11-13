@@ -56,23 +56,26 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
-      # magick (needed by nflplotR in Suggests) is built from source. In the
-      # clang containers it links a static ImageMagick that needs fontconfig,
-      # which the system requirements of magick don't install.
-      - name: Install fontconfig for magick
-        run: |
-          if command -v apt-get > /dev/null; then
-            apt-get update && apt-get install -y libfontconfig1-dev
-          fi
-        shell: bash
+      # nflplotR (Suggests) is left out: it needs magick, which is built from
+      # source in the containers and doesn't load there (its static
+      # ImageMagick needs `xmlNanoFTPInit`, which the libxml2 of the
+      # containers no longer has). So only the hard dependencies and the
+      # other suggested packages are installed. nflplotR is only used by the
+      # pure R function `nfl_standings_prettify()`.
       - uses: r-hub/actions/setup-deps@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
+          dependencies: '"hard"'
+          extra-packages: >-
+            any::rcmdcheck, any::gt, any::knitr, any::rmarkdown, any::scales,
+            any::testthat, any::withr
       - uses: r-hub/actions/run-check@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
+        env:
+          _R_CHECK_FORCE_SUGGESTS_: false
 
   other-platforms:
     needs: setup

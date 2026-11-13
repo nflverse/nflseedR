@@ -1242,7 +1242,10 @@ roughly in order.
    starts them. The first run (2026-11-13) stopped before the check: magick
    (needed by nflplotR in Suggests) is built from source there and its
    static ImageMagick didn't find fontconfig (`cannot find -lfontconfig`).
-   `.github/workflows/rhub.yaml` now installs `libfontconfig1-dev` first;
+   Installing `libfontconfig1-dev` first got past that, but magick then
+   didn't load (`undefined symbol: xmlNanoFTPInit`). The container jobs of
+   `.github/workflows/rhub.yaml` now leave nflplotR out (hard dependencies
+   plus the other suggested packages, `_R_CHECK_FORCE_SUGGESTS_=false`);
    not run again yet.
 5. The smaller gaps under "Other gaps, not seen in the NFL comparison".
 
