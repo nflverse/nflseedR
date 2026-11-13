@@ -31,6 +31,16 @@ record the answer in the decision log.
 - Review standings snapshot changes carefully (see
   `dev/cpp-standings-engine.md`).
 
+### WebAssembly build (`wasm/`)
+
+`.github/workflows/wasm.yaml` builds the clinching engine with
+Emscripten for static web apps and tests it against fixtures written by
+R. `wasm/` is in `.Rbuildignore`, not part of the package. Its JS
+wrapper ports R code around the engine (`clinching_status_compute()` and
+helpers): when you change those, or the interface of
+`compute_clinching_status()`, update `wasm/` too. Details in
+`dev/wasm-build.md`.
+
 ## Package development
 
 ### Key commands

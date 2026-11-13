@@ -73,6 +73,10 @@
 <li>Run <code>clang-format -i</code> on changed C++ files, then <code>dev/check-cpp.sh</code> (formatting, <code>-Wall -Wextra</code> warnings, clang-tidy with <code>.clang-tidy</code>) and fix everything it reports in code you wrote or changed. Don’t refactor unrelated existing code to satisfy it.</li>
 <li>Review standings snapshot changes carefully (see <code>dev/cpp-standings-engine.md</code>).</li>
 </ul></div>
+<div class="section level3">
+<h3 id="webassembly-build-wasm">WebAssembly build (<code>wasm/</code>)<a class="anchor" aria-label="anchor" href="#webassembly-build-wasm"></a></h3>
+<p><code>.github/workflows/wasm.yaml</code> builds the clinching engine with Emscripten for static web apps and tests it against fixtures written by R. <code>wasm/</code> is in <code>.Rbuildignore</code>, not part of the package. Its JS wrapper ports R code around the engine (<code>clinching_status_compute()</code> and helpers): when you change those, or the interface of <code>compute_clinching_status()</code>, update <code>wasm/</code> too. Details in <code>dev/wasm-build.md</code>.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="package-development">Package development<a class="anchor" aria-label="anchor" href="#package-development"></a></h2>
