@@ -8,7 +8,8 @@ done** (2026-11-11), milestone 6 (tighter tie proofs) partly done, milestone 7
 per-team part) done (2026-11-12), milestone 9 (budgeted search, off by
 default) done (2026-11-12), milestone 10 (tie groups at X's level, P11) done
 (2026-11-12), milestone 11 (tie group ranges that know every team's side,
-P13) done (2026-11-13): exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
+P13) done (2026-11-13), milestone 12 (larger tie group budgets for a single
+season, P14) done (2026-11-13): exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
 
@@ -1051,8 +1052,9 @@ statuses changed):
   earlier. One test for each.
 - Check 1 with `search = FALSE`: 2024 PHI matches the NFL; 2008 DET and
   2023 CAR (eliminated) stay one week late.
-- No week of 2006–2025 needs the pooled head-to-head, so it has no test:
-  with the current budgets it only shows in the week 10 results above.
+- No week of 2006–2025 needs the pooled head-to-head: with the budgets of
+  milestone 10 it only shows in the week 10 results above. Its test came
+  with the budgets of milestone 12.
 - Checks 2–5, the self-check and the test suite (`clinching_status`) pass.
   `dev/check-cpp.sh` reports nothing in the changed code.
 
@@ -1063,6 +1065,69 @@ Benchmark (`data-raw/bench_clinching_status.R`, same session):
 | every week of 2006–2025 | 1.66s | 1.80s |
 | 2023 after week 15, all goals | 8.0ms | 8.6ms |
 | 1,000 simulated seasons after week 12 | 3.54s | 4.28s |
+
+### Results of milestone 12
+
+P14: with a single season in the input, the tie groups get 20,000 flows per
+question and no cap on the groups that stay open (`kSingleSeasonBudgets` in
+`src/status.cpp`, chosen in `compute_clinching_status()` by the number of
+seasons). More seasons and the parts of the search keep 200 flows (2,000
+for teams with 4 or fewer games left) and 16 open groups. 20,000 is where
+the table of milestone 11 levels off; both limits matter (the flows for the
+eliminations, the open groups for the alive answers).
+
+The 60 sampled week 10 results of 2026 (30 site eliminated, 30 not; all
+undecided before milestone 11), all goals, optimized build:
+
+| | eliminated | alive | median | max |
+|---|---|---|---|---|
+| `search = FALSE` | 16 of 30 | 20 of 30 | 0.07s | 0.40s |
+| `search = TRUE` | 16 of 30 | 21 of 30 | 0.09s | 0.46s |
+
+Every week of 2006–2025, one call each: median 5ms, 99% below 0.17s, at
+most 0.34s (0.38s with the search). Much less than the upper bounds of
+milestone 11, because the context only runs for open groups now.
+
+Compared with milestone 10 on every week of 2006–2025 (only undecided
+statuses changed; this includes milestone 11):
+
+| undecided team-weeks | division | playoffs | No. 1 seed |
+|---|---|---|---|
+| milestone 10, `search = FALSE` | 12 | 19 | 62 |
+| now, `search = FALSE` | 11 | 13 | 31 |
+| milestone 10, `search = TRUE` | 0 | 4 | 27 |
+| now, `search = TRUE` | 0 | 3 | 13 |
+
+- Check 1 is now the same with and without the search: no later cases
+  (division 159 same, playoffs 251, eliminated 388, No. 1 seed 40; earlier
+  only BUF/CIN 2022). 2008 DET and 2023 CAR are eliminated in the NFL's
+  week without the search.
+- Newly decided on top of milestone 11, with and without the search: out of
+  the No. 1 seed race 2010 SF after week 12, 2024 LV and 2024 NYG after
+  week 11. Each held in 8,000 completions with X winning out, random team
+  strengths and 6% tie games, but that check is weak here: it finds no
+  violation a week earlier either. Independent answers: the code of
+  milestone 10 says the same for SF with a search of 5 million parts (19s;
+  LV stays undecided there after 11 minutes), and nflplayoffscenarios.com
+  has LV and NYG alive for the 1 seed entering week 11 of 2024 and out
+  entering week 12.
+- On top of `search = FALSE`, the search now only decides one team-week
+  (2017 DEN, division, after week 13) and two for the No. 1 seed (2015 PIT
+  after week 14, 2025 PHI after week 16); the rest it settles are alive.
+  The two search tests use 2017 DEN now (2023 CAR no longer needs the
+  search).
+- New fixture `tests/testthat/games_2026_week_9.rds` (2026 through week 9)
+  with `games_2026_week_10()`: a test for the pooled head-to-head (LAC,
+  site scenario 11) and one that two seasons keep the small budgets.
+- Checks 2–5, the self-check and the full test suite pass.
+
+Benchmark (`data-raw/bench_clinching_status.R`, same session):
+
+| case | milestone 11 | milestone 12 |
+|---|---|---|
+| every week of 2006–2025 | 1.80s | 4.02s |
+| 2023 after week 15, all goals | 8.6ms | 17.0ms |
+| 1,000 simulated seasons after week 12 | 4.28s | 4.33s |
 
 ### Still to do
 
@@ -1094,12 +1159,9 @@ Benchmark (`data-raw/bench_clinching_status.R`, same session):
    prune for
    teams X always ranks behind (`conference_sides()`), which would save
    most of the flows there.
-   After milestone 11 (the ranges know every team's side), two things are
-   open and need the maintainer:
-   - *Budgets.* Early No. 1 seed questions need about 20,000 flows and no
-     cap on open groups (table in the results of milestone 11). That costs
-     up to 3–4s on a single-season call and much more on many simulated
-     seasons, so it could apply to single-season input only.
+   After milestone 11 (the ranges know every team's side), this is
+   open and needs the maintainer:
+   - *Budgets.* Done for a single season (milestone 12, P14).
    - *Propagation.* Bounds on every pair's open games, tightened to a fixed
      point from the teams' sides, and constraints from the steps a group
      passed (all level in head-to-head means everyone is at .500 there).
@@ -1392,6 +1454,8 @@ flows' failing sets, or cache `lowest_difference()` per pair and group.
 11. Tie group ranges that know every team's side, and pooled head-to-head
     (P13). **Done** (2026-11-13), see
     [results of milestone 11](#results-of-milestone-11).
+12. Larger tie group budgets for a single season (P14). **Done**
+    (2026-11-13), see [results of milestone 12](#results-of-milestone-12).
 
 ## Decisions
 
@@ -1484,5 +1548,13 @@ scenarios of nflplayoffscenarios.com (2026 LAC, No. 1 seed): in a tie group
 the ranges may use which teams end above, level with and below X, and the
 head-to-head step may use that the games among the tied teams hand out a
 fixed number of wins. In the clinching code only. Done as
-[milestone 11](#results-of-milestone-11). Not decided: higher budgets for
-the tie groups and chained conclusions across steps (propagation).
+[milestone 11](#results-of-milestone-11). Not decided: chained conclusions
+across steps (propagation).
+
+**P14 Tie group budgets. Decided by the maintainer (2026-11-13):** 20,000
+flows per question and no cap on open groups, only when the input holds a
+single season. More seasons (simulations) and the parts of the search keep
+the budgets of milestone 10: the budget is per team and question, so many
+seasons would take too long, and the maintainer only runs single seasons.
+No argument for it. Done as
+[milestone 12](#results-of-milestone-12).
