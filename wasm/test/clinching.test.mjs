@@ -19,7 +19,7 @@ const fixtures = readdirSync(fixtureDir)
   .sort()
   .map((f) => JSON.parse(readFileSync(join(fixtureDir, f), "utf8")));
 
-const { createClinchingEngine, TEAMS } = await import(
+const { createClinchingEngine, standingsLabel, TEAMS } = await import(
   pathToFileURL(join(dist, "nflseedr-clinching.js")).href
 );
 let engine;
@@ -57,6 +57,47 @@ test("built-in teams match the teams in the fixtures", () => {
     const t = teams.get(row.team);
     assert.deepEqual([t.conf, t.division], [row.conf, row.division]);
   }
+});
+
+// standings_labels() in R/standings_cpp.R; the fixtures don't cover every step
+test("tiebreaker labels decode like standings_labels()", () => {
+  assert.equal(standingsLabel(-1, "div"), null);
+  assert.equal(standingsLabel(12, "div"), "Head-To-Head Win PCT (2)");
+  assert.equal(standingsLabel(23, "div"), "Head-To-Head (3)");
+  assert.equal(standingsLabel(23, "conf"), "Head-To-Head Sweep (3)");
+  assert.equal(standingsLabel(72, "conf"), "SOS (2)");
+  assert.equal(standingsLabel(122, "div"), "Point Differential (2)");
+  assert.equal(standingsLabel(122, "conf"), "League Point Differential (2)");
+  assert.equal(standingsLabel(130, "conf"), "Coin Toss");
+  assert.equal(standingsLabel(140, "conf"), "Division Tiebreaker");
+  assert.equal(standingsLabel(150, "draft"), "Conference Tiebreaker");
+});
+
+test("teams without a played game have no ranks", () => {
+  const games = fixtures[0].games.map((g) => ({ ...g, result: null }));
+  const { status } = engine.clinchingStatus({ games });
+  assert.equal(status.length, 32);
+  for (const row of status) {
+    assert.deepEqual(
+      [row.div_rank, row.conf_rank, row.div_tie_broken_by],
+      [null, null, null],
+    );
+  }
+  const order = status.map((r) => `${r.division} ${r.team}`);
+  assert.deepEqual(order, [...order].sort());
+});
+
+test("the same seed gives the same coin tosses", () => {
+  // Week 1 of 2024: many ties that only a coin toss breaks
+  const games = fixtures
+    .find((f) => f.name === "2024-week-15")
+    .games.map((g) => ({ ...g, result: g.week === 1 ? g.result : null }));
+  const ranks = (seed) =>
+    engine
+      .clinchingStatus({ games, status: ["DIV"], seed })
+      .status.map((r) => [r.team, r.conf_rank, r.conf_tie_broken_by]);
+  assert.deepEqual(ranks(1), ranks(1));
+  assert.ok(ranks(1).some(([, , label]) => label === "Coin Toss"));
 });
 
 test("errors become JS errors", () => {

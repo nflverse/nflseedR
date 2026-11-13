@@ -1,7 +1,8 @@
 # Clinching engine as WebAssembly
 
 The C++ engine behind `nfl_clinching_status()` built with Emscripten, so a
-static web app can compute clinching and elimination status in the browser
+static web app can compute clinching and elimination status, and the
+division and conference ranks of the current standings, in the browser
 without R. Not part of the R package (`.Rbuildignore`).
 
 ## Download
@@ -51,22 +52,38 @@ const { status, scenarios } = engine.clinchingStatus({
   status: ["DIV", "PLAYOFFS", "1SEED"], // default: all three
   scenarios: false,                     // default
   search: false,                        // default
+  // seed: 42,                          // coin tosses; default: random
   // teams: [{ team, conf, division }]  // default: the 32 current teams
 });
 ```
 
-`status` has one row per season and team, sorted by season, division and
-team, like the internal `clinching_status_compute()` (the table
-`nfl_clinching_status()` adds to the standings):
+`status` has one row per season and team, sorted by season, division,
+division rank and team like `nfl_clinching_status()`. It has the columns of
+the internal `clinching_status_compute()` (the table `nfl_clinching_status()`
+adds to the standings) and the ranks of the standings:
 
 ```js
 { season: 2024, team: "BUF", conf: "AFC", division: "AFC East",
   wins: 11, losses: 3, ties: 0, games_left: 3,
-  div_status: "clinched", playoffs_status: "clinched", seed1_status: "alive" }
+  div_status: "clinched", playoffs_status: "clinched", seed1_status: "alive",
+  div_rank: 1, div_tie_broken_by: null,
+  conf_rank: 2, conf_tie_broken_by: null }
 ```
 
 Each status is `"clinched"`, `"alive"`, `"eliminated"` or `"undecided"`;
-only requested goals get a column. With `scenarios: true`, `scenarios` holds
+only requested goals get a column. `wins` counts only wins (in R,
+`nfl_clinching_status()` has the `wins` of `nfl_standings()`, where a tie
+counts as half a win).
+
+The ranks are those of `nfl_clinching_status()`: `nfl_standings()` of the
+played games with conference ranks and tiebreakers through SOS.
+`div_rank` (1–4) and `conf_rank` (1–16; division winners 1–4) are numbers,
+`div_tie_broken_by` and `conf_tie_broken_by` the tiebreaker that decided the
+rank, such as `"SOV (2)"` (2 tied teams), or `null` if the team wasn't in a
+tie. A tie that SOS doesn't break is a coin toss (`"Coin Toss"`), drawn with
+`seed` (a random seed by default); the same seed gives the same coin tosses,
+but not those of R. Teams without a played game have `null` ranks and come
+last in their division (R has no row for them). With `scenarios: true`, `scenarios` holds
 the rows of the `"scenarios"` attribute in R (one row per scenario and
 remaining game, with the results that prove the answer), otherwise it is
 `null`. Use `sim` instead of `season` for simulated seasons (always 7 seeds).

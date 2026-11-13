@@ -1,5 +1,6 @@
 // nflseedR clinching engine in the browser: a thin wrapper around the
-// WebAssembly build of compute_clinching_status() (src/engine/status.hpp).
+// WebAssembly build of compute_clinching_status() (src/engine/status.hpp)
+// and compute_standings() (src/engine/engine.hpp).
 // It ports the R code around the engine in R/clinching_status.R and
 // R/standings_*.R. Each ported piece names the R function it mirrors; keep
 // them in sync. See wasm/README.md.
@@ -30,7 +31,16 @@ const COLUMNS = {
   scenario_proves: 12,
   scenario_coin_toss: 13,
   scenario_result: 14,
+  standings_sim: 15,
+  standings_team: 16,
+  div_rank: 17,
+  div_label: 18,
+  conf_rank: 19,
+  conf_label: 20,
 };
+
+// kMissing of src/engine/types.hpp
+const MISSING = -1;
 
 // The 32 teams of nflseedR::divisions without LAR, OAK, SD and STL
 // (standings_league_build())
@@ -116,6 +126,34 @@ function statusLabel(code) {
   return ["clinched", "alive", "eliminated", "undecided"][code - 1] ?? null;
 }
 
+// standings_labels(): label codes of the standings engine (step * 10 +
+// number of tied teams, step ids in src/engine/types.hpp) as text
+const LABEL_STEPS = {
+  1: "Head-To-Head Win PCT",
+  2: { conf: "Head-To-Head Sweep", other: "Head-To-Head" },
+  3: "Division Win PCT",
+  4: "Common Games Win PCT",
+  5: "Conference Win PCT",
+  6: "SOV",
+  7: "SOS",
+  8: "Conference Points Rank",
+  9: "League Points Rank",
+  10: "Common Games Point Differential",
+  11: "Conference Point Differential",
+  12: { conf: "League Point Differential", other: "Point Differential" },
+  13: "Coin Toss",
+  14: "Division Tiebreaker",
+  15: "Conference Tiebreaker",
+};
+export function standingsLabel(code, procedure) {
+  if (code === MISSING) return null;
+  let step = LABEL_STEPS[Math.floor(code / 10)];
+  if (typeof step === "object") step = step[procedure] ?? step.other;
+  if (step === undefined) return null;
+  const n = code % 10;
+  return n > 0 ? `${step} (${n})` : step;
+}
+
 // standings_encode_games(): the season id, game type, away and home team of
 // `n` games as four blocks in one array, plus the results
 function encodeGames(rows, id, sims, teamIds, placeholder) {
@@ -153,7 +191,7 @@ export async function createClinchingEngine(moduleOptions = {}) {
   }
 
   // clinching_status_cpp() in src/bindings.cpp
-  function run(played, remaining, nSims, league, seeds, goals, opts) {
+  function run(played, remaining, nSims, league, seeds, goals, opts, seed) {
     try {
       const leagueIds = Int32Array.from([
         ...league.map((t) => t.division_id),
@@ -172,6 +210,7 @@ export async function createClinchingEngine(moduleOptions = {}) {
         goals.reduce((bits, on, g) => bits | (on ? 1 << g : 0), 0),
         opts.scenarios ? 1 : 0,
         opts.search ? 1 : 0,
+        seed | 0,
       );
       try {
         const error = mod.UTF8ToString(mod._nflseedr_error(handle));
@@ -212,15 +251,34 @@ export async function createClinchingEngine(moduleOptions = {}) {
     return scenarios;
   }
 
-  // nfl_clinching_status() / clinching_status_compute(): one row per season
-  // and team (all teams with a played or remaining game), sorted by season,
-  // division and team
+  // clinching_status_standings(): division and conference ranks of the
+  // standings of the played games, with their tiebreakers, by season id and
+  // team id
+  function standingsByTeam(out) {
+    const byTeam = new Map();
+    out.standings_sim.forEach((simId, i) => {
+      const rank = (r) => (r === MISSING ? null : r);
+      byTeam.set(`${simId}:${out.standings_team[i]}`, {
+        div_rank: rank(out.div_rank[i]),
+        div_tie_broken_by: standingsLabel(out.div_label[i], "div"),
+        conf_rank: rank(out.conf_rank[i]),
+        conf_tie_broken_by: standingsLabel(out.conf_label[i], "conf"),
+      });
+    });
+    return byTeam;
+  }
+
+  // nfl_clinching_status(): clinching_status_compute() plus the ranks of
+  // clinching_status_standings(). One row per season and team (all teams
+  // with a played or remaining game), sorted by season, division, division
+  // rank and team
   function clinchingStatus({
     games,
     teams = TEAMS,
     status = GOALS,
     scenarios = false,
     search = false,
+    seed = Math.floor(Math.random() * 2 ** 32),
   }) {
     const unknown = status.filter((s) => !GOALS.includes(s));
     if (status.length === 0 || unknown.length > 0) {
@@ -249,7 +307,16 @@ export async function createClinchingEngine(moduleOptions = {}) {
       clinchingStatusSeeds(sims, id === "season"),
       GOALS.map((g) => status.includes(g)),
       { scenarios, search },
+      seed,
     );
+    const ranks = standingsByTeam(out);
+    // Teams without a played game have no standings (and no row in R)
+    const noRanks = {
+      div_rank: null,
+      div_tie_broken_by: null,
+      conf_rank: null,
+      conf_tie_broken_by: null,
+    };
 
     const table = out.sim.map((simId, i) => {
       const team = league[out.team[i]];
@@ -268,12 +335,16 @@ export async function createClinchingEngine(moduleOptions = {}) {
           row[STATUS_COLUMNS[g]] = statusLabel(out[STATUS_COLUMNS[g]][i]);
         }
       });
-      return row;
+      return { ...row, ...(ranks.get(`${simId}:${out.team[i]}`) ?? noRanks) };
     });
+    // Like nfl_standings(); teams without a rank last in their division
+    // (NaN when both are missing: equal)
+    const byRank = (a, b) => (a ?? Infinity) - (b ?? Infinity) || 0;
     table.sort(
       (a, b) =>
         a[id] - b[id] ||
         byString(a.division, b.division) ||
+        byRank(a.div_rank, b.div_rank) ||
         byString(a.team, b.team),
     );
     return {

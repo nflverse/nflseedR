@@ -1,6 +1,8 @@
 # Fixtures for the Node tests of the wasm build (wasm/test): input games and
-# the expected output of clinching_status_compute(), the table behind
-# nfl_clinching_status(), as JSON.
+# the expected output as JSON. The status table is that of
+# clinching_status_compute() (the table behind nfl_clinching_status()) with
+# the ranks and tiebreakers of nfl_clinching_status() added, in the row order
+# of nfl_clinching_status().
 #
 # Usage (from the package root, with nflseedR installed or loaded):
 #   Rscript wasm/fixtures/make-fixtures.R [out_dir]   (default: wasm/fixtures/json)
@@ -66,13 +68,39 @@ for (f in fixtures) {
     search = options$search
   )
   scenarios <- attr(status, "scenarios")
+  # Ranks of the current standings, in the row order of nfl_clinching_status()
+  id <- names(status)[1]
+  rank_cols <- c(
+    "div_rank",
+    "div_tie_broken_by",
+    "conf_rank",
+    "conf_tie_broken_by"
+  )
+  standings <- as.data.frame(nflseedR::nfl_clinching_status(
+    f$games,
+    status = options$status,
+    verbosity = "NONE"
+  ))
+  # Coin tosses are random in R and in the wasm build
+  labels <- c(standings$div_tie_broken_by, standings$conf_tie_broken_by)
+  if ("Coin Toss" %in% labels) {
+    stop(f$name, ": a coin toss decides a rank, use other games")
+  }
+  stopifnot(nrow(standings) == nrow(status))
+  status <- as.data.frame(status)
+  rows <- match(
+    paste(standings[[id]], standings$team),
+    paste(status[[id]], status$team)
+  )
+  status <- cbind(status[rows, ], standings[rank_cols])
+  rownames(status) <- NULL
   json <- list(
     name = f$name,
     nflseedr_version = as.character(utils::packageVersion("nflseedR")),
     options = options,
     games = f$games,
     expected = list(
-      status = as.data.frame(status),
+      status = status,
       scenarios = if (is.null(scenarios)) NULL else as.data.frame(scenarios)
     )
   )
