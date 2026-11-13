@@ -1245,8 +1245,12 @@ roughly in order.
    Installing `libfontconfig1-dev` first got past that, but magick then
    didn't load (`undefined symbol: xmlNanoFTPInit`). The container jobs of
    `.github/workflows/rhub.yaml` now leave nflplotR out (hard dependencies
-   plus the other suggested packages, `_R_CHECK_FORCE_SUGGESTS_=false`);
-   not run again yet.
+   plus the other suggested packages, `_R_CHECK_FORCE_SUGGESTS_=false`).
+   With that, clang-asan passed and clang-ubsan reported
+   `store to misaligned address 0x000000000001` in `results_to_r()` and
+   `to_r()` of `src/bindings.cpp`: an empty vector was copied to the data
+   pointer of a zero-length R vector. Both now skip the copy if the vector
+   is empty.
 5. The smaller gaps under "Other gaps, not seen in the NFL comparison".
 
 #### Gap 3: X's position in a tie (handoff)
