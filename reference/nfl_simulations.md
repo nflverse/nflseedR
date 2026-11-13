@@ -305,20 +305,20 @@ sim <- nflseedR::nfl_simulations(
 #>   documentation for further information.
 #> ℹ Will go on sequentially...
 #> This message is displayed once every 8 hours.
-#> ℹ 19:59:30 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
-#> ℹ 19:59:30 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 20:09:48 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
+#> ℹ 20:09:48 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 19:59:30 | Compute standings
-#> ℹ 19:59:30 | CHUNK #1: Start simulation of post season weeks "WC" and "SB"
-#> ℹ 19:59:30 | Compute Draft Order
-#> ℹ 19:59:30 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 20:09:48 | Compute standings
+#> ℹ 20:09:48 | CHUNK #1: Start simulation of post season weeks "WC" and "SB"
+#> ℹ 20:09:48 | Compute Draft Order
+#> ℹ 20:09:48 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 19:59:30 | Compute standings
-#> ℹ 19:59:30 | CHUNK #2: Start simulation of post season weeks "WC" and "SB"
-#> ℹ 19:59:30 | Compute Draft Order
-#> ℹ 19:59:30 | Combine simulation data
-#> ℹ 19:59:30 | Aggregate across simulations
-#> ℹ 19:59:30 | DONE!
+#> ℹ 20:09:48 | Compute standings
+#> ℹ 20:09:48 | CHUNK #2: Start simulation of post season weeks "WC" and "SB"
+#> ℹ 20:09:48 | Compute Draft Order
+#> ℹ 20:09:48 | Combine simulation data
+#> ℹ 20:09:48 | Aggregate across simulations
+#> ℹ 20:09:48 | DONE!
 
 # Overview output
 str(sim, max.level = 3)
@@ -398,7 +398,7 @@ str(sim, max.level = 3)
 #>   ..$ verbosity       : chr "MIN"
 #>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1
 #>   .. ..$ : int [1:4] 2 0 2 9005
-#>   ..$ finished_at     : POSIXct[1:1], format: "2026-11-13 19:59:30"
+#>   ..$ finished_at     : POSIXct[1:1], format: "2026-11-13 20:09:48"
 #>  - attr(*, "class")= chr "nflseedR_simulation"
 # }
 ```
