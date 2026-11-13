@@ -1230,8 +1230,8 @@ roughly in order.
    since the budgets of milestone 12 (1.80s before); the simulated seasons
    are 53% slower since milestone 10. If that matters, lower the 200 flows
    per question (most settled questions need 50).
-4. **Before a release.** `devtools::check()` was last clean after milestone
-   10 (2026-11-12: 0 errors, warnings, notes); run it again.
+4. **Before a release.** `devtools::check()` is clean with the group check
+   (2026-11-13: 0 errors, warnings, notes).
    `dev/sanitize-cpp.sh` runs the clinching engine without R under ASan and
    UBSan (every week of 2006–2025 and 300 seasons with random results, with
    and without the search, scenarios, self-check and group check on).
