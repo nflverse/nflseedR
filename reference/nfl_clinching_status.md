@@ -138,10 +138,16 @@ coin toss decides after the last game is `"undecided"`.
 Seasons through 2019 have 6 playoff seeds per conference, later seasons
 7. With `sim` instead of `season`, 7 seeds are used.
 
+With a single season in `games`, the function puts more effort into ties
+of many teams (mostly for the No. 1 seed with many games left), which
+can take a few seconds. With more than one season, e.g. simulated
+seasons, it gives up on them earlier, so more statuses are
+`"undecided"`.
+
 The results are compared with the official clinching flags of the NFL
-for every week of 2006 to 2025: no status contradicts them. With
-`search = TRUE`, every team clinches or is eliminated in the same week
-as in the NFL. Without it, three teams are `"undecided"` a week longer.
+for every week of 2006 to 2025, one season at a time: no status
+contradicts them, and every team clinches or is eliminated in the same
+week as in the NFL, with and without `search`.
 
 ## See also
 
@@ -158,8 +164,8 @@ try({#to avoid CRAN test problems
 # Status after week 15
 games$result[games$week > 15] <- NA
 status <- nflseedR::nfl_clinching_status(games)
-#> ℹ 08:54:43 | Compute clinching status
-#> ℹ 08:54:43 | Compute standings
+#> ℹ 12:14:30 | Compute clinching status
+#> ℹ 12:14:30 | Compute standings
 #> ℹ 3 statuses are "undecided" (teams with 3 games left). `search = TRUE` might
 #>   decide them.
 #>   The search helps most with 5 or fewer games left per team.

@@ -13,7 +13,7 @@ given the games played so far."><meta property="og:image" content="https://nflse
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -170,10 +170,14 @@ known before they happen, so both of their outcomes count as possible. A
 goal that only a coin toss decides after the last game is <code>"undecided"</code>.</p>
 <p>Seasons through 2019 have 6 playoff seeds per conference, later seasons 7.
 With <code>sim</code> instead of <code>season</code>, 7 seeds are used.</p>
+<p>With a single season in <code>games</code>, the function puts more effort into ties
+of many teams (mostly for the No. 1 seed with many games left), which can
+take a few seconds. With more than one season, e.g. simulated seasons, it
+gives up on them earlier, so more statuses are <code>"undecided"</code>.</p>
 <p>The results are compared with the official clinching flags of the NFL for
-every week of 2006 to 2025: no status contradicts them. With
-<code>search = TRUE</code>, every team clinches or is eliminated in the same week as
-in the NFL. Without it, three teams are <code>"undecided"</code> a week longer.</p>
+every week of 2006 to 2025, one season at a time: no status contradicts
+them, and every team clinches or is eliminated in the same week as in the
+NFL, with and without <code>search</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -190,8 +194,8 @@ in the NFL. Without it, three teams are <code>"undecided"</code> a week longer.<
 <span class="r-in"><span><span class="co"># Status after week 15</span></span></span>
 <span class="r-in"><span><span class="va">games</span><span class="op">$</span><span class="va">result</span><span class="op">[</span><span class="va">games</span><span class="op">$</span><span class="va">week</span> <span class="op">&gt;</span> <span class="fl">15</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
 <span class="r-in"><span><span class="va">status</span> <span class="op">&lt;-</span> <span class="fu">nflseedR</span><span class="fu">::</span><span class="fu">nfl_clinching_status</span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 08:54:43 | Compute clinching status</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 08:54:43 | Compute standings</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 12:14:30 | Compute clinching status</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 12:14:30 | Compute standings</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 3 statuses are <span style="color: #0000BB;">"undecided"</span> (teams with 3 games left). `search = TRUE` might</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   decide them.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   The search helps most with 5 or fewer games left per team.</span>

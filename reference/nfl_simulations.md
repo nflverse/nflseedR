@@ -305,20 +305,20 @@ sim <- nflseedR::nfl_simulations(
 #>   documentation for further information.
 #> ℹ Will go on sequentially...
 #> This message is displayed once every 8 hours.
-#> ℹ 08:54:44 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
-#> ℹ 08:54:44 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 12:14:31 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
+#> ℹ 12:14:31 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 08:54:44 | Compute standings
-#> ℹ 08:54:44 | CHUNK #1: Start simulation of post season weeks "WC" and "SB"
-#> ℹ 08:54:44 | Compute Draft Order
-#> ℹ 08:54:44 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 12:14:31 | Compute standings
+#> ℹ 12:14:31 | CHUNK #1: Start simulation of post season weeks "WC" and "SB"
+#> ℹ 12:14:31 | Compute Draft Order
+#> ℹ 12:14:31 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 08:54:44 | Compute standings
-#> ℹ 08:54:44 | CHUNK #2: Start simulation of post season weeks "WC" and "SB"
-#> ℹ 08:54:44 | Compute Draft Order
-#> ℹ 08:54:44 | Combine simulation data
-#> ℹ 08:54:44 | Aggregate across simulations
-#> ℹ 08:54:44 | DONE!
+#> ℹ 12:14:31 | Compute standings
+#> ℹ 12:14:31 | CHUNK #2: Start simulation of post season weeks "WC" and "SB"
+#> ℹ 12:14:31 | Compute Draft Order
+#> ℹ 12:14:31 | Combine simulation data
+#> ℹ 12:14:31 | Aggregate across simulations
+#> ℹ 12:14:31 | DONE!
 
 # Overview output
 str(sim, max.level = 3)
@@ -397,8 +397,8 @@ str(sim, max.level = 3)
 #>   ..$ return_games    : logi TRUE
 #>   ..$ verbosity       : chr "MIN"
 #>   ..$ nflseedR_version:Classes 'package_version', 'numeric_version'  hidden list of 1
-#>   .. ..$ : int [1:4] 2 0 2 9004
-#>   ..$ finished_at     : POSIXct[1:1], format: "2026-11-13 08:54:44"
+#>   .. ..$ : int [1:4] 2 0 2 9005
+#>   ..$ finished_at     : POSIXct[1:1], format: "2026-11-13 12:14:31"
 #>  - attr(*, "class")= chr "nflseedR_simulation"
 # }
 ```

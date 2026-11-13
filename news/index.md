@@ -35,6 +35,14 @@
   from 20 points to 45 points, which reflects roughly 1.8 actual points
   in home field advantage.
   ([\#65](https://github.com/nflverse/nflseedR/issues/65))
+- [`nfl_clinching_status()`](https://nflseedr.com/reference/nfl_clinching_status.md)
+  decides more statuses that depend on ties of many teams, like the
+  No. 1 seed with many games left: its proofs now use which teams end
+  above, level with and below a team. With a single season in `games`,
+  it also puts more effort into these ties, which can take a few tenths
+  of a second longer. Every clinch and elimination of 2006 to 2025 is
+  now found in the same week as in the NFL without `search = TRUE`.
+  ([\#72](https://github.com/nflverse/nflseedR/issues/72))
 - [`nflseedR_compute_results()`](https://nflseedr.com/reference/nflseedR_compute_results.md)
   and
   [`cpp_compute_results()`](https://nflseedr.com/reference/cpp_compute_results.md)

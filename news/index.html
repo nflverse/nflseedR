@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflseedR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,6 +61,8 @@
 <li>Added new experimental function <code><a href="../reference/nfl_clinching_status.html">nfl_clinching_status()</a></code>. It determines for every team whether it has clinched, is alive in, or has been eliminated from the division title, a playoff berth and the No. 1 seed, given the games played so far. It returns the current standings of <code><a href="../reference/nfl_standings.html">nfl_standings()</a></code> with the number of remaining games and the status columns added, and can return the results of the remaining games that prove each answer. With <code>search = TRUE</code>, it searches answers its proofs leave open by fixing remaining games, which decides more teams late in the season at the cost of time. It agrees with the official NFL clinching flags of every week of 2006 to 2025.</li>
 <li>Added new function <code><a href="../reference/nfl_regular_season.html">nfl_regular_season()</a></code> which computes regular season matchups based on previous season standings and NFL regular season rules. (<a href="https://github.com/nflverse/nflseedR/issues/64" class="external-link">#64</a>)</li>
 <li>Changed home field elo point adjustment in <code><a href="../reference/nflseedR_compute_results.html">nflseedR_compute_results()</a></code> from 20 points to 45 points, which reflects roughly 1.8 actual points in home field advantage. (<a href="https://github.com/nflverse/nflseedR/issues/65" class="external-link">#65</a>)</li>
+<li>
+<code><a href="../reference/nfl_clinching_status.html">nfl_clinching_status()</a></code> decides more statuses that depend on ties of many teams, like the No. 1 seed with many games left: its proofs now use which teams end above, level with and below a team. With a single season in <code>games</code>, it also puts more effort into these ties, which can take a few tenths of a second longer. Every clinch and elimination of 2006 to 2025 is now found in the same week as in the NFL without <code>search = TRUE</code>. (<a href="https://github.com/nflverse/nflseedR/issues/72" class="external-link">#72</a>)</li>
 <li>
 <code><a href="../reference/nflseedR_compute_results.html">nflseedR_compute_results()</a></code> and <code><a href="../reference/cpp_compute_results.html">cpp_compute_results()</a></code> add the columns <code>away_elo</code> and <code>home_elo</code> to <code>games</code>, the elo ratings of both teams going into each game. <code><a href="../reference/nfl_simulations.html">nfl_simulations()</a></code> therefore returns them in its <code>games</code> table.</li>
 <li>
