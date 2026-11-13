@@ -70,10 +70,15 @@
 #' Seasons through 2019 have 6 playoff seeds per conference, later seasons 7.
 #' With `sim` instead of `season`, 7 seeds are used.
 #'
+#' With a single season in `games`, the function puts more effort into ties
+#' of many teams (mostly for the No. 1 seed with many games left), which can
+#' take a few seconds. With more than one season, e.g. simulated seasons, it
+#' gives up on them earlier, so more statuses are `"undecided"`.
+#'
 #' The results are compared with the official clinching flags of the NFL for
-#' every week of 2006 to 2025: no status contradicts them. With
-#' `search = TRUE`, every team clinches or is eliminated in the same week as
-#' in the NFL. Without it, two teams are `"undecided"` a week longer.
+#' every week of 2006 to 2025, one season at a time: no status contradicts
+#' them, and every team clinches or is eliminated in the same week as in the
+#' NFL, with and without `search`.
 #'
 #' @return The current standings: the output of [nfl_standings()] for the
 #'   games played so far (with conference ranks and tiebreakers through

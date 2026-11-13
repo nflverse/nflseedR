@@ -63,6 +63,17 @@ clinching_status_after <- function(season_id, last_week, status) {
   clinching_status_compute(games, status = status, verify = TRUE)
 }
 
+# The 2026 season after week 9 with results (home - away) of week 10 games,
+# named by home team
+games_2026_week_10 <- function(results) {
+  games <- data.table::as.data.table(readRDS(test_path(
+    "games_2026_week_9.rds"
+  )))
+  rows <- match(names(results), games[week == 10, home_team])
+  games[week == 10, result := replace(result, rows, as.integer(results))]
+  games[]
+}
+
 load_nfl_clinch_2006_2025 <- function() {
   data.table::as.data.table(readRDS(test_path("nfl_clinch_2006_2025.rds")))
 }

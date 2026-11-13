@@ -113,10 +113,15 @@ goal that only a coin toss decides after the last game is \code{"undecided"}.
 Seasons through 2019 have 6 playoff seeds per conference, later seasons 7.
 With \code{sim} instead of \code{season}, 7 seeds are used.
 
+With a single season in \code{games}, the function puts more effort into ties
+of many teams (mostly for the No. 1 seed with many games left), which can
+take a few seconds. With more than one season, e.g. simulated seasons, it
+gives up on them earlier, so more statuses are \code{"undecided"}.
+
 The results are compared with the official clinching flags of the NFL for
-every week of 2006 to 2025: no status contradicts them. With
-\code{search = TRUE}, every team clinches or is eliminated in the same week as
-in the NFL. Without it, two teams are \code{"undecided"} a week longer.
+every week of 2006 to 2025, one season at a time: no status contradicts
+them, and every team clinches or is eliminated in the same week as in the
+NFL, with and without \code{search}.
 }
 \examples{
 \donttest{

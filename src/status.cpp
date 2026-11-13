@@ -90,6 +90,11 @@ constexpr Budgets kSearchBudgets{
 // open, and that's when teams clinch
 constexpr int32_t kLateGames = 4;
 constexpr int32_t kLateGroupFlows = 2000;
+// A single season in the input gets enough for the tie groups of early No. 1
+// seed questions (up to 15 open teams). More flows settle nothing more; with
+// many seasons they would take too long (P14).
+constexpr Budgets kSingleSeasonBudgets{
+    .group_flows = 20000, .open_groups = std::numeric_limits<int32_t>::max()};
 // Interrupt checks during the search, every this many parts
 constexpr int32_t kInterruptEvery = 64;
 // Splitting on X's own games comes last: the checks already fix them
@@ -1341,7 +1346,11 @@ StatusRows compute_clinching_status(const GamesInput& played,
       out.ties.push_back(season.played.ties[x]);
       out.games_left.push_back(season.left[x]);
       Budgets budgets;
-      if (season.left[x] <= kLateGames) budgets.group_flows = kLateGroupFlows;
+      if (played.n_sims == 1) {
+        budgets = kSingleSeasonBudgets;
+      } else if (season.left[x] <= kLateGames) {
+        budgets.group_flows = kLateGroupFlows;
+      }
       TeamStatus team(season, x, flow, runner, season_over, options.verify,
                       budgets);
       for (int32_t goal = 0; goal < kGoals; ++goal) {
