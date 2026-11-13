@@ -52,7 +52,14 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           dependencies: '"hard"'
-          extra-packages: any::jsonlite, local::.
+          extra-packages: any::jsonlite
+
+      # Not `local::.` in extra-packages: pak runs R CMD build first, which
+      # builds the vignettes (over 5 minutes). Parallel make for src/.
+      - name: Install nflseedR
+        env:
+          MAKEFLAGS: -j4
+        run: R CMD INSTALL --no-docs --no-multiarch .
 
       - name: Write fixtures
         run: Rscript wasm/fixtures/make-fixtures.R wasm/fixtures/json
