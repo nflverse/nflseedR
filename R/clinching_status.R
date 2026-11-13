@@ -73,7 +73,7 @@
 #' The results are compared with the official clinching flags of the NFL for
 #' every week of 2006 to 2025: no status contradicts them. With
 #' `search = TRUE`, every team clinches or is eliminated in the same week as
-#' in the NFL. Without it, three teams are `"undecided"` a week longer.
+#' in the NFL. Without it, two teams are `"undecided"` a week longer.
 #'
 #' @return The current standings: the output of [nfl_standings()] for the
 #'   games played so far (with conference ranks and tiebreakers through

@@ -221,6 +221,18 @@ test_that("tie groups settle the division title and the No. 1 seed", {
   expect_identical(s[team == "SF", seed1_status], "eliminated")
 })
 
+test_that("tie groups know which teams end level with and below X", {
+  s <- clinching_status_after(2024, 14, "PLAYOFFS")
+  expect_identical(s[team == "PHI", playoffs_status], "clinched")
+  s <- clinching_status_after(2008, 11, "DIV")
+  expect_identical(s[team == "DET", div_status], "eliminated")
+})
+
+test_that("a tied team's other games bound its record against a group", {
+  s <- clinching_status_after(2024, 13, "1SEED")
+  expect_identical(s[team == "LA", seed1_status], "eliminated")
+})
+
 test_that("the search settles answers the proofs leave open", {
   # CAR (6-11 at best) is out after week 13, which the proofs only show once
   # the search fixes a few games of the teams that can end 6-11
