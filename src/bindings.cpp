@@ -81,15 +81,18 @@ cpp11::writable::integers to_r(const std::vector<int32_t>& x) {
 
 // Game results. A plain copy: to_r() would turn -1 (kMissing), a valid result,
 // into NA. kNoResult is INT_MIN, which is R's NA_INTEGER.
+// Nothing is copied if x is empty: the data pointer of a zero-length R
+// vector is a misaligned dummy, which UBSan reports even for zero elements.
 cpp11::writable::integers results_to_r(const std::vector<int32_t>& x) {
   cpp11::writable::integers out(static_cast<R_xlen_t>(x.size()));
-  std::ranges::copy(x, INTEGER(out));
+  if (!x.empty()) std::ranges::copy(x, INTEGER(out));
   return out;
 }
 
 cpp11::writable::doubles to_r(const std::vector<double>& x) {
   cpp11::writable::doubles out(static_cast<R_xlen_t>(x.size()));
-  std::ranges::copy(x, REAL(out));
+  // See results_to_r() for the empty case
+  if (!x.empty()) std::ranges::copy(x, REAL(out));
   return out;
 }
 
