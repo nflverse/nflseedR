@@ -1236,21 +1236,21 @@ roughly in order.
    UBSan (every week of 2006–2025 and 300 seasons with random results, with
    and without the search, scenarios, self-check and group check on).
    With the group check it takes about 10 minutes (the group check only
-   runs with the search). Still to run: the sanitizer builds of the whole
-   package (`rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))`,
-   see `dev/cpp-standings-engine.md`); they need a push, so the maintainer
-   starts them. The first run (2026-11-13) stopped before the check: magick
-   (needed by nflplotR in Suggests) is built from source there and its
-   static ImageMagick didn't find fontconfig (`cannot find -lfontconfig`).
-   Installing `libfontconfig1-dev` first got past that, but magick then
-   didn't load (`undefined symbol: xmlNanoFTPInit`). The container jobs of
-   `.github/workflows/rhub.yaml` now leave nflplotR out (hard dependencies
-   plus the other suggested packages, `_R_CHECK_FORCE_SUGGESTS_=false`).
-   With that, clang-asan passed and clang-ubsan reported
-   `store to misaligned address 0x000000000001` in `results_to_r()` and
-   `to_r()` of `src/bindings.cpp`: an empty vector was copied to the data
-   pointer of a zero-length R vector. Both now skip the copy if the vector
-   is empty.
+   runs with the search). The sanitizer builds of the whole package pass
+   (2026-11-13, clang-asan and clang-ubsan on R-hub, commit `09a69a1`).
+   Start them with
+   `rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))` (see
+   `dev/cpp-standings-engine.md`); they need a push, so the maintainer
+   starts them. Two things came up on the way:
+   - magick (needed by nflplotR in Suggests) is built from source in the
+     containers and doesn't load there (`undefined symbol: xmlNanoFTPInit`).
+     The container jobs of `.github/workflows/rhub.yaml` leave nflplotR out
+     (hard dependencies plus the other suggested packages,
+     `_R_CHECK_FORCE_SUGGESTS_=false`).
+   - clang-ubsan reported `store to misaligned address 0x000000000001` in
+     `results_to_r()` and `to_r()` of `src/bindings.cpp`: an empty vector
+     was copied to the data pointer of a zero-length R vector. Both now skip
+     the copy if the vector is empty.
 5. The smaller gaps under "Other gaps, not seen in the NFL comparison".
 
 #### Gap 3: X's position in a tie (handoff)

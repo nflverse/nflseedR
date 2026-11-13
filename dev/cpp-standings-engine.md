@@ -231,6 +231,9 @@ Also summarized in `AGENTS.md`.
   `cpp11::check_user_interrupt()`.
 - Not allowed on CRAN: printing, `exit`, `abort`, `rand()`, non-portable
   flags in `Makevars`.
+- Don't copy to or from the data pointer (`INTEGER()`, `REAL()`) of a
+  zero-length R vector, not even zero elements: it's a misaligned dummy
+  pointer and UBSan reports it. Check for an empty vector first.
 - Run `clang-format -i` on changed C++ files (`.clang-format`: Google
   style, 80 columns).
 
@@ -280,7 +283,9 @@ code alone. The existing code had 16 findings when clang-tidy was set up
 problems. On macOS the script passes the current SDK to Homebrew's
 clang-tidy, which otherwise picks an old one. Warning flags can't go into
 `src/Makevars` (not portable, CRAN). Before a release, also run the sanitizer builds CRAN uses, e.g.
-`rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))`. For the
+`rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))`. The
+container jobs of `.github/workflows/rhub.yaml` don't install nflplotR,
+because magick doesn't load there. For the
 clinching engine alone, `dev/sanitize-cpp.sh` does it locally without R (a
 driver in `dev/sanitize/` built with ASan and UBSan).
 
