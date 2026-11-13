@@ -56,6 +56,15 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
+      # magick (needed by nflplotR in Suggests) is built from source. In the
+      # clang containers it links a static ImageMagick that needs fontconfig,
+      # which the system requirements of magick don't install.
+      - name: Install fontconfig for magick
+        run: |
+          if command -v apt-get > /dev/null; then
+            apt-get update && apt-get install -y libfontconfig1-dev
+          fi
+        shell: bash
       - uses: r-hub/actions/setup-deps@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
