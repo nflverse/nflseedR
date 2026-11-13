@@ -8,13 +8,14 @@ args <- commandArgs(trailingOnly = TRUE)
 out_dir <- if (length(args) > 0) args[[1]] else "wasm/fixtures/json"
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
+# The installed nflseedR if it is the version of DESCRIPTION (CI), otherwise
+# the source package (local development)
 if (!"nflseedR" %in% loadedNamespaces()) {
-  if (
-    requireNamespace("pkgload", quietly = TRUE) && file.exists("DESCRIPTION")
-  ) {
+  version <- read.dcf("DESCRIPTION", fields = "Version")[[1]]
+  installed <- requireNamespace("nflseedR", quietly = TRUE) &&
+    as.character(utils::packageVersion("nflseedR")) == version
+  if (!installed) {
     pkgload::load_all(quiet = TRUE)
-  } else {
-    loadNamespace("nflseedR")
   }
 }
 `%||%` <- function(x, y) if (is.null(x)) y else x
