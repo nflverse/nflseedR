@@ -68,6 +68,12 @@ class TieProof {
   // picked first from the level division winners
   [[nodiscard]] TieOutcome first_seed_outcome(TeamMask above, TeamMask level);
 
+  // What the outcomes above may use about the other teams: the teams of
+  // `above` end above X, the teams of `level` level with X and the teams of
+  // `below` below X (the tie groups, P11). Without a context, only the teams
+  // of a tie group are known to be level.
+  void set_context(TeamMask above, TeamMask level, TeamMask below);
+
  private:
   enum class Procedure : int8_t { kDivision = 0, kConference = 1 };
 
@@ -112,8 +118,18 @@ class TieProof {
   [[nodiscard]] static std::span<const Step> steps(Procedure procedure);
   [[nodiscard]] StepRanges ranges(Step step, TeamMask group,
                                   Procedure procedure) const;
+  // Half-wins of tied team t in its games against `opponents`, lowest and
+  // highest
+  struct HalfWins {
+    int32_t games = 0;
+    int32_t low = 0;
+    int32_t high = 0;
+  };
+  [[nodiscard]] HalfWins half_wins_range(TeamId t, TeamMask opponents,
+                                         TeamMask group) const;
   [[nodiscard]] Range pct_range(TeamId t, TeamMask opponents,
                                 TeamMask group) const;
+  [[nodiscard]] bool beaten_head_to_head(TeamId t, TeamMask group) const;
   [[nodiscard]] Range sweep_range(TeamId t, TeamMask group) const;
   [[nodiscard]] Range sos_range(TeamId t, TeamMask group) const;
   [[nodiscard]] Range sov_range(TeamId t, TeamMask group) const;
@@ -243,6 +259,15 @@ class TieProof {
   TeamArray<int32_t> half_wins_high_{};
   // Half-wins at X's win percentage, kMissing if a team can't get there
   TeamArray<int32_t> tie_half_wins_{};
+  // Half-wins of every team within the context (set_context()), otherwise
+  // half_wins_low_ and half_wins_high_
+  TeamArray<int32_t> context_low_{};
+  TeamArray<int32_t> context_high_{};
+  bool has_context_ = false;
+  TeamMask context_above_ = 0;
+  TeamMask context_level_ = 0;
+  TeamMask context_below_ = 0;
+  void clear_caches();
   // Results of wins() and loses() per procedure and group
   std::array<std::array<std::unordered_map<TeamMask, bool>, 2>, 2> cache_{};
   // Results of possible_picks() per procedure and group

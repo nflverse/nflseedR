@@ -603,6 +603,19 @@ class TeamStatus {
     return *t;
   }
 
+  // A second set of tie proofs for the tie groups (P11): they know which
+  // teams end above, level with and below X (TieProof::set_context()), and
+  // lose their cached results with every group
+  [[nodiscard]] TieProof& context_ties(bool reach) {
+    std::optional<TieProof>& t =
+        reach ? reach_context_ties_ : miss_context_ties_;
+    if (!t) {
+      t.emplace(s_->played, s_->played_games, s_->remaining, *s_->league, x_,
+                reach);
+    }
+    return *t;
+  }
+
   // `feasible(strict, c)`: can the check hold with the teams of `strict`
   // strictly behind (ahead of) X and the others possibly tied?
   //
@@ -985,13 +998,20 @@ class TeamStatus {
                (o.above && self(self, i + 1, above | bit, level, below)) ||
                (o.below && self(self, i + 1, above, level, below | bit));
       }
-      const TieOutcome outcome = tie_outcome(proof, goal, above, level);
       const TieOutcome wanted =
           reach ? TieOutcome::kReached : TieOutcome::kMissed;
-      const bool never =
-          outcome == TieOutcome::kImpossible ||
-          outcome == (reach ? TieOutcome::kMissed : TieOutcome::kReached);
-      if (never) {
+      const auto never = [&](TieOutcome o) {
+        return o == TieOutcome::kImpossible ||
+               o == (reach ? TieOutcome::kMissed : TieOutcome::kReached);
+      };
+      TieOutcome outcome = tie_outcome(proof, goal, above, level);
+      // Not settled: again with ranges that know every team's side
+      if (!never(outcome)) {
+        TieProof& context = context_ties(reach);
+        context.set_context(above, level, below);
+        outcome = tie_outcome(context, goal, above, level);
+      }
+      if (never(outcome)) {
         if (verify_) verify_no(goal, reach, c);
         return false;
       }
@@ -1109,6 +1129,8 @@ class TeamStatus {
   // Ties at X's level when X wins out and loses out
   std::optional<TieProof> reach_ties_;
   std::optional<TieProof> miss_ties_;
+  std::optional<TieProof> reach_context_ties_;
+  std::optional<TieProof> miss_context_ties_;
   TeamMask rivals_ = 0;
   TeamMask conference_ = 0;
   // Divisions of X's conference and their teams (without X)

@@ -7,7 +7,8 @@ done** (2026-11-11), milestone 6 (tighter tie proofs) partly done, milestone 7
 (pairwise strength and wild card sides) done (2026-11-12), milestone 8 (gap 3,
 per-team part) done (2026-11-12), milestone 9 (budgeted search, off by
 default) done (2026-11-12), milestone 10 (tie groups at X's level, P11) done
-(2026-11-12): exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
+(2026-11-12), milestone 11 (tie group ranges that know every team's side,
+P13) done (2026-11-13): exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
 
@@ -947,6 +948,122 @@ With `search = TRUE`, every week takes about 50% longer than before (the
 parts run the groups too); 100 flows per part doubled it and settled 6
 more statuses, none per part 17 fewer.
 
+### Results of milestone 11
+
+P13. Started from the 50 scenarios of
+[nflplayoffscenarios.com](https://nflplayoffscenarios.com/#afc-elimination-scenarios)
+for "LAC is knocked out of 1 seed contention" in week 10 of 2026 (LAC 0-8,
+8-9 at best). They cover 7 games of week 10; all 3^7 = 2,187 results of
+these games were run with `status = "1SEED"` (later weeks unplayed). Before:
+
+| site | ours | `search = FALSE` | `search = TRUE` |
+|---|---|---|---|
+| eliminated (339) | eliminated | 183 | 183 |
+| eliminated | undecided | 156 | 156 |
+| not eliminated (1,848) | alive | 1,467 | 1,494 |
+| not eliminated | undecided | 381 | 354 |
+
+No contradiction, only undecided. X is the No. 1 seed only if 9 to 14 teams
+end level with it at 8-9, with 8 or 9 games left each. Two causes:
+
+- Budget (site says alive): up to 15 open teams, each level or below. 200
+  flows and 16 open groups run out before a group with a completion that
+  works is found.
+- Proofs (site says eliminated): unlimited budgets don't help. The ranges
+  of a step only knew the step's tie group, and every comparison was
+  between two teams. A search with 3 million parts proves the traced case
+  (31s), so the site is right.
+
+Changes, all in the clinching code:
+
+- **Context** (`TieProof::set_context()`): in a tie group of milestone 10
+  every conference team's side is known (above, level, below), which bounds
+  the half-wins it can take from its open games (level: exactly what it
+  needs; below: at most one half-win less; above: at least one more).
+  `half_wins_range()` (the counting of `pct_range()`) uses these bounds for
+  every open opponent, and `low_in()` / `high_in()` (SOV, SOS) too. Example:
+  BUF (8-1) is level, so it loses out; DEN gets a win from BUF, which is
+  all it needs, so it loses both LV games and ends 2-4 in the division.
+  Only for groups the plain proof leaves open, in a second `TieProof` per
+  check (`context_ties()` in `src/status.cpp`): its cached results are lost
+  with every group, and with the context on every group, every week of
+  2006–2025 took 10s instead of 1.1s.
+- **Other games** (`half_wins_range()`, with or without a context): what a
+  tied team must and can get from its other open games bounds what is left
+  for the games in question. Before, the other games counted as free even
+  against a team of the group.
+- **Pooled head-to-head** (`TieProof::beaten_head_to_head()`, in
+  `possible_picks()` and `loses()`): the games among the teams of a division
+  group hand out a fixed number of half-wins. A team is beaten for sure if
+  the others can't hold what it leaves at its best without one of them
+  ending above its percentage. Example: LAC 3-3, DEN 2-4, so KC and LV share
+  7 wins of their 12 division games and one of them ends 4-2.
+
+Results on the 2,187 results of week 10, with unlimited budgets (current
+budgets: 22 more alive, 50 with the search, no new elimination):
+
+| site | before | now | N |
+|---|---|---|---|
+| eliminated | undecided | eliminated | 84 |
+| eliminated | undecided | undecided | 72 |
+| not eliminated | undecided | alive | 221 |
+| not eliminated | undecided | undecided | 160 |
+
+No contradiction with the site. Without the pooled head-to-head none of the
+84; without the context none either. The 72 need conclusions chained across
+steps (see "Still to do"): if all four teams of the AFC West pass the
+head-to-head step, all are 3-3, so KC loses to LV and beats BUF, and its
+conference record is better than LAC's.
+
+Budgets on single-season calls (all goals, optimized build, a sample of 30
++ 30 undecided results of week 10; and every week of 2006–2025):
+
+| flows | open groups | eliminated | alive | week 10 median / max | all weeks: undecided | median / p99 / max |
+|---|---|---|---|---|---|---|
+| 200 | 16 | 0 of 30 | 3 of 30 | 0.05s / 0.08s | 85 | 0.026s / 0.10s / 0.13s |
+| 2,000 | 16 | 1 | 3 | 0.06s / 0.22s | 81 | 0.026s / 0.21s / 0.47s |
+| 2,000 | no cap | 1 | 19 | 0.23s / 0.74s | 62 | 0.025s / 0.51s / 0.82s |
+| 20,000 | no cap | 16 | 20 | 0.49s / 3.3s | 50 | 0.026s / 1.6s / 3.1s |
+| 200,000 | no cap | 16 | 20 | 0.50s / 4.1s | 49 | 0.026s / 1.6s / 5.0s |
+
+Measured with the context on every group (before the second `TieProof`),
+so the times are upper bounds. The budgets are unchanged; raising them is
+an open decision.
+
+Compared with milestone 10 on every week of 2006–2025 (only undecided
+statuses changed):
+
+| undecided team-weeks | division | playoffs | No. 1 seed |
+|---|---|---|---|
+| before, `search = FALSE` | 12 | 19 | 62 |
+| now, `search = FALSE` | 11 | 18 | 61 |
+| before, `search = TRUE` | 0 | 4 | 27 |
+| now, `search = TRUE` | 0 | 4 | 26 |
+
+- 2024 PHI clinched the playoffs after week 14 (the NFL's week) and 2008
+  DET is out of the division race after week 11, both without the search
+  now (the search already said so); they need the context. 2024 LA is out
+  of the No. 1 seed race after week 13 (new with and without the search),
+  from the other games. The code of milestone 10 says the same for LA with
+  a search of 5 million parts. Each of the three held in 8,000 completions
+  with X at its best or worst case, random team strengths (sd 3) and 6% tie
+  games; the same check finds violations for LA a week and PHI a week
+  earlier. One test for each.
+- Check 1 with `search = FALSE`: 2024 PHI matches the NFL; 2008 DET and
+  2023 CAR (eliminated) stay one week late.
+- No week of 2006–2025 needs the pooled head-to-head, so it has no test:
+  with the current budgets it only shows in the week 10 results above.
+- Checks 2–5, the self-check and the test suite (`clinching_status`) pass.
+  `dev/check-cpp.sh` reports nothing in the changed code.
+
+Benchmark (`data-raw/bench_clinching_status.R`, same session):
+
+| case | milestone 10 | milestone 11 |
+|---|---|---|
+| every week of 2006–2025 | 1.66s | 1.80s |
+| 2023 after week 15, all goals | 8.0ms | 8.6ms |
+| 1,000 simulated seasons after week 12 | 3.54s | 4.28s |
+
 ### Still to do
 
 **Next steps** (2026-11-12, after milestone 10), roughly in order.
@@ -973,10 +1090,21 @@ more statuses, none per part 17 fewer.
    can't order the level teams (SOV or SOS with games left) and the flow's
    one completion doesn't show the answer. Ideas: more completions per
    group (the exact flow gives one; vary the free games as the gray zone
-   does), ranges that know which teams are above and below X (they bound
-   the opponents' wins in SOV and SOS), and for the No. 1 seed a prune for
+   does, or steer them toward X's tiebreakers), and for the No. 1 seed a
+   prune for
    teams X always ranks behind (`conference_sides()`), which would save
    most of the flows there.
+   After milestone 11 (the ranges know every team's side), two things are
+   open and need the maintainer:
+   - *Budgets.* Early No. 1 seed questions need about 20,000 flows and no
+     cap on open groups (table in the results of milestone 11). That costs
+     up to 3–4s on a single-season call and much more on many simulated
+     seasons, so it could apply to single-season input only.
+   - *Propagation.* Bounds on every pair's open games, tightened to a fixed
+     point from the teams' sides, and constraints from the steps a group
+     passed (all level in head-to-head means everyone is at .500 there).
+     72 of the 156 week 10 results of milestone 11 need it; later steps
+     (SOV) may still be open after it.
 3. **Speed.** A part of the search now only answers the question asked
    (`final_proof()`) and builds a `TieProof` only when a check needs it
    (2026-11-12): same statuses, about 6% faster. The profile is flat: the
@@ -1261,6 +1389,9 @@ flows' failing sets, or cache `lowest_difference()` per pair and group.
    [results of milestone 9](#results-of-milestone-9).
 10. Tie groups at X's level (P11). **Done** (2026-11-12), see
     [results of milestone 10](#results-of-milestone-10).
+11. Tie group ranges that know every team's side, and pooled head-to-head
+    (P13). **Done** (2026-11-13), see
+    [results of milestone 11](#results-of-milestone-11).
 
 ## Decisions
 
@@ -1346,3 +1477,12 @@ that can end level with X first. A part answering yes gives a completion; the
 answer is no if every part answers no. Within a fixed node budget per
 question, then undecided as before. Implemented in C++ (`GameSearch` in
 `src/status.cpp`). P11 (set constraints) stays open.
+
+**P13 Ranges with every team's side and pooled head-to-head. Decided by the
+maintainer (2026-11-13): yes,** from the comparison with the week 10
+scenarios of nflplayoffscenarios.com (2026 LAC, No. 1 seed): in a tie group
+the ranges may use which teams end above, level with and below X, and the
+head-to-head step may use that the games among the tied teams hand out a
+fixed number of wins. In the clinching code only. Done as
+[milestone 11](#results-of-milestone-11). Not decided: higher budgets for
+the tie groups and chained conclusions across steps (propagation).

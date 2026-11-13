@@ -116,7 +116,7 @@ With \code{sim} instead of \code{season}, 7 seeds are used.
 The results are compared with the official clinching flags of the NFL for
 every week of 2006 to 2025: no status contradicts them. With
 \code{search = TRUE}, every team clinches or is eliminated in the same week as
-in the NFL. Without it, three teams are \code{"undecided"} a week longer.
+in the NFL. Without it, two teams are \code{"undecided"} a week longer.
 }
 \examples{
 \donttest{
