@@ -29,7 +29,9 @@ env:
 
 jobs:
   wasm:
-    runs-on: ubuntu-latest
+    # Not ubuntu-latest (26.04): P3M has no binaries for it yet, so the R
+    # packages took over 6 minutes to build from source
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
