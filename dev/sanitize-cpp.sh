@@ -3,7 +3,8 @@
 # UndefinedBehaviorSanitizer without R: the engine is pure C++, so a small
 # driver (dev/sanitize/driver.cpp) calls compute_clinching_status() on the
 # states after every week of 2006-2025 and on seasons with random results,
-# with and without the search, with scenarios and the self-check.
+# with and without the search, with scenarios, the self-check and (with the
+# search) the group check.
 #
 # Usage: dev/sanitize-cpp.sh
 # Prints the number of states and a checksum of the statuses; any sanitizer

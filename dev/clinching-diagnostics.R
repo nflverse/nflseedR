@@ -12,6 +12,7 @@
 #   level_with(2009, 13, "KC", x_wins = TRUE, lose_out = "JAX",
 #              level = c("JAX", "BAL", "NYJ"), y = "JAX") # one group only
 #   show_completion(x$season, x$nfl, winners = c("PHI", "ATL"))
+#   group_check(2021, 15)  # every clinch and elimination, without tie proofs
 
 devtools::load_all(quiet = TRUE)
 library(data.table)
@@ -289,4 +290,56 @@ show_completion <- function(season_id, last_week, winners, conference = NULL) {
     conf_rank,
     conf_tie_broken_by
   )]
+}
+
+# Group check (dev/playoff-status.md): every clinch and elimination of a
+# state against completions of every tie group at the team's level, without
+# the tie proofs. Returns the number of checked answers (`incomplete`: the
+# check ran out of flows), or the completion that contradicts a status with
+# its conference standings.
+group_check <- function(season_id, last_week, samples = 100L, ...) {
+  g <- state_after(season_id, last_week)
+  tryCatch(
+    attr(
+      clinching_status_compute(g, group_samples = samples, ...),
+      "group_check"
+    ),
+    error = function(e) failed_group_check(g, conditionMessage(e))
+  )
+}
+
+# The completion in the error message of a failed group check: team id, goal
+# code and home half-wins of the remaining games in input order
+failed_group_check <- function(g, message) {
+  pattern <- "team (\\d+), goal (\\d+), can (reach|miss), completion (\\d*)"
+  parts <- regmatches(message, regexec(pattern, message))[[1]]
+  if (length(parts) == 0L) {
+    stop(message)
+  }
+  g <- copy(g)
+  results <- as.integer(strsplit(parts[5], "")[[1]]) - 1L
+  g[is.na(result), result := results]
+  x <- standings_league()$team[as.integer(parts[2]) + 1L]
+  seeds <- if (g$season[1] >= 2020) 7L else 6L
+  st <- as.data.table(nfl_standings(g, verbosity = "NONE", playoff_seeds = 16))
+  list(
+    team = x,
+    goal = c("DIV", "PLAYOFFS", "1SEED")[as.integer(parts[3]) + 1L],
+    wrong = if (parts[4] == "reach") "eliminated" else "clinched",
+    seeds = seeds,
+    standings = st[conf == st[team == x, conf]][
+      order(conf_rank),
+      list(
+        team,
+        wins,
+        losses,
+        ties,
+        div_rank,
+        div_tie_broken_by,
+        conf_rank,
+        conf_tie_broken_by
+      )
+    ],
+    games = g
+  )
 }

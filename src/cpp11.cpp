@@ -34,16 +34,16 @@ extern "C" SEXP _nflseedR_elo_week_cpp(SEXP game_sim, SEXP away, SEXP home, SEXP
   END_CPP11
 }
 // bindings.cpp
-cpp11::writable::list clinching_status_cpp(const cpp11::list& played, const cpp11::list& remaining, const cpp11::integers& seeds, const cpp11::logicals& goals, bool scenarios, bool search, bool verify);
-extern "C" SEXP _nflseedR_clinching_status_cpp(SEXP played, SEXP remaining, SEXP seeds, SEXP goals, SEXP scenarios, SEXP search, SEXP verify) {
+cpp11::writable::list clinching_status_cpp(const cpp11::list& played, const cpp11::list& remaining, const cpp11::integers& seeds, const cpp11::logicals& goals, bool scenarios, bool search, bool verify, int group_samples);
+extern "C" SEXP _nflseedR_clinching_status_cpp(SEXP played, SEXP remaining, SEXP seeds, SEXP goals, SEXP scenarios, SEXP search, SEXP verify, SEXP group_samples) {
   BEGIN_CPP11
-    return cpp11::as_sexp(clinching_status_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(played), cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(remaining), cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(seeds), cpp11::as_cpp<cpp11::decay_t<const cpp11::logicals&>>(goals), cpp11::as_cpp<cpp11::decay_t<bool>>(scenarios), cpp11::as_cpp<cpp11::decay_t<bool>>(search), cpp11::as_cpp<cpp11::decay_t<bool>>(verify)));
+    return cpp11::as_sexp(clinching_status_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(played), cpp11::as_cpp<cpp11::decay_t<const cpp11::list&>>(remaining), cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(seeds), cpp11::as_cpp<cpp11::decay_t<const cpp11::logicals&>>(goals), cpp11::as_cpp<cpp11::decay_t<bool>>(scenarios), cpp11::as_cpp<cpp11::decay_t<bool>>(search), cpp11::as_cpp<cpp11::decay_t<bool>>(verify), cpp11::as_cpp<cpp11::decay_t<int>>(group_samples)));
   END_CPP11
 }
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_nflseedR_clinching_status_cpp", (DL_FUNC) &_nflseedR_clinching_status_cpp,  7},
+    {"_nflseedR_clinching_status_cpp", (DL_FUNC) &_nflseedR_clinching_status_cpp,  8},
     {"_nflseedR_draft_ranks_cpp",      (DL_FUNC) &_nflseedR_draft_ranks_cpp,       7},
     {"_nflseedR_elo_week_cpp",         (DL_FUNC) &_nflseedR_elo_week_cpp,         10},
     {"_nflseedR_positions_of_cpp",     (DL_FUNC) &_nflseedR_positions_of_cpp,      2},

@@ -33,6 +33,11 @@ struct StatusOptions {
   // Tests only: check every "no" that needed tie proofs against the engine
   // (throws EngineError if it fails)
   bool verify = false;
+  // Tests and diagnostics only: completions sampled per tie group to check
+  // every "no" independently of the tie proofs (0 = off, needs `rng`). See
+  // StatusRows::group_checks.
+  int32_t group_samples = 0;
+  RandomSource* rng = nullptr;
   // Playoff seeds per conference, one value per season
   std::span<const int32_t> seeds;
 };
@@ -52,6 +57,10 @@ struct StatusRows {
   std::vector<int32_t> sim, team, wins, losses, ties, games_left;
   std::array<std::vector<int32_t>, kGoals> status;
   ScenarioRows scenarios;
+  // With StatusOptions::group_samples: "no" answers whose tie groups were
+  // all checked, and those where the check ran out of budget
+  int32_t group_checks = 0;
+  int32_t group_checks_incomplete = 0;
 };
 
 // `played` are all games with a result, `remaining` the regular season games

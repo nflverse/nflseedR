@@ -2,14 +2,11 @@
 
 Plan for a new exported function that says, for every team, whether it has
 clinched or been eliminated from a division title, a playoff berth and the
-No. 1 seed, given the games played so far. Status: **milestones 1–5
-done** (2026-11-11), milestone 6 (tighter tie proofs) partly done, milestone 7
-(pairwise strength and wild card sides) done (2026-11-12), milestone 8 (gap 3,
-per-team part) done (2026-11-12), milestone 9 (budgeted search, off by
-default) done (2026-11-12), milestone 10 (tie groups at X's level, P11) done
-(2026-11-12), milestone 11 (tie group ranges that know every team's side,
-P13) done (2026-11-13), milestone 12 (larger tie group budgets for a single
-season, P14) done (2026-11-13): exported as `nfl_clinching_status()`, experimental, returning the current standings with the status added (P9). Built on the C++ standings engine, so read
+No. 1 seed, given the games played so far. Status: **milestones 1–12 done**
+(2026-11-13, see [milestones](#milestones)): exported as
+`nfl_clinching_status()`, experimental, returning the current standings
+with the status added (P9). What's left is under
+[still to do](#still-to-do). Built on the C++ standings engine, so read
 `dev/cpp-standings-engine.md` first. Open decisions are at the end; never
 resolve them without the maintainer.
 
@@ -418,7 +415,8 @@ src/flow.cpp
 src/engine/status.hpp     compute_clinching_status(): season loop, checks per
 src/status.cpp            goal, gray zone search, tie groups at X's level
                           (milestone 10), GameSearch (budgeted search over
-                          remaining games, `search = TRUE`)
+                          remaining games, `search = TRUE`), group check
+                          (`group_samples`, tests and diagnostics)
 src/engine/scenario.hpp   ScenarioRunner: a completion through the procedures
 src/scenario.cpp          for every coin toss sequence
 src/engine/tie_proof.hpp  TieProof: which tied teams X always ranks ahead of
@@ -428,9 +426,9 @@ src/bindings.cpp          clinching_status_cpp()
 ```
 
 - Same conventions as the engine: pure C++ outside `bindings.cpp`,
-  `EngineError`, interrupt checks between seasons, `RandomSource` only if
-  the scenario search uses randomness (seeded, reproducible with
-  `set.seed()`).
+  `EngineError`, interrupt checks between seasons. Only the group check
+  draws random numbers (`RandomSource`, reproducible with `set.seed()`);
+  without it R's RNG isn't touched.
 - Coin tosses: the procedures are unchanged. `ScenarioRunner`
   (`src/engine/scenario.hpp`) passes a scripted `RandomSource` that records
   every toss and forces given results, and tries the other results of every
@@ -692,7 +690,8 @@ Three gaps, all in `TieProof` (`src/tie_proof.cpp`):
    shortcuts, so the new sides are never weaker than the old ones. Only the
    division ranking uses it; the conference procedure re-reduces divisions
    after each pick, which `possible_picks()` doesn't model.
-3. **Position in a tie, not pairwise sides. Open.** The flows only take
+3. **Position in a tie, not pairwise sides. Open after milestone 6, solved
+   by milestone 10.** The flows only take
    per-team sides (X always ahead of y, or always behind). Some ties need
    "X is never last of these teams":
    - 2015 after week 15: SEA, ATL and MIN can all end 9-7 for two wild
@@ -1129,62 +1128,122 @@ Benchmark (`data-raw/bench_clinching_status.R`, same session):
 | 2023 after week 15, all goals | 8.6ms | 17.0ms |
 | 1,000 simulated seasons after week 12 | 4.28s | 4.33s |
 
+### Group check (2026-11-13)
+
+An independent check of every "no" (clinched, eliminated), for tests and
+diagnostics: `clinching_status_compute(group_samples = n)`,
+`TeamStatus::check_no()` in `src/status.cpp`. It walks the tie groups like
+milestone 10 (every way the teams can end above, level with or below X that
+`Check::exact()` finds feasible, without the ways where win totals alone
+give the answer), but uses no tie proofs: the flow's completion and `n`
+random completions of every group go through the procedures, and X must
+never get the other outcome. An error names the team (id), the goal and the
+completion; the attribute `"group_check"` counts the checked answers and
+those where the 20,000 flows ran out (`incomplete`).
+
+- **Completions of a group** (`sample()`): the remaining games in random
+  order, each with a random result (6% ties) if `Check::exact()` says the
+  rest can still follow with that result fixed, with another result if not.
+  So every completion has exactly the wanted group.
+- **Strengths** (`sample_plan()`): every team gets a strength (log odds of
+  a win). Even completions: random strengths with standard deviation 0
+  (coin flips), 1.5 and 3 in turn. Odd completions are steered against the
+  answer through SOV, then SOS, of one level team y after the other: for
+  "can miss", the teams y beat are strong and the teams X beat weak.
+- **Why steered.** The wrong 2021 DAL clinch of milestone 8 needs PHI to
+  win the NFC East over DAL on SOV, which takes about ten games of other
+  teams going one way. The check visits the right group (GB, ARI, LA, SF
+  above; PHI, NO, TB level), but 2,000 random completions of every group
+  never showed it, with coin flips or random strengths. With the steered
+  ones it does.
+- **Control** (a temporary hook that ran the check on a team that hasn't
+  clinched, never committed): 2021 DAL after week 15 found with 5 of 8
+  seeds at 24 and 48 completions per group and 8 of 8 at 96 (1.7s, debug
+  build). 2023 SF after week 13, 2024 PHI after week 13, 2025 LA after week
+  14 and 2015 SEA after week 14 fail at once with 5.
+- It checks X at its worst case only (X wins out for "can reach", loses
+  out for "can miss"), like the flows, and it's a sample: passing proves
+  nothing, but a group that many teams must win or lose out for is no
+  longer out of reach.
+
+Every week of 2006–2025 with `search = TRUE` (345 states, optimized
+build), no contradiction:
+
+| completions per group | answers checked | incomplete | errors | time |
+|---|---|---|---|---|
+| 12 | 5,257 | 3 | 0 | 194s |
+| 100 | 5,257 | 3 | 0 | 1,516s |
+
+The median state takes 4ms. A few early states take nearly all the time
+(with 100 completions: 2011 after week 10 477s, 2018 after week 10 311s,
+2011 after week 12 133s, 2024 after week 11 128s). The three incomplete
+checks are early eliminations from the No. 1 seed race (2010 after week
+11, 2011 after week 10, 2019 WAS after week 9; 6 or 7 games left): their
+groups need more than 20,000 flows.
+
+
+`dev/clinching-diagnostics.R` has `group_check(season, week, samples)`: the
+counts, or the failing completion with its conference standings. The test
+"clinches and eliminations hold in completions of every tie group" runs
+it on 2021 after week 15, and `dev/sanitize-cpp.sh` with 2 completions per
+group.
+
 ### Still to do
 
-**Next steps** (2026-11-12, after milestone 10), roughly in order.
+**Next steps** (2026-11-13, after milestone 12 and the group check),
+roughly in order.
 
-1. **Independent verification.** The random-completion checks missed the
-   wrong 2021 DAL clinch of milestone 8. The self-check of milestone 10
-   helps (every proven group is run through the engine), and all playoff
-   answers match the NFL's weeks, but the division and No. 1 seed
-   eliminations have no outside source. Comparing with
-   nflplayoffscenarios.com (2021 on) is manual so far; a fixture built from
-   it would need the maintainer: it's an external site. Tried and dropped
-   (2026-11-12): a local search for counterexamples (flip one remaining game
-   at a time, all neighbors through `nfl_standings()`, objective X's rank
-   plus how close the competitors' win percentages get to X, with walks
-   along plateaus). It doesn't find the 2021 DAL counterexample in 800
-   steps (77,000 completions): that one needs TB to *lose* out to end level
-   with DAL behind NO, and no objective built on win totals points there.
-   Better: use `Check::exact()` to build completions with a given tie group
-   and sample those.
-2. **What's still undecided.** With `search = TRUE`: 2010 PIT after week
-   14 and three more playoff team-weeks, 27 for the No. 1 seed (most with 5
-   or more games left). Without it also 2008 DET, 2023 CAR and 2024 PHI
-   (one week later than the NFL). A group stays open when `possible_picks()`
+1. **Independent verification.** The [group check](#group-check-2026-11-13)
+   covers what the random-completion checks missed (the wrong 2021 DAL
+   clinch of milestone 8). Still without an outside source: the division
+   and No. 1 seed eliminations. Comparing with nflplayoffscenarios.com
+   (2021 on) is manual so far; a fixture built from it would need the
+   maintainer: it's an external site. Tried and dropped (2026-11-12): a
+   local search for counterexamples (flip one remaining game at a time, all
+   neighbors through `nfl_standings()`, objective X's rank plus how close
+   the competitors' win percentages get to X, with walks along plateaus).
+   It doesn't find the 2021 DAL counterexample in 800 steps (77,000
+   completions): that one needs TB to *lose* out to end level with DAL
+   behind NO, and no objective built on win totals points there.
+2. **What's still undecided** (every week of 2006–2025, team-weeks, see
+   [results of milestone 12](#results-of-milestone-12)): without the search
+   11 for the division, 13 for the playoffs and 31 for the No. 1 seed; with
+   `search = TRUE` 0, 3 and 13. A group stays open when `possible_picks()`
    can't order the level teams (SOV or SOS with games left) and the flow's
    one completion doesn't show the answer. Ideas: more completions per
-   group (the exact flow gives one; vary the free games as the gray zone
-   does, or steer them toward X's tiebreakers), and for the No. 1 seed a
-   prune for
-   teams X always ranks behind (`conference_sides()`), which would save
-   most of the flows there.
-   After milestone 11 (the ranges know every team's side), this is
-   open and needs the maintainer:
-   - *Budgets.* Done for a single season (milestone 12, P14).
-   - *Propagation.* Bounds on every pair's open games, tightened to a fixed
-     point from the teams' sides, and constraints from the steps a group
-     passed (all level in head-to-head means everyone is at .500 there).
-     72 of the 156 week 10 results of milestone 11 need it; later steps
-     (SOV) may still be open after it.
-3. **Speed.** A part of the search now only answers the question asked
+   group (`sample()` of the group check builds them, steered toward X's
+   tiebreakers), and for the No. 1 seed a prune for teams X always ranks
+   behind (`conference_sides()`), which would save most of the flows there.
+   Open and needs the maintainer:
+   - *Propagation* (not decided in P13). Bounds on every pair's open games,
+     tightened to a fixed point from the teams' sides, and constraints from
+     the steps a group passed (all level in head-to-head means everyone is
+     at .500 there). 72 of the 156 week 10 results of milestone 11 need it;
+     later steps (SOV) may still be open after it.
+3. **Speed.** A part of the search only answers the question asked
    (`final_proof()`) and builds a `TieProof` only when a check needs it
-   (2026-11-12): same statuses, about 6% faster. The profile is flat: the
-   tie proofs (`lowest_difference()`, `ranges()`, `pct_range()`,
-   `possible_picks()`) take about half, the flows a fifth, and rebuilding
-   `SeasonData` and the `TieProof` matrices per part a fifth. So a much
-   faster search needs incremental updates of a part. The simulated seasons
-   are 53% slower since milestone 10; if that matters, lower the 200 flows
+   (2026-11-12). The profile is flat: the tie proofs
+   (`lowest_difference()`, `ranges()`, `pct_range()`, `possible_picks()`)
+   take about half, the flows a fifth, and rebuilding `SeasonData` and the
+   `TieProof` matrices per part a fifth. So a much faster search needs
+   incremental updates of a part. Every week of 2006–2025 takes 4.02s
+   since the budgets of milestone 12 (1.80s before); the simulated seasons
+   are 53% slower since milestone 10. If that matters, lower the 200 flows
    per question (most settled questions need 50).
-4. **Before a release.** `devtools::check()` is clean after milestone 10
-   (2026-11-12: 0 errors, warnings, notes). `dev/sanitize-cpp.sh` runs the
-   clinching engine without R under ASan and UBSan (every week of
-   2006–2025 and 300 seasons with random results, with and without the
-   search, scenarios and self-check on): no reports. Still to run: the
-   sanitizer builds of the whole package
-   (`rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))`, see
-   `dev/cpp-standings-engine.md`); they need a push, so the maintainer
-   starts them.
+4. **Before a release.** `devtools::check()` was last clean after milestone
+   10 (2026-11-12: 0 errors, warnings, notes); run it again.
+   `dev/sanitize-cpp.sh` runs the clinching engine without R under ASan and
+   UBSan (every week of 2006–2025 and 300 seasons with random results, with
+   and without the search, scenarios, self-check and group check on).
+   With the group check it takes about 10 minutes (the group check only
+   runs with the search). Still to run: the sanitizer builds of the whole
+   package (`rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))`,
+   see `dev/cpp-standings-engine.md`); they need a push, so the maintainer
+   starts them. The first run (2026-11-13) stopped before the check: magick
+   (needed by nflplotR in Suggests) is built from source there and its
+   static ImageMagick didn't find fontconfig (`cannot find -lfontconfig`).
+   `.github/workflows/rhub.yaml` now installs `libfontconfig1-dev` first;
+   not run again yet.
 5. The smaller gaps under "Other gaps, not seen in the NFL comparison".
 
 #### Gap 3: X's position in a tie (handoff)
@@ -1404,6 +1463,9 @@ those needs a rule that fits one case. Four cases need set reasoning, and
    the masks in `decide()` and the failing sets (see the tools above).
    `search = TRUE` can also find the counterexample once the proof is
    fixed.
+7. Run the [group check](#group-check-2026-11-13) on every week of
+   2006–2025 (about 100 completions per group for newly decided
+   team-weeks): no error, and no incomplete checks among the new ones.
 
 **Other gaps, not seen in the NFL comparison:**
 
@@ -1439,14 +1501,15 @@ flows' failing sets, or cache `lowest_difference()` per pair and group.
 5. R interface, docs, `_pkgdown.yml`, NEWS, benchmark. **Done**
    (2026-11-11), see [results of milestone 5](#results-of-milestone-5).
 6. Tighter tie proofs from the cases where we're later than the NFL (P8).
-   Gaps 1 and 2 **done** (2026-11-11), gap 3 open, see
-   [results of milestone 6](#results-of-milestone-6).
+   Gaps 1 and 2 **done** (2026-11-11), see
+   [results of milestone 6](#results-of-milestone-6). Gap 3 became
+   milestones 8 and 10.
 7. Pairwise SOV/SOS bounds and per-team wild card sides (P10). **Done**
    (2026-11-12), see [results of milestone 7](#results-of-milestone-7).
 8. Gap 3, the per-team part (P10): conditioned steps, opponents' tie
    levels, wild card representatives. **Done** (2026-11-12), see
-   [gap 3](#gap-3-xs-position-in-a-tie-handoff). The set constraints are
-   open (P11).
+   [gap 3](#gap-3-xs-position-in-a-tie-handoff). The set constraints
+   became milestone 10 (P11).
 9. Budgeted search for open answers (P12). **Done** (2026-11-12), see
    [results of milestone 9](#results-of-milestone-9).
 10. Tie groups at X's level (P11). **Done** (2026-11-12), see

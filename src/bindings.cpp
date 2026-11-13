@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cpp11.hpp>
+#include <optional>
 #include <span>
 #include <vector>
 
@@ -267,7 +268,7 @@ cpp11::writable::list clinching_status_cpp(const cpp11::list& played,
                                            const cpp11::integers& seeds,
                                            const cpp11::logicals& goals,
                                            bool scenarios, bool search,
-                                           bool verify) {
+                                           bool verify, int group_samples) {
   const nflseedr::GamesInput played_games = make_games(played);
   const nflseedr::GamesInput remaining_games = make_games(remaining);
   const nflseedr::League league = make_league(played);
@@ -276,6 +277,7 @@ cpp11::writable::list clinching_status_cpp(const cpp11::list& played,
   options.scenarios = scenarios;
   options.search = search;
   options.verify = verify;
+  options.group_samples = group_samples;
   const std::span<const int32_t> goal_flags = lgl_span(goals);
   if (goal_flags.size() != options.goals.size()) {
     throw nflseedr::EngineError("Need one flag per goal");
@@ -283,8 +285,14 @@ cpp11::writable::list clinching_status_cpp(const cpp11::list& played,
   std::ranges::transform(goal_flags, options.goals.begin(),
                          [](int32_t flag) { return flag == TRUE; });
 
-  const nflseedr::StatusRows rows = nflseedr::compute_clinching_status(
-      played_games, remaining_games, league, options, check_interrupt);
+  nflseedr::StatusRows rows;
+  {
+    // Only the group check draws random numbers
+    std::optional<RRandom> rng;
+    if (group_samples > 0) options.rng = &rng.emplace();
+    rows = nflseedr::compute_clinching_status(played_games, remaining_games,
+                                              league, options, check_interrupt);
+  }
 
   using namespace cpp11::literals;
   return cpp11::writable::list({
@@ -303,5 +311,8 @@ cpp11::writable::list clinching_status_cpp(const cpp11::list& played,
       "scenario_proves"_nm = to_r(rows.scenarios.proves),
       "scenario_coin_toss"_nm = to_r(rows.scenarios.coin_toss),
       "scenario_result"_nm = results_to_r(rows.scenarios.result),
+      "group_checks"_nm = cpp11::as_sexp(rows.group_checks),
+      "group_checks_incomplete"_nm =
+          cpp11::as_sexp(rows.group_checks_incomplete),
   });
 }

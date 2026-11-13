@@ -8,9 +8,36 @@
 #include "engine/engine.hpp"
 #include "engine/status.hpp"
 
+namespace {
+
+// Random numbers for the group check: a small generator is enough here
+class DriverRandom final : public nflseedr::RandomSource {
+ public:
+  int32_t index(int32_t n) override {
+    return static_cast<int32_t>(next() % static_cast<uint64_t>(n));
+  }
+  // Sum of 12 uniform numbers, close enough to a normal draw
+  double normal() override {
+    double sum = -6.0;
+    for (int i = 0; i < 12; ++i)
+      sum += static_cast<double>(index(1 << 20)) / (1 << 20);
+    return sum;
+  }
+
+ private:
+  uint64_t next() {
+    state_ = state_ * 6364136223846793005ULL + 1442695040888963407ULL;
+    return state_ >> 33;
+  }
+  uint64_t state_ = 20261113;
+};
+
+}  // namespace
+
 int main(int argc, char** argv) {
   if (argc < 2) return 2;
-  // A third argument turns the self-check off (for timing)
+  // A third argument turns the self-check and the group check off (for
+  // timing)
   const bool verify = argc < 3;
   std::ifstream in(argv[1]);
   int n_states = 0;
@@ -19,6 +46,7 @@ int main(int argc, char** argv) {
   for (auto& d : league.division) in >> d;
   for (auto& c : league.conference) in >> c;
   uint64_t checksum = 0;
+  DriverRandom rng;
   for (int s = 0; s < n_states; ++s) {
     int seeds = 0, n = 0;
     in >> seeds >> n;
@@ -52,6 +80,10 @@ int main(int argc, char** argv) {
       options.scenarios = true;
       options.search = mode == 1;
       options.verify = verify;
+      // The group check too, with few completions per tie group. Only with
+      // the search: it takes most of the time.
+      options.group_samples = verify && mode == 1 ? 2 : 0;
+      options.rng = &rng;
       options.seeds = seed_vec;
       const nflseedr::StatusRows rows = nflseedr::compute_clinching_status(
           played, remaining, league, options, [] {});
