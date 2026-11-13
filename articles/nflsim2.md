@@ -84,22 +84,22 @@ sims <- nflseedR::nfl_simulations(
   simulations = 4,
   chunks = 2
 )
-#> ℹ 12:23:16 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
-#> ℹ 12:23:16 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 18:53:39 | Start simulation of 4 seasons in 2 chunks with a chunk size of 2.
+#> ℹ 18:53:39 | CHUNK #1: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 12:23:16 | Compute standings
-#> ℹ 12:23:16 | CHUNK #1: Start simulation of post season weeks "WC", "DIV",
+#> ℹ 18:53:39 | Compute standings
+#> ℹ 18:53:39 | CHUNK #1: Start simulation of post season weeks "WC", "DIV",
 #> "CON", and "SB"
-#> ℹ 12:23:16 | Compute Draft Order
-#> ℹ 12:23:16 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
+#> ℹ 18:53:39 | Compute Draft Order
+#> ℹ 18:53:39 | CHUNK #2: Start simulation of regular season weeks "1", "2", "3",
 #> …, "17", and "18"
-#> ℹ 12:23:16 | Compute standings
-#> ℹ 12:23:16 | CHUNK #2: Start simulation of post season weeks "WC", "DIV",
+#> ℹ 18:53:39 | Compute standings
+#> ℹ 18:53:39 | CHUNK #2: Start simulation of post season weeks "WC", "DIV",
 #> "CON", and "SB"
-#> ℹ 12:23:16 | Compute Draft Order
-#> ℹ 12:23:16 | Combine simulation data
-#> ℹ 12:23:16 | Aggregate across simulations
-#> ℹ 12:23:16 | DONE!
+#> ℹ 18:53:39 | Compute Draft Order
+#> ℹ 18:53:39 | Combine simulation data
+#> ℹ 18:53:39 | Aggregate across simulations
+#> ℹ 18:53:39 | DONE!
 ```
 
 Before we take a closer look at the contents of a simulation, we will
@@ -241,8 +241,8 @@ sims <- nflseedR::nfl_simulations(
   chunks = 20,
   verbosity = "NONE"
 )
-#> ℹ 12:23:17 | Start simulation of 50 000 seasons in 20 chunks with a chunk size of 2 500.
-#> ℹ 12:23:31 | DONE!
+#> ℹ 18:53:39 | Start simulation of 50 000 seasons in 20 chunks with a chunk size of 2 500.
+#> ℹ 18:53:50 | DONE!
 ```
 
 Please pay attention to how we pass the team ratings to the simulation.
@@ -494,9 +494,9 @@ sims2 <- nflseedR::nfl_simulations(
 #> ℹ To maximize performance, `nfl_simulations()` does not control the output of
 #>   your function during the simulation. Please use `simulations_verify_fct()` in
 #>   advance to ensure that you do not get any unexpected results or errors.
-#> ℹ 12:23:33 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
+#> ℹ 18:53:51 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
 #> 
-#> ℹ 12:23:34 | DONE!
+#> ℹ 18:53:52 | DONE!
 #> 
 #> This message is displayed once every 8 hours.
 
@@ -597,8 +597,8 @@ sims3 <- nflseedR::nfl_simulations(
   worst = "GB",
   verbosity = "NONE"
 )
-#> ℹ 12:23:34 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
-#> ℹ 12:23:36 | DONE!
+#> ℹ 18:53:52 | Start simulation of 500 seasons in 1 chunk with a chunk size of 500.
+#> ℹ 18:53:53 | DONE!
 sims3$overall |> 
   dplyr::arrange(-wins) |> 
   gt::gt_preview(top_n = 5, bottom_n = 5)

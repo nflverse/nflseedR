@@ -164,8 +164,8 @@ try({#to avoid CRAN test problems
 # Status after week 15
 games$result[games$week > 15] <- NA
 status <- nflseedR::nfl_clinching_status(games)
-#> ℹ 12:14:30 | Compute clinching status
-#> ℹ 12:14:30 | Compute standings
+#> ℹ 18:50:02 | Compute clinching status
+#> ℹ 18:50:02 | Compute standings
 #> ℹ 3 statuses are "undecided" (teams with 3 games left). `search = TRUE` might
 #>   decide them.
 #>   The search helps most with 5 or fewer games left per team.
