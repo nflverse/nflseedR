@@ -86,9 +86,12 @@ struct Budgets {
   int32_t group_flows = 200;
   // Tie groups that stay open before giving up
   int32_t open_groups = 16;
+  // Tie groups that get the proof that carries facts from step to step
+  // (P15), which is costly
+  int32_t fact_groups = 4;
 };
 constexpr Budgets kSearchBudgets{
-    .scenarios = 2, .group_flows = 30, .open_groups = 2};
+    .scenarios = 2, .group_flows = 30, .open_groups = 2, .fact_groups = 2};
 // Late in the season the tie groups get more flows: few teams are still
 // open, and that's when teams clinch
 constexpr int32_t kLateGames = 4;
@@ -97,7 +100,9 @@ constexpr int32_t kLateGroupFlows = 2000;
 // seed questions (up to 15 open teams). More flows settle nothing more; with
 // many seasons they would take too long (P14).
 constexpr Budgets kSingleSeasonBudgets{
-    .group_flows = 20000, .open_groups = std::numeric_limits<int32_t>::max()};
+    .group_flows = 20000,
+    .open_groups = std::numeric_limits<int32_t>::max(),
+    .fact_groups = 128};
 // The group check (StatusOptions::group_samples): flows to find the tie
 // groups of one answer, and the share of tie games in its random completions
 constexpr int32_t kCheckFlows = 20000;
@@ -1205,6 +1210,8 @@ class TeamStatus {
     // Groups that stay open before giving up: the answer is open then,
     // unless a later group says yes
     int32_t open_groups = budgets_.open_groups;
+    // Groups that get the proof that carries facts (P15)
+    int32_t fact_groups = budgets_.fact_groups;
     bool unknown = false;
     Proof found;
     // True to stop
@@ -1238,9 +1245,10 @@ class TeamStatus {
       };
       TieOutcome outcome = tie_outcome(proof, goal, above, level);
       // Not settled: again with ranges that know every team's side
+      TieProof& context = context_ties(reach);
       if (!never(outcome)) {
-        TieProof& context = context_ties(reach);
         context.set_context(above, level, below);
+        context.carry_facts(false);
         outcome = tie_outcome(context, goal, above, level);
       }
       if (never(outcome)) {
@@ -1250,6 +1258,15 @@ class TeamStatus {
       for (const int8_t fill : {kHomeWin, kAwayWin}) {
         found = try_scenario(goal, filled(c, fill), reach);
         if (found.answer == Answer::kYes) return true;
+      }
+      // Still open: the costly proof that carries facts from step to step
+      if (fact_groups-- > 0) {
+        context.carry_facts(true);
+        outcome = tie_outcome(context, goal, above, level);
+        if (never(outcome)) {
+          if (verify_) verify_no(goal, reach, c);
+          return false;
+        }
       }
       if (verify_ && outcome == wanted) {
         throw EngineError("A tie group proof failed its self-check");

@@ -243,6 +243,28 @@ test_that("head-to-head wins of a tied division are shared out", {
   expect_identical(s[team == "LAC", seed1_status], "eliminated")
 })
 
+test_that("a step a tie group passes fixes the records of its teams", {
+  s <- clinching_status_after(2022, 11, "1SEED")
+  expect_identical(s[team == "CHI", seed1_status], "eliminated")
+})
+
+test_that("a reduced tie group keeps what the larger group's steps said", {
+  s <- clinching_status_after(2018, 13, "1SEED")
+  expect_identical(s[team == "IND", seed1_status], "eliminated")
+  s <- clinching_status_after(2017, 13, "DIV")
+  expect_identical(s[team == "DEN", div_status], "eliminated")
+})
+
+test_that("the pick among division winners knows how they won", {
+  # MIA only wins the AFC East over NE with the better division record,
+  # which puts its conference record above LAC's
+  games <- games_2026_week_10(
+    c(BAL = 3, NYJ = -3, ATL = 0, DET = 3, IND = -3, LV = 0, CLE = 0)
+  )
+  s <- clinching_status_compute(games, status = "1SEED", verify = TRUE)
+  expect_identical(s[team == "LAC", seed1_status], "eliminated")
+})
+
 test_that("only a single season gets the large budget for tie groups", {
   games <- games_2026_week_10(
     c(BAL = 3, NYJ = -3, ATL = 3, DET = -3, IND = 0, LV = -3, CLE = 3)
@@ -271,22 +293,22 @@ test_that("clinches and eliminations hold in completions of every tie group", {
 })
 
 test_that("the search settles answers the proofs leave open", {
-  # DEN is out of the AFC West race after week 13, which the proofs only
-  # show once the search fixes a few games
-  games <- load_games_2006_2025()[season == 2017]
-  games[week > 13, result := NA]
+  # PIT is out of the race for the AFC's No. 1 seed after week 14, which the
+  # proofs only show once the search fixes a few games
+  games <- load_games_2006_2025()[season == 2015]
+  games[week > 14, result := NA]
   s <- clinching_status_compute(
     games,
-    status = "DIV",
+    status = "1SEED",
     search = TRUE,
     verify = TRUE
   )
-  expect_identical(s[team == "DEN", div_status], "eliminated")
+  expect_identical(s[team == "PIT", seed1_status], "eliminated")
 })
 
 test_that("search = FALSE (default) leaves open answers undecided", {
-  s <- clinching_status_after(2017, 13, "DIV")
-  expect_identical(s[team == "DEN", div_status], "undecided")
+  s <- clinching_status_after(2015, 14, "1SEED")
+  expect_identical(s[team == "PIT", seed1_status], "undecided")
 })
 
 test_that("nfl_clinching_status() hints at the search", {
