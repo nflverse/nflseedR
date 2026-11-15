@@ -265,6 +265,27 @@ test_that("the pick among division winners knows how they won", {
   expect_identical(s[team == "LAC", seed1_status], "eliminated")
 })
 
+test_that("the records on the way to a pick must hold at once", {
+  # LAC is only picked ahead of CIN with the better conference record, so
+  # CIN would lose at least five of its six AFC games. The teams it loses
+  # to can't all stay at or below 8-9.
+  games <- games_2026_week_10(
+    c(BAL = 3, NYJ = -3, ATL = 3, DET = 0, IND = -3, LV = -3, CLE = 0)
+  )
+  s <- clinching_status_compute(games, status = "1SEED", verify = TRUE)
+  expect_identical(s[team == "LAC", seed1_status], "eliminated")
+})
+
+test_that("a pick knows the survivors of a step are ahead of the dropped teams", {
+  # MIA only wins the AFC East over NE with the better division record,
+  # and no completion that fits the other records gives it one
+  games <- games_2026_week_10(
+    c(BAL = 3, NYJ = 0, ATL = 3, DET = 3, IND = -3, LV = 3, CLE = 3)
+  )
+  s <- clinching_status_compute(games, status = "1SEED", verify = TRUE)
+  expect_identical(s[team == "LAC", seed1_status], "eliminated")
+})
+
 test_that("only a single season gets the large budget for tie groups", {
   games <- games_2026_week_10(
     c(BAL = 3, NYJ = -3, ATL = 3, DET = -3, IND = 0, LV = -3, CLE = 3)
