@@ -52,6 +52,24 @@ constexpr int32_t kMinCommonOpponents = 4;
 // 3^n results)
 constexpr size_t kMaxEnumeratedGames = 4;
 
+// Ways to the division winners that the No. 1 seed follows one by one (P15)
+constexpr size_t kMaxWinnerPaths = 256;
+
+// Half-wins per game, 0 without games (like Ratio)
+struct Share {
+  int64_t half_wins = 0;
+  int64_t games = 1;
+};
+
+[[nodiscard]] constexpr Share share(int64_t half_wins, int64_t games) noexcept {
+  return games == 0 ? Share{} : Share{.half_wins = half_wins, .games = games};
+}
+
+[[nodiscard]] constexpr bool operator<(const Share& a,
+                                       const Share& b) noexcept {
+  return a.half_wins * b.games < b.half_wins * a.games;
+}
+
 }  // namespace
 
 TieProof::TieProof(const SeasonData& played, std::span<const Game> played_games,
@@ -103,8 +121,11 @@ TieProof::TieProof(const SeasonData& played, std::span<const Game> played_games,
   }
   for (TeamId u = 0; u < kTeams; ++u) {
     for (TeamId v = u + 1; v < kTeams; ++v) {
-      if (open_[u][v] > 0)
+      if (open_[u][v] > 0) {
         open_pairs_.push_back({.first = u, .second = v, .count = open_[u][v]});
+        open_opponents_[u] |= team_bit(v);
+        open_opponents_[v] |= team_bit(u);
+      }
     }
   }
   for (TeamId t = 0; t < kTeams; ++t) {
@@ -147,7 +168,9 @@ int32_t TieProof::high_in(TeamId t, TeamMask group) const {
 // An opponent in the tie `group` also ends at its tie level, which bounds
 // what it can lose (or win) against t in the same way.
 TieProof::HalfWins TieProof::half_wins_range(TeamId t, TeamMask opponents,
-                                             TeamMask group) const {
+                                             TeamMask group,
+                                             const PairBounds* bounds) const {
+  if (bounds != nullptr) return bounded_half_wins(*bounds, t, opponents);
   int32_t games = 0;
   int32_t known = 0;
   int32_t open = 0;
@@ -180,7 +203,340 @@ TieProof::HalfWins TieProof::half_wins_range(TeamId t, TeamMask opponents,
   const int32_t needed = tie_half_wins_[t] - half_wins_low_[t];
   const int32_t low = std::max(open_low, needed - other_high);
   const int32_t high = std::min({2 * open, needed - other_low, open_high});
-  return {.games = games, .low = known + low, .high = known + high};
+  return {
+      .games = games, .known = known, .low = known + low, .high = known + high};
+}
+
+// The same from the pair bounds: what t's open games against `opponents`
+// bring at least and at most, and what t's other open games leave of the
+// half-wins t takes from all of them
+TieProof::HalfWins TieProof::bounded_half_wins(const PairBounds& bounds,
+                                               TeamId t,
+                                               TeamMask opponents) const {
+  HalfWins out;
+  for_each_team(opponents, [&](TeamId u) {
+    out.games += games_[t][u];
+    out.known += known_half_wins_[t][u];
+  });
+  if (!bounds.feasible) {
+    out.low = 1;
+    return out;
+  }
+  int32_t in_low = 0;
+  int32_t in_high = 0;
+  int32_t other_low = 0;
+  int32_t other_high = 0;
+  for_each_team(open_opponents_[t], [&](TeamId u) {
+    const bool counts = has(opponents, u);
+    (counts ? in_low : other_low) += bounds.low[t][u];
+    (counts ? in_high : other_high) += bounds.high[t][u];
+  });
+  out.low = out.known + std::max(in_low, needed_low(t) - other_high);
+  out.high = out.known + std::min(in_high, needed_high(t) - other_low);
+  return out;
+}
+
+// Propagation needs every team of the group at its tie level in the pair
+// bounds, which the context only says of the level teams
+bool TieProof::propagates(TeamMask group) const {
+  return has_context_ && (group & ~team_bit(x_) & ~context_level_) == 0;
+}
+
+int32_t TieProof::needed_low(TeamId t) const {
+  return context_low_[t] - half_wins_low_[t];
+}
+
+int32_t TieProof::needed_high(TeamId t) const {
+  return context_high_[t] - half_wins_low_[t];
+}
+
+// One pair brings at least what the others can't, and at most what the
+// others leave. The opponent gets the rest of the pair's games.
+TeamMask TieProof::tighten(PairBounds& bounds, TeamId t, TeamMask opponents,
+                           int32_t low, int32_t high) const {
+  if (!bounds.feasible) return 0;
+  opponents &= open_opponents_[t];
+  int32_t sum_low = 0;
+  int32_t sum_high = 0;
+  for_each_team(opponents, [&](TeamId u) {
+    sum_low += bounds.low[t][u];
+    sum_high += bounds.high[t][u];
+  });
+  if (low > high || low > sum_high || high < sum_low) {
+    bounds.feasible = false;
+    return 0;
+  }
+  TeamMask changed = 0;
+  for_each_team(opponents, [&](TeamId u) {
+    const int32_t vs_u = 2 * open_[t][u];
+    const int32_t at_least = low - (sum_high - bounds.high[t][u]);
+    const int32_t at_most = high - (sum_low - bounds.low[t][u]);
+    if (at_least > bounds.low[t][u]) {
+      bounds.low[t][u] = static_cast<int8_t>(at_least);
+      bounds.high[u][t] = static_cast<int8_t>(vs_u - at_least);
+      changed |= team_bit(u) | team_bit(t);
+    }
+    if (at_most < bounds.high[t][u]) {
+      bounds.high[t][u] = static_cast<int8_t>(at_most);
+      bounds.low[u][t] = static_cast<int8_t>(vs_u - at_most);
+      changed |= team_bit(u) | team_bit(t);
+    }
+  });
+  return changed;
+}
+
+// A changed bound of a pair can tighten the other pairs of both teams
+TeamMask TieProof::propagate(PairBounds& bounds, TeamMask dirty) const {
+  TeamMask changed = 0;
+  while (dirty != 0 && bounds.feasible) {
+    const TeamId t = std::countr_zero(dirty);
+    dirty &= dirty - 1;
+    if (open_opponents_[t] == 0) continue;
+    const TeamMask tightened =
+        tighten(bounds, t, open_opponents_[t], needed_low(t), needed_high(t));
+    dirty |= tightened;
+    changed |= tightened;
+  }
+  return changed;
+}
+
+TeamMask TieProof::step_opponents(Step step, TeamId t, TeamMask group,
+                                  TeamMask common) const {
+  switch (step) {
+    case Step::kHeadToHead:
+    case Step::kHeadToHeadSweep:
+      return group & ~team_bit(t);
+    case Step::kDivisionPct:
+      return division_of(t) & ~team_bit(t);
+    case Step::kCommonPct:
+      return common;
+    case Step::kConferencePct:
+      return conference_of(t) & ~team_bit(t);
+    default:
+      throw EngineError("Step has no record");
+  }
+}
+
+// The teams' percentages are equal: every team is within the percentages
+// all of them can reach
+bool TieProof::equal_records(TeamMask teams, TeamArray<HalfWins>& records) {
+  Share low;
+  Share high;
+  bool first = true;
+  bool feasible = true;
+  for_each_team(teams, [&](TeamId t) {
+    HalfWins& r = records[t];
+    r.low = std::max(r.low, 0);
+    r.high = std::min(r.high, 2 * r.games);
+    feasible = feasible && r.low <= r.high;
+    const Share t_low = share(r.low, r.games);
+    const Share t_high = share(r.high, r.games);
+    if (first || low < t_low) low = t_low;
+    if (first || t_high < high) high = t_high;
+    first = false;
+  });
+  if (!feasible || high < low) return false;
+  for_each_team(teams, [&](TeamId t) {
+    HalfWins& r = records[t];
+    if (r.games == 0) {
+      feasible = feasible && low.half_wins == 0;
+      return;
+    }
+    const int64_t games = r.games;
+    r.low = std::max(
+        r.low, static_cast<int32_t>((low.half_wins * games + low.games - 1) /
+                                    low.games));
+    r.high = std::min(
+        r.high, static_cast<int32_t>(high.half_wins * games / high.games));
+    feasible = feasible && r.low <= r.high;
+  });
+  return feasible;
+}
+
+// A step the whole group passes leaves all of its teams level there.
+// Head-to-head: every game among the group brings it two half-wins, so equal
+// percentages are all .500. Head-to-head sweep: nobody won or lost all of
+// its games against the others. Other records: equal percentages.
+bool TieProof::level_records(Step step, TeamMask group,
+                             TeamArray<HalfWins>& records) const {
+  if (step == Step::kHeadToHead) {
+    return equal_records(group, records) && at_half(group, records);
+  }
+  if (step != Step::kHeadToHeadSweep) return equal_records(group, records);
+  bool feasible = true;
+  for_each_team(group, [&](TeamId t) {
+    bool played_all = true;
+    for_each_team(group & ~team_bit(t), [&](TeamId u) {
+      played_all = played_all && games_[t][u] > 0;
+    });
+    HalfWins& r = records[t];
+    r.low = std::max(r.low, played_all ? 1 : 0);
+    r.high = std::min(r.high, 2 * r.games - (played_all ? 1 : 0));
+    feasible = feasible && r.low <= r.high;
+  });
+  return feasible;
+}
+
+// Every team has as many half-wins as games. False if one can't.
+bool TieProof::at_half(TeamMask teams, TeamArray<HalfWins>& records) {
+  bool feasible = true;
+  for_each_team(teams, [&](TeamId t) {
+    HalfWins& r = records[t];
+    r.low = std::max(r.low, r.games);
+    r.high = std::min(r.high, r.games);
+    feasible = feasible && r.low <= r.high;
+  });
+  return feasible;
+}
+
+// The procedure only reaches a step with the whole group if no earlier step
+// separated its teams. That fixes or bounds every team's record at the
+// earlier steps, which bounds its games against single opponents, which
+// bounds the opponents' other games, and so on until nothing changes
+// (P15). Not feasible: the step is never reached with the whole group.
+TieProof::PairBounds TieProof::passed_bounds(const StepRanges& r,
+                                             std::span<const Fact> facts,
+                                             Facts& passed) const {
+  PairBounds bounds = context_bounds_;
+  const EarlierSteps earlier = earlier_steps(r);
+  std::array<TeamArray<HalfWins>, kMaxSteps> records{};
+  std::array<TeamArray<TeamMask>, kMaxSteps> opponents{};
+  for (size_t i = 0; i < earlier.size; ++i) {
+    const EarlierStep& e = earlier.steps[i];
+    for_each_team(r.group, [&](TeamId t) {
+      opponents[i][t] = step_opponents(e.step, t, r.group, e.common);
+      records[i][t].high = std::numeric_limits<int32_t>::max();
+    });
+  }
+  // t takes `low` to `high` half-wins from its open games against `in`,
+  // and the rest of its half-wins from its other open games
+  const auto apply = [&](TeamId t, TeamMask in, int32_t low, int32_t high) {
+    const TeamMask changed = tighten(bounds, t, in, low, high);
+    return tighten(bounds, t, open_opponents_[t] & ~in, needed_low(t) - high,
+                   needed_high(t) - low) |
+           changed;
+  };
+  // Teams with a bound that changed since the facts and steps were applied:
+  // only their facts, and the steps of groups with one of them, can say more
+  TeamMask touched = earlier.size > 0 || !facts.empty() ? ~TeamMask{0} : 0;
+  while (touched != 0 && bounds.feasible) {
+    TeamMask changed = 0;
+    for (const Fact& f : facts) {
+      if (has(touched, f.team)) {
+        changed |= apply(f.team, f.opponents, f.low, f.high);
+      }
+    }
+    for (size_t i = 0; i < earlier.size && bounds.feasible; ++i) {
+      if ((touched & r.group) == 0) continue;
+      TeamArray<HalfWins>& record = records[i];
+      for_each_team(r.group, [&](TeamId t) {
+        const HalfWins h = bounded_half_wins(bounds, t, opponents[i][t]);
+        record[t] = {.games = h.games,
+                     .known = h.known,
+                     .low = std::max(record[t].low, h.low),
+                     .high = std::min(record[t].high, h.high)};
+      });
+      if (!level_records(earlier.steps[i].step, r.group, record)) {
+        bounds.feasible = false;
+        break;
+      }
+      for_each_team(r.group, [&](TeamId t) {
+        changed |= apply(t, opponents[i][t], record[t].low - record[t].known,
+                         record[t].high - record[t].known);
+      });
+    }
+    touched = changed | propagate(bounds, changed);
+  }
+  if (!bounds.feasible) return bounds;
+  for (size_t i = 0; i < earlier.size; ++i) {
+    for_each_team(r.group, [&](TeamId t) {
+      const HalfWins& h = records[i][t];
+      passed.push_back({.team = t,
+                        .opponents = opponents[i][t],
+                        .low = h.low - h.known,
+                        .high = h.high - h.known});
+    });
+  }
+  return bounds;
+}
+
+// A step keeps the teams with the best value and drops the others, and the
+// procedure restarts with the survivors. They take along what the step and
+// the earlier ones said: the whole group was level at the earlier steps,
+// the survivors are level at this one and the dropped teams below them.
+bool TieProof::reduction_facts(const StepRanges& r, TeamMask survivors,
+                               Facts& facts) const {
+  facts.insert(facts.end(), r.passed.begin(), r.passed.end());
+  if (r.step == Step::kSov || r.step == Step::kSos) return true;
+  const TeamMask dropped = r.group & ~survivors;
+  TeamArray<HalfWins> records{};
+  TeamArray<TeamMask> opponents{};
+  for_each_team(r.group, [&](TeamId t) {
+    opponents[t] = step_opponents(r.step, t, r.group, r.common);
+    records[t] = bounded_half_wins(*r.bounds, t, opponents[t]);
+  });
+  bool feasible = true;
+  const auto narrow = [&](TeamId t, int64_t low, int64_t high) {
+    HalfWins& h = records[t];
+    h.low = static_cast<int32_t>(std::max<int64_t>(h.low, low));
+    h.high = static_cast<int32_t>(std::min<int64_t>(h.high, high));
+    feasible = feasible && h.low <= h.high;
+  };
+  if (r.step == Step::kHeadToHeadSweep) {
+    // One survivor swept the others or is the only one not swept: nothing
+    // simple to say. More survivors: none of them swept or was swept, and
+    // every dropped team lost all of its games against the others.
+    if (std::popcount(survivors) == 1) return true;
+    for_each_team(r.group, [&](TeamId t) {
+      bool played_all = true;
+      for_each_team(r.group & ~team_bit(t), [&](TeamId u) {
+        played_all = played_all && games_[t][u] > 0;
+      });
+      if (has(dropped, t)) {
+        feasible = feasible && played_all;
+        narrow(t, 0, 0);
+      } else if (played_all) {
+        narrow(t, 1, 2 * records[t].games - 1);
+      }
+    });
+  } else {
+    if (!equal_records(survivors, records)) return false;
+    // The dropped teams are below the survivors' percentage
+    Share top;
+    Share bottom;
+    bool first = true;
+    for_each_team(survivors, [&](TeamId t) {
+      const Share s = share(records[t].high, records[t].games);
+      if (first || s < top) top = s;
+      first = false;
+    });
+    for_each_team(dropped, [&](TeamId t) {
+      const Share s = share(records[t].low, records[t].games);
+      if (bottom < s) bottom = s;
+    });
+    for_each_team(dropped, [&](TeamId t) {
+      const int64_t games = records[t].games;
+      if (games == 0) {
+        feasible = feasible && top.half_wins > 0;
+      } else {
+        narrow(t, 0, (top.half_wins * games + top.games - 1) / top.games - 1);
+      }
+    });
+    for_each_team(survivors, [&](TeamId t) {
+      const int64_t games = records[t].games;
+      // Without games the percentage is 0, which is never above another
+      narrow(t, games == 0 ? 1 : bottom.half_wins * games / bottom.games + 1,
+             2 * games);
+    });
+  }
+  if (!feasible) return false;
+  for_each_team(r.group, [&](TeamId t) {
+    facts.push_back({.team = t,
+                     .opponents = opponents[t],
+                     .low = records[t].low - records[t].known,
+                     .high = records[t].high - records[t].known});
+  });
+  return true;
 }
 
 // The teams of `above` end above X's win percentage, the teams of `level`
@@ -214,6 +570,19 @@ void TieProof::set_context(TeamMask above, TeamMask level, TeamMask below) {
           std::min(context_high_[t], exact ? floor_level - 1 : floor_level);
     }
   });
+  context_bounds_ = {};
+  for (const OpenGames& g : open_pairs_) {
+    const auto all = static_cast<int8_t>(2 * g.count);
+    context_bounds_.high[g.first][g.second] = all;
+    context_bounds_.high[g.second][g.first] = all;
+  }
+  (void)propagate(context_bounds_, ~TeamMask{0});
+  clear_caches();
+}
+
+void TieProof::carry_facts(bool on) {
+  if (on == carry_facts_) return;
+  carry_facts_ = on;
   clear_caches();
 }
 
@@ -227,8 +596,9 @@ void TieProof::clear_caches() {
 }
 
 TieProof::Range TieProof::pct_range(TeamId t, TeamMask opponents,
-                                    TeamMask group) const {
-  const HalfWins h = half_wins_range(t, opponents, group);
+                                    TeamMask group,
+                                    const PairBounds* bounds) const {
+  const HalfWins h = half_wins_range(t, opponents, group, bounds);
   // Empty: t and its opponents can't all end at their tie levels
   if (h.low > h.high) {
     return {.low = Ratio(1, 1), .high = Ratio(0, 1)};
@@ -239,14 +609,15 @@ TieProof::Range TieProof::pct_range(TeamId t, TeamMask opponents,
 // Head-to-head among the teams of a group: every game among them brings two
 // half-wins to the group. Team t is beaten for sure if the other teams can't
 // hold what t leaves without one of them ending above t's best percentage.
-bool TieProof::beaten_head_to_head(TeamId t, TeamMask group) const {
-  const HalfWins own = half_wins_range(t, group & ~team_bit(t), group);
+bool TieProof::beaten_head_to_head(TeamId t, TeamMask group,
+                                   const PairBounds* bounds) const {
+  const HalfWins own = half_wins_range(t, group & ~team_bit(t), group, bounds);
   if (own.games == 0 || own.low > own.high) return false;
   int64_t total = own.games;
   int64_t held = own.high;
   bool empty = false;
   for_each_team(group & ~team_bit(t), [&](TeamId u) {
-    const HalfWins h = half_wins_range(u, group & ~team_bit(u), group);
+    const HalfWins h = half_wins_range(u, group & ~team_bit(u), group, bounds);
     empty = empty || h.low > h.high;
     total += h.games;
     // u's percentage at most t's best
@@ -258,7 +629,8 @@ bool TieProof::beaten_head_to_head(TeamId t, TeamMask group) const {
 
 // Head-to-head sweep: 2 = beat every other team of the group, 0 = lost to
 // every one, 1 otherwise (or didn't play all of them)
-TieProof::Range TieProof::sweep_range(TeamId t, TeamMask group) const {
+TieProof::Range TieProof::sweep_range(TeamId t, TeamMask group,
+                                      const PairBounds* bounds) const {
   bool played_all = true;
   int32_t known_games = 0;
   int32_t known = 0;
@@ -271,6 +643,15 @@ TieProof::Range TieProof::sweep_range(TeamId t, TeamMask group) const {
     open += open_[t][u];
   });
   if (!played_all) return {.low = Ratio(1, 1), .high = Ratio(1, 1)};
+  if (bounds != nullptr) {
+    const HalfWins h = bounded_half_wins(*bounds, t, group & ~team_bit(t));
+    if (h.low > h.high) return {.low = Ratio(1, 1), .high = Ratio(0, 1)};
+    const auto sweep = [&](int32_t half_wins) {
+      if (half_wins == 2 * h.games) return 2;
+      return half_wins == 0 ? 0 : 1;
+    };
+    return {.low = Ratio(sweep(h.low), 1), .high = Ratio(sweep(h.high), 1)};
+  }
   const bool can_win_all = known == 2 * known_games;
   const bool can_lose_all = known == 0;
   if (open == 0) {
@@ -313,7 +694,8 @@ TieProof::Range TieProof::sov_range(TeamId t, TeamMask group) const {
 }
 
 TieProof::StepRanges TieProof::ranges(Step step, TeamMask group,
-                                      Procedure procedure) const {
+                                      Procedure procedure,
+                                      std::span<const Fact> facts) const {
   StepRanges out{.step = step, .group = group, .procedure = procedure};
   for_each_team(group, [&](TeamId t) {
     if (tie_half_wins_[t] == kMissing) {
@@ -330,25 +712,36 @@ TieProof::StepRanges TieProof::ranges(Step step, TeamMask group,
       return out;
     }
   }
+  if (propagates(group)) {
+    out.bounds = passed_bounds(out, facts, out.passed);
+    // Never reached with the whole group: no team survives the step
+    if (!out.bounds->feasible) {
+      for_each_team(group, [&](TeamId t) {
+        out.range[t] = {.low = Ratio(1, 1), .high = Ratio(0, 1)};
+      });
+      return out;
+    }
+  }
+  const PairBounds* bounds = out.pair_bounds();
   for_each_team(group, [&](TeamId t) {
     const TeamMask others = group & ~team_bit(t);
     const TeamMask own_division = division_of(t) & ~team_bit(t);
     const TeamMask own_conference = conference_of(t) & ~team_bit(t);
     switch (step) {
       case Step::kHeadToHead:
-        out.range[t] = pct_range(t, others, group);
+        out.range[t] = pct_range(t, others, group, bounds);
         break;
       case Step::kHeadToHeadSweep:
-        out.range[t] = sweep_range(t, group);
+        out.range[t] = sweep_range(t, group, bounds);
         break;
       case Step::kDivisionPct:
-        out.range[t] = pct_range(t, own_division, group);
+        out.range[t] = pct_range(t, own_division, group, bounds);
         break;
       case Step::kCommonPct:
-        out.range[t] = pct_range(t, common, group);
+        out.range[t] = pct_range(t, common, group, bounds);
         break;
       case Step::kConferencePct:
-        out.range[t] = pct_range(t, own_conference, group);
+        out.range[t] = pct_range(t, own_conference, group, bounds);
         break;
       case Step::kSov:
         out.range[t] = sov_range(t, group);
@@ -370,11 +763,12 @@ TieProof::StepRanges TieProof::ranges(Step step, TeamMask group,
 // with their tie level, the others with `half_wins` plus their shares of
 // the open games, and each open game goes the way that lowers the
 // difference most. Unlike low(a) - high(b), a beaten opponent of both
-// counts the same for both.
+// counts the same for both. With `bounds`, an open game only goes the ways
+// they allow.
 int64_t TieProof::linear_strength_difference(
     const TeamArray<int32_t>& weight_a, const TeamArray<int32_t>& weight_b,
-    const TeamArray<int32_t>& half_wins, TeamMask group,
-    TeamMask settled) const {
+    const TeamArray<int32_t>& half_wins, TeamMask group, TeamMask settled,
+    const PairBounds* bounds) const {
   const auto denominator = [&](const TeamArray<int32_t>& weight) {
     int64_t out = 0;
     for (TeamId o = 0; o < kTeams; ++o) {
@@ -395,7 +789,13 @@ int64_t TieProof::linear_strength_difference(
   }
   for (const OpenGames& g : open_pairs_) {
     if (has(settled, g.first) || has(settled, g.second)) continue;
-    out += int64_t{2} * g.count * std::min(coef[g.first], coef[g.second]);
+    const int32_t all = 2 * g.count;
+    const int32_t low = bounds != nullptr ? bounds->low[g.first][g.second] : 0;
+    const int32_t high =
+        bounds != nullptr ? bounds->high[g.first][g.second] : all;
+    // The first team's half-wins that lower the difference most
+    const int32_t share = coef[g.first] > coef[g.second] ? low : high;
+    out += coef[g.first] * share + coef[g.second] * (all - share);
   }
   return out;
 }
@@ -500,7 +900,7 @@ std::optional<int64_t> TieProof::lowest_difference(const StepRanges& r,
     // SOS doesn't depend on who wins a's and b's games
     if (r.step != Step::kSos) return std::nullopt;
     return linear_strength_difference(games_[a], games_[b], half_wins_low_,
-                                      r.group, 0);
+                                      r.group, 0, r.pair_bounds());
   }
   const EarlierSteps earlier = earlier_steps(r);
   const bool strength = r.step == Step::kSov || r.step == Step::kSos;
@@ -536,10 +936,10 @@ std::optional<int64_t> TieProof::lowest_difference(const StepRanges& r,
     switch (r.step) {
       case Step::kSov:
         return linear_strength_difference(own.wins_a, own.wins_b, own.half_wins,
-                                          r.group, pair);
+                                          r.group, pair, r.pair_bounds());
       case Step::kSos:
         return linear_strength_difference(games_[a], games_[b], own.half_wins,
-                                          r.group, pair);
+                                          r.group, pair, r.pair_bounds());
       default: {
         const auto ordering =
             value(r.step, a, own.half_wins_a, r.group, r.common) <=>
@@ -549,6 +949,17 @@ std::optional<int64_t> TieProof::lowest_difference(const StepRanges& r,
       }
     }
   };
+  // The results of t's open games are among those the pair bounds allow
+  const auto within_bounds = [&](TeamId t, const TeamArray<int32_t>& won) {
+    const PairBounds* bounds = r.pair_bounds();
+    bool ok = true;
+    if (bounds == nullptr) return ok;
+    for_each_team(open_opponents_[t], [&](TeamId u) {
+      const int32_t open = won[u] - known_half_wins_[t][u];
+      ok = ok && open >= bounds->low[t][u] && open <= bounds->high[t][u];
+    });
+    return ok;
+  };
   // Depth first over the results (half-wins of the first team: 0, 1 or 2),
   // dropping results that can't leave the group at its tie levels
   std::optional<int64_t> out;
@@ -557,6 +968,10 @@ std::optional<int64_t> TieProof::lowest_difference(const StepRanges& r,
     if (!all_reachable()) return;
     if (i == n_games) {
       if (!equal_before(earlier, r.group, a, b, own)) return;
+      if (!within_bounds(a, own.half_wins_a) ||
+          !within_bounds(b, own.half_wins_b)) {
+        return;
+      }
       reached = true;
       const int64_t d = difference();
       out = out ? std::min(*out, d) : d;
@@ -671,8 +1086,8 @@ bool TieProof::loses(TeamMask group, Procedure procedure) {
       beaten = beaten || l == Lead::kAhead;
       if (l != Lead::kNone) at_least_x |= team_bit(y);
     });
-    beaten =
-        beaten || (step == Step::kHeadToHead && beaten_head_to_head(x_, group));
+    beaten = beaten || (step == Step::kHeadToHead &&
+                        beaten_head_to_head(x_, group, r.pair_bounds()));
     if (beaten) {
       result = true;
       break;
@@ -708,11 +1123,36 @@ TeamMask TieProof::possible_picks(TeamMask group, Procedure procedure) {
   if (std::popcount(group) == 1) return group;
   auto& cache = picks_cache_[static_cast<size_t>(procedure)];
   if (const auto it = cache.find(group); it != cache.end()) return it->second;
+  const TeamMask out = possible_picks(group, procedure, {});
+  cache[group] = out;
+  return out;
+}
+
+TeamMask TieProof::possible_picks(TeamMask group, Procedure procedure,
+                                  const Facts& facts,
+                                  std::vector<PickPath>* paths) {
+  if (std::popcount(group) == 1) {
+    if (!facts.empty()) {
+      // The steps of the larger groups can leave this team
+      Facts passed;
+      const StepRanges first{.step = steps(procedure).front(),
+                             .group = group,
+                             .procedure = procedure};
+      if (!passed_bounds(first, facts, passed).feasible) return 0;
+    }
+    if (paths != nullptr) {
+      paths->push_back({.pick = std::countr_zero(group), .facts = facts});
+    }
+    return group;
+  }
   TeamMask out = 0;
   bool all_level = true;
+  // The group's records if it is level at every step
+  Facts level_facts;
   for (const Step step : steps(procedure)) {
-    const StepRanges r = ranges(step, group, procedure);
+    const StepRanges r = ranges(step, group, procedure, facts);
     if (!r.applies) continue;
+    if (paths != nullptr) level_facts = r.passed;
     TeamMask can_survive = 0;
     TeamMask must_survive = 0;
     for_each_team(group, [&](TeamId t) {
@@ -722,16 +1162,22 @@ TeamMask TieProof::possible_picks(TeamMask group, Procedure procedure) {
         beaten = beaten || lead(r, u, t) == Lead::kAhead;
         unbeatable = unbeatable && lead(r, t, u) != Lead::kNone;
       });
-      beaten = beaten ||
-               (step == Step::kHeadToHead && beaten_head_to_head(t, group));
+      beaten = beaten || (step == Step::kHeadToHead &&
+                          beaten_head_to_head(t, group, r.pair_bounds()));
       if (!beaten) can_survive |= team_bit(t);
       if (unbeatable) must_survive |= team_bit(t);
     });
     const TeamMask optional = can_survive & ~must_survive;
     (void)all_subsets(optional, [&](TeamMask s) {
       const TeamMask survivors = must_survive | s;
-      if (survivors != 0 && survivors != group) {
+      if (survivors == 0 || survivors == group) return true;
+      if ((!r.bounds || !carry_facts_) && paths == nullptr) {
         out |= possible_picks(survivors, procedure);
+        return true;
+      }
+      Facts next = facts;
+      if (!r.bounds || reduction_facts(r, survivors, next)) {
+        out |= possible_picks(survivors, procedure, next, paths);
       }
       return true;
     });
@@ -740,8 +1186,16 @@ TeamMask TieProof::possible_picks(TeamMask group, Procedure procedure) {
       break;
     }
   }
-  if (all_level) out |= group;
-  cache[group] = out;
+  if (all_level) {
+    out |= group;
+    if (paths != nullptr) {
+      Facts next = facts;
+      next.insert(next.end(), level_facts.begin(), level_facts.end());
+      for_each_team(group, [&](TeamId t) {
+        paths->push_back({.pick = t, .facts = next});
+      });
+    }
+  }
   return out;
 }
 
@@ -1073,9 +1527,52 @@ TieOutcome TieProof::first_seed_outcome(TeamMask above, TeamMask level) {
       divisions |= team_bit(t);
       rest &= ~division_of(t);
     }
-    first_seed_picks(divisions, level, team_bit(x_), out);
+    if (!has_context_ || !carry_facts_ ||
+        !first_seed_paths(divisions, level, out)) {
+      first_seed_picks(divisions, level, team_bit(x_), out);
+    }
   }
   return outcome_of(out);
+}
+
+// How a division's winner is picked says something about its records: the
+// steps it passed level with others, and the step that put it ahead. The
+// pick among the division winners takes that along, for every way to every
+// winner.
+bool TieProof::first_seed_paths(TeamMask divisions, TeamMask level,
+                                Berth& out) {
+  std::vector<std::vector<PickPath>> paths;
+  std::vector<PickPath>& own = paths.emplace_back();
+  (void)possible_picks((level & division_) | team_bit(x_), Procedure::kDivision,
+                       {}, &own);
+  std::erase_if(own, [&](const PickPath& p) { return p.pick != x_; });
+  size_t combinations = own.size();
+  for (TeamMask rest = divisions; rest != 0; rest &= rest - 1) {
+    std::vector<PickPath>& winners = paths.emplace_back();
+    (void)possible_picks(level & division_of(std::countr_zero(rest)),
+                         Procedure::kDivision, {}, &winners);
+    combinations *= winners.size();
+    if (combinations > kMaxWinnerPaths) return false;
+  }
+  Facts facts;
+  const auto visit = [&](const auto& self, size_t i, TeamMask winners) -> void {
+    if (out.reached && out.missed) return;
+    if (i == paths.size()) {
+      const TeamMask picks =
+          possible_picks(winners, Procedure::kConference, facts);
+      out.reached = out.reached || has(picks, x_);
+      out.missed = out.missed || (picks & ~team_bit(x_)) != 0;
+      return;
+    }
+    for (const PickPath& p : paths[i]) {
+      const size_t size = facts.size();
+      facts.insert(facts.end(), p.facts.begin(), p.facts.end());
+      self(self, i + 1, winners | team_bit(p.pick));
+      facts.resize(size);
+    }
+  };
+  visit(visit, 0, 0);
+  return true;
 }
 
 void TieProof::first_seed_picks(TeamMask divisions, TeamMask level,

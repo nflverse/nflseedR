@@ -73,6 +73,10 @@ class TieProof {
   // `below` below X (the tie groups, P11). Without a context, only the teams
   // of a tie group are known to be level.
   void set_context(TeamMask above, TeamMask level, TeamMask below);
+  // Whether a group that a step reduced, and the pick among the division
+  // winners, take along what the earlier steps and picks said (P15). Only
+  // with a context. Stronger, but much slower: nothing of it is cached.
+  void carry_facts(bool on);
 
  private:
   enum class Procedure : int8_t { kDivision = 0, kConference = 1 };
@@ -83,6 +87,25 @@ class TieProof {
     Ratio high;
   };
 
+  // Half-wins a team takes from its open games with each opponent, at least
+  // and at most (P15). Not feasible: no completion fits what is known.
+  struct PairBounds {
+    TeamMatrix<int8_t> low{};
+    TeamMatrix<int8_t> high{};
+    bool feasible = true;
+  };
+
+  // Team t takes between `low` and `high` half-wins from its open games
+  // against `opponents`: what a step says of a record when it keeps or drops
+  // teams of a group (P15)
+  struct Fact {
+    TeamId team = 0;
+    TeamMask opponents = 0;
+    int32_t low = 0;
+    int32_t high = 0;
+  };
+  using Facts = std::vector<Fact>;
+
   // A step's ranges for the teams of a group, or not applicable
   struct StepRanges {
     TeamArray<Range> range{};
@@ -92,6 +115,14 @@ class TieProof {
     Procedure procedure = Procedure::kDivision;
     // Common opponents of the group (common games step only)
     TeamMask common = 0;
+    // What the context and the steps the group passed leave of every pair's
+    // open games (only with a context, see passed_bounds())
+    std::optional<PairBounds> bounds;
+    // The records of the group's teams at the earlier steps, all level
+    Facts passed;
+    [[nodiscard]] const PairBounds* pair_bounds() const noexcept {
+      return bounds ? &*bounds : nullptr;
+    }
   };
 
   // One result of the open games of two teams a and b: everyone's half-wins
@@ -116,28 +147,76 @@ class TieProof {
   };
 
   [[nodiscard]] static std::span<const Step> steps(Procedure procedure);
+  // `facts`: what the steps of larger groups said before they left `group`
   [[nodiscard]] StepRanges ranges(Step step, TeamMask group,
-                                  Procedure procedure) const;
+                                  Procedure procedure,
+                                  std::span<const Fact> facts = {}) const;
   // Half-wins of tied team t in its games against `opponents`, lowest and
-  // highest
+  // highest. `known` of them come from games that aren't open.
   struct HalfWins {
     int32_t games = 0;
+    int32_t known = 0;
     int32_t low = 0;
     int32_t high = 0;
   };
+  // With `bounds`, from the pair bounds instead of the group
   [[nodiscard]] HalfWins half_wins_range(TeamId t, TeamMask opponents,
-                                         TeamMask group) const;
-  [[nodiscard]] Range pct_range(TeamId t, TeamMask opponents,
-                                TeamMask group) const;
-  [[nodiscard]] bool beaten_head_to_head(TeamId t, TeamMask group) const;
-  [[nodiscard]] Range sweep_range(TeamId t, TeamMask group) const;
+                                         TeamMask group,
+                                         const PairBounds* bounds) const;
+  [[nodiscard]] HalfWins bounded_half_wins(const PairBounds& bounds, TeamId t,
+                                           TeamMask opponents) const;
+  [[nodiscard]] Range pct_range(TeamId t, TeamMask opponents, TeamMask group,
+                                const PairBounds* bounds) const;
+  [[nodiscard]] bool beaten_head_to_head(TeamId t, TeamMask group,
+                                         const PairBounds* bounds) const;
+  [[nodiscard]] Range sweep_range(TeamId t, TeamMask group,
+                                  const PairBounds* bounds) const;
+
+  // Propagation (P15), only with a context and for groups of level teams.
+  // Half-wins team t takes from its open games, at least and at most
+  [[nodiscard]] bool propagates(TeamMask group) const;
+  [[nodiscard]] int32_t needed_low(TeamId t) const;
+  [[nodiscard]] int32_t needed_high(TeamId t) const;
+  // t takes between `low` and `high` half-wins from its open games against
+  // `opponents`: tightens the bounds of these pairs. Returns the teams with
+  // a changed bound.
+  [[nodiscard]] TeamMask tighten(PairBounds& bounds, TeamId t,
+                                 TeamMask opponents, int32_t low,
+                                 int32_t high) const;
+  // Tightens the bounds with the totals of the teams of `dirty`, and of
+  // every team a bound changes for, until nothing changes. Returns the teams
+  // with a changed bound.
+  [[nodiscard]] TeamMask propagate(PairBounds& bounds, TeamMask dirty) const;
+  // The pair bounds when the procedure reaches step r.step with all of
+  // r.group: the context's bounds, the facts, and the group is level at
+  // every earlier record step (these records are added to `passed`)
+  [[nodiscard]] PairBounds passed_bounds(const StepRanges& r,
+                                         std::span<const Fact> facts,
+                                         Facts& passed) const;
+  // Step r.step leaves `survivors` of r.group: adds what that says of the
+  // group's records to `facts`. False if it can't happen.
+  [[nodiscard]] bool reduction_facts(const StepRanges& r, TeamMask survivors,
+                                     Facts& facts) const;
+  // Narrows the half-wins of `teams` at a record step to those that give
+  // all of them the same percentage. False if there are none.
+  [[nodiscard]] static bool equal_records(TeamMask teams,
+                                          TeamArray<HalfWins>& records);
+  [[nodiscard]] static bool at_half(TeamMask teams,
+                                    TeamArray<HalfWins>& records);
+  // The opponents a record step counts for team t
+  [[nodiscard]] TeamMask step_opponents(Step step, TeamId t, TeamMask group,
+                                        TeamMask common) const;
+  // Narrows the half-wins of the teams of a group at a record step to those
+  // that leave the whole group level there. False if there are none.
+  [[nodiscard]] bool level_records(Step step, TeamMask group,
+                                   TeamArray<HalfWins>& records) const;
   [[nodiscard]] Range sos_range(TeamId t, TeamMask group) const;
   [[nodiscard]] Range sov_range(TeamId t, TeamMask group) const;
   [[nodiscard]] Lead lead(const StepRanges& r, TeamId a, TeamId b) const;
   [[nodiscard]] int64_t linear_strength_difference(
       const TeamArray<int32_t>& weight_a, const TeamArray<int32_t>& weight_b,
-      const TeamArray<int32_t>& half_wins, TeamMask group,
-      TeamMask settled) const;
+      const TeamArray<int32_t>& half_wins, TeamMask group, TeamMask settled,
+      const PairBounds* bounds) const;
   [[nodiscard]] std::optional<int64_t> lowest_difference(const StepRanges& r,
                                                          TeamId a,
                                                          TeamId b) const;
@@ -206,6 +285,16 @@ class TieProof {
 
   // Teams of `group` that one pick of a procedure can pick (a superset)
   [[nodiscard]] TeamMask possible_picks(TeamMask group, Procedure procedure);
+  // A team one pick can pick, and what the steps on the way to it said
+  struct PickPath {
+    TeamId pick = 0;
+    Facts facts;
+  };
+  // The same for a group that the steps of larger groups left, with what
+  // they said (`facts`). With `paths`, also every way to a pick.
+  [[nodiscard]] TeamMask possible_picks(TeamMask group, Procedure procedure,
+                                        const Facts& facts,
+                                        std::vector<PickPath>* paths = nullptr);
 
   // X ranks ahead of (behind) rival y in the division ranking of `group`,
   // which holds both: the picks go on until one of them is picked
@@ -233,6 +322,10 @@ class TieProof {
   // one of each division of `divisions` (a team of each), `level` its teams
   void first_seed_picks(TeamMask divisions, TeamMask level, TeamMask winners,
                         Berth& out);
+  // The same with what every division's pick says about its winner (P15).
+  // False if there are too many ways to the division winners.
+  [[nodiscard]] bool first_seed_paths(TeamMask divisions, TeamMask level,
+                                      Berth& out);
   [[nodiscard]] static TieOutcome outcome_of(const Berth& berth);
 
   // Every nonempty set of at most one team per division of `teams` outside
@@ -252,6 +345,8 @@ class TieProof {
   TeamMatrix<int32_t> known_half_wins_{};
   TeamMatrix<int32_t> known_wins_{};
   TeamMatrix<int32_t> open_{};
+  // Opponents of every team in its open games
+  TeamArray<TeamMask> open_opponents_{};
   std::vector<OpenGames> open_pairs_;
   TeamArray<int32_t> final_games_{};
   TeamArray<int32_t> open_games_{};
@@ -264,9 +359,12 @@ class TieProof {
   TeamArray<int32_t> context_low_{};
   TeamArray<int32_t> context_high_{};
   bool has_context_ = false;
+  bool carry_facts_ = false;
   TeamMask context_above_ = 0;
   TeamMask context_level_ = 0;
   TeamMask context_below_ = 0;
+  // The pair bounds the context leaves, at their fixed point
+  PairBounds context_bounds_;
   void clear_caches();
   // Results of wins() and loses() per procedure and group
   std::array<std::array<std::unordered_map<TeamMask, bool>, 2>, 2> cache_{};
