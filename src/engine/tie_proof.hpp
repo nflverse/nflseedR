@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "flow.hpp"
 #include "season.hpp"
 #include "types.hpp"
 
@@ -76,7 +77,9 @@ class TieProof {
   // Whether a group that a step reduced, and the pick among the division
   // winners, take along what the earlier steps and picks said (P15). Only
   // with a context. Stronger, but much slower: nothing of it is cached.
-  void carry_facts(bool on);
+  // With `jointly`, a pick also needs all records on the way to it to hold
+  // at once (P17), which takes a flow per pick.
+  void carry_facts(bool on, bool jointly = false);
 
  private:
   enum class Procedure : int8_t { kDivision = 0, kConference = 1 };
@@ -193,10 +196,29 @@ class TieProof {
   [[nodiscard]] PairBounds passed_bounds(const StepRanges& r,
                                          std::span<const Fact> facts,
                                          Facts& passed) const;
+  // Whether the open games can hand out their half-wins so that every team
+  // gets a total the context allows, every pair what `bounds` allow and
+  // every record of `facts` and `passed` holds, all at once (P17). The pair
+  // bounds only look at one team at a time.
+  [[nodiscard]] bool jointly_feasible(const PairBounds& bounds,
+                                      std::span<const Fact> facts,
+                                      std::span<const Fact> passed) const;
+  // The same with a given choice among records that can't all be in one flow
+  struct RecordBound;
+  [[nodiscard]] bool records_feasible(const PairBounds& bounds,
+                                      std::span<RecordBound> records,
+                                      bool crossed_first) const;
   // Step r.step leaves `survivors` of r.group: adds what that says of the
   // group's records to `facts`. False if it can't happen.
   [[nodiscard]] bool reduction_facts(const StepRanges& r, TeamMask survivors,
                                      Facts& facts) const;
+  // The same, one case per record the survivors can share at a record step
+  // (with the joint check, P18): ranges per team can't say that the
+  // survivors are level with each other and the dropped teams below them.
+  // No case: it can't happen.
+  [[nodiscard]] std::vector<Facts> reduction_cases(const StepRanges& r,
+                                                   TeamMask survivors,
+                                                   const Facts& facts) const;
   // Narrows the half-wins of `teams` at a record step to those that give
   // all of them the same percentage. False if there are none.
   [[nodiscard]] static bool equal_records(TeamMask teams,
@@ -360,11 +382,14 @@ class TieProof {
   TeamArray<int32_t> context_high_{};
   bool has_context_ = false;
   bool carry_facts_ = false;
+  bool joint_facts_ = false;
   TeamMask context_above_ = 0;
   TeamMask context_level_ = 0;
   TeamMask context_below_ = 0;
   // The pair bounds the context leaves, at their fixed point
   PairBounds context_bounds_;
+  // The flow of jointly_feasible(), kept for its memory
+  mutable MaxFlow flow_;
   void clear_caches();
   // Results of wins() and loses() per procedure and group
   std::array<std::array<std::unordered_map<TeamMask, bool>, 2>, 2> cache_{};

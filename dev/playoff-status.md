@@ -2,8 +2,8 @@
 
 Plan for a new exported function that says, for every team, whether it has
 clinched or been eliminated from a division title, a playoff berth and the
-No. 1 seed, given the games played so far. Status: **milestones 1–13 done**
-(2026-11-15, see [milestones](#milestones)): exported as
+No. 1 seed, given the games played so far. Status: **milestones 1–15 done**
+(2026-11-16, see [milestones](#milestones)): exported as
 `nfl_clinching_status()`, experimental, returning the current standings
 with the status added (P9). What's left is under
 [still to do](#still-to-do). Built on the C++ standings engine, so read
@@ -421,8 +421,10 @@ src/engine/scenario.hpp   ScenarioRunner: a completion through the procedures
 src/scenario.cpp          for every coin toss sequence
 src/engine/tie_proof.hpp  TieProof: which tied teams X always ranks ahead of
 src/tie_proof.cpp         or behind (milestone 4), what X gets in a given
-                          tie group (milestone 10), and the propagation of
-                          what the steps say (milestone 13)
+                          tie group (milestone 10), the propagation of
+                          what the steps say (milestone 13), and a flow that
+                          checks the records on the way to a pick jointly
+                          (milestone 14)
 src/bindings.cpp          clinching_status_cpp()
 ```
 
@@ -1317,9 +1319,184 @@ Benchmark (`data-raw/bench_clinching_status.R`, same session):
 Where the time goes now (every week, sampled): the flows of the tie groups
 first, then `tighten()`.
 
+### Results of milestone 14
+
+P17: a joint check of the records on the way to a pick, from an analysis of
+the 16 week 10 results of 2026 that milestone 13 left open (site:
+eliminated). What the analysis found, with temporary prints in a copy of the
+package:
+
+- Row 412 (the traced example of the
+  [handoff](#sov-with-many-open-games-handoff)) was never about SOV: the
+  ways to the division winners exceed `kMaxWinnerPaths` (448 times in the 16
+  results, up to 13,530 combinations), so `first_seed_paths()` gave up and
+  the pick among the winners ran without facts. With a limit of 4,096 the
+  row is eliminated, nothing else changes, and `all_statuses()` takes 26.1s
+  instead of 23.5s (56.7s without a limit).
+- Rows 1411 and 1897 have one open group with the paths followed: BAL, BUF,
+  CIN, DEN, KC, MIA, NE and PIT level with LAC. CIN, LAC and MIA win their
+  divisions, MIA is swept, and LAC is only picked if CIN's conference record
+  ends below LAC's 6-6. CIN (6-2) needs four half-wins from nine open games,
+  so it would take at most three of them from its six AFC games. The pair
+  bounds allow that: each of these games can be lost on its own. But no
+  completion does: a linear program over the team totals of the tie group
+  with this one fact is infeasible (lpSolve, not part of the package). The
+  pair bounds look at one team at a time; this needs all teams at once.
+
+Changes:
+
+- **Joint check** (`TieProof::jointly_feasible()`, `records_feasible()` in
+  `src/tie_proof.cpp`): a flow in which every pair of teams hands out the
+  half-wins of its open games within the pair bounds, and a team's half-wins
+  against a set of opponents run through a node with the record's bounds
+  into the next larger set and at last into the team's total (lower bounds
+  by the usual reduction to a max-flow). The records are the facts and the
+  level records of the steps passed. The sets of one team must be nested or
+  disjoint; records that overlap another way (common games) are left out,
+  which only relaxes, and get a second flow in which they go first. It runs
+  where a pick is made: a single team is left, or a group is level at every
+  step (coin toss).
+- **Only for the last open groups** (`tie_groups()` in `src/status.cpp`,
+  `TieProof::carry_facts(on, jointly)`): the groups the proof with facts
+  leaves open are kept, and if nothing else is open and they are at most
+  `Budgets::joint_groups` (32 with a single season, 0 otherwise), each gets
+  the proof again with the joint check, until one stays open. In that proof
+  the ways to the division winners may be up to `kMaxJointWinnerPaths`
+  (4,096); the proof with facts keeps 256.
+- Why not everywhere: with the flow at every step, `all_statuses()` took
+  256s instead of 23.5s; with the flow at every pick of every group with
+  facts 432s (about 120,000 flows for four calls, 15 µs each). A group that
+  is really open makes the proof walk every way to every pick, because it
+  no longer stops at the first way that reaches and misses. With 8 groups
+  only row 412 closes (rows 1411 and 1897 have more than 8 groups open
+  before the paths are followed); 32 and 128 give the same.
+
+Results on the 2,187 results of week 10 of 2026, with and without the
+search:
+
+| site | milestone 13 | now | N |
+|---|---|---|---|
+| eliminated (339) | eliminated | eliminated | 323 |
+| eliminated | undecided | eliminated | 3 |
+| eliminated | undecided | undecided | 13 |
+| not eliminated (1,848) | alive | alive | 1,688 |
+| not eliminated | undecided | undecided | 160 |
+
+- The three are rows 412, 1411 and 1897, all eliminated by the site. Each
+  passes `verify = TRUE` and the [group check](#group-check-2026-11-13) with
+  100 completions per group (complete, no error).
+- Every week of 2006–2025, with and without the search: no status changes
+  (undecided 10 / 13 / 26 and 0 / 2 / 9 as before).
+- The other 13 are not closed by this, see the
+  [handoff](#sov-with-many-open-games-handoff).
+- The test suite (`clinching_status`, 194 expectations) passes, with a new
+  test for row 1411. `dev/check-cpp.sh` reports nothing in the changed code.
+  Not run again: `devtools::check()`, `dev/sanitize-cpp.sh` and the R-hub
+  sanitizer builds.
+
+Benchmark (`data-raw/bench_clinching_status.R`, same session, two runs
+each in turn):
+
+| case | milestone 13 | milestone 14 |
+|---|---|---|
+| every week of 2006–2025 | 5.23s, 5.27s | 5.73s, 5.38s |
+| 2023 after week 15, all goals | 19.7ms, 19.8ms | 23.6ms, 20.6ms |
+| 1,000 simulated seasons after week 12 | 4.90s, 5.29s | 4.96s, 4.98s |
+
+The fastest runs are the same within 2%. A week 10 result with a few open
+groups takes longer: row 1411 0.2s before, 0.8s now.
+
+### Results of milestone 15
+
+P18: in the joint proof, a way that drops teams at a record step is split by the record
+of the survivors. Found by tracing the 13 week 10 results of 2026 that
+milestone 14 left open.
+
+**What was missing.** Row 166, the way traced in milestone 14: LAC, MIA
+and PIT win their divisions, the conference record leaves LAC and MIA ahead
+of PIT, and LAC beat MIA. An integer program over the team totals and all
+facts of that way is feasible, so three of its solutions were turned into
+results and run through `nfl_standings()`. In all three NE wins the AFC
+East, not MIA: both end 4-2 in the division and NE has the better
+conference record. The proof has MIA win the division tie with NE at the
+division record. `reduction_facts()` says that with a range per team: MIA
+(2 half-wins so far) takes 6 to 8 more, NE (6 so far) 1 to 3 more, so 8 to
+10 against 7 to 9. Both can be 8, which is no win for MIA. With "MIA's
+division record is above NE's" added, the integer program is infeasible. A
+range per team can't say that the survivors of a step are level with each
+other and the dropped teams below them.
+
+**Change** (`TieProof::reduction_cases()` in `src/tie_proof.cpp`, used by
+`possible_picks()`): with the joint check on, a record step that drops
+teams gives one case per record the survivors can share: every survivor
+exactly at that percentage, every dropped team strictly below it. Each
+case goes on with its own facts, and the joint flow drops the cases that
+can't happen. The head-to-head sweep, SOV and SOS keep
+`reduction_facts()`, and so does the proof with facts. Not done: the same
+split for the steps a group passes level (`passed_bounds()` keeps ranges).
+
+**Budgets**, chosen from the table below and decided with P18 (they
+replace the 32 groups and 4,096 ways of milestone 14):
+
+- `Budgets::joint_groups` = 512 (single season). Any group still open
+  counts, also one beyond `fact_groups` that never got the proof with facts.
+- `kMaxJointWinnerPaths` = 65,536: the cases multiply the ways to the
+  division winners.
+- `fact_groups` stays 128 (P15).
+
+| joint proof for | `fact_groups` | `joint_groups` | ways | open of the 16 |
+|---|---|---|---|---|
+| milestone 14, no split | 128 | 32 | 4,096 | 13 |
+| groups with facts | 128 | 32 | 4,096 | 5 |
+| groups with facts | 128 | 128 | 4,096 or 65,536 | 3 |
+| groups with facts | 512 | 512 | 4,096 | 2 |
+| groups with facts | 512 | 512 | 65,536 | 0 |
+| any open group | 128 | 512 | 4,096 | 2 |
+| any open group (now) | 128 | 512 | 65,536 | 0 |
+
+`fact_groups` = 512 made `all_statuses()` about half slower (36.9s against
+23.5s, 8 cores, noisy); the setting used now doesn't. One process, same
+session:
+
+| case | milestone 13 | groups with facts, 128, 4,096 | now |
+|---|---|---|---|
+| every week of 2006–2025, one call each | 6.03s (max 0.38s) | 6.01s (0.37s) | 6.27s (0.43s) |
+| the same with `search = TRUE` | 6.68s (0.42s) | 6.57s (0.43s) | 6.65s (0.43s) |
+| 200 random week 10 results, No. 1 seed | 7.9s (max 0.57s) | 8.9s (1.08s) | 9.6s (1.09s) |
+
+Results on the 2,187 results of week 10 of 2026, with and without the
+search:
+
+| site | milestone 14 | now | N |
+|---|---|---|---|
+| eliminated (339) | eliminated | eliminated | 326 |
+| eliminated | undecided | eliminated | 13 |
+| not eliminated (1,848) | alive | alive | 1,688 |
+| not eliminated | undecided | undecided | 160 |
+
+- All 339 eliminations of the site are found, and nothing else is
+  eliminated. The 13 new ones (rows 166, 181, 199, 418, 424, 670, 904, 910,
+  922, 1156, 1642, 1660 and 2140) each pass `verify = TRUE` and the
+  [group check](#group-check-2026-11-13) with 100 completions per group
+  (complete, no error).
+- Every week of 2006–2025, with and without the search: no status changes
+  (undecided 10 / 13 / 26 and 0 / 2 / 9 as before).
+- The test suite (`clinching_status`, 195 expectations) passes, with a new
+  test for row 166. `dev/check-cpp.sh` reports nothing in the changed code.
+  `devtools::check()` is clean (2026-11-16: 0 errors, warnings, notes). Not
+  run again: `dev/sanitize-cpp.sh` and the R-hub sanitizer builds.
+
+Benchmark (`data-raw/bench_clinching_status.R`, same session, medians):
+
+| case | milestone 13 | milestone 15 |
+|---|---|---|
+| every week of 2006–2025 | 5.56s | 5.80s |
+| 2023 after week 15, all goals | 21.0ms | 22.0ms |
+| 1,000 simulated seasons after week 12 | 5.28s | 5.32s |
+
 ### Still to do
 
-**Next steps** (2026-11-15, after milestone 13), roughly in order.
+**Next steps** (2026-11-16, after milestone 15), roughly in order.
 
 1. **Independent verification.** The [group check](#group-check-2026-11-13)
    covers what the random-completion checks missed (the wrong 2021 DAL
@@ -1343,12 +1520,9 @@ first, then `tighten()`.
    tiebreakers), and for the No. 1 seed a prune for teams X always ranks
    behind (`conference_sides()`), which would save most of the flows there.
    Open and needs the maintainer:
-   - *SOV with many open games.* The 16 week 10 results of 2026 that
-     milestone 13 leaves (site: eliminated) end in SOV among division
-     winners with 8 or 9 open games each. The pair bounds say which games
-     a team must win or lose, so SOV could get a bound from them without
-     enumerating results. See the
-     [handoff](#sov-with-many-open-games-handoff).
+   - *The 160 week 10 results the site has alive* and we have undecided:
+     they need a completion, not a proof (more completions per group, see
+     above).
    - *Facts in the wild card picks.* Only the No. 1 seed carries how a
      division was won into the next pick; `division_titles()` and
      `wild_card_picks()` don't. No known case needs it.
@@ -1392,6 +1566,57 @@ first, then `tighten()`.
 **Open after milestone 13, needs a decision by the maintainer** before any
 work on it.
 
+**Status (2026-11-16, after milestone 15): closed.** The diagnosis below ("the proof needs a bound on SOV
+differences") was wrong. None of the 16 results needed SOV:
+
+- Rows 412, 1411 and 1897: the ways to the division winners ran over
+  `kMaxWinnerPaths`, and records that can't hold at once
+  ([milestone 14](#results-of-milestone-14)).
+- The other 13: a division or conference tie that a record step decides
+  was carried on as a range per team, which lets the winner and the loser
+  end with the same record ([milestone 15](#results-of-milestone-15)), and
+  the budgets of the joint proof.
+
+Ideas 1 and 2 are done with (P16); the "traced example" and "ideas" below
+are kept as the history. Left to do here: removing
+`dev/clinching-week10-2026.R` (see the end of this section). Not removed
+yet: it also has the 160 results the site has alive and we have undecided,
+and the maintainer wants to close as many gaps to the site as possible
+(2026-11-16), so ask before removing it.
+
+How milestones 14 and 15 were found, on top of the steps at the end of this
+section: dump the facts of a pick of X (`Fact`, `needed_low()`,
+`needed_high()`, `open_pairs_`) to `stderr` where `possible_picks()` is
+left with X alone, and put them into an integer program in R (lpSolve):
+one variable per pair with open games, the totals and the facts as rows.
+Infeasible: the pair bounds miss something the joint flow sees
+(milestone 14). Feasible: turn a solution into results, run them through
+`nfl_standings()` and compare the division winners and the steps with the
+way the proof took (milestone 15).
+
+Recipes for the P16 experiments (temporary builds, never committed):
+
+- *Exact SOV per pair.* In `lowest_difference()` of `src/tie_proof.cpp`,
+  apply the open games the pair bounds fix (`low == high`; for more than
+  one game only 0 or all half-wins, so the wins follow) with the same
+  bookkeeping as the enumeration, count only the other games against
+  `kMaxEnumeratedGames`, and raise it to 10. Every SOV pair with LAC in the
+  16 results then has at most 9 free games and is enumerated exactly.
+  About 10s for the 16 results on 8 cores; `all_statuses()` is too slow
+  with it.
+- *Trace of the SOV leads.* In `lead()`, after `lowest_difference()`, print
+  `r.group`, `a`, `b`, whether `r.pair_bounds()` is set and the sign of
+  `d` for `r.step == Step::kSov` to `stderr`, guarded by an environment
+  variable. Run row 412 with `clinching_status_compute(week10_games(
+  week10_grid()[412, ]), status = "1SEED")` and keep the lines with `b`
+  being LAC (bit i is `standings_league()$team[i + 1]`).
+- *Level teams fixed.* In `linear_strength_difference()`, treat
+  `group | context_level_` (when `bounds` is given) like the group: tie
+  level and coefficient 0.
+- The 16 rows: 166, 181, 199, 412, 418, 424, 670, 904, 910, 922, 1156,
+  1411, 1642, 1660, 1897 and 2140 of `week10_grid()`, with an optimized
+  build (see the header of `dev/clinching-week10-2026.R`).
+
 **Problem.** In 16 of the 2,187 week 10 results of 2026 the site has LAC
 out of the No. 1 seed race and we're undecided, with and without the
 search, whatever the budgets. `dev/clinching-week10-2026.R` lists them
@@ -1415,7 +1640,8 @@ sure. The same holds for the three left if one is dropped (e.g. BAL, LAC,
 MIA are level in the conference record for sure). So the proof needs a
 bound on SOV differences with many open games, nothing else.
 
-**Ideas, not decided.**
+**Ideas, not decided.** Ideas 1 and 2 were tried and don't close the 16
+results, see P16 in the [decisions](#decisions).
 
 1. *SOV from the pair bounds.* Within a tie group with facts, the pair
    bounds fix many results (low equal to high). A team's wins over an
@@ -1743,6 +1969,12 @@ flows' failing sets, or cache `lowest_difference()` per pair and group.
     (2026-11-13), see [results of milestone 12](#results-of-milestone-12).
 13. Propagation in the tie proofs of the tie groups (P15). **Done**
     (2026-11-15), see [results of milestone 13](#results-of-milestone-13).
+14. Joint check of the records on the way to a pick, and more ways to the
+    division winners (P17). **Done** (2026-11-15), see
+    [results of milestone 14](#results-of-milestone-14).
+15. The joint proof splits a reduction by the record of the survivors
+    (P18). **Done** (2026-11-16), see
+    [results of milestone 15](#results-of-milestone-15).
 
 ## Decisions
 
@@ -1856,3 +2088,64 @@ the division winners. Also decided by the maintainer (2026-11-15): the
 budgets for the groups that get the costly part, 128 per question with a
 single season, 4 with more seasons and 2 in parts of the search. The table
 of milestone 13 has the alternatives.
+
+**P16 SOV with many open games. Decided by the maintainer (2026-11-15):
+free games first, then reverted by the maintainer (2026-11-15).** In
+`lowest_difference()`, a pair's open games that the pair bounds fix (low
+equal to high, and the wins follow) were applied directly, and only the
+other games counted against `kMaxEnumeratedGames`. Results: none of the 16
+open week 10 results changed; three statuses of 2006–2025 went from
+undecided to eliminated (2015 PIT after week 14 without the search, which
+the search already proved; 2019 PHI after week 12 with and without it,
+both passing `verify = TRUE` and `group_samples = 2000`); `all_statuses()`
+took 31.7s instead of 23.4s. Not worth the time.
+
+Idea 1 of the [handoff](#sov-with-many-open-games-handoff) (a relaxation
+per pair) was then dropped after experiments (2026-11-15, not committed),
+because a relaxation can't beat the exact bound it relaxes:
+
+- The patch above with `kMaxEnumeratedGames = 10`, so every SOV pair with
+  LAC is enumerated exactly (at most 9 free games): the 16 stay undecided,
+  with and without the search.
+- A trace of `lead()` at SOV for row 412 with that build: for every team y
+  in every group with LAC, `lowest_difference()` is negative, with and
+  without pair bounds. Within what the bounds allow, LAC can always end
+  with the higher SOV, so no pairwise SOV bound shows y ahead of LAC.
+- Idea 2 for SOV: `linear_strength_difference()` keeping every team of
+  `context_level_` at its tie level (not only the step's group) when pair
+  bounds are given. Alone and together with the exact enumeration: the 16
+  stay undecided.
+
+So the handoff's diagnosis ("the proof needs a bound on SOV differences
+with many open games, nothing else") doesn't hold for row 412. Open: what
+the proof needs instead. Candidates: the other open groups of row 412 (7
+stay open, only one was traced), a case split over which team is ahead of
+LAC (the minimizing completions differ per pair and may not fit together),
+or the per-game freedom of the SOV difference (it doesn't keep the teams
+above and below X within their context ranges).
+
+**P17 Joint check of facts and more winner paths. Decided by the maintainer
+(2026-11-15): yes to both,** from the analysis of the 16 open week 10
+results (see [results of milestone 14](#results-of-milestone-14)): check
+with a flow whether the records on the way to a pick can hold at once, and
+follow more ways to the division winners than `kMaxWinnerPaths` (256). In
+the clinching code only. Done as milestone 14. Chosen from the
+measurements there and replaced by the budgets of P18: the
+joint check only runs for a question with at most 32 groups left open by
+the proof with facts (`Budgets::joint_groups`, single season only; 8 closes
+one row less, 128 nothing more), and the higher path limit of 4,096
+(`kMaxJointWinnerPaths`) only applies in that proof, not in the proof with
+facts (there it cost 11% and closed nothing the joint proof doesn't).
+Milestone 15 uses 512 groups and 65,536 ways instead (P18).
+
+**P18 Split by the survivors' record. Decided by the maintainer
+(2026-11-16): keep it,** to close as many gaps to nflplayoffscenarios.com
+as possible. In the joint proof, a record step that drops teams gives one
+case per record the survivors can share (the survivors exactly there, the
+dropped teams below), instead of a range per team. In the clinching code
+only. With it the budgets that close all 16 open week 10 results: 512 open
+groups of any kind for the joint proof with a single season, 65,536 ways to
+the division winners (see
+[results of milestone 15](#results-of-milestone-15) for the alternatives).
+It was implemented for review after the maintainer asked what the 13 open
+results were missing, and kept. Done as milestone 15.

@@ -89,6 +89,11 @@ struct Budgets {
   // Tie groups that get the proof that carries facts from step to step
   // (P15), which is costly
   int32_t fact_groups = 4;
+  // Tie groups still open after that (or left without it) which get the
+  // proof that checks the facts of a pick jointly (P17), which is costlier
+  // still. It only runs if no more groups than this are open: one open
+  // group leaves the question open anyway.
+  int32_t joint_groups = 0;
 };
 constexpr Budgets kSearchBudgets{
     .scenarios = 2, .group_flows = 30, .open_groups = 2, .fact_groups = 2};
@@ -102,7 +107,8 @@ constexpr int32_t kLateGroupFlows = 2000;
 constexpr Budgets kSingleSeasonBudgets{
     .group_flows = 20000,
     .open_groups = std::numeric_limits<int32_t>::max(),
-    .fact_groups = 128};
+    .fact_groups = 128,
+    .joint_groups = 512};
 // The group check (StatusOptions::group_samples): flows to find the tie
 // groups of one answer, and the share of tie games in its random completions
 constexpr int32_t kCheckFlows = 20000;
@@ -1214,6 +1220,20 @@ class TeamStatus {
     int32_t fact_groups = budgets_.fact_groups;
     bool unknown = false;
     Proof found;
+    // Groups still open, for the joint proof
+    struct OpenGroup {
+      TeamMask above = 0;
+      TeamMask level = 0;
+      TeamMask below = 0;
+      Completion completion;
+    };
+    std::vector<OpenGroup> open_groups_left;
+    const TieOutcome wanted =
+        reach ? TieOutcome::kReached : TieOutcome::kMissed;
+    const auto never = [&](TieOutcome o) {
+      return o == TieOutcome::kImpossible ||
+             o == (reach ? TieOutcome::kMissed : TieOutcome::kReached);
+    };
     // True to stop
     const auto visit = [&](const auto& self, size_t i, TeamMask above,
                            TeamMask level, TeamMask below) -> bool {
@@ -1237,12 +1257,6 @@ class TeamStatus {
                (o.above && self(self, i + 1, above | bit, level, below)) ||
                (o.below && self(self, i + 1, above, level, below | bit));
       }
-      const TieOutcome wanted =
-          reach ? TieOutcome::kReached : TieOutcome::kMissed;
-      const auto never = [&](TieOutcome o) {
-        return o == TieOutcome::kImpossible ||
-               o == (reach ? TieOutcome::kMissed : TieOutcome::kReached);
-      };
       TieOutcome outcome = tie_outcome(proof, goal, above, level);
       // Not settled: again with ranges that know every team's side
       TieProof& context = context_ties(reach);
@@ -1271,12 +1285,28 @@ class TeamStatus {
       if (verify_ && outcome == wanted) {
         throw EngineError("A tie group proof failed its self-check");
       }
-      unknown = true;
+      if (!unknown && std::ssize(open_groups_left) < budgets_.joint_groups) {
+        open_groups_left.push_back({.above = above,
+                                    .level = level,
+                                    .below = below,
+                                    .completion = std::move(c)});
+      } else {
+        unknown = true;
+      }
       return --open_groups <= 0;
     };
     (void)visit(visit, 0, sides.above, sides.level, sides.below);
     if (found.answer == Answer::kYes) return found;
     if (unknown) return {};
+    // Only a few groups are open: the proof that checks the facts of every
+    // pick jointly (P17), until one of them stays open
+    TieProof& context = context_ties(reach);
+    for (const OpenGroup& g : open_groups_left) {
+      context.set_context(g.above, g.level, g.below);
+      context.carry_facts(true, true);
+      if (!never(tie_outcome(context, goal, g.above, g.level))) return {};
+      if (verify_) verify_no(goal, reach, g.completion);
+    }
     return {.answer = Answer::kNo};
   }
 
