@@ -1301,7 +1301,8 @@ statuses changed):
   week 10 eliminations with 12 completions: no error.
 - Checks 2–5, the self-check and the test suite (`clinching_status`, 193
   expectations) pass. `dev/check-cpp.sh` reports nothing in the changed
-  code. Three new tests: 2022 CHI (passed steps), 2018 IND and 2017 DEN
+  code. `devtools::check()`, `dev/sanitize-cpp.sh` and the R-hub sanitizer
+  builds are clean (see "Before a release"). Three new tests: 2022 CHI (passed steps), 2018 IND and 2017 DEN
   (facts), and a week 10 result of 2026 (division winners' paths).
 
 Benchmark (`data-raw/bench_clinching_status.R`, same session):
@@ -1360,14 +1361,15 @@ first, then `tighten()`.
    milestone 13; the simulated seasons are 53% slower since milestone 10
    and another 16% since milestone 13. If that matters, lower the 200 flows
    per question (most settled questions need 50) or the groups with facts.
-4. **Before a release.** `devtools::check()` is clean with the group check
-   (2026-11-13: 0 errors, warnings, notes).
+4. **Before a release.** `devtools::check()` is clean with milestone 13
+   (2026-11-15: 0 errors, warnings, notes).
    `dev/sanitize-cpp.sh` runs the clinching engine without R under ASan and
    UBSan (every week of 2006–2025 and 300 seasons with random results, with
    and without the search, scenarios, self-check and group check on).
    With the group check it takes about 10 minutes (the group check only
-   runs with the search). The sanitizer builds of the whole package pass
-   (2026-11-13, clang-asan and clang-ubsan on R-hub, commit `09a69a1`).
+   runs with the search); it reports nothing with milestone 13
+   (2026-11-15). The sanitizer builds of the whole package pass
+   (2026-11-15, clang-asan and clang-ubsan on R-hub, commit `42c659d`).
    Start them with
    `rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))` (see
    `dev/cpp-standings-engine.md`); they need a push, so the maintainer
