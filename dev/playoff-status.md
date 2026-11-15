@@ -1264,9 +1264,10 @@ milestone 11), current budgets, with and without the search:
 No contradiction with the site: every new elimination is one of its 339.
 Of the 56, the pair bounds and passed steps alone give 21, the facts 24
 more and the division winners' paths 11. The site's 50 scenarios were read
-from its week 10 page on 2026-11-15 and turned into the 3^7 results in a
-scratch script (they reproduce the 339 of milestone 11); nothing of it is
-in the repo.
+from its week 10 page on 2026-11-15 and turned into the 3^7 results (they
+reproduce the 339 of milestone 11): `dev/clinching-week10-2026.R`, a
+temporary file (see the
+[SOV handoff](#sov-with-many-open-games-handoff)).
 
 The 16 left are not propagation: LAC, MIA, BAL or CLE and an AFC South
 winner are level through the conference record, and the pick goes to SOV
@@ -1346,7 +1347,8 @@ first, then `tighten()`.
      milestone 13 leaves (site: eliminated) end in SOV among division
      winners with 8 or 9 open games each. The pair bounds say which games
      a team must win or lose, so SOV could get a bound from them without
-     enumerating results.
+     enumerating results. See the
+     [handoff](#sov-with-many-open-games-handoff).
    - *Facts in the wild card picks.* Only the No. 1 seed carries how a
      division was won into the next pick; `division_titles()` and
      `wild_card_picks()` don't. No known case needs it.
@@ -1384,6 +1386,85 @@ first, then `tighten()`.
      was copied to the data pointer of a zero-length R vector. Both now skip
      the copy if the vector is empty.
 5. The smaller gaps under "Other gaps, not seen in the NFL comparison".
+
+#### SOV with many open games (handoff)
+
+**Open after milestone 13, needs a decision by the maintainer** before any
+work on it.
+
+**Problem.** In 16 of the 2,187 week 10 results of 2026 the site has LAC
+out of the No. 1 seed race and we're undecided, with and without the
+search, whatever the budgets. `dev/clinching-week10-2026.R` lists them
+(`week10_compare()`, rows 166, 181, 199, 412, 418, 424, 670, 904, 910, 922,
+1156, 1411, 1642, 1660, 1897 and 2140 of `week10_grid()`). In all of them
+LAC (0-8, 8-9 at best) can win the AFC West and then meets division winners
+that are level with it through the conference record, so the pick goes to
+SOV. Every one of these teams has 8 or 9 open games, `lowest_difference()`
+only enumerates the results of two teams' own open games up to
+`kMaxEnumeratedGames` (4), and beyond that SOV is unknown: every team can
+survive the step, and LAC can be picked.
+
+**Traced example.** Row 412 (BAL 3, NYJ -3, ATL 3, DET 3, IND -3, LV 0,
+CLE 3 by home team; 7 groups stay open). One of them: BAL, BUF, CIN, CLE,
+DEN, IND, JAX, KC, MIA, NE, PIT and TEN level with LAC, HOU, LV and NYJ
+below. The division winners can be BAL, IND, LAC and MIA. In the conference
+procedure nobody is swept, MIA's conference record is at least LAC's and
+all four can be level there, common games don't apply (fewer than four
+common opponents), and at SOV and SOS no team is ahead of another for
+sure. The same holds for the three left if one is dropped (e.g. BAL, LAC,
+MIA are level in the conference record for sure). So the proof needs a
+bound on SOV differences with many open games, nothing else.
+
+**Ideas, not decided.**
+
+1. *SOV from the pair bounds.* Within a tie group with facts, the pair
+   bounds fix many results (low equal to high). A team's wins over an
+   opponent then have a range per pair (a tie game counts for neither, so
+   wins are at most half the half-wins), and SOV is a ratio of sums over
+   these. LAC's own wins are known (it wins out). A lower bound of
+   `SOV(y) - SOV(LAC)` over the pair ranges and the opponents' totals is
+   what `linear_strength_difference()` does for fixed weights; with ranges
+   for the weights the difference is no longer linear, so it needs either
+   an enumeration over the few pairs that aren't fixed or a relaxation per
+   pair. Check first how many pairs of the traced groups are fixed.
+2. *SOS first.* SOS doesn't depend on who wins a team's own games, and all
+   level teams' totals are known in a context, but
+   `linear_strength_difference()` only uses the tie level for the teams of
+   the step's group, not for the other level teams of the context. Cheap to
+   add (treat every team of `context_level_` like a group team when bounds
+   are given), but it only matters once SOV is level or decided.
+3. *More completions per group* won't help here: these are eliminations.
+
+**How the gaps of milestone 13 were found** (use the same for this one):
+
+1. `source("dev/clinching-week10-2026.R")`, `week10_compare()`: the results
+   where the site says eliminated and we don't. A result where we say
+   eliminated and the site doesn't would be a soundness bug.
+2. For one result, list the tie groups that stay open: temporarily print
+   `above`, `level` and `below` to `stderr` in `tie_groups()` of
+   `src/status.cpp`, just before `unknown = true; return --open_groups <=
+   0;`, guarded by an environment variable. Decode the masks with
+   `standings_league()$team` (bit i is team i, 0-based).
+3. For one open group, trace the picks: in
+   `possible_picks(group, procedure, facts, paths)` of `src/tie_proof.cpp`,
+   after `can_survive` and `must_survive` are known, print the procedure,
+   `group`, `facts.size()`, the step, both masks and
+   `r.bounds->feasible`, and for record steps every team's
+   `half_wins_range(t, step_opponents(step, t, group, r.common), group,
+   r.pair_bounds())` (games, low, high). Guard it with `has_context_ &&
+   context_level_ ==` the group's level mask from an environment variable,
+   or every group prints. Read it top down: the division groups first, then
+   the conference group of the winners. The step where LAC survives
+   although the site says it can't is the gap. Never commit the prints
+   (CRAN).
+4. Before and after a change: `all_statuses()` and `changed_statuses()`.
+   Only undecided statuses may change, and week 10 must not contradict the
+   site. Then the soundness checks under gap 3 below (group check, an
+   independent answer for every new status).
+
+`dev/clinching-week10-2026.R` is temporary (decided by the maintainer,
+2026-11-15): it holds the site's scenarios, so **remove it when this work
+is done**, together with this paragraph and the references to it.
 
 #### Gap 3: X's position in a tie (handoff)
 
@@ -1546,7 +1627,9 @@ those needs a rule that fits one case. Four cases need set reasoning, and
    caps of the flow (a team that must stay strictly behind X has a bound on
    its remaining wins, which bounds its results against tied teams).
 
-**Tools** (`dev/clinching-diagnostics.R`, run from the package root):
+**Tools** (`dev/clinching-diagnostics.R`, run from the package root; for
+the week 10 results of 2026 also `dev/clinching-week10-2026.R`, see the
+[SOV handoff](#sov-with-many-open-games-handoff)):
 
 - `later_cases()`: the open cases of the snapshot.
 - `single_team_fixes(case)`: fixes each competitor to win or lose out and
