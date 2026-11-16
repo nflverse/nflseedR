@@ -37,6 +37,8 @@ const COLUMNS = {
   div_label: 18,
   conf_rank: 19,
   conf_label: 20,
+  draft_rank: 21,
+  draft_label: 22,
 };
 
 // kMissing of src/engine/types.hpp
@@ -253,7 +255,9 @@ export async function createClinchingEngine(moduleOptions = {}) {
 
   // clinching_status_standings(): division and conference ranks of the
   // standings of the played games, with their tiebreakers, by season id and
-  // team id
+  // team id. Plus the draft ranks if the regular season ended today (not in
+  // R): nfl_standings(ranks = "DRAFT") with every team outside the playoff
+  // seeds eliminated in the regular season, null for the playoff teams.
   function standingsByTeam(out) {
     const byTeam = new Map();
     out.standings_sim.forEach((simId, i) => {
@@ -263,6 +267,8 @@ export async function createClinchingEngine(moduleOptions = {}) {
         div_tie_broken_by: standingsLabel(out.div_label[i], "div"),
         conf_rank: rank(out.conf_rank[i]),
         conf_tie_broken_by: standingsLabel(out.conf_label[i], "conf"),
+        draft_rank: rank(out.draft_rank[i]),
+        draft_tie_broken_by: standingsLabel(out.draft_label[i], "draft"),
       });
     });
     return byTeam;
@@ -316,6 +322,8 @@ export async function createClinchingEngine(moduleOptions = {}) {
       div_tie_broken_by: null,
       conf_rank: null,
       conf_tie_broken_by: null,
+      draft_rank: null,
+      draft_tie_broken_by: null,
     };
 
     const table = out.sim.map((simId, i) => {

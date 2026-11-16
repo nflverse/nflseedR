@@ -33,11 +33,13 @@ class SeededRandom final : public nflseedr::RandomSource {
   std::mt19937 gen_;
 };
 
-// Output of one call: the status rows and the standings of the played games,
-// or the message of the exception that ended it
+// Output of one call: the status rows, the standings of the played games and
+// the draft ranks of the standings rows, or the message of the exception that
+// ended it
 struct Result {
   nflseedr::StatusRows rows;
   nflseedr::StandingsRows standings;
+  nflseedr::DraftRanks draft;
   std::string error;
 };
 
@@ -89,6 +91,10 @@ const std::vector<int32_t>* column(const Result& r, int32_t id) {
       return &st.conf_rank;
     case 20:
       return &st.conf_label;
+    case 21:
+      return &r.draft.rank;
+    case 22:
+      return &r.draft.label;
     default:
       return nullptr;
   }
@@ -118,7 +124,7 @@ nflseedr::GamesInput make_games(const int32_t* ints, const double* result,
 nflseedr::StandingsRows current_standings(const nflseedr::GamesInput& played,
                                           const nflseedr::League& league,
                                           const nflseedr::StatusRows& status,
-                                          uint32_t seed) {
+                                          nflseedr::RandomSource& rng) {
   std::vector<int32_t> complete(static_cast<size_t>(played.n_sims), 1);
   for (size_t i = 0; i < status.sim.size(); ++i) {
     if (status.games_left[i] > 0) {
@@ -130,8 +136,41 @@ nflseedr::StandingsRows current_standings(const nflseedr::GamesInput& played,
   options.playoff_seeds = nflseedr::kTeamsPerConference;
   options.depth = 2;  // "SOS"
   options.season_complete = complete;
-  SeededRandom rng(seed);
   return nflseedr::compute_standings(played, league, options, rng, [] {});
+}
+
+// Draft ranks of the standings rows if the regular season ended today, as
+// nfl_standings(ranks = "DRAFT") gives them after the season. The teams with
+// a playoff seed (`seeds` per season) get a later exit than all other teams,
+// which are eliminated in the regular season. Those take picks 1 to n; the
+// picks of the playoff teams depend on the playoffs and become kMissing.
+// compute_draft_ranks() compares records as in a complete season.
+nflseedr::DraftRanks current_draft_ranks(
+    const nflseedr::GamesInput& played, const nflseedr::League& league,
+    const nflseedr::StandingsRows& standings, std::span<const int32_t> seeds,
+    nflseedr::RandomSource& rng) {
+  constexpr auto kRegular = static_cast<int32_t>(nflseedr::GameType::kRegular);
+  const size_t n = standings.sim.size();
+  std::vector<int32_t> exit(n, kRegular);
+  for (size_t i = 0; i < n; ++i) {
+    const int32_t rank = standings.conf_rank[i];
+    if (rank != nflseedr::kMissing &&
+        rank <= seeds[static_cast<size_t>(standings.sim[i] - 1)]) {
+      exit[i] = static_cast<int32_t>(nflseedr::GameType::kWildCard);
+    }
+  }
+  const nflseedr::TeamRanksInput teams{standings.sim, standings.team,
+                                       standings.div_rank, standings.conf_rank,
+                                       exit};
+  nflseedr::DraftRanks draft = nflseedr::compute_draft_ranks(
+      played, league, teams, 2 /* "SOS" */, rng, [] {});
+  for (size_t i = 0; i < n; ++i) {
+    if (exit[i] != kRegular) {
+      draft.rank[i] = nflseedr::kMissing;
+      draft.label[i] = nflseedr::kMissing;
+    }
+  }
+  return draft;
 }
 
 }  // namespace
@@ -142,8 +181,8 @@ extern "C" {
 // standings of the played games. `league` holds the division ids of the 32
 // teams followed by their conference ids, `seeds` one value per season, bit
 // g of `goals` requests Goal g, and `seed` seeds the coin tosses of the
-// standings. Never throws: the returned handle holds the rows or an error
-// message. Free it with nflseedr_free().
+// standings and draft ranks. Never throws: the returned handle holds the rows
+// or an error message. Free it with nflseedr_free().
 EMSCRIPTEN_KEEPALIVE Result* nflseedr_clinching_status(
     const int32_t* played_ints, const double* played_result, int32_t n_played,
     const int32_t* remaining_ints, const double* remaining_result,
@@ -172,7 +211,10 @@ EMSCRIPTEN_KEEPALIVE Result* nflseedr_clinching_status(
         played,
         make_games(remaining_ints, remaining_result, n_remaining, n_sims),
         teams, options, [] {});
-    out->standings = current_standings(played, teams, out->rows, seed);
+    SeededRandom rng(seed);
+    out->standings = current_standings(played, teams, out->rows, rng);
+    out->draft =
+        current_draft_ranks(played, teams, out->standings, options.seeds, rng);
   } catch (const std::exception& e) {
     out->error = e.what();
   } catch (...) {

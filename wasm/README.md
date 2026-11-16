@@ -1,9 +1,9 @@
 # Clinching engine as WebAssembly
 
 The C++ engine behind `nfl_clinching_status()` built with Emscripten, so a
-static web app can compute clinching and elimination status, and the
-division and conference ranks of the current standings, in the browser
-without R. Not part of the R package (`.Rbuildignore`).
+static web app can compute clinching and elimination status, the
+division and conference ranks of the current standings, and the draft order
+if the season ended today, in the browser without R. Not part of the R package (`.Rbuildignore`).
 
 ## Download
 
@@ -67,7 +67,8 @@ adds to the standings) and the ranks of the standings:
   wins: 11, losses: 3, ties: 0, games_left: 3,
   div_status: "clinched", playoffs_status: "clinched", seed1_status: "alive",
   div_rank: 1, div_tie_broken_by: null,
-  conf_rank: 2, conf_tie_broken_by: null }
+  conf_rank: 2, conf_tie_broken_by: null,
+  draft_rank: null, draft_tie_broken_by: null }
 ```
 
 Each status is `"clinched"`, `"alive"`, `"eliminated"` or `"undecided"`;
@@ -83,7 +84,24 @@ rank, such as `"SOV (2)"` (2 tied teams), or `null` if the team wasn't in a
 tie. A tie that SOS doesn't break is a coin toss (`"Coin Toss"`), drawn with
 `seed` (a random seed by default); the same seed gives the same coin tosses,
 but not those of R. Teams without a played game have `null` ranks and come
-last in their division (R has no row for them). With `scenarios: true`, `scenarios` holds
+last in their division (R has no row for them).
+
+`draft_rank` and `draft_tie_broken_by` are the draft order if the regular
+season ended today (not in `nfl_clinching_status()`). The teams in a playoff
+spot (`conf_rank` 1–7, 1–6 through 2019) have `null` for both, because their
+picks depend on the playoffs. The other teams (18 once every team has
+played, 20 through 2019) get picks from 1 as `nfl_standings(ranks = "DRAFT")`
+gives them: worst win percentage first, then lower SOS, then the draft
+tiebreakers (the team that loses a division or conference tiebreaker picks
+first, `"Division Tiebreaker"` or `"Conference Tiebreaker"`; between
+conferences head-to-head, common games and SOV, e.g. `"SOV (2)"`) down to a
+coin toss drawn with `seed`. A tie that SOS breaks has no label, as in R.
+Unlike the conference ranks, equal win percentages are not broken by net
+wins before the season is over. For a complete season, picks 1–18 equal
+those of `nfl_standings(ranks = "DRAFT")` with the playoffs. Like the other
+ranks, they are `null` for every team until every team has played.
+
+With `scenarios: true`, `scenarios` holds
 the rows of the `"scenarios"` attribute in R (one row per scenario and
 remaining game, with the results that prove the answer), otherwise it is
 `null`. Use `sim` instead of `season` for simulated seasons (always 7 seeds).

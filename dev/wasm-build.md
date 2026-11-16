@@ -2,7 +2,8 @@
 
 `compute_clinching_status()` (`src/engine/status.hpp`) built with Emscripten,
 together with `compute_standings()` (`src/engine/engine.hpp`) for the ranks
-`nfl_clinching_status()` adds, for static web apps such as the "What if?" app (nflseedR-what-if), which
+`nfl_clinching_status()` adds and `compute_draft_ranks()` for the draft order
+if the season ended today, for static web apps such as the "What if?" app (nflseedR-what-if), which
 used to run nflseedR through webR/shinylive. Consumer docs, download URLs
 and the JS API are in `wasm/README.md`.
 
@@ -35,6 +36,11 @@ or ships any of it.
   no status row of it has games left. Coin tosses come from
   `SeededRandom` (`std::mt19937`, a `RandomSource`) with the `seed` the
   wrapper passes (random by default), so they never match R's.
+- Draft ranks: `compute_draft_ranks()` on the played games and the rows of
+  these standings, depth 2, with exit WC for `conf_rank` up to the season's
+  seeds and REG for the others (D16 in `dev/cpp-standings-engine.md`). The
+  ranks and labels of the playoff teams become `kMissing`. Its coin tosses
+  continue the `SeededRandom` of the standings, so those don't change.
 - The glue catches every exception and returns its message; the wrapper
   throws it as a JS `Error`.
 - The wrapper ports the R code around the engine. Every ported piece names
@@ -55,7 +61,8 @@ or ships any of it.
 `clinchingStatus()` returns the columns of `clinching_status_compute()`
 (`season`/`sim`, `team`, `conf`, `division`, `wins`, `losses`, `ties`,
 `games_left`, the requested status columns) followed by four columns of the
-standings, joined by season and team as in `clinching_status_standings()`:
+standings, joined by season and team as in `clinching_status_standings()`,
+and two of the draft ranks (not in R):
 
 | column | engine field | R column of `nfl_clinching_status()` |
 |---|---|---|
@@ -63,6 +70,8 @@ standings, joined by season and team as in `clinching_status_standings()`:
 | `div_tie_broken_by` | `div_label`, decoded by `standingsLabel(code, "div")` | `div_tie_broken_by` |
 | `conf_rank` | `conf_rank` | `conf_rank` |
 | `conf_tie_broken_by` | `conf_label`, decoded by `standingsLabel(code, "conf")` | `conf_tie_broken_by` |
+| `draft_rank` | `DraftRanks::rank` | none |
+| `draft_tie_broken_by` | `DraftRanks::label`, decoded by `standingsLabel(code, "draft")` | none |
 
 `kMissing` becomes `null`. Rows are sorted by season, division, `div_rank`
 and team like `nfl_clinching_status()`. Differences to R: `wins` counts only
@@ -86,11 +95,17 @@ current R code in CI). The expected status rows are those of
 `nfl_clinching_status()`, in its row order. It stops if a coin toss decides
 a rank, because coin tosses are random in both. The Node test also checks
 `standingsLabel()` for the steps the fixtures miss, `null` ranks without
-played games and the `seed`.
+played games and the `seed`. The fixtures have no draft ranks
+(`nfl_clinching_status()` has none), so the test drops them before comparing
+and checks them against values from R written into the test: 2024 complete
+(`nfl_standings(ranks = "DRAFT")` with the playoffs) and 2024 through week
+10 (`standings_add_draft_ranks()` with exit 1 for `conf_rank` 1–7).
 
 | fixture | covers |
 |---|---|
 | `2024-week-15` | current format |
+| `2024-week-10` | mid-season (draft ranks) |
+| `2024-complete` | complete season with playoffs (draft ranks) |
 | `2022-week-14-ties` | ties (weeks 1 and 13) |
 | `2016-week-14-6-seeds` | 6 seeds, ties |
 | `2023-week-15` | `"undecided"` statuses (3) |
@@ -118,3 +133,7 @@ fixtures identical to R. No engine changes were needed; only the stack size.
 2026-11-13: ranks and tiebreakers of the standings added. `clinching.wasm`
 195 KiB; runtime for 2024 after week 15 unchanged (2.5 ms). All fixtures
 identical to `nfl_clinching_status()`.
+
+2026-11-16: draft ranks added. `clinching.wasm` 229 KiB (225 KiB before);
+median in Node with emsdk 4.0.10 0.17 ms for 2024 REG complete (0.16 ms
+before), 1.67 ms for 2024 after week 15 (1.65 ms before).

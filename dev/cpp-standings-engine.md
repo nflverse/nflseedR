@@ -460,3 +460,12 @@ divisions (in 2009 week 16 they disagree for 24 pairs).
 `nflseedR_compute_results()` stays unchanged and remains the default of
 `nfl_simulations()`. `RandomSource` gets a `normal()` method for the normal
 draws. See the section [`cpp_compute_results()`](#cpp_compute_results).
+
+**D16 Draft ranks before the end of the regular season. Decided by the
+maintainer (2026-11-16).** The wasm build (`wasm/src/clinching.cpp`) adds
+draft ranks "if the season ended today" with `compute_draft_ranks()`: teams
+with a playoff seed get exit WC and lose their ranks, all other teams exit in
+the regular season and take picks 1 to n. `compute_draft_ranks()` compares
+records as in a complete season, so mid-season equal win percentages are not
+broken by net wins (D13), unlike the conference ranks. Kept as is, without an
+engine change. Playoff seeds are those of the season (6 through 2019).

@@ -34,6 +34,9 @@ cut_off <- function(seasons, last_week) {
 
 fixtures <- list(
   list(name = "2024-week-15", games = cut_off(2024, 15)),
+  # Draft ranks (wasm/test): mid-season and a complete season with playoffs
+  list(name = "2024-week-10", games = cut_off(2024, 10)),
+  list(name = "2024-complete", games = cut_off(2024, 99)),
   # Ties in weeks 1 and 13
   list(name = "2022-week-14-ties", games = cut_off(2022, 14)),
   # 6 seeds, ties in weeks 7 and 8
