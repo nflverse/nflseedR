@@ -2198,3 +2198,13 @@ The test suite passes with `verify = TRUE` and the group check (195
 expectations). Without the rule, `possible_picks()` in place of `wins()`
 and `loses()` loses 5 statuses: `loses()` knew that a team never behind X
 stays whenever X does.
+
+**P20 One flow builder. Decided by the maintainer (2026-11-16): no.**
+`Check::cap()`, `push()` and `exact()` stay three functions. They differ
+in which games are in the flow and where spare wins go, and that decides
+the completion a flow returns, which some "alive" answers depend on.
+Measured with each routed through `exact()`'s network: `push()` turns 1
+status of 2006–2025 from alive to undecided, `cap()` 3 (and 1 the other
+way in a call with all seasons); nothing is faster. One builder that keeps
+every completion needs these differences as flags and saves about 20
+lines.

@@ -12,22 +12,6 @@ namespace nflseedr {
 
 namespace {
 
-[[nodiscard]] constexpr TeamMask team_bit(TeamId t) noexcept {
-  return TeamMask{1} << static_cast<uint32_t>(t);
-}
-
-[[nodiscard]] constexpr bool has(TeamMask mask, TeamId t) noexcept {
-  return (mask & team_bit(t)) != 0;
-}
-
-template <typename F>
-void for_each_team(TeamMask mask, F f) {
-  while (mask != 0) {
-    f(static_cast<TeamId>(std::countr_zero(mask)));
-    mask &= mask - 1;
-  }
-}
-
 // Calls f(s) for every subset s of `mask` (including 0 and `mask`) until f
 // returns false. True if it never did.
 template <typename F>
@@ -108,10 +92,6 @@ TieProof::TieProof(const SeasonData& played, std::span<const Game> played_games,
     }
   }
   for (TeamId t = 0; t < kTeams; ++t) {
-    if (league.division[t] == league.division[x]) division_ |= team_bit(t);
-    if (league.conference[t] == league.conference[x]) {
-      conference_ |= team_bit(t);
-    }
     for (TeamId u = 0; u < kTeams; ++u) {
       games_[t][u] = played.h2h_games[t][u];
       known_games_[t][u] = played.h2h_games[t][u];
@@ -166,13 +146,13 @@ TieProof::TieProof(const SeasonData& played, std::span<const Game> played_games,
   // these half-wins (X's own are fixed by the check)
   const int32_t x_half_wins = half_wins_low_[x];
   for (TeamId t = 0; t < kTeams; ++t) {
-    const int64_t scaled = static_cast<int64_t>(x_half_wins) * final_games_[t];
-    const bool exact = scaled % final_games_[x] == 0;
-    const auto level = static_cast<int32_t>(scaled / final_games_[x]);
-    tie_half_wins_[t] =
-        exact && level >= half_wins_low_[t] && level <= half_wins_high_[t]
-            ? level
-            : kMissing;
+    const TieLevel level =
+        tie_level(x_half_wins, final_games_[x], final_games_[t]);
+    level_[t] = level;
+    tie_half_wins_[t] = level.exact && level.floor >= half_wins_low_[t] &&
+                                level.floor <= half_wins_high_[t]
+                            ? level.floor
+                            : kMissing;
   }
 }
 
@@ -329,11 +309,11 @@ TeamMask TieProof::step_opponents(Step step, TeamId t, TeamMask group,
     case Step::kHeadToHeadSweep:
       return group & ~team_bit(t);
     case Step::kDivisionPct:
-      return division_of(t) & ~team_bit(t);
+      return division_of_[t] & ~team_bit(t);
     case Step::kCommonPct:
       return common;
     case Step::kConferencePct:
-      return conference_of(t) & ~team_bit(t);
+      return conference_of_[t] & ~team_bit(t);
     default:
       throw EngineError("Step has no record");
   }
@@ -797,10 +777,8 @@ void TieProof::set_context(TeamMask above, TeamMask level, TeamMask below) {
   context_high_ = half_wins_high_;
   for_each_team((above | level | below) & ~team_bit(x_), [&](TeamId t) {
     // Most half-wins of t at or below X's win percentage
-    const int64_t scaled =
-        static_cast<int64_t>(half_wins_low_[x_]) * final_games_[t];
-    const auto floor_level = static_cast<int32_t>(scaled / final_games_[x_]);
-    const bool exact = scaled % final_games_[x_] == 0;
+    const int32_t floor_level = level_[t].floor;
+    const bool exact = level_[t].exact;
     if (has(level, t)) {
       if (tie_half_wins_[t] == kMissing) return;
       context_low_[t] = tie_half_wins_[t];
@@ -842,7 +820,7 @@ TieProof::Range TieProof::pct_range(TeamId t, TeamMask opponents,
   const HalfWins h = half_wins_range(t, opponents, group, bounds);
   // Empty: t and its opponents can't all end at their tie levels
   if (h.low > h.high) {
-    return {.low = Ratio(1, 1), .high = Ratio(0, 1)};
+    return empty_range();
   }
   return {.low = Ratio(h.low, 2 * h.games), .high = Ratio(h.high, 2 * h.games)};
 }
@@ -885,7 +863,7 @@ TieProof::Range TieProof::sweep_range(TeamId t, TeamMask group,
   });
   if (bounds != nullptr) {
     const HalfWins h = bounded_half_wins(*bounds, t, group & ~team_bit(t));
-    if (h.low > h.high) return {.low = Ratio(1, 1), .high = Ratio(0, 1)};
+    if (h.low > h.high) return empty_range();
     const auto sweep = [&](int32_t half_wins) {
       if (half_wins == 2 * h.games) return 2;
       return half_wins == 0 ? 0 : 1;
@@ -986,9 +964,7 @@ TieProof::StepRanges TieProof::ranges(Step step, TeamMask group,
     out.bounds = passage.bounds;
     // Never reached with the whole group: no team survives the step
     if (!out.bounds->feasible) {
-      for_each_team(group, [&](TeamId t) {
-        out.range[t] = {.low = Ratio(1, 1), .high = Ratio(0, 1)};
-      });
+      for_each_team(group, [&](TeamId t) { out.range[t] = empty_range(); });
       return out;
     }
     // The records of the group's teams at the earlier steps, all level
@@ -1004,24 +980,9 @@ TieProof::StepRanges TieProof::ranges(Step step, TeamMask group,
   }
   const PairBounds* bounds = out.pair_bounds();
   for_each_team(group, [&](TeamId t) {
-    const TeamMask others = group & ~team_bit(t);
-    const TeamMask own_division = division_of(t) & ~team_bit(t);
-    const TeamMask own_conference = conference_of(t) & ~team_bit(t);
     switch (step) {
-      case Step::kHeadToHead:
-        out.range[t] = pct_range(t, others, group, bounds);
-        break;
       case Step::kHeadToHeadSweep:
         out.range[t] = sweep_range(t, group, bounds);
-        break;
-      case Step::kDivisionPct:
-        out.range[t] = pct_range(t, own_division, group, bounds);
-        break;
-      case Step::kCommonPct:
-        out.range[t] = pct_range(t, common, group, bounds);
-        break;
-      case Step::kConferencePct:
-        out.range[t] = pct_range(t, own_conference, group, bounds);
         break;
       case Step::kSov:
         out.range[t] = sov_range(t, group);
@@ -1030,7 +991,8 @@ TieProof::StepRanges TieProof::ranges(Step step, TeamMask group,
         out.range[t] = sos_range(t, group);
         break;
       default:
-        throw EngineError("Step not used in clinching proofs");
+        out.range[t] =
+            pct_range(t, step_opponents(step, t, group, common), group, bounds);
     }
   });
   return out;
@@ -1105,30 +1067,19 @@ Ratio TieProof::value(Step step, TeamId t, const TeamArray<int32_t>& half_wins,
     });
     return Ratio(won, 2 * games);
   };
-  const TeamMask others = group & ~team_bit(t);
-  switch (step) {
-    case Step::kHeadToHead:
-      return pct(others);
-    case Step::kHeadToHeadSweep: {
-      if (!plays_all(t, others)) return {1, 1};
-      int32_t games = 0;
-      int32_t won = 0;
-      for_each_team(others, [&](TeamId u) {
-        games += games_[t][u];
-        won += half_wins[u];
-      });
-      if (won == 2 * games) return {2, 1};
-      return won == 0 ? Ratio(0, 1) : Ratio(1, 1);
-    }
-    case Step::kDivisionPct:
-      return pct(division_of(t) & ~team_bit(t));
-    case Step::kCommonPct:
-      return pct(common);
-    case Step::kConferencePct:
-      return pct(conference_of(t) & ~team_bit(t));
-    default:
-      throw EngineError("Step has no value from a team's own games");
+  if (step != Step::kHeadToHeadSweep) {
+    return pct(step_opponents(step, t, group, common));
   }
+  const TeamMask others = group & ~team_bit(t);
+  if (!plays_all(t, others)) return {1, 1};
+  int32_t games = 0;
+  int32_t won = 0;
+  for_each_team(others, [&](TeamId u) {
+    games += games_[t][u];
+    won += half_wins[u];
+  });
+  if (won == 2 * games) return {2, 1};
+  return won == 0 ? Ratio(0, 1) : Ratio(1, 1);
 }
 
 // The procedure only reaches a step with all of a group if no earlier step
@@ -1300,10 +1251,6 @@ TieProof::Leads TieProof::leads(const StepRanges& r, TeamId a, TeamId b) const {
           .b = lead(range_b, range_a, d.b_minus_a)};
 }
 
-TeamMask TieProof::division_of(TeamId t) const { return division_of_[t]; }
-
-TeamMask TieProof::conference_of(TeamId t) const { return conference_of_[t]; }
-
 std::span<const Step> TieProof::steps(Procedure procedure) {
   if (procedure == Procedure::kDivision) return kDivisionSteps;
   return kConferenceSteps;
@@ -1472,15 +1419,13 @@ bool TieProof::ranks_behind(TeamMask group, TeamId y) {
 }
 
 bool TieProof::can_end_above_x(TeamId z) const {
-  if (final_games_[z] == 0) return false;
-  return static_cast<int64_t>(half_wins_high_[z]) * final_games_[x_] >
-         static_cast<int64_t>(half_wins_low_[x_]) * final_games_[z];
+  return half_wins_high_[z] > level_[z].floor;
 }
 
 std::vector<TeamMask> TieProof::representative_sets(TeamMask teams) const {
   // Teams per division, without X's division
   std::array<TeamMask, kDivisions> by_division{};
-  for_each_team(teams & ~division_, [&](TeamId t) {
+  for_each_team(teams & ~division_of_[x_], [&](TeamId t) {
     by_division[league_->division[t]] |= team_bit(t);
   });
   // One team or none per division
@@ -1496,7 +1441,7 @@ std::vector<TeamMask> TieProof::representative_sets(TeamMask teams) const {
 }
 
 bool TieProof::wins_division_ties(TeamMask teams) {
-  return all_subsets(teams & division_ & ~team_bit(x_), [&](TeamMask s) {
+  return all_subsets(teams & division_of_[x_] & ~team_bit(x_), [&](TeamMask s) {
     return s == 0 || wins(team_bit(x_) | s, Procedure::kDivision);
   });
 }
@@ -1507,12 +1452,12 @@ bool TieProof::wins_division_ties(TeamMask teams) {
 // second behind a rival above X's level), or, if no rival can end above X,
 // X wins the tie of the others after any first pick.
 bool TieProof::survives_wild_card_reduction(TeamMask tied) {
-  return all_subsets(tied & division_ & ~team_bit(x_), [&](TeamMask s) {
+  return all_subsets(tied & division_of_[x_] & ~team_bit(x_), [&](TeamMask s) {
     if (s == 0) return true;
     const TeamMask group = team_bit(x_) | s;
     if (wins(group, Procedure::kDivision)) return true;
     bool ok = true;
-    for_each_team(division_ & ~group,
+    for_each_team(division_of_[x_] & ~group,
                   [&](TeamId z) { ok = ok && !can_end_above_x(z); });
     for_each_team(possible_picks(group, Procedure::kDivision) & ~team_bit(x_),
                   [&](TeamId p) {
@@ -1547,7 +1492,7 @@ bool TieProof::never_picked_before_x(TeamId y, TeamMask in_d,
 // pick of every division tie of y with teams of `tied` (and X, which is
 // always level, if y is a rival). Then y is never in the wild card pool.
 bool TieProof::wins_division_when_level(TeamId y, TeamMask tied) {
-  const TeamMask division = division_of(y);
+  const TeamMask division = division_of_[y];
   const TeamMask with_y = team_bit(y) | (division & team_bit(x_));
   bool above = false;
   for_each_team(division & ~with_y,
@@ -1569,11 +1514,11 @@ bool TieProof::x_never_picked_before(TeamId y, TeamMask in_d,
                                      std::span<const TeamMask> reps,
                                      TeamMask tied) {
   TeamMask y_reps = team_bit(y);
-  for_each_team(tied & division_of(y) & ~team_bit(y), [&](TeamId w) {
+  for_each_team(tied & division_of_[y] & ~team_bit(y), [&](TeamId w) {
     // y is picked before w in every division tie with both
     const TeamMask pair = team_bit(y) | team_bit(w);
     const bool behind_y =
-        all_subsets(tied & division_of(y) & ~pair, [&](TeamMask s) {
+        all_subsets(tied & division_of_[y] & ~pair, [&](TeamMask s) {
           return !has(possible_picks(pair | s, Procedure::kDivision), w);
         });
     if (!behind_y) y_reps |= team_bit(w);
@@ -1590,7 +1535,7 @@ bool TieProof::x_never_picked_before(TeamId y, TeamMask in_d,
 // behind it. Other teams of the group may be picked before both.
 TieSides TieProof::division_sides(TeamMask tied) {
   TieSides out;
-  const TeamMask rivals = tied & division_ & ~team_bit(x_);
+  const TeamMask rivals = tied & division_of_[x_] & ~team_bit(x_);
   for_each_team(rivals, [&](TeamId y) {
     const TeamMask with_y = team_bit(x_) | team_bit(y);
     const TeamMask rest = rivals & ~team_bit(y);
@@ -1620,7 +1565,7 @@ TieSides TieProof::conference_sides(TeamMask tied, bool wild_card) {
   TieSides out = division_sides(tied);
   const bool never_reduced =
       wild_card ? survives_wild_card_reduction(tied) : wins_division_ties(tied);
-  TeamMask others = tied & conference_ & ~division_;
+  TeamMask others = tied & conference_of_[x_] & ~division_of_[x_];
   if (wild_card) {
     for_each_team(others, [&](TeamId y) {
       if (wins_division_when_level(y, tied)) others &= ~team_bit(y);
@@ -1635,10 +1580,10 @@ TieSides TieProof::conference_sides(TeamMask tied, bool wild_card) {
   TeamMask x_reps = team_bit(x_);
   if (wild_card) {
     for_each_team(
-        tied & division_ & ~team_bit(x_) & ~out.x_ahead, [&](TeamId z) {
+        tied & division_of_[x_] & ~team_bit(x_) & ~out.x_ahead, [&](TeamId z) {
           bool other_winner = false;
           for_each_team(
-              division_ & ~team_bit(x_) & ~team_bit(z), [&](TeamId w) {
+              division_of_[x_] & ~team_bit(x_) & ~team_bit(z), [&](TeamId w) {
                 other_winner =
                     other_winner || has(tied, w) || can_end_above_x(w);
               });
@@ -1679,9 +1624,9 @@ TieSides TieProof::conference_sides(TeamMask tied, bool wild_card) {
     }
   }
   if (wild_card) {
-    out.x_ahead &=
-        ~level_division_winners(tied, tied & conference_ & ~division_ & ~others,
-                                out.x_ahead & others, others);
+    out.x_ahead &= ~level_division_winners(
+        tied, tied & conference_of_[x_] & ~division_of_[x_] & ~others,
+        out.x_ahead & others, others);
   }
   return out;
 }
@@ -1700,7 +1645,7 @@ TeamMask TieProof::level_division_winners(TeamMask tied, TeamMask winners,
                                           TeamMask x_ahead, TeamMask others) {
   TeamMask out = 0;
   for_each_team(x_ahead, [&](TeamId y) {
-    const TeamMask rest = division_of(y) & ~team_bit(y);
+    const TeamMask rest = division_of_[y] & ~team_bit(y);
     bool above = false;
     for_each_team(rest, [&](TeamId z) { above = above || always_above_x(z); });
     if (above) return;
@@ -1723,7 +1668,7 @@ TieOutcome TieProof::playoff_outcome(TeamMask above, TeamMask level,
   // Every team above X but one per division takes a wild card
   int32_t slots = wild_cards;
   for (TeamMask rest = above; rest != 0;) {
-    const TeamMask in_d = rest & division_of(std::countr_zero(rest));
+    const TeamMask in_d = rest & division_of_[std::countr_zero(rest)];
     slots -= std::popcount(in_d) - 1;
     rest &= ~in_d;
   }
@@ -1732,8 +1677,8 @@ TieOutcome TieProof::playoff_outcome(TeamMask above, TeamMask level,
   TeamMask divisions = 0;
   for (TeamMask rest = pool; rest != 0;) {
     const TeamId t = std::countr_zero(rest);
-    if ((above & division_of(t)) == 0) divisions |= team_bit(t);
-    rest &= ~division_of(t);
+    if ((above & division_of_[t]) == 0) divisions |= team_bit(t);
+    rest &= ~division_of_[t];
   }
   Berth out;
   division_titles(divisions, pool, slots, out);
@@ -1748,9 +1693,9 @@ TieOutcome TieProof::outcome_of(const Berth& berth) {
 }
 
 TieOutcome TieProof::division_outcome(TeamMask above, TeamMask level) {
-  if ((above & division_) != 0) return TieOutcome::kMissed;
-  const TeamMask picks =
-      possible_picks((level & division_) | team_bit(x_), Procedure::kDivision);
+  if ((above & division_of_[x_]) != 0) return TieOutcome::kMissed;
+  const TeamMask picks = possible_picks(
+      (level & division_of_[x_]) | team_bit(x_), Procedure::kDivision);
   return outcome_of(
       {.reached = has(picks, x_), .missed = (picks & ~team_bit(x_)) != 0});
 }
@@ -1758,16 +1703,16 @@ TieOutcome TieProof::division_outcome(TeamMask above, TeamMask level) {
 TieOutcome TieProof::first_seed_outcome(TeamMask above, TeamMask level) {
   // A team above X puts its division's winner above X (or is a rival)
   if (above != 0) return TieOutcome::kMissed;
-  const TeamMask picks =
-      possible_picks((level & division_) | team_bit(x_), Procedure::kDivision);
+  const TeamMask picks = possible_picks(
+      (level & division_of_[x_]) | team_bit(x_), Procedure::kDivision);
   Berth out{.missed = (picks & ~team_bit(x_)) != 0};
   if (has(picks, x_)) {
     // The other divisions with level teams
     TeamMask divisions = 0;
-    for (TeamMask rest = level & ~division_; rest != 0;) {
+    for (TeamMask rest = level & ~division_of_[x_]; rest != 0;) {
       const TeamId t = std::countr_zero(rest);
       divisions |= team_bit(t);
-      rest &= ~division_of(t);
+      rest &= ~division_of_[t];
     }
     if (!has_context_ || !carry_facts_ ||
         !first_seed_paths(divisions, level, out)) {
@@ -1785,13 +1730,13 @@ bool TieProof::first_seed_paths(TeamMask divisions, TeamMask level,
                                 Berth& out) {
   std::vector<std::vector<PickPath>> paths;
   std::vector<PickPath>& own = paths.emplace_back();
-  (void)possible_picks((level & division_) | team_bit(x_), Procedure::kDivision,
-                       {}, &own);
+  (void)possible_picks((level & division_of_[x_]) | team_bit(x_),
+                       Procedure::kDivision, {}, &own);
   std::erase_if(own, [&](const PickPath& p) { return p.pick != x_; });
   size_t combinations = own.size();
   for (TeamMask rest = divisions; rest != 0; rest &= rest - 1) {
     std::vector<PickPath>& winners = paths.emplace_back();
-    (void)possible_picks(level & division_of(std::countr_zero(rest)),
+    (void)possible_picks(level & division_of_[std::countr_zero(rest)],
                          Procedure::kDivision, {}, &winners);
     combinations *= winners.size();
     if (combinations >
@@ -1830,7 +1775,7 @@ void TieProof::first_seed_picks(TeamMask divisions, TeamMask level,
     return;
   }
   const TeamId t = std::countr_zero(divisions);
-  for_each_team(possible_picks(level & division_of(t), Procedure::kDivision),
+  for_each_team(possible_picks(level & division_of_[t], Procedure::kDivision),
                 [&](TeamId winner) {
                   first_seed_picks(divisions & (divisions - 1), level,
                                    winners | team_bit(winner), out);
@@ -1847,7 +1792,7 @@ void TieProof::division_titles(TeamMask divisions, TeamMask pool, int32_t slots,
   }
   const TeamId t = std::countr_zero(divisions);
   const TeamMask rest = divisions & (divisions - 1);
-  const TeamMask in_d = pool & division_of(t);
+  const TeamMask in_d = pool & division_of_[t];
   for_each_team(possible_picks(in_d, Procedure::kDivision), [&](TeamId winner) {
     if (winner == x_) {
       out.reached = true;
@@ -1867,7 +1812,7 @@ TieProof::Berth TieProof::wild_card_picks(TeamMask pool, int32_t slots) {
   std::array<TeamMask, kDivisions> candidates{};
   size_t n = 0;
   for (TeamMask rest = pool; rest != 0;) {
-    const TeamMask in_d = rest & division_of(std::countr_zero(rest));
+    const TeamMask in_d = rest & division_of_[std::countr_zero(rest)];
     candidates[n++] = possible_picks(in_d, Procedure::kDivision);
     rest &= ~in_d;
   }
@@ -1896,9 +1841,7 @@ TieProof::Berth TieProof::wild_card_picks(TeamMask pool, int32_t slots) {
 }
 
 bool TieProof::always_above_x(TeamId z) const {
-  if (final_games_[z] == 0) return false;
-  return static_cast<int64_t>(half_wins_low_[z]) * final_games_[x_] >
-         static_cast<int64_t>(half_wins_low_[x_]) * final_games_[z];
+  return half_wins_low_[z] > level_[z].floor;
 }
 
 }  // namespace nflseedr

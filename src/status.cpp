@@ -37,26 +37,9 @@ enum class Answer : int8_t { kUnknown, kYes, kNo };
 // conference (No. 1 seed) or the wild cards (playoffs)
 enum class Ranking : int8_t { kDivision, kConference, kWildCard };
 
-[[nodiscard]] constexpr TeamMask team_bit(TeamId t) noexcept {
-  return TeamMask{1} << static_cast<uint32_t>(t);
-}
-
-[[nodiscard]] constexpr bool has(TeamMask mask, TeamId t) noexcept {
-  return (mask & team_bit(t)) != 0;
-}
-
 // Strictly behind (ahead of) X for teams in `strict`, possibly tied else
 [[nodiscard]] Tie tie_of(TeamMask strict, TeamId y) noexcept {
   return has(strict, y) ? Tie::kStrict : Tie::kWeak;
-}
-
-// Calls f(t) for every team in `mask`
-template <typename F>
-void for_each_team(TeamMask mask, F f) {
-  while (mask != 0) {
-    f(static_cast<TeamId>(std::countr_zero(mask)));
-    mask &= mask - 1;
-  }
 }
 
 // Calls f(subset) for every subset of `mask` with `size` teams until f
@@ -219,31 +202,21 @@ class Check {
   // Most half-wins y can end with and stay behind X (strict) or not get
   // ahead (weak). Compares final win percentages, so game counts can differ.
   [[nodiscard]] int32_t limit(TeamId y, Tie tie) const {
-    const int64_t num = scaled(y);
-    const int64_t den = s_->final_games[x_];
-    const int64_t below = num / den;
-    const bool exact = num % den == 0;
-    return static_cast<int32_t>(tie == Tie::kStrict && exact ? below - 1
-                                                             : below);
+    const TieLevel l = level(y);
+    return tie == Tie::kStrict && l.exact ? l.floor - 1 : l.floor;
   }
 
   // Fewest half-wins y needs to get ahead of X (strict) or not stay behind
   // (weak)
   [[nodiscard]] int32_t target(TeamId y, Tie tie) const {
-    const int64_t num = scaled(y);
-    const int64_t den = s_->final_games[x_];
-    const int64_t below = num / den;
-    const bool exact = num % den == 0;
-    return static_cast<int32_t>(tie == Tie::kWeak && exact ? below : below + 1);
+    const TieLevel l = level(y);
+    return tie == Tie::kWeak && l.exact ? l.floor : l.floor + 1;
   }
 
   // y can end with exactly X's win percentage
   [[nodiscard]] bool can_tie(TeamId y) const {
-    const int64_t num = scaled(y);
-    const int64_t den = s_->final_games[x_];
-    if (num % den != 0) return false;
-    const int64_t h = num / den;
-    return h >= current_[y] && h <= maximum_[y];
+    const TieLevel l = level(y);
+    return l.exact && l.floor >= current_[y] && l.floor <= maximum_[y];
   }
 
   // y can get ahead of X (strict) or tie X (weak) on its own
@@ -504,10 +477,9 @@ class Check {
     return (g.home == x_) == x_wins_out_ ? kHomeWin : kAwayWin;
   }
 
-  // X's final half-wins scaled to y's final games: y is level with X at
-  // exactly scaled(y) / final_games[x] half-wins
-  [[nodiscard]] int64_t scaled(TeamId y) const {
-    return static_cast<int64_t>(x_half_wins_) * s_->final_games[y];
+  // The half-wins that leave y level with X
+  [[nodiscard]] TieLevel level(TeamId y) const {
+    return tie_level(x_half_wins_, s_->final_games[x_], s_->final_games[y]);
   }
 
   const Season* s_;
@@ -711,25 +683,22 @@ class TeamStatus {
   // Ties at X's level when X wins out (`reach`) or loses out, built when
   // first needed
   [[nodiscard]] TieProof& ties(bool reach) {
-    std::optional<TieProof>& t = reach ? reach_ties_ : miss_ties_;
-    if (!t) {
-      t.emplace(s_->played, s_->played_games, s_->remaining, *s_->league, x_,
-                reach);
-    }
-    return *t;
+    return built(reach ? reach_ties_ : miss_ties_, reach);
   }
 
   // A second set of tie proofs for the tie groups (P11): they know which
   // teams end above, level with and below X (TieProof::set_context()), and
   // lose their cached results with every group
   [[nodiscard]] TieProof& context_ties(bool reach) {
-    std::optional<TieProof>& t =
-        reach ? reach_context_ties_ : miss_context_ties_;
-    if (!t) {
-      t.emplace(s_->played, s_->played_games, s_->remaining, *s_->league, x_,
-                reach);
+    return built(reach ? reach_context_ties_ : miss_context_ties_, reach);
+  }
+
+  [[nodiscard]] TieProof& built(std::optional<TieProof>& proof, bool reach) {
+    if (!proof) {
+      proof.emplace(s_->played, s_->played_games, s_->remaining, *s_->league,
+                    x_, reach);
     }
-    return *t;
+    return *proof;
   }
 
   // `feasible(strict, c)`: can the check hold with the teams of `strict`
@@ -1152,9 +1121,8 @@ class TeamStatus {
     return found;
   }
 
-  using Tighten = std::function<bool(TeamMask, Completion*)>;
   [[nodiscard]] Proof gray(Goal goal, TeamMask teams, bool want_reach,
-                           const Tighten& feasible, const Check& check) {
+                           const Feasible& feasible, const Check& check) {
     std::vector<TeamId> tied;
     for_each_team(teams, [&](TeamId y) {
       if (check.can_tie(y)) tied.push_back(y);
@@ -1342,7 +1310,7 @@ class TeamStatus {
     std::array<TeamMask, kDivisions> forced{};
     std::array<TeamMask, kDivisions> open{};
     for (int32_t i = 0; i < n_divisions_; ++i) {
-      for_each_team(division_teams(divisions_[i]), [&](TeamId y) {
+      for_each_team(division_masks_[i], [&](TeamId y) {
         const int32_t limit = reach_.limit(y, tie_of(strict, y));
         if (reach_.current(y) > limit) {
           forced[i] |= team_bit(y);
@@ -1386,7 +1354,7 @@ class TeamStatus {
     std::array<bool, kDivisions> own{};
     for (int32_t i = 0; i < n_divisions_; ++i) {
       own[i] = divisions_[i] == s_->league->division[x_];
-      for_each_team(division_teams(divisions_[i]), [&](TeamId y) {
+      for_each_team(division_masks_[i], [&](TeamId y) {
         const Tie tie = tie_of(strict, y);
         if (miss_.current(y) >= miss_.target(y, tie)) {
           already[i] |= team_bit(y);
