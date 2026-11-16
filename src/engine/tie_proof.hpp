@@ -1,6 +1,6 @@
 // Proofs that a team wins (or loses) every tie in win percentage it can end
 // up in, through the tiebreaking steps up to SOS, whatever the remaining
-// games do. Milestone 4 of dev/playoff-status.md.
+// games do. See dev/playoff-status.md.
 #pragma once
 
 #include <array>

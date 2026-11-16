@@ -1,5 +1,5 @@
 # Diagnostics for cases where nfl_clinching_status() is later than the NFL.
-# Used for milestones 6 and 7 of dev/playoff-status.md. Not part of the
+# See "Lessons" in dev/playoff-status.md. Not part of the
 # package (dev/ is in .Rbuildignore).
 #
 #   source("dev/clinching-diagnostics.R")

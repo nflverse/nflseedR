@@ -1,11 +1,11 @@
 # TEMPORARY (2026-11-15, decided by the maintainer): remove this file once
-# the work on the open No. 1 seed cases of week 10 of 2026 is done (the SOV
-# gap, see "SOV with many open games (handoff)" in dev/playoff-status.md).
-# It holds scenarios copied from an external site.
+# the work on the open No. 1 seed cases of week 10 of 2026 is done (see
+# "Still to do" in dev/playoff-status.md; ask the maintainer first). It
+# holds scenarios copied from an external site.
 #
 # The 3^7 results of seven week 10 games of 2026 and whether LAC is out of
 # the race for the AFC's No. 1 seed in each, by nflplayoffscenarios.com and
-# by clinching_status_compute(). Used for milestones 11 to 13. Not part of
+# by clinching_status_compute(). Not part of
 # the package (dev/ is in .Rbuildignore).
 #
 #   source("dev/clinching-week10-2026.R")
