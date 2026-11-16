@@ -150,7 +150,7 @@ nfl_clinching_status <- function(
 }
 
 # Games left per team up to which the search decided most open answers
-# (dev/playoff-status.md, milestone 9)
+# (dev/playoff-status.md, results)
 clinching_status_search_games_left <- 5L
 
 # search = FALSE: a hint if statuses of teams with games left are undecided
