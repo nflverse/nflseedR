@@ -1,15 +1,16 @@
 #include "engine/status.hpp"
 
 #include <algorithm>
+#include <array>
 #include <bit>
-#include <cmath>
 #include <functional>
 #include <limits>
 #include <optional>
-#include <string>
 #include <utility>
 
+#include "engine/checks.hpp"
 #include "engine/flow.hpp"
+#include "engine/group_check.hpp"
 #include "engine/scenario.hpp"
 #include "engine/season.hpp"
 #include "engine/tie_proof.hpp"
@@ -18,17 +19,13 @@ namespace nflseedr {
 
 namespace {
 
-// Runs of the procedures per completion (one per coin toss sequence)
-constexpr int32_t kTossBudget = 64;
+using namespace clinching;
+
 // Runs for the final standings once no games are left. Enough to try every
 // coin toss sequence in practice, which makes the answers exact.
 constexpr int32_t kSeasonOverBudget = 4096;
 // Orders of the greedy tightening in the gray zone
 constexpr int32_t kTighteningOrders = 4;
-
-// Does a check need competitors strictly behind (or ahead of) X, or is a tie
-// in win percentage enough?
-enum class Tie : int8_t { kStrict, kWeak };
 
 // Answer to "can X reach the goal?" or "can X miss it?"
 enum class Answer : int8_t { kUnknown, kYes, kNo };
@@ -36,11 +33,6 @@ enum class Answer : int8_t { kUnknown, kYes, kNo };
 // Ranking that breaks ties with X: the division (division title), the
 // conference (No. 1 seed) or the wild cards (playoffs)
 enum class Ranking : int8_t { kDivision, kConference, kWildCard };
-
-// Strictly behind (ahead of) X for teams in `strict`, possibly tied else
-[[nodiscard]] Tie tie_of(TeamMask strict, TeamId y) noexcept {
-  return has(strict, y) ? Tie::kStrict : Tie::kWeak;
-}
 
 // Calls f(subset) for every subset of `mask` with `size` teams until f
 // returns true. True if it did.
@@ -51,12 +43,6 @@ template <typename F>
     if (s == 0) return false;
   }
 }
-
-// Results of a completion that no check constrains
-constexpr int8_t kFree = -1;
-constexpr int8_t kHomeWin = 2;
-constexpr int8_t kTie = 1;
-constexpr int8_t kAwayWin = 0;
 
 // Parts of the season the search for an open answer may check (P12)
 constexpr int32_t kSearchBudget = 200;
@@ -92,28 +78,10 @@ constexpr Budgets kSingleSeasonBudgets{
     .open_groups = std::numeric_limits<int32_t>::max(),
     .fact_groups = 128,
     .joint_groups = 512};
-// The group check (StatusOptions::group_samples): flows to find the tie
-// groups of one answer, and the share of tie games in its random completions
-constexpr int32_t kCheckFlows = 20000;
-constexpr int32_t kSampleTiePercent = 6;
-// Standard deviations of the team strengths (log odds of a win) in the
-// random completions, one after the other: 0 gives coin flips
-constexpr std::array<double, 3> kSampleSpreads{0.0, 1.5, 3.0};
-// Steered completions: log odds per half-win of difference between the
-// opponents of two teams, and the standard deviation on top
-constexpr double kSampleSteer = 1.5;
-constexpr double kSampleSteerSpread = 1.0;
-// Steps of the uniform draw that decides a game
-constexpr int32_t kSampleResolution = 1'000'000;
 // Interrupt checks during the search, every this many parts
 constexpr int32_t kInterruptEvery = 64;
 // Splitting on X's own games comes last: the checks already fix them
 constexpr int32_t kOwnGamePenalty = 10;
-
-[[nodiscard]] Completion filled(Completion c, int8_t free_result) {
-  std::ranges::replace(c, kFree, free_result);
-  return c;
-}
 
 // An answer and, for yes, the completion that proves it. `coin_toss` is
 // true if a coin toss was needed in that completion.
@@ -126,368 +94,6 @@ struct Proof {
 struct Answers {
   Proof reach;
   Proof miss;
-};
-
-// Played games and remaining games of one season
-struct Season {
-  SeasonData played;
-  std::span<const Game> played_games;
-  const League* league = nullptr;
-  std::span<const Game> remaining;
-  TeamArray<int32_t> left{};
-  TeamMatrix<int32_t> left_vs{};
-  // Games at the end of the season
-  TeamArray<int32_t> final_games{};
-  int32_t seeds = 0;
-  int32_t wild_cards = 0;
-
-  void build(std::span<const Game> played_games_in,
-             std::span<const Game> remaining_games, const League& lg,
-             int32_t n_seeds) {
-    played.build(played_games_in, lg, false, true);
-    played_games = played_games_in;
-    league = &lg;
-    remaining = remaining_games;
-    left = {};
-    left_vs = {};
-    for (const Game& g : remaining) {
-      ++left[g.away];
-      ++left[g.home];
-      ++left_vs[g.away][g.home];
-      ++left_vs[g.home][g.away];
-    }
-    for (TeamId t = 0; t < kTeams; ++t) {
-      final_games[t] = played.games[t] + left[t];
-    }
-    seeds = n_seeds;
-    wild_cards = seeds - kDivisions / kConferences;
-  }
-
-  [[nodiscard]] bool present(TeamId t) const noexcept {
-    return final_games[t] > 0;
-  }
-
-  // Did X reach the goal in these final ranks?
-  [[nodiscard]] bool reached(Goal goal, TeamId x, const RankResult& div,
-                             const RankResult& conf) const {
-    switch (goal) {
-      case Goal::kDivision:
-        return div.rank[x] == 1;
-      case Goal::kPlayoffs:
-        return conf.rank[x] != kMissing && conf.rank[x] <= seeds;
-      case Goal::kFirstSeed:
-        return conf.rank[x] == 1;
-    }
-    return false;
-  }
-};
-
-// Win totals (half-wins) when X wins out ("can reach" checks) or loses out
-// ("can miss" checks), and the flows on top of them.
-class Check {
- public:
-  Check(const Season& s, TeamId x, bool x_wins_out)
-      : s_(&s), x_(x), x_wins_out_(x_wins_out) {
-    for (TeamId y = 0; y < kTeams; ++y) {
-      const int32_t vs_x = s.left_vs[x][y];
-      current_[y] = s.played.half_wins[y] + (x_wins_out ? 0 : 2 * vs_x);
-      maximum_[y] = current_[y] + 2 * (s.left[y] - vs_x);
-    }
-    x_half_wins_ = s.played.half_wins[x] + (x_wins_out ? 2 * s.left[x] : 0);
-  }
-
-  [[nodiscard]] int32_t current(TeamId y) const { return current_[y]; }
-  [[nodiscard]] int32_t maximum(TeamId y) const { return maximum_[y]; }
-
-  // Most half-wins y can end with and stay behind X (strict) or not get
-  // ahead (weak). Compares final win percentages, so game counts can differ.
-  [[nodiscard]] int32_t limit(TeamId y, Tie tie) const {
-    const TieLevel l = level(y);
-    return tie == Tie::kStrict && l.exact ? l.floor - 1 : l.floor;
-  }
-
-  // Fewest half-wins y needs to get ahead of X (strict) or not stay behind
-  // (weak)
-  [[nodiscard]] int32_t target(TeamId y, Tie tie) const {
-    const TieLevel l = level(y);
-    return tie == Tie::kWeak && l.exact ? l.floor : l.floor + 1;
-  }
-
-  // y can end with exactly X's win percentage
-  [[nodiscard]] bool can_tie(TeamId y) const {
-    const TieLevel l = level(y);
-    return l.exact && l.floor >= current_[y] && l.floor <= maximum_[y];
-  }
-
-  // y can get ahead of X (strict) or tie X (weak) on its own
-  [[nodiscard]] bool can_pass(TeamId y, Tie tie) const {
-    return target(y, tie) <= maximum_[y];
-  }
-
-  // Can every team in `capped` stay behind X at once? Teams in `strict`
-  // must be strictly behind, the others may tie X. Teams outside `capped`
-  // take any wins. If feasible and `out` is given, writes a completion
-  // (games that don't matter are kFree).
-  [[nodiscard]] bool cap(TeamMask capped, TeamMask strict, MaxFlow& flow,
-                         Completion* out) const {
-    TeamArray<int32_t> room{};
-    bool ok = true;
-    for_each_team(capped, [&](TeamId y) {
-      room[y] = limit(y, tie_of(strict, y)) - current_[y];
-      if (room[y] < 0) ok = false;
-    });
-    if (!ok) return false;
-    // Only games between two capped teams constrain anything: a game against
-    // any other team can go to that team.
-    auto counts = [&](const Game& g) {
-      return !involves_x(g) && has(capped, g.away) && has(capped, g.home);
-    };
-    const auto n_games =
-        static_cast<int32_t>(std::ranges::count_if(s_->remaining, counts));
-    std::vector<int32_t> home_edge;
-    if (n_games > 0) {
-      flow.reset(kFirstGameNode + n_games);
-      for_each_team(capped, [&](TeamId y) {
-        flow.add_edge(team_node(y), kSink, room[y]);
-      });
-      int32_t node = kFirstGameNode;
-      for (const Game& g : s_->remaining) {
-        home_edge.push_back(counts(g) ? add_game(flow, node++, g, 2, 2).home
-                                      : -1);
-      }
-      if (flow.run(kSource, kSink) != 2 * n_games) return false;
-    }
-    if (out != nullptr) {
-      Completion& c = *out;
-      c.assign(s_->remaining.size(), kFree);
-      for (size_t i = 0; i < c.size(); ++i) {
-        const Game& g = s_->remaining[i];
-        if (involves_x(g)) {
-          c[i] = x_result(g);
-        } else if (counts(g)) {
-          c[i] = static_cast<int8_t>(flow.flow(home_edge[i]));
-        } else if (has(capped, g.away)) {
-          c[i] = kHomeWin;
-        } else if (has(capped, g.home)) {
-          c[i] = kAwayWin;
-        }
-      }
-    }
-    return true;
-  }
-
-  // Can every team in `pushed` get ahead of X at once? Teams in `strict`
-  // must get strictly ahead, the others only need to tie X. Wins nobody needs
-  // can go anywhere. Writes a completion like cap().
-  [[nodiscard]] bool push(TeamMask pushed, TeamMask strict, MaxFlow& flow,
-                          Completion* out) const {
-    TeamArray<int32_t> need{};
-    TeamMask needy = 0;
-    int32_t total = 0;
-    bool ok = true;
-    for_each_team(pushed, [&](TeamId y) {
-      need[y] = target(y, tie_of(strict, y)) - current_[y];
-      if (need[y] > maximum_[y] - current_[y]) ok = false;
-      if (need[y] > 0) {
-        needy |= team_bit(y);
-        total += need[y];
-      }
-    });
-    if (!ok) return false;
-    auto counts = [&](const Game& g) {
-      return !involves_x(g) && (has(needy, g.away) || has(needy, g.home));
-    };
-    const auto n_games =
-        static_cast<int32_t>(std::ranges::count_if(s_->remaining, counts));
-    std::vector<GameEdges> edges;
-    if (total > 0) {
-      flow.reset(kFirstGameNode + n_games);
-      for_each_team(needy, [&](TeamId y) {
-        flow.add_edge(team_node(y), kSink, need[y]);
-      });
-      int32_t node = kFirstGameNode;
-      for (const Game& g : s_->remaining) {
-        edges.push_back(counts(g) ? add_game(flow, node++, g,
-                                             has(needy, g.away) ? 2 : 0,
-                                             has(needy, g.home) ? 2 : 0)
-                                  : GameEdges{});
-      }
-      if (flow.run(kSource, kSink) != total) return false;
-    }
-    if (out != nullptr) {
-      Completion& c = *out;
-      c.assign(s_->remaining.size(), kFree);
-      for (size_t i = 0; i < c.size(); ++i) {
-        const Game& g = s_->remaining[i];
-        if (involves_x(g)) {
-          c[i] = x_result(g);
-        } else if (total > 0 && counts(g)) {
-          // Half-wins nobody needs go to the home team. More wins never
-          // hurt a pushed team.
-          c[i] = static_cast<int8_t>(2 - flow_or_zero(flow, edges[i].away));
-        }
-      }
-    }
-    return true;
-  }
-
-  // y can end strictly above (below) X
-  [[nodiscard]] bool can_end_above(TeamId y) const {
-    return can_pass(y, Tie::kStrict);
-  }
-  [[nodiscard]] bool can_end_below(TeamId y) const {
-    return limit(y, Tie::kStrict) >= current_[y];
-  }
-
-  // Can the teams of `above` end strictly above X, the teams of `level`
-  // exactly level with X and the teams of `below` strictly below, all at
-  // once? The other teams take anything. Writes a completion like cap().
-  // Games with a result in `fixed` (not kFree) keep it.
-  //
-  // A flow with lower and upper bounds on the half-wins of every team: a
-  // team sends its lower bound to the sink and the rest through a middle
-  // node, which also gets the lower bounds from the source. Feasible iff
-  // every edge of the source is used up.
-  //
-  // Without `out`, a game of a bounded team against a team without bounds
-  // isn't in the flow: it can bring the bounded team anything, so it only
-  // lowers what the team's other games must bring.
-  [[nodiscard]] bool exact(TeamMask above, TeamMask level, TeamMask below,
-                           MaxFlow& flow, Completion* out,
-                           const Completion* fixed = nullptr) const {
-    const TeamMask bounded = above | level | below;
-    const size_t n_remaining = s_->remaining.size();
-    // Half-wins the fixed games already hand out
-    TeamArray<int32_t> got{};
-    // Half-wins a bounded team can take from the games left out of the flow
-    TeamArray<int32_t> spare{};
-    // Games of the flow: open games of a bounded team
-    std::vector<bool> counts(n_remaining, false);
-    int32_t n_games = 0;
-    for (size_t i = 0; i < n_remaining; ++i) {
-      const Game& g = s_->remaining[i];
-      if (involves_x(g)) continue;
-      const bool away = has(bounded, g.away);
-      const bool home = has(bounded, g.home);
-      if (fixed != nullptr && (*fixed)[i] != kFree) {
-        got[g.home] += (*fixed)[i];
-        got[g.away] += 2 - (*fixed)[i];
-      } else if ((away && home) || (out != nullptr && (away || home))) {
-        counts[i] = true;
-        ++n_games;
-      } else if (away) {
-        spare[g.away] += 2;
-      } else if (home) {
-        spare[g.home] += 2;
-      }
-    }
-    TeamArray<int32_t> low{};
-    TeamArray<int32_t> high{};
-    for (TeamId y = 0; y < kTeams; ++y) {
-      high[y] = maximum_[y] - current_[y] - got[y];
-    }
-    for_each_team(above, [&](TeamId y) {
-      low[y] = std::max(target(y, Tie::kStrict) - current_[y] - got[y], 0);
-    });
-    for_each_team(level, [&](TeamId y) {
-      low[y] = limit(y, Tie::kWeak) - current_[y] - got[y];
-      high[y] = low[y];
-    });
-    for_each_team(below, [&](TeamId y) {
-      high[y] =
-          std::min(high[y], limit(y, Tie::kStrict) - current_[y] - got[y]);
-    });
-    int32_t total_low = 0;
-    bool ok = true;
-    for_each_team(bounded, [&](TeamId y) {
-      if (low[y] < 0 || low[y] > high[y]) ok = false;
-      low[y] = std::max(low[y] - spare[y], 0);
-      total_low += low[y];
-    });
-    if (!ok) return false;
-    constexpr int32_t kMiddle = kFirstGameNode;
-    flow.reset(kMiddle + 1 + n_games);
-    for (TeamId y = 0; y < kTeams; ++y) {
-      if (low[y] > 0) flow.add_edge(team_node(y), kSink, low[y]);
-      if (high[y] > low[y]) {
-        flow.add_edge(team_node(y), kMiddle, high[y] - low[y]);
-      }
-    }
-    if (total_low > 0) flow.add_edge(kSource, kMiddle, total_low);
-    if (n_games > 0) flow.add_edge(kMiddle, kSink, 2 * n_games);
-    std::vector<int32_t> home_edge(n_remaining, -1);
-    int32_t node = kMiddle + 1;
-    for (size_t i = 0; i < n_remaining; ++i) {
-      if (counts[i]) {
-        home_edge[i] = add_game(flow, node++, s_->remaining[i], 2, 2).home;
-      }
-    }
-    if (flow.run(kSource, kSink) != 2 * n_games + total_low) return false;
-    if (out != nullptr) {
-      Completion& c = *out;
-      c.assign(n_remaining, kFree);
-      for (size_t i = 0; i < n_remaining; ++i) {
-        const Game& g = s_->remaining[i];
-        if (involves_x(g)) {
-          c[i] = x_result(g);
-        } else if (home_edge[i] >= 0) {
-          c[i] = static_cast<int8_t>(flow.flow(home_edge[i]));
-        } else if (fixed != nullptr) {
-          c[i] = (*fixed)[i];
-        }
-      }
-    }
-    return true;
-  }
-
-  [[nodiscard]] bool involves_x(const Game& g) const noexcept {
-    return g.away == x_ || g.home == x_;
-  }
-
- private:
-  // Flow nodes: source, sink, one per team, then one per game
-  static constexpr int32_t kSource = 0;
-  static constexpr int32_t kSink = 1;
-  static constexpr int32_t kFirstGameNode = 2 + kTeams;
-  [[nodiscard]] static constexpr int32_t team_node(TeamId t) noexcept {
-    return 2 + t;
-  }
-
-  struct GameEdges {
-    int32_t away = -1;
-    int32_t home = -1;
-  };
-
-  // A game hands out 2 half-wins (win 2/0, tie 1/1)
-  static GameEdges add_game(MaxFlow& flow, int32_t node, const Game& g,
-                            int32_t to_away, int32_t to_home) {
-    flow.add_edge(kSource, node, 2);
-    GameEdges e;
-    if (to_away > 0) e.away = flow.add_edge(node, team_node(g.away), to_away);
-    if (to_home > 0) e.home = flow.add_edge(node, team_node(g.home), to_home);
-    return e;
-  }
-
-  [[nodiscard]] static int32_t flow_or_zero(const MaxFlow& flow, int32_t edge) {
-    return edge < 0 ? 0 : flow.flow(edge);
-  }
-
-  // Home half-wins of a game of X: X wins out or loses out
-  [[nodiscard]] int8_t x_result(const Game& g) const noexcept {
-    return (g.home == x_) == x_wins_out_ ? kHomeWin : kAwayWin;
-  }
-
-  // The half-wins that leave y level with X
-  [[nodiscard]] TieLevel level(TeamId y) const {
-    return tie_level(x_half_wins_, s_->final_games[x_], s_->final_games[y]);
-  }
-
-  const Season* s_;
-  TeamId x_;
-  bool x_wins_out_;
-  TeamArray<int32_t> current_{};
-  TeamArray<int32_t> maximum_{};
-  int32_t x_half_wins_ = 0;
 };
 
 [[nodiscard]] Status to_status(Answer reach, Answer miss) {
@@ -601,55 +207,27 @@ class TeamStatus {
     return {.reach = final_proof(goal, true), .miss = final_proof(goal, false)};
   }
 
-  // Checks the answer "no" to "can X reach the goal?" (`reach`) or "can X
-  // miss it?" without the tie proofs (tests and diagnostics): every way the
-  // teams can end above, level with or below X, as in tie_groups(), with
-  // the completion of its flow and `samples` random completions run through
-  // the procedures. Random completions of the whole season rarely hit a tie
-  // group that needs many teams to win or lose out together; these do.
-  // Throws if X gets the other outcome in one of them. False if the flows
-  // ran out before every way was visited.
+  // The group check of the answer "no" to "can X reach the goal?"
+  // (`reach`) or "can X miss it?" (tests and diagnostics, see
+  // engine/group_check.hpp)
   [[nodiscard]] bool check_no(Goal goal, bool reach, int32_t samples,
                               RandomSource& rng,
                               const InterruptCheck& interrupt) {
-    const Check& check = reach ? reach_ : miss_;
-    const GroupSides sides = group_sides(check, group_teams(goal));
-    int32_t flows = kCheckFlows;
-    bool complete = true;
-    const auto visit = [&](const auto& self, size_t i, TeamMask above,
-                           TeamMask level, TeamMask below) -> void {
-      if (!complete || settled_without_ties(goal, reach, above, level,
-                                            sides.can_be_ahead[i])) {
-        return;
-      }
-      if (flows-- <= 0) {
-        complete = false;
-        return;
-      }
-      const bool leaf = i == sides.open.size();
-      Completion c;
-      if (!check.exact(above, level, below, *flow_, leaf ? &c : nullptr)) {
-        return;
-      }
-      if (!leaf) {
-        const Open& o = sides.open[i];
-        const TeamMask bit = team_bit(o.team);
-        if (o.level) self(self, i + 1, above, level | bit, below);
-        if (o.above) self(self, i + 1, above | bit, level, below);
-        if (o.below) self(self, i + 1, above, level, below | bit);
-        return;
-      }
-      interrupt();
-      for (const int8_t fill : {kHomeWin, kAwayWin}) {
-        expect_no(goal, reach, filled(c, fill));
-      }
-      for (int32_t k = 0; k < samples; ++k) {
-        const SamplePlan plan = sample_plan(k, level, reach);
-        expect_no(goal, reach, sample(check, above, level, below, plan, rng));
-      }
-    };
-    visit(visit, 0, sides.above, sides.level, sides.below);
-    return complete;
+    const GroupCheck group{
+        .season = s_,
+        .check = reach ? &reach_ : &miss_,
+        .x = x_,
+        .goal = goal,
+        .reach = reach,
+        .teams = group_teams(goal),
+        .settled =
+            [&](TeamMask above, TeamMask level, TeamMask may_follow) {
+              return settled_without_ties(goal, reach, above, level,
+                                          may_follow);
+            },
+        .flow = flow_,
+        .runner = runner_};
+    return clinching::check_no(group, samples, rng, interrupt);
   }
 
  private:
@@ -740,172 +318,10 @@ class TeamStatus {
     }
   }
 
-  // Group check: X must not reach the goal (`reach`) or miss it in
-  // `completion`, whatever the coin tosses
-  void expect_no(Goal goal, bool reach, const Completion& completion) {
-    (void)runner_->run(
-        completion, kTossBudget,
-        [&](const RankResult& div, const RankResult& conf, bool) {
-          if (s_->reached(goal, x_, div, conf) != reach) return false;
-          // Enough to rebuild the case: results are home half-wins of the
-          // remaining games in input order
-          std::string results;
-          for (const int8_t r : completion) results += std::to_string(r);
-          throw EngineError("A clinching answer failed its group check: team " +
-                            std::to_string(x_) + ", goal " +
-                            std::to_string(static_cast<int32_t>(goal)) +
-                            (reach ? ", can reach" : ", can miss") +
-                            ", completion " + results);
-        });
-  }
-
-  // How the random completions of a tie group pick results: every team
-  // gets a strength (log odds of a win), `lean` plus a random part with
-  // standard deviation `spread`
-  struct SamplePlan {
-    TeamArray<double> lean{};
-    double spread = 0.0;
-  };
-
-  // The plan of the k-th completion of a tie group. Even k: random
-  // strengths only, with the spreads in turn. A large one makes teams win
-  // out or lose out together. Odd k: steered against the answer "no"
-  // through the SOV, then the SOS of one level team y after the other: for
-  // "can miss", the teams y beat (played) are strong and the teams X beat
-  // weak, the reverse for "can reach". Coin flips almost never line up the
-  // ten or so games such a step can take.
-  [[nodiscard]] SamplePlan sample_plan(int32_t k, TeamMask level,
-                                       bool reach) const {
-    SamplePlan plan;
-    const int32_t n_level = std::popcount(level);
-    if (k % 2 == 0 || n_level == 0) {
-      plan.spread =
-          kSampleSpreads.at(static_cast<size_t>(k / 2) % kSampleSpreads.size());
-      return plan;
-    }
-    const int32_t turn = k / 2;
-    TeamMask rest = level;
-    for (int32_t skip = (turn / 2) % n_level; skip > 0; --skip) {
-      rest &= rest - 1;
-    }
-    const auto y = static_cast<TeamId>(std::countr_zero(rest));
-    const bool sov = turn % 2 == 0;
-    const SeasonData& played = s_->played;
-    // X's remaining games are wins for "can reach" and losses for "can miss"
-    const int32_t x_wins_left = reach ? 2 : 0;
-    for (TeamId t = 0; t < kTeams; ++t) {
-      const int32_t for_y =
-          sov ? played.h2h_half_wins[y][t]
-              : 2 * (played.h2h_games[y][t] + s_->left_vs[y][t]);
-      const int32_t for_x =
-          sov ? played.h2h_half_wins[x_][t] + x_wins_left * s_->left_vs[x_][t]
-              : 2 * (played.h2h_games[x_][t] + s_->left_vs[x_][t]);
-      plan.lean[t] = (reach ? -kSampleSteer : kSampleSteer) * (for_y - for_x);
-    }
-    plan.spread = kSampleSteerSpread;
-    return plan;
-  }
-
-  // A random completion with the teams of `above`, `level` and `below` on
-  // their side of X: the games in random order, each with a random result
-  // by the strengths of `plan` if the flow says the rest can still follow,
-  // with another one if not
-  [[nodiscard]] Completion sample(const Check& check, TeamMask above,
-                                  TeamMask level, TeamMask below,
-                                  const SamplePlan& plan, RandomSource& rng) {
-    TeamArray<double> strength = plan.lean;
-    for (double& value : strength) value += plan.spread * rng.normal();
-    const auto home_wins = [&](const Game& g) {
-      const double p =
-          1.0 / (1.0 + std::exp(strength[g.away] - strength[g.home]));
-      return rng.index(kSampleResolution) < p * kSampleResolution;
-    };
-    const std::span<const Game> games = s_->remaining;
-    std::vector<size_t> order;
-    for (size_t i = 0; i < games.size(); ++i) {
-      if (!check.involves_x(games[i])) order.push_back(i);
-    }
-    for (size_t i = order.size(); i > 1; --i) {
-      const auto j = static_cast<size_t>(rng.index(static_cast<int32_t>(i)));
-      std::swap(order[i - 1], order[j]);
-    }
-    const TeamMask bounded = above | level | below;
-    Completion fixed(games.size(), kFree);
-    const auto feasible = [&](Completion* out) {
-      return check.exact(above, level, below, *flow_, out, &fixed);
-    };
-    for (const size_t i : order) {
-      const bool tie = rng.index(100) < kSampleTiePercent;
-      const int8_t win = home_wins(games[i]) ? kHomeWin : kAwayWin;
-      const auto other = static_cast<int8_t>(kHomeWin - win);
-      const std::array<int8_t, 3> results =
-          tie ? std::array{kTie, win, other} : std::array{win, other, kTie};
-      // Games between teams without a side never matter to the flow
-      const bool is_free =
-          !has(bounded, games[i].away) && !has(bounded, games[i].home);
-      const bool found = std::ranges::any_of(results, [&](int8_t result) {
-        fixed[i] = result;
-        return is_free || feasible(nullptr);
-      });
-      if (!found) throw EngineError("A feasible flow became infeasible");
-    }
-    Completion c;
-    if (!feasible(&c)) throw EngineError("A feasible flow became infeasible");
-    return c;
-  }
-
   // The teams whose final position against X decides the goal: only the
   // rivals matter for the division title
   [[nodiscard]] TeamMask group_teams(Goal goal) const noexcept {
     return goal == Goal::kDivision ? rivals_ : conference_;
-  }
-
-  // A team that can end on more than one side of X
-  struct Open {
-    TeamId team = 0;
-    bool above = false;
-    bool level = false;
-    bool below = false;
-  };
-  // Where teams can end against X: teams with one possible side are set,
-  // the others open
-  struct GroupSides {
-    std::vector<Open> open;
-    TeamMask above = 0;
-    TeamMask level = 0;
-    TeamMask below = 0;
-    // Teams that can still end level with or above X, from each open team on
-    std::vector<TeamMask> can_be_ahead;
-  };
-
-  [[nodiscard]] static GroupSides group_sides(const Check& check,
-                                              TeamMask teams) {
-    GroupSides out;
-    for_each_team(teams, [&](TeamId y) {
-      const Open o{.team = y,
-                   .above = check.can_end_above(y),
-                   .level = check.can_tie(y),
-                   .below = check.can_end_below(y)};
-      const int32_t sides = static_cast<int32_t>(o.above) +
-                            static_cast<int32_t>(o.level) +
-                            static_cast<int32_t>(o.below);
-      if (sides > 1) {
-        out.open.push_back(o);
-      } else if (o.above) {
-        out.above |= team_bit(y);
-      } else if (o.level) {
-        out.level |= team_bit(y);
-      } else {
-        out.below |= team_bit(y);
-      }
-    });
-    out.can_be_ahead.assign(out.open.size() + 1, 0);
-    for (size_t i = out.open.size(); i-- > 0;) {
-      const Open& o = out.open[i];
-      out.can_be_ahead[i] =
-          out.can_be_ahead[i + 1] | (o.above || o.level ? team_bit(o.team) : 0);
-    }
-    return out;
   }
 
   // Whatever the tiebreakers and the teams still open do, the answer to
