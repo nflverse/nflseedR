@@ -12,13 +12,10 @@
 
 #include "flow.hpp"
 #include "season.hpp"
+#include "team_mask.hpp"
 #include "types.hpp"
 
 namespace nflseedr {
-
-// Set of team ids as bits
-using TeamMask = uint32_t;
-static_assert(kTeams <= 32);
 
 // Teams X always ranks ahead of, or behind, when tied with them
 struct TieSides {
@@ -89,6 +86,10 @@ class TieProof {
     Ratio low;
     Ratio high;
   };
+  // No value: the teams can't all end at their tie levels
+  [[nodiscard]] static Range empty_range() {
+    return {.low = Ratio(1, 1), .high = Ratio(0, 1)};
+  }
 
   // Half-wins a team takes from its open games with each opponent, at least
   // and at most (P15). Not feasible: no completion fits what is known.
@@ -278,8 +279,6 @@ class TieProof {
   [[nodiscard]] bool plays_all(TeamId t, TeamMask teams) const noexcept;
   [[nodiscard]] int32_t low_in(TeamId t, TeamMask group) const;
   [[nodiscard]] int32_t high_in(TeamId t, TeamMask group) const;
-  [[nodiscard]] TeamMask division_of(TeamId t) const;
-  [[nodiscard]] TeamMask conference_of(TeamId t) const;
 
   // X wins every division tie with teams of `teams`, so X survives every
   // division reduction of the conference ranking
@@ -371,10 +370,9 @@ class TieProof {
 
   const League* league_;
   TeamId x_;
-  TeamMask division_ = 0;  // X's division, with X
+  // The teams of every team's division and conference, with the team
   TeamArray<TeamMask> division_of_{};
   TeamArray<TeamMask> conference_of_{};
-  TeamMask conference_ = 0;
   // Games of t against u, and what's known of them: played, or X's games
   // (fixed by the check). Open games are the other remaining ones.
   TeamMatrix<int32_t> games_{};
@@ -392,6 +390,7 @@ class TieProof {
   TeamArray<int32_t> half_wins_high_{};
   // Half-wins at X's win percentage, kMissing if a team can't get there
   TeamArray<int32_t> tie_half_wins_{};
+  TeamArray<TieLevel> level_{};
   // Half-wins of every team within the context (set_context()), otherwise
   // half_wins_low_ and half_wins_high_
   TeamArray<int32_t> context_low_{};
