@@ -847,9 +847,11 @@ class GameSearch {
 
   // Answer to "can X reach the goal?" (`want_reach`) or "can X miss it?"
   [[nodiscard]] Proof run(bool want_reach) {
-    nodes_ = 0;
     fixed_.assign(root_->remaining.size(), kFree);
-    return visit(want_reach);
+    // The whole season is the first part, and the checks already left it
+    // open (with larger budgets): split it right away
+    nodes_ = 1;
+    return split(pick(*root_, root_->remaining, want_reach), want_reach);
   }
 
  private:
@@ -867,18 +869,22 @@ class GameSearch {
     if (node.proof.answer != Answer::kUnknown || !node.split) {
       return node.proof;
     }
-    const size_t split = *node.split;
+    return split(*node.split, want_reach);
+  }
+
+  // The answer of a part from its three parts with each result of `game`
+  [[nodiscard]] Proof split(size_t game, bool want_reach) {
     bool unknown = false;
     for (const int8_t result : {kHomeWin, kAwayWin, kTie}) {
-      fixed_[split] = result;
+      fixed_[game] = result;
       Proof child = visit(want_reach);
       if (child.answer == Answer::kYes) {
-        fixed_[split] = kFree;
+        fixed_[game] = kFree;
         return child;
       }
       unknown = unknown || child.answer == Answer::kUnknown;
     }
-    fixed_[split] = kFree;
+    fixed_[game] = kFree;
     if (unknown) return {};
     return {.answer = Answer::kNo};
   }
