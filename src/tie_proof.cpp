@@ -841,9 +841,6 @@ void TieProof::carry_facts(bool on, bool jointly) {
 }
 
 void TieProof::clear_caches() {
-  for (auto& procedure : cache_) {
-    for (auto& cache : procedure) cache.clear();
-  }
   for (auto& cache : picks_cache_) cache.clear();
   for (auto& cache : rank_cache_) cache.clear();
   berth_cache_.clear();
@@ -1280,99 +1277,22 @@ std::span<const Step> TieProof::steps(Procedure procedure) {
   return kConferenceSteps;
 }
 
-// X is picked first if a step makes X best for sure. A step where X is at
-// least as good as everyone for sure can also leave X with the teams that
-// can be level with X; then X must win from every such smaller group (the
-// procedure restarts with it). If no step settles it, a coin toss could.
+// X is picked first (wins) if no other team can be picked, and never (loses)
+// if X can't be.
 bool TieProof::wins(TeamMask group, Procedure procedure) {
-  const TeamMask others = group & ~team_bit(x_);
-  if (others == 0) return true;
-  auto& cache = cache_[static_cast<size_t>(procedure)][0];
-  if (const auto it = cache.find(group); it != cache.end()) return it->second;
-  bool result = false;
-  for (const Step step : steps(procedure)) {
-    const StepRanges r = ranges(step, group, procedure);
-    if (!r.applies) continue;
-    bool best = true;
-    bool never_behind = true;
-    TeamMask level = 0;  // teams that can end level with X
-    for_each_team(others, [&](TeamId y) {
-      const Lead l = lead(r, x_, y);
-      best = best && l == Lead::kAhead;
-      never_behind = never_behind && l != Lead::kNone;
-      if (l == Lead::kNeverBehind) level |= team_bit(y);
-    });
-    if (best) {
-      result = true;
-      break;
-    }
-    if (!never_behind) break;
-    const bool smaller_groups_won = all_subsets(level, [&](TeamMask s) {
-      return s == others || wins(team_bit(x_) | s, procedure);
-    });
-    if (!smaller_groups_won) break;
-    // The step always eliminates someone, or nobody and the next step decides
-    if (level != others) {
-      result = true;
-      break;
-    }
-  }
-  cache[group] = result;
-  return result;
+  return possible_picks(group, procedure) == team_bit(x_);
 }
 
-// The mirror of wins(): X isn't picked if some team is better than X for
-// sure, or if teams that are at least as good as X for sure stay with X in
-// every smaller group.
 bool TieProof::loses(TeamMask group, Procedure procedure) {
-  const TeamMask others = group & ~team_bit(x_);
-  if (others == 0) return false;
-  auto& cache = cache_[static_cast<size_t>(procedure)][1];
-  if (const auto it = cache.find(group); it != cache.end()) return it->second;
-  bool result = false;
-  for (const Step step : steps(procedure)) {
-    const StepRanges r = ranges(step, group, procedure);
-    if (!r.applies) continue;
-    bool beaten = false;
-    TeamMask at_least_x = 0;  // never worse than X
-    for_each_team(others, [&](TeamId y) {
-      const Lead l = lead(r, y, x_);
-      beaten = beaten || l == Lead::kAhead;
-      if (l != Lead::kNone) at_least_x |= team_bit(y);
-    });
-    beaten = beaten || (step == Step::kHeadToHead &&
-                        beaten_head_to_head(x_, group, r.pair_bounds()));
-    if (beaten) {
-      result = true;
-      break;
-    }
-    if (at_least_x == 0) break;
-    // If X survives the step, so do these teams
-    const TeamMask rest = others & ~at_least_x;
-    const TeamMask keep = team_bit(x_) | at_least_x;
-    const bool smaller_groups_lost = all_subsets(rest, [&](TeamMask s) {
-      return (keep | s) == group || loses(keep | s, procedure);
-    });
-    if (!smaller_groups_lost) break;
-    // A team that can't be level with X leaves whenever X stays
-    bool shrinks = false;
-    for_each_team(rest, [&](TeamId y) {
-      shrinks = shrinks || lead(r, x_, y) == Lead::kAhead;
-    });
-    if (shrinks) {
-      result = true;
-      break;
-    }
-  }
-  cache[group] = result;
-  return result;
+  return !has(possible_picks(group, procedure), x_);
 }
 
 // One pick drops the teams that lose a step and restarts with the others
 // until one is left (procedures.cpp). A step drops every team some other team
 // beats for sure and keeps every team no team can beat, so the survivors are
-// between these two sets. If every step can leave all teams level, a coin
-// toss can pick any of them.
+// between these two sets. A team that is never behind a survivor has the best
+// value too, so it survives with it (P19). If every step can leave all teams
+// level, a coin toss can pick any of them.
 TeamMask TieProof::possible_picks(TeamMask group, Procedure procedure) {
   if (std::popcount(group) == 1) return group;
   auto& cache = picks_cache_[static_cast<size_t>(procedure)];
@@ -1413,11 +1333,15 @@ TeamMask TieProof::possible_picks(TeamMask group, Procedure procedure,
     if (paths != nullptr || joint_facts_) level_facts = r.passed;
     TeamMask can_survive = 0;
     TeamMask must_survive = 0;
+    // The teams that are never behind a team
+    TeamArray<TeamMask> never_behind{};
     for_each_team(group, [&](TeamId t) {
       bool beaten = false;
       bool unbeatable = true;
       for_each_team(group & ~team_bit(t), [&](TeamId u) {
-        beaten = beaten || lead(r, u, t) == Lead::kAhead;
+        const Lead ahead = lead(r, u, t);
+        beaten = beaten || ahead == Lead::kAhead;
+        if (ahead != Lead::kNone) never_behind[t] |= team_bit(u);
         unbeatable = unbeatable && lead(r, t, u) != Lead::kNone;
       });
       beaten = beaten || (step == Step::kHeadToHead &&
@@ -1429,6 +1353,11 @@ TeamMask TieProof::possible_picks(TeamMask group, Procedure procedure,
     (void)all_subsets(optional, [&](TeamMask s) {
       const TeamMask survivors = must_survive | s;
       if (survivors == 0 || survivors == group) return true;
+      bool closed = true;
+      for_each_team(survivors, [&](TeamId t) {
+        closed = closed && (never_behind[t] & ~survivors) == 0;
+      });
+      if (!closed) return true;
       if ((!r.bounds || !carry_facts_) && paths == nullptr) {
         out |= possible_picks(survivors, procedure);
         return true;
@@ -1486,7 +1415,7 @@ bool TieProof::ranks_behind(TeamMask group, TeamId y) {
   auto& cache = rank_cache_[1];
   if (const auto it = cache.find(key); it != cache.end()) return it->second;
   const TeamMask picks = possible_picks(group, Procedure::kDivision);
-  bool result = !has(picks, x_) || loses(group, Procedure::kDivision);
+  bool result = !has(picks, x_);
   for_each_team(picks & ~team_bit(x_) & ~team_bit(y), [&](TeamId p) {
     result = result && ranks_behind(group & ~team_bit(p), y);
   });
@@ -1604,8 +1533,7 @@ bool TieProof::x_never_picked_before(TeamId y, TeamMask in_d,
   return std::ranges::all_of(reps, [&](TeamMask r) {
     if ((r & in_d & y_reps) == 0) return true;
     const TeamMask group = team_bit(x_) | r;
-    return loses(group, Procedure::kConference) ||
-           !has(possible_picks(group, Procedure::kConference), x_);
+    return loses(group, Procedure::kConference);
   });
 }
 

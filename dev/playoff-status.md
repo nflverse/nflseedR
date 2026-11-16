@@ -324,13 +324,15 @@ first, only results that leave both at their tie level, at most 4 open
 games); with more, SOV stays unknown. All of this is a relaxation of the
 real completions, so it's sound, and never weaker than the ranges.
 
-**One pick.** X is picked first from a group if a step makes X best for
-sure. If X is at least as good as everyone for sure, the step can also
-leave X with the teams that can be level with X, and X must be picked first
-from each of these smaller groups (the procedure restarts with them;
-induction, cached per group). Not picked: some team is better for sure, or
-the teams at least as good as X for sure stay with X in every smaller group.
-A coin toss (all steps passed) proves nothing.
+**One pick.** `possible_picks()` gives the teams one pick can pick (a
+superset). A step drops every team some other team beats for sure and keeps
+every team no team can beat; the procedure restarts with every set of
+survivors in between (induction, cached per group). A team that is never
+behind a survivor has the best value too, so it survives with it (P19). If
+every step can leave the whole group level, a coin toss can pick any of
+them. X is picked first (`wins()`) if it is the only possible pick, and
+never (`loses()`) if it isn't one. Until P19, `wins()` and `loses()` were
+inductions of their own.
 
 **Sides.** Of the teams that can tie X in the check:
 
@@ -1537,6 +1539,23 @@ Benchmark (`data-raw/bench_clinching_status.R`, same session, medians):
    milestone 13; the simulated seasons are 53% slower since milestone 10
    and another 16% since milestone 13. If that matters, lower the 200 flows
    per question (most settled questions need 50) or the groups with facts.
+   Since 2026-11-16 the flow of a tie group that only has to answer
+   (`Check::exact()` without a completion) leaves out the games of a bounded
+   team against a team without bounds: they only lower what the team's
+   other games must bring. `tie_groups()` builds the completion with the
+   full flow only when a group needs one, so the completions are the same
+   as before. With P19, same session, optimized build: every week of
+   2006–2025 5.4s → 4.3s (6.0s → 4.8s with the search), 60 week 10 results
+   of 2026 with all goals 3.3s → 2.3s; no status changes. Tried and
+   dropped: the smaller flow for the completions too (another 10 to 20%).
+   The flow then finds other completions, and about 8 statuses of
+   2006–2025 go from alive to undecided and 2 the other way, whichever way
+   the games left out are filled (home team, bounded team, level teams
+   steered to or away from conference wins). Ideas not done yet from the
+   same review: carry the pair bounds of `passed_bounds()` from step to
+   step instead of rebuilding them (24% of the profile), keep
+   `earlier_steps()` in `StepRanges`, and one enumeration for `lead(a, b)`
+   and `lead(b, a)`.
 4. **Before a release.** `devtools::check()` is clean with milestone 13
    (2026-11-15: 0 errors, warnings, notes).
    `dev/sanitize-cpp.sh` runs the clinching engine without R under ASan and
@@ -2149,3 +2168,18 @@ the division winners (see
 [results of milestone 15](#results-of-milestone-15) for the alternatives).
 It was implemented for review after the maintainer asked what the 13 open
 results were missing, and kept. Done as milestone 15.
+
+**P19 One induction for a pick. Decided by the maintainer (2026-11-16):
+yes.** `possible_picks()` only follows sets of survivors that hold every
+team that is never behind one of them at the step (such a team has the best
+value whenever the survivor has). With that rule it says everything
+`wins()` and `loses()` proved with inductions of their own, so both now
+only ask it (X is the only possible pick, X isn't one) and their cache is
+gone. In the clinching code only. Results: no status changes in every week
+of 2006–2025 with and without the search, in all seasons after weeks 12
+and 15 in one call (the small budgets), and in the 2,187 week 10 results
+of 2026 (339 eliminated, 1,688 alive, 160 undecided as in milestone 15).
+The test suite passes with `verify = TRUE` and the group check (195
+expectations). Without the rule, `possible_picks()` in place of `wins()`
+and `loses()` loses 5 statuses: `loses()` knew that a team never behind X
+stays whenever X does.
