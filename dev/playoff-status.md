@@ -2214,3 +2214,22 @@ status of 2006–2025 from alive to undecided, `cap()` 3 (and 1 the other
 way in a call with all seasons); nothing is faster. One builder that keeps
 every completion needs these differences as flags and saves about 20
 lines.
+
+**P21 Two larger changes from the review. Decided by the maintainer
+(2026-11-16): skip both.**
+
+- *Always build pair bounds.* The tie proofs without a context keep the
+  one-step estimate of `half_wins_range()`, next to the pair bounds of the
+  proofs with a context. One path would be about 60 lines less, but it
+  changes what the proofs can show and costs time where they are cheap
+  (their results are cached across the tie groups of a question). Not
+  measured.
+- *Incremental updates in `GameSearch`.* Every part still rebuilds
+  `SeasonData` and its checks. `GameSearch::evaluate()` is 7% of the
+  profile, and applying and undoing single results would make `SeasonData`
+  mutable, which `nfl_standings()` shares.
+
+Done instead: the search no longer runs the checks on the whole season
+again (they left it open with larger budgets) and splits it right away. The
+root still counts as one of the 200 parts. The search adds 0.34s instead of
+0.38s to every week of 2006–2025 (3.82s in all); no status changes.
