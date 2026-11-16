@@ -300,8 +300,8 @@ class TieProof {
                                                 TeamMask x_ahead,
                                                 TeamMask others);
 
-  // X is picked first (wins) or not (loses) from `group` by one pick of a
-  // procedure. Proven by induction over the smaller groups a step can leave.
+  // X is picked first (wins) or never (loses) from `group` by one pick of a
+  // procedure: what possible_picks() says about X
   [[nodiscard]] bool wins(TeamMask group, Procedure procedure);
   [[nodiscard]] bool loses(TeamMask group, Procedure procedure);
 
@@ -391,8 +391,6 @@ class TieProof {
   // The flow of jointly_feasible(), kept for its memory
   mutable MaxFlow flow_;
   void clear_caches();
-  // Results of wins() and loses() per procedure and group
-  std::array<std::array<std::unordered_map<TeamMask, bool>, 2>, 2> cache_{};
   // Results of possible_picks() per procedure and group
   std::array<std::unordered_map<TeamMask, TeamMask>, 2> picks_cache_{};
   // Results of ranks_ahead() and ranks_behind() per group and rival

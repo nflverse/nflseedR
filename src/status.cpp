@@ -375,6 +375,10 @@ class Check {
   // team sends its lower bound to the sink and the rest through a middle
   // node, which also gets the lower bounds from the source. Feasible iff
   // every edge of the source is used up.
+  //
+  // Without `out`, a game of a bounded team against a team without bounds
+  // isn't in the flow: it can bring the bounded team anything, so it only
+  // lowers what the team's other games must bring.
   [[nodiscard]] bool exact(TeamMask above, TeamMask level, TeamMask below,
                            MaxFlow& flow, Completion* out,
                            const Completion* fixed = nullptr) const {
@@ -382,18 +386,26 @@ class Check {
     const size_t n_remaining = s_->remaining.size();
     // Half-wins the fixed games already hand out
     TeamArray<int32_t> got{};
+    // Half-wins a bounded team can take from the games left out of the flow
+    TeamArray<int32_t> spare{};
     // Games of the flow: open games of a bounded team
     std::vector<bool> counts(n_remaining, false);
     int32_t n_games = 0;
     for (size_t i = 0; i < n_remaining; ++i) {
       const Game& g = s_->remaining[i];
       if (involves_x(g)) continue;
+      const bool away = has(bounded, g.away);
+      const bool home = has(bounded, g.home);
       if (fixed != nullptr && (*fixed)[i] != kFree) {
         got[g.home] += (*fixed)[i];
         got[g.away] += 2 - (*fixed)[i];
-      } else if (has(bounded, g.away) || has(bounded, g.home)) {
+      } else if ((away && home) || (out != nullptr && (away || home))) {
         counts[i] = true;
         ++n_games;
+      } else if (away) {
+        spare[g.away] += 2;
+      } else if (home) {
+        spare[g.home] += 2;
       }
     }
     TeamArray<int32_t> low{};
@@ -416,6 +428,7 @@ class Check {
     bool ok = true;
     for_each_team(bounded, [&](TeamId y) {
       if (low[y] < 0 || low[y] > high[y]) ok = false;
+      low[y] = std::max(low[y] - spare[y], 0);
       total_low += low[y];
     });
     if (!ok) return false;
@@ -1246,10 +1259,14 @@ class TeamStatus {
         return true;
       }
       const bool leaf = i == open.size();
+      if (!check.exact(above, level, below, *flow_, nullptr)) return false;
+      // The flow that only answers is smaller, and few groups need more
       Completion c;
-      if (!check.exact(above, level, below, *flow_, leaf ? &c : nullptr)) {
-        return false;
-      }
+      const auto complete = [&] {
+        if (c.empty() && !check.exact(above, level, below, *flow_, &c)) {
+          throw EngineError("A feasible flow became infeasible");
+        }
+      };
       if (!leaf) {
         const Open& o = open[i];
         const TeamMask bit = team_bit(o.team);
@@ -1266,9 +1283,13 @@ class TeamStatus {
         outcome = tie_outcome(context, goal, above, level);
       }
       if (never(outcome)) {
-        if (verify_) verify_no(goal, reach, c);
+        if (verify_) {
+          complete();
+          verify_no(goal, reach, c);
+        }
         return false;
       }
+      complete();
       for (const int8_t fill : {kHomeWin, kAwayWin}) {
         found = try_scenario(goal, filled(c, fill), reach);
         if (found.answer == Answer::kYes) return true;
