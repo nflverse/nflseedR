@@ -1551,11 +1551,26 @@ Benchmark (`data-raw/bench_clinching_status.R`, same session, medians):
    The flow then finds other completions, and about 8 statuses of
    2006–2025 go from alive to undecided and 2 the other way, whichever way
    the games left out are filled (home team, bounded team, level teams
-   steered to or away from conference wins). Ideas not done yet from the
-   same review: carry the pair bounds of `passed_bounds()` from step to
-   step instead of rebuilding them (24% of the profile), keep
-   `earlier_steps()` in `StepRanges`, and one enumeration for `lead(a, b)`
-   and `lead(b, a)`.
+   steered to or away from conference wins). Also since 2026-11-16, from
+   the same review, in `src/tie_proof.cpp`:
+   - The pair bounds go from step to step. `passed_bounds()` rebuilt them
+     for every step from the context's bounds (24% of the profile); now a
+     `Passage` per group and pick keeps the bounds, the earlier steps and
+     the group's records there, `ranges()` adds the step the pick just
+     passed and `settle()` tightens from where the bounds were.
+     `earlier_steps()` is gone: `StepRanges` has the list.
+   - `possible_picks()` compares every pair of teams once (`leads()`, one
+     enumeration in `lowest_differences()` for both directions) instead of
+     up to four times. An empty range is ahead of and behind the other
+     team, as before: without that, 12 of the 339 week 10 eliminations of
+     2026 and one test are lost.
+   - A mask of every team's opponents replaces the loops of
+     `common_opponents()` and of the head-to-head sweep.
+
+   Same session, optimized build: every week of 2006–2025 4.3s → 3.7s
+   (4.8s → 4.1s with the search), 60 week 10 results 2.3s → 2.0s; no status
+   changes there, in the two calls with all seasons, or in the 2,187 week
+   10 results.
 4. **Before a release.** `devtools::check()` is clean with milestone 13
    (2026-11-15: 0 errors, warnings, notes).
    `dev/sanitize-cpp.sh` runs the clinching engine without R under ASan and

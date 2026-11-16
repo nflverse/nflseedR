@@ -109,6 +109,18 @@ class TieProof {
   };
   using Facts = std::vector<Fact>;
 
+  // The record steps before a step, with their common opponents. At most
+  // the division procedure's six steps through SOS.
+  static constexpr size_t kMaxSteps = 6;
+  struct EarlierStep {
+    Step step = Step::kHeadToHead;
+    TeamMask common = 0;
+  };
+  struct EarlierSteps {
+    std::array<EarlierStep, kMaxSteps> steps;
+    size_t size = 0;
+  };
+
   // A step's ranges for the teams of a group, or not applicable
   struct StepRanges {
     TeamArray<Range> range{};
@@ -118,8 +130,10 @@ class TieProof {
     Procedure procedure = Procedure::kDivision;
     // Common opponents of the group (common games step only)
     TeamMask common = 0;
+    // The record steps the group passed level before this one
+    EarlierSteps earlier;
     // What the context and the steps the group passed leave of every pair's
-    // open games (only with a context, see passed_bounds())
+    // open games (only with a context, see Passage)
     std::optional<PairBounds> bounds;
     // The records of the group's teams at the earlier steps, all level
     Facts passed;
@@ -150,9 +164,12 @@ class TieProof {
   };
 
   [[nodiscard]] static std::span<const Step> steps(Procedure procedure);
-  // `facts`: what the steps of larger groups said before they left `group`
+  // A group on its way through the steps of one pick, see ranges()
+  struct Passage;
+  // The steps of a pick in turn, with one `passage` per group and pick.
+  // `facts`: what the steps of larger groups said before they left `group`.
   [[nodiscard]] StepRanges ranges(Step step, TeamMask group,
-                                  Procedure procedure,
+                                  Procedure procedure, Passage& passage,
                                   std::span<const Fact> facts = {}) const;
   // Half-wins of tied team t in its games against `opponents`, lowest and
   // highest. `known` of them come from games that aren't open.
@@ -190,12 +207,11 @@ class TieProof {
   // every team a bound changes for, until nothing changes. Returns the teams
   // with a changed bound.
   [[nodiscard]] TeamMask propagate(PairBounds& bounds, TeamMask dirty) const;
-  // The pair bounds when the procedure reaches step r.step with all of
-  // r.group: the context's bounds, the facts, and the group is level at
-  // every earlier record step (these records are added to `passed`)
-  [[nodiscard]] PairBounds passed_bounds(const StepRanges& r,
-                                         std::span<const Fact> facts,
-                                         Facts& passed) const;
+  // Tightens the pair bounds of a passage with the facts of the teams of
+  // `touched` and, if one of them is in `group`, with the records of the
+  // steps the group passed level, until nothing changes
+  void settle(Passage& passage, TeamMask group, std::span<const Fact> facts,
+              TeamMask touched) const;
   // Whether the open games can hand out their half-wins so that every team
   // gets a total the context allows, every pair what `bounds` allow and
   // every record of `facts` and `passed` holds, all at once (P17). The pair
@@ -234,33 +250,32 @@ class TieProof {
                                    TeamArray<HalfWins>& records) const;
   [[nodiscard]] Range sos_range(TeamId t, TeamMask group) const;
   [[nodiscard]] Range sov_range(TeamId t, TeamMask group) const;
-  [[nodiscard]] Lead lead(const StepRanges& r, TeamId a, TeamId b) const;
+  // How a compares with b, and b with a
+  struct Leads {
+    Lead a = Lead::kNone;
+    Lead b = Lead::kNone;
+  };
+  [[nodiscard]] Leads leads(const StepRanges& r, TeamId a, TeamId b) const;
   [[nodiscard]] int64_t linear_strength_difference(
       const TeamArray<int32_t>& weight_a, const TeamArray<int32_t>& weight_b,
       const TeamArray<int32_t>& half_wins, TeamMask group, TeamMask settled,
       const PairBounds* bounds) const;
-  [[nodiscard]] std::optional<int64_t> lowest_difference(const StepRanges& r,
-                                                         TeamId a,
-                                                         TeamId b) const;
+  // The lowest value of a's step value minus b's, and of b's minus a's
+  struct Differences {
+    std::optional<int64_t> a_minus_b;
+    std::optional<int64_t> b_minus_a;
+  };
+  [[nodiscard]] Differences lowest_differences(const StepRanges& r, TeamId a,
+                                               TeamId b) const;
   [[nodiscard]] Ratio value(Step step, TeamId t,
                             const TeamArray<int32_t>& half_wins, TeamMask group,
                             TeamMask common) const;
-  // The record steps before a step, with their common opponents. At most
-  // the division procedure's six steps through SOS.
-  static constexpr size_t kMaxSteps = 6;
-  struct EarlierStep {
-    Step step = Step::kHeadToHead;
-    TeamMask common = 0;
-  };
-  struct EarlierSteps {
-    std::array<EarlierStep, kMaxSteps> steps;
-    size_t size = 0;
-  };
-  [[nodiscard]] EarlierSteps earlier_steps(const StepRanges& r) const;
   [[nodiscard]] bool equal_before(const EarlierSteps& earlier, TeamMask group,
                                   TeamId a, TeamId b,
                                   const OwnResults& own) const;
   [[nodiscard]] TeamMask common_opponents(TeamMask group) const;
+  // t has a game (played or not) against every team of `teams`
+  [[nodiscard]] bool plays_all(TeamId t, TeamMask teams) const noexcept;
   [[nodiscard]] int32_t low_in(TeamId t, TeamMask group) const;
   [[nodiscard]] int32_t high_in(TeamId t, TeamMask group) const;
   [[nodiscard]] TeamMask division_of(TeamId t) const;
@@ -367,7 +382,8 @@ class TieProof {
   TeamMatrix<int32_t> known_half_wins_{};
   TeamMatrix<int32_t> known_wins_{};
   TeamMatrix<int32_t> open_{};
-  // Opponents of every team in its open games
+  // Opponents of every team in all of its games, and in its open games
+  TeamArray<TeamMask> opponents_{};
   TeamArray<TeamMask> open_opponents_{};
   std::vector<OpenGames> open_pairs_;
   TeamArray<int32_t> final_games_{};
