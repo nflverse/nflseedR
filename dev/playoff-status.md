@@ -414,11 +414,17 @@ R/clinching_status.R      nfl_clinching_status(): argument checks, then
                           standings_encode_games(), call C++, decode
 src/engine/flow.hpp       small Dinic max-flow (vectors reused across flows)
 src/flow.cpp
+src/engine/team_mask.hpp  sets of teams as bits, and the half-wins that leave
+                          a team level with X
+src/engine/checks.hpp     Season and Check: the flows on the win totals when
+                          X wins out or loses out (internal, shared by
+                          status.cpp and group_check.cpp)
 src/engine/status.hpp     compute_clinching_status(): season loop, checks per
 src/status.cpp            goal, gray zone search, tie groups at X's level
                           (milestone 10), GameSearch (budgeted search over
-                          remaining games, `search = TRUE`), group check
-                          (`group_samples`, tests and diagnostics)
+                          remaining games, `search = TRUE`)
+src/engine/group_check.hpp  group check (`group_samples`, tests and
+src/group_check.cpp       diagnostics)
 src/engine/scenario.hpp   ScenarioRunner: a completion through the procedures
 src/scenario.cpp          for every coin toss sequence
 src/engine/tie_proof.hpp  TieProof: which tied teams X always ranks ahead of
