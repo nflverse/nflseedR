@@ -114,7 +114,7 @@ games <- nflreadr::load_schedules(2025)
 
 # Second compute standings
 standings <- nflseedR::nfl_standings(games, ranks = "DIV")
-#> ℹ 10:55:07 | Compute standings
+#> ℹ 11:45:32 | Compute standings
 
 # Finally compute matchups
 matchups <- nflseedR::nfl_regular_season(standings)
